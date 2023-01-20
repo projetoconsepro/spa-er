@@ -1,0 +1,15 @@
+#dropdown-basic{
+    background-color: #3A58C8!important;
+    color: #fff;
+    font-size: 23px;
+}
+#dropdown-select{
+    background-color: #3A58C8!important;
+    width: 100%;
+}
+#dropdown-item{
+    color: #fff !important;
+    font-size: 19px;
+    text-align: center;
+
+}

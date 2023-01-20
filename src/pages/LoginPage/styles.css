@@ -1,4 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+.form-check-label{
+    float: left;
+}
+
+#labelLogin{
+    float: left;
+    margin-left: 10px;
+}
 
 .datepicker {
     display: none;
@@ -129,6 +136,17 @@
     border-color: #384f80;
     color: #1F2937;
 }
+#select{
+    background-color: greenyellow!important;
+
+
+}
+
+.botao{
+    background-color: #3A58C8!important;
+    color: #fff !important;
+}
+
 
 .datepicker-controls .button[disabled] {
     cursor: not-allowed;
@@ -1002,6 +1020,10 @@
     --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
 }
 
+.color-primary{
+    color: #0041bf;
+}
+
 *,
 *::before,
 *::after {
@@ -1021,9 +1043,10 @@ body {
     font-weight: 400;
     line-height: 1.5;
     color: #374151;
-    background-color: #F2F4F6;
+    background-color: #E0E0E0;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgba(17, 24, 39, 0);
+    
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -1302,6 +1325,7 @@ textarea {
     margin: 0;
     font-family: inherit;
     font-size: inherit;
+    font-weight: bold;
     line-height: inherit;
 }
 
@@ -3805,20 +3829,20 @@ progress {
 .form-control {
     display: block;
     width: 100%;
-    padding: 0.5rem 1rem;
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.5;
     color: #6B7280;
-    background-color: #ffffff;
-    background-clip: padding-box;
-    border: 0.0625rem solid #D1D5DB;
-    -webkit-appearance: none;
-    appearance: none;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.07);
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    background:unset;
+    border-radius: 0;
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    box-shadow: none;
+    border-bottom: 2.5px solid #000000;
 }
+
+
 
 @media (prefers-reduced-motion: reduce) {
     .form-control {
@@ -3833,17 +3857,34 @@ progress {
 .form-control[type="file"]:not(:disabled):not([readonly]) {
     cursor: pointer;
 }
+.form-control{
+    box-shadow: none !important;
 
-.form-control:focus {
+}
+
+.form-control:focus{
     color: #6B7280;
-    background-color: #ffffff;
-    border-color: #4d6689;
+    background-color: unset !important;
+    border-bottom: 2px solid #000000 !important ;
     outline: 0;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.07), 0 0 0 0.18rem rgba(31, 41, 55, 0.25);
 }
 
 .form-control::-webkit-date-and-time-value {
     height: 1.5em;
+}
+
+.olho {
+    background-color: unset;
+    border-right: 0;
+    border-left: 0;
+    border-top: 0;
+}
+.olho-error {
+    background-color: unset;
+    border-right: 0;
+    border-left: 0;
+    border-top: 0;
+    border-bottom: 2.5px solid #ff0000;
 }
 
 .form-control:-ms-input-placeholder {
@@ -3874,7 +3915,6 @@ progress {
     border-width: 0;
     border-inline-end-width: 0.0625rem;
     border-radius: 0;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3898,8 +3938,8 @@ progress {
     border-color: inherit;
     border-style: solid;
     border-width: 0;
-    border-inline-end-width: 0.0625rem;
     border-radius: 0;
+    border-inline-end-width: 0.0625rem;
     -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -3923,8 +3963,6 @@ progress {
     line-height: 1.5;
     color: #374151;
     background-color: transparent;
-    border: solid transparent;
-    border-width: 0.0625rem 0;
 }
 
 .form-control-plaintext.form-control-sm, .form-control-plaintext.form-control-lg {
@@ -3936,7 +3974,6 @@ progress {
     min-height: calc(1.5em + 0.875rem);
     padding: 0.375rem 0.625rem;
     font-size: 0.875rem;
-    border-radius: 0.5rem;
 }
 
 .form-control-sm::file-selector-button {
@@ -3957,7 +3994,6 @@ progress {
     min-height: calc(1.5em + 1.125rem);
     padding: 0.5rem 1rem;
     font-size: 1.25rem;
-    border-radius: 0.5rem;
 }
 
 .form-control-lg::file-selector-button {
@@ -3998,12 +4034,11 @@ textarea.form-control-lg {
 
 .form-control-color::-moz-color-swatch {
     height: 1.5em;
-    border-radius: 0.5rem;
+
 }
 
 .form-control-color::-webkit-color-swatch {
     height: 1.5em;
-    border-radius: 0.5rem;
 }
 
 .form-select {
@@ -4063,6 +4098,7 @@ textarea.form-control-lg {
 }
 
 .form-check {
+    margin-top: 30px;
     display: block;
     min-height: 1.5rem;
     padding-left: 1.625em;
@@ -4079,7 +4115,7 @@ textarea.form-control-lg {
     height: 1.125em;
     margin-top: 0.1875em;
     vertical-align: top;
-    background-color: #F2F4F6;
+    background-color: #ffffff;
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -4116,22 +4152,22 @@ textarea.form-control-lg {
 }
 
 .form-check-input:checked {
-    background-color: #1F2937;
-    border-color: #1F2937;
+    background-color: #00E332;
+    border-color: #3A58C8;
 }
 
 .form-check-input:checked[type="checkbox"] {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%233A58C8' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
 }
 
 .form-check-input:checked[type="radio"] {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23ffffff'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%233A58C8'/%3e%3c/svg%3e");
 }
 
 .form-check-input[type="checkbox"]:indeterminate {
     background-color: #1F2937;
     border-color: #1F2937;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%233A58C8' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
 }
 
 .form-check-input:disabled {
@@ -4615,6 +4651,7 @@ textarea.form-control-lg {
     font-weight: 500;
     line-height: 1.5;
     color: #374151;
+    width: 40%;
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
@@ -4635,8 +4672,44 @@ textarea.form-control-lg {
     }
 }
 
-.btn:hover {
+.btn2 {
+    display: inline-block;
+    font-weight: 500;
+    line-height: 1.5;
     color: #374151;
+    width: 40%;
+    margin-right: 10px;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: gray !important;
+    border: 0.0625rem solid transparent;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn2 {
+        transition: none;
+    }
+}
+
+.pointer-cursor{
+    cursor: pointer;
+    color: blue;
+}
+
+.btn:hover {
+    color: #374151 !important;
+}
+
+.btn2:hover {
+    color: #374151 !important;
 }
 
 .btn-check:focus + .btn, .btn:focus {
@@ -9877,6 +9950,7 @@ textarea.form-control-lg {
 
 .d-grid {
     display: grid !important;
+    margin-top: 20px;
 }
 
 .d-table {
@@ -12184,6 +12258,7 @@ textarea.form-control-lg {
 
 .text-muted {
     color: #58677d !important;
+    margin-top: 10px;
 }
 
 .text-black-50 {
@@ -12246,6 +12321,8 @@ textarea.form-control-lg {
     background-color: #ffffff !important;
 }
 
+
+
 .bg-indigo {
     background-color: #4F46E5 !important;
 }
@@ -12263,7 +12340,7 @@ textarea.form-control-lg {
 }
 
 .bg-gray-50 {
-    background-color: #F9FAFB !important;
+    background-color: #D9D9D9 !important;
 }
 
 .bg-gray-100 {
@@ -28547,6 +28624,11 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
 .form-switch .form-check-input {
     height: 1.275em;
 }
+.input-group:focus{
+    box-shadow: none;
+}
+
+
 
 .input-group .form-control:focus {
     border-color: #D1D5DB;

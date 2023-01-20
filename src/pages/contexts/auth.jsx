@@ -4,7 +4,7 @@ import sha256 from 'crypto-js/sha256';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-import {api, createSession } from '../../services/api'
+import {api, createSession, registrar } from '../../services/api'
 
 export const AuthContext = createContext();
 
@@ -16,15 +16,37 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const recoveredUser = localStorage.getItem('user');
         const teste = JSON.parse(recoveredUser);
+        const teste2 = localStorage.getItem("registrou");
         console.log(teste)
         if(teste){
             setUser(recoveredUser);
             navigate("/home")
         }
-        else(navigate("/login"))
-
         setLoading(false);
     }, []);
+
+    const register = async (nome, email, cpf, telefone , senha) => {
+    const password = sha256(senha).toString();
+    const response = await registrar(nome, email, cpf, telefone , password);
+    console.log("register", response.data.message);
+        try{
+        if(response.data.auth === true){
+        const registrou = localStorage.setItem("registrou", true)
+        console.log(registrou)
+        return {
+            auth: response.data.auth,
+            message: response.data.message
+        }
+        }
+        return {
+            auth: response.data.auth,
+            message: response.data.message
+        }
+    
+        }catch(error){
+            console.log(error)
+        }
+    }
 
     const login = async (login, senha) => {
         const password = sha256(senha).toString();
@@ -48,16 +70,13 @@ export const AuthProvider = ({ children }) => {
         api.defaults.headers.Authorization = `Bearer ${token}`;
         navigate('/double')
         }
-        else{
-            const MySwal = withReactContent(Swal)
-
-            MySwal.fire({
-                icon: 'error',
-                title: 'Ops!',
-                text: 'Você provavelmente escreveu algo errado, tente novamente!',
-                footer: '<a href="/kkk">Ainda não possui uma conta? Clique aqui!</a>'
-              })
+        else {
+        return {
+            auth: response.data.auth,
+            message: response.data.message
         }
+    }
+        
 
         }catch(error){
             console.log(error);
@@ -78,7 +97,7 @@ export const AuthProvider = ({ children }) => {
 
     return(
     <AuthContext.Provider value={{ authenticated: 
-        !!user, user, loading, login, logout}}>
+        !!user, user, loading, login, logout, register}}>
             { children }
         </AuthContext.Provider>
     )
