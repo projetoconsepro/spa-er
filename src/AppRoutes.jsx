@@ -10,10 +10,10 @@ import {
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import Loading from "./pages/LoginPage/loading";
-import MonitorPage from "./pages/MonitorPage/monitor";
 import DoublePerfil from "./pages/DoublePerfil/doublePerfil";
 
 import { AuthProvider, AuthContext } from "./pages/contexts/auth";
+import RegisterPage from "./pages/RegisterPage";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -37,8 +37,8 @@ const AppRoutes = () => {
                 <Route exact path="/login" element={<LoginPage />} />
                 <Route exact path="/home" element={<HomePage />}/>
                 <Route exact path="/loading" element={<Loading />}/>
-                <Route exact path="/monitor" element={<MonitorPage />}/>
                 <Route exact path="/double" element={<DoublePerfil />}/>
+                <Route exact path="/register" element={<RegisterPage />}/>
             </Routes>
             </AuthProvider>
         </Router>
