@@ -41,16 +41,17 @@ if(analiseFeita.perfil.length > 1){
               <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-3 pb-3" />
               <h1 className="mb-5 mt-5 h3 text-muted fs-24"><small>Selecione o perfil desejado:</small></h1>
           </div>
-          <Dropdown>
-              <Dropdown.Toggle variant='sucess' id="dropdown-basic">
-                Selecione      ↓
-              </Dropdown.Toggle>
+            
+            <div class="btn-group">
+  <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdown-basic" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+    Selecione
+  </button>
+  <ul class="dropdown-menu dropdown-menu-lg-end" id="dropdown-select">
+    <li><button class="dropdown-item" type="button" id="dropdown-item" onClick={()=> { red(0,analiseFeita)}}>{analiseFeita.perfil[0]}</button></li>
+    <li><button class="dropdown-item" type="button" id="dropdown-item" onClick={()=> { red(1,analiseFeita)}}>{analiseFeita.perfil[1]}</button></li>
+  </ul>
+</div>
 
-              <Dropdown.Menu id="dropdown-select">
-                <Dropdown.Item id="dropdown-item" onClick={()=> { red(0,analiseFeita)}}>{analiseFeita.perfil[0]}</Dropdown.Item>
-                <Dropdown.Item id="dropdown-item" onClick={()=> { red(1,analiseFeita)}}>{analiseFeita.perfil[1]}</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
           </div>
           </div>
           </div>

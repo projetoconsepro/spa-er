@@ -112,7 +112,7 @@ const LoginPage = () => {
 
                             <div className="mt-5 mb-4 text-center">
                                 <button type="submit" className="btn botao" onClick={handleSubmit}>Acessar  <span className='align-self-end'>➜</span></button>
-                                <p className='text-muted' onClick={registrado}> <small>Ainda não possui uma conta?</small> <a href='/register'><small>Clique aqui!</small></a></p>
+                                <p className='text-muted' onClick={registrado}> <small>Ainda não possui uma conta?</small> <a href='/'><small>Clique aqui!</small></a></p>
                             </div>
                             <div class="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}

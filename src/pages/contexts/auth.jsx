@@ -1,8 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import sha256 from 'crypto-js/sha256';
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
 
 import {api, createSession, registrar } from '../../services/api'
 
@@ -16,7 +14,6 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const recoveredUser = localStorage.getItem('user');
         const teste = JSON.parse(recoveredUser);
-        const teste2 = localStorage.getItem("registrou");
         console.log(teste)
         if(teste){
             setUser(recoveredUser);
@@ -90,6 +87,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token")
         localStorage.removeItem("perfil")
         localStorage.removeItem("perfil2")
+        localStorage.removeItem("componente")
         api.defaults.headers.Authorization = null;
         setUser(null);
         navigate("/login")
