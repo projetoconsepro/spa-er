@@ -1046,7 +1046,7 @@ body {
     background-color: #E0E0E0;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgba(17, 24, 39, 0);
-    
+    user-select:none;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -3839,7 +3839,7 @@ progress {
     border-right: 0;
     border-left: 0;
     box-shadow: none;
-    border-bottom: 2.5px solid #000000;
+    border-bottom: 2px solid #000000;
 }
 
 
@@ -4664,6 +4664,11 @@ textarea.form-control-lg {
     font-size: 0.875rem;
     border-radius: 0.5rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#modalTexto{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: justify;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -6814,10 +6819,15 @@ textarea.form-control-lg {
     list-style: none;
 }
 
+#modalLink{
+    color: blue;
+    text-decoration: underline;
+}
+
 .nav-link {
     display: block;
     padding: 0.5rem 1rem;
-    color: #1F2937;
+    color: black;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
 

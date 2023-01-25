@@ -4,8 +4,10 @@ import {
     BrowserRouter as Router,
     Route,
     Routes,
-    Navigate
+    Navigate,
 } from "react-router-dom";
+
+import { redirect } from 'react-router-dom';
 
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -38,7 +40,7 @@ const AppRoutes = () => {
                 <Route exact path="/home" element={<HomePage />}/>
                 <Route exact path="/loading" element={<Loading />}/>
                 <Route exact path="/double" element={<DoublePerfil />}/>
-                <Route exact path="/register" element={<RegisterPage />}/>
+                <Route exact path="/" element={<RegisterPage />}/>
             </Routes>
             </AuthProvider>
         </Router>
