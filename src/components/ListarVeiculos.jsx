@@ -17,11 +17,16 @@ const ListarVeiculos = () => {
     const [mostrar, setMostrar] = useState(false);
     const [mostrar2, setMostrar2] = useState([]);
 
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
+    console.log(user2.id_usuario)
+
     const veiculo = axios.create({
         baseURL: "http://localhost:3001",
         headers: {
-            'x-access-token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlhdCI6MTY3NDgyMzMyNywiZXhwIjoxNjc0ODUyMTI3fQ.WCKhf2N5Ky2TLJ96CUU8fyevgJUHZOQNAvanWuHbVzM",
-            'id': 12,
+            'x-access-token': token,
+            'id': user2.id_usuario,
             'perfil': "cliente"
         }
     })
