@@ -10,7 +10,7 @@ const DoublePerfil = () => {
     const navigate = useNavigate();
     const analisePerfil = localStorage.getItem('user');
     const analiseFeita = JSON.parse(analisePerfil);
-    console.log(analiseFeita.perfil)
+    console.log(analiseFeita)
     if(!authenticated){
         navigate('/login')
     }

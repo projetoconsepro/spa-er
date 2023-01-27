@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const recoveredUser = localStorage.getItem('user');
         const teste = JSON.parse(recoveredUser);
-        console.log(teste)
         if(teste){
             setUser(recoveredUser);
             navigate("/home")
@@ -27,17 +26,17 @@ export const AuthProvider = ({ children }) => {
     const response = await registrar(nome, email, cpf, telefone , password);
     console.log("register", response.data.message);
         try{
-        if(response.data.auth === true){
+        if(response.data.msg.resultado === true){
         const registrou = localStorage.setItem("registrou", true)
         console.log(registrou)
         return {
-            auth: response.data.auth,
-            message: response.data.message
+            auth: response.data.msg.resultado,
+            message: response.data.msg.msg
         }
         }
         return {
-            auth: response.data.auth,
-            message: response.data.message
+            auth: response.data.msg.resultado,
+            message: response.data.msg.msg
         }
     
         }catch(error){
@@ -49,29 +48,33 @@ export const AuthProvider = ({ children }) => {
         const password = sha256(senha).toString();
         console.log(password)
         const response = await createSession(login, password);
-        console.log("login", response.data);
         try{
-        if(response.data.auth === true && response.data.user.perfil.length === 1){
-        const loggedUser = response.data.user;
-        const token = response.data.token;
+        console.log("login", response.data);
+        if(response.data.msg.resultado === true) {
+        console.log("teste", response.data.dados.user.perfil.length)
+        if(response.data.msg.resultado === true && response.data.dados.user.perfil.length === 1){
+        const loggedUser = response.data.dados.user;
+        const token = response.data.dados.token;
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
+        console.log("Qwfowejfg")
         navigate('/home')
         }
-        else if(response.data.auth === true && response.data.user.perfil.length > 1){
-        const loggedUser = response.data.user;
+        else if(response.data.msg.resultado === true && response.data.dados.user.perfil.length > 1){
+        const loggedUser = response.data.dados.user;
         const token = response.data.token;
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
         navigate('/double')
         }
+        }
         else {
         return {
-            auth: response.data.auth,
-            message: response.data.message
-        }
+            auth: response.data.msg.resultado,
+            message: response.data.msg.msg
+        };
     }
         
 
