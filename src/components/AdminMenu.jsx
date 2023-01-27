@@ -6,13 +6,6 @@ function AdminMenu(){
     console.log(teste.nome)
 
 
-
-
-
-
-
-
-
     return(
         <div className="dashboard-container">
         <div class="py-4"></div>

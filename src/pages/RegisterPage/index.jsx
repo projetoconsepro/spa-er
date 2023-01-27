@@ -12,7 +12,7 @@ import '../LoginPage/styles.css';
 const RegisterPage = () => {
     const { register } = useContext(AuthContext);
     const [nome, setNome] = useState("");
-    const [mail, setMail] = useState("");
+    const [mail, setMail] = useState('');
     const [cpff, setCpff] = useState("");
     const [telefone, setTelefone] = useState("");
     const [senha, setSenha] = useState("");
@@ -40,12 +40,9 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         const checkValidate = document.getElementById("flexCheckDefault").checked;
         e.preventDefault();
-        if (nome === "" || mail === "" || cpf === "" || telefone === "" || senha === "") {
+        if (nome === "" || cpf === "" || telefone === "" || senha === "") {
             if (nome === "") {
                 setInputNome("form-control is-invalid")
-            }
-            if (mail === "") {
-                setInputMail("form-control is-invalid")
             }
             if (cpff === "") {
                 setInputCpf("form-control is-invalid")
@@ -83,7 +80,8 @@ const RegisterPage = () => {
                 }, 4000);
             }
         }
-        else if (!await emailValidator.validate(mail)) {
+        if(mail.length > 1){
+        if (!await emailValidator.validate(mail)) {
             setEstado(true)
             setInputMail("form-control is-invalid")
             setMensagem("Email inválido!")
@@ -91,6 +89,7 @@ const RegisterPage = () => {
                 setInputMail("form-control")
                 setEstado(false)
             }, 4000);
+        }
         }
 
         else if (cpf.isValid(cpff) === false && cnpj.isValid(cpff) === false) {
@@ -106,6 +105,7 @@ const RegisterPage = () => {
             setEstado(true)
             setInputTelefone("form-control is-invalid")
             setMensagem("O telefone deve conter 11 caracteres!")
+            console.log(telefone)
             setTimeout(() => {
                 setInputTelefone("form-control")
                 setEstado(false)
@@ -220,7 +220,7 @@ const RegisterPage = () => {
                                 <div className="form-group mb-4">
                                     <label htmlFor="email" id="labelLogin">Email:</label>
                                     <div className="input-group">
-                                        <input className={inputMail} name="email" id="email" value={mail} onChange={(e) => setMail(e.target.value)} placeholder="Digite seu endereço de email" />
+                                        <input className={inputMail} name="email" id="email" value={mail} onChange={(e) => setMail(e.target.value)} placeholder="Digite seu endereço de email (não obrigatório)" />
                                     </div>
                                 </div>
                                 <div className="form-group mb-4">
@@ -232,7 +232,7 @@ const RegisterPage = () => {
                                 <div className="form-group mb-4">
                                     <label htmlFor="email" id="labelLogin">Telefone:</label>
                                     <div className="input-group">
-                                        <IMaskInput className={inputTelefone} mask="(00) 00000-0000" name="email" id="email" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
+                                        <IMaskInput className={inputTelefone} name="email" id="email" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
                                     </div>
                                 </div>
                                 <div class="form-group">

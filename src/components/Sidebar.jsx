@@ -13,9 +13,7 @@ const Sidebar = () => {
         const { authenticated, logout } = useContext(AuthContext);
         const nome = localStorage.getItem("user");
         const teste = JSON.parse(nome);
-        console.log(teste.perfil)
         const [componente, setComponente] = useState("")
-        console.log(componente)
         const componentefunc = (componente) =>{
             localStorage.setItem("componente", componente)
             window.location.reload();
@@ -29,13 +27,13 @@ const Sidebar = () => {
         className: "nav-link d-flex align-items-center",
         }
 
-    const links = [
+    const links = [ 
         {
             
         }
     ]
     
-    if(teste.perfil[0] === "Estacionamento"){
+    if(teste.perfil[0] === "Cliente"){
         links.push({
             className: styles.className,
             icon: <FaCarAlt />,
@@ -131,7 +129,7 @@ const Sidebar = () => {
                 <ul class="nav flex-column pt-md-0 ">
                     <li class="nav-item"><a href="#" class="nav-link d-flex align-items-center pb-3"><span class="sidebar-icon"><img src="assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span class="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></li>
                     <li class="nav-item">
-                    {links.map(link => (<li className={link.className} onClick={() => componentefunc(link.componente)}>{link.icon}{link.name}</li>))}
+                    {links.map((link, key) => (<li key={key} className={link.className} onClick={() => componentefunc(link.componente)}>{link.icon}{link.name}</li>))}
                     </li>
                 </ul>
             </div>

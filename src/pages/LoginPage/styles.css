@@ -1,3 +1,5 @@
+
+
 .form-check-label{
     float: left;
 }
@@ -7259,6 +7261,7 @@ textarea.form-control-lg {
     position: relative;
     display: flex;
     flex-direction: column;
+    min-height: 0;
     min-width: 0;
     word-wrap: break-word;
     background-color: #ffffff;
@@ -7290,11 +7293,15 @@ textarea.form-control-lg {
 }
 
 .card > .card-header + .list-group,
-  .card > .list-group + .card-footer {
+  .card > .list-group + .card-footer { 
     border-top: 0;
+}
+#detalhe{
+    display: none !important;
 }
 
 .card-body {
+    height: 8rem;
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
 }

@@ -51,16 +51,17 @@ const LoginPage = () => {
             console.log("submit", { email, password });
             const resposta = await login(email, password);
             console.log(resposta);
-            console.log(resposta.auth);
             if (resposta.auth === false) {
                 setEstado(true)
                 setMensagem(resposta.message)
                 setinputLogin("form-control is-invalid")
                 setInputSenha("form-control is-invalid")
+                setClassolho("olho-error")
                 setTimeout(() => {
                     setEstado(false)
                     setinputLogin("form-control")
                     setInputSenha("form-control")
+                    setClassolho("olho")
                 }, 4000);
             }
         }
@@ -69,8 +70,7 @@ const LoginPage = () => {
     const registrado = () => {
         localStorage.setItem("registrou", "false");
     }
-
-
+    
     return (
         <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
