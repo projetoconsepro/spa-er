@@ -26,7 +26,7 @@ const AppRoutes = () => {
         }
 
         if(!authenticated){
-            return <Navigate to="/login" />
+            return <Navigate to="/" />
         }
 
         return children;
@@ -36,11 +36,11 @@ const AppRoutes = () => {
         <Router>
             <AuthProvider>
             <Routes>
-                <Route exact path="/login" element={<LoginPage />} />
+                <Route exact path="/" element={<LoginPage />} />
                 <Route exact path="/home" element={<HomePage />}/>
                 <Route exact path="/loading" element={<Loading />}/>
                 <Route exact path="/double" element={<DoublePerfil />}/>
-                <Route exact path="/" element={<RegisterPage />}/>
+                <Route exact path="/register" element={<RegisterPage />}/>
             </Routes>
             </AuthProvider>
         </Router>

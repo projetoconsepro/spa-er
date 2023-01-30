@@ -12,7 +12,7 @@ const DoublePerfil = () => {
     const analiseFeita = JSON.parse(analisePerfil);
     console.log(analiseFeita)
     if(!authenticated){
-        navigate('/login')
+        navigate('/')
     }
 
 const handleLogout = () => {

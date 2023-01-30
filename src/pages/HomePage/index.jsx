@@ -29,7 +29,7 @@ const HomePage =  () => {
     }, [])
 
     if(!authenticated){
-        navigate('/login')
+        navigate('/')
     }
     
     return (

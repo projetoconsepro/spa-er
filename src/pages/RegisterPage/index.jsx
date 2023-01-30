@@ -161,7 +161,7 @@ const RegisterPage = () => {
                 setSucesso(true)
                 setTimeout(() => {
                     setSucesso(false)
-                    navigate("/login")
+                    navigate("/")
                 }, 3000);
             }
             else {
@@ -345,11 +345,11 @@ const RegisterPage = () => {
                                 <div className="mt-5 mb-5 gap-2 d-md-block">
                                     <button type="submit" className="btn2 botao"><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
-                                    </svg></span> <a href="/login">Voltar</a></button>
+                                    </svg></span> <a href="/">Voltar</a></button>
                                     <button type="submit" onClick={handleSubmit} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
-                                    <p className='text-muted' onClick={registrado}> <small>Já possui uma conta?</small> <a href='/login'><small className="color-primary"><u>Clique aqui!</u></small></a></p>
+                                    <p className='text-muted' onClick={registrado}> <small>Já possui uma conta?</small> <a href='/'><small className="color-primary"><u>Clique aqui!</u></small></a></p>
                                 </div>
                             </form>
                             <div class="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
