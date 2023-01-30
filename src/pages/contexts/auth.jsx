@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("componente")
         api.defaults.headers.Authorization = null;
         setUser(null);
-        navigate("/login")
+        navigate("/")
     }
 
     return(

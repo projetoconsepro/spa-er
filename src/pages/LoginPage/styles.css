@@ -4146,11 +4146,57 @@ textarea.form-control-lg {
 .form-check-input:active {
     filter: brightness(90%);
 }
+#placa {
+    background-image: url("../../../public/assets/img/placa2.png")!important;
+    background-repeat: no-repeat;   
+    background-position: center;
+    background-size: contain; 
+}
+#placa2{
+
+}
 
 .form-check-input:focus {
     border-color: #4d6689;
     outline: 0;
     box-shadow: 0 0 0 0.18rem rgba(31, 41, 55, 0.25);
+}
+#inputvazio{
+    outline: 0;
+    border: 0;
+    background-color: unset;
+    width: 30rem   !important;
+    max-width: 140% !important;
+    margin-left: -10% !important;
+}
+
+@media (max-width: 375px)
+{
+    #inputvazio{
+        outline: 0;
+        border: 0;
+        background-color: unset;
+        width: 500px !important;
+        max-width: none !important;
+        margin-left: -30% !important;
+    }
+}
+
+@media (max-width: 280px)
+{
+    #inputvazio{
+        outline: 0;
+        border: 0;
+        background-color: unset;
+        width: 200px !important;
+        font-size: 22px !important;
+        margin-left: -50px !important;
+        padding-bottom: 10px !important;
+    }
+
+    #h5Placa{
+        font-size: 14px !important;
+    }
 }
 
 .form-check-input:checked {

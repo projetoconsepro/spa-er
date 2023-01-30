@@ -7,6 +7,7 @@ import Dashboard from '../../components/Dashboard';
 import Sidebar from '../../components/Sidebar';
 import AdminMenu from '../../components/AdminMenu';
 import ListarVeiculos from '../../components/ListarVeiculos';
+import RegistrarVeiculo from '../../components/RegistrarVeiculo';
 
 const Veiculos = () => {
     const componente = localStorage.getItem("componente");
@@ -15,6 +16,9 @@ const Veiculos = () => {
         }
         else if (componente === "RegistrarEstacionamento"){
             return <AdminMenu />
+        }
+        else if(componente === "CadastrarVeiculo"){
+            return <RegistrarVeiculo />
         }
         else{
             return <ListarVeiculos />

@@ -35,6 +35,7 @@ const ListarVeiculos = () => {
         veiculo.get('/veiculo').then(
             response => {
                 setResposta(response?.data?.data);
+                console.log(response)
                 for (let i = 0; i < response?.data?.data.length; i++) {
                     resposta2[i] = {};
                     mostrar2[i] = { "estado": false };
