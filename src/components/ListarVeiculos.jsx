@@ -1,5 +1,4 @@
 import axios from "axios";
-import { listarVeiculo, api, veiculo } from "../services/api.js";
 import { FcPlus } from "react-icons/fc";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCarAlt, FaParking } from "react-icons/fa";
@@ -16,18 +15,18 @@ const ListarVeiculos = () => {
     const [resposta2, setResposta2] = useState([]);
     const [mostrar, setMostrar] = useState(false);
     const [mostrar2, setMostrar2] = useState([]);
+    const [nofityvar , setNofityvar] = useState([]);
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-    console.log(user2.id_usuario)
 
     const veiculo = axios.create({
         baseURL: "http://localhost:3001",
         headers: {
-            'x-access-token': token,
-            'id': user2.id_usuario,
-            'perfil': "cliente"
+            'token': token,
+            'id_usuario': user2.id_usuario,
+            'perfil_usuario': "cliente"
         }
     })
 
@@ -39,6 +38,7 @@ const ListarVeiculos = () => {
                 for (let i = 0; i < response?.data?.data.length; i++) {
                     resposta2[i] = {};
                     mostrar2[i] = { "estado": false };
+                    nofityvar[i] = { "notifi": "notify" };
                     resposta2[i].placa = response.data.data[i].usuario;
                     if (response.data.data[i].estacionado === 'N') {
                         resposta2[i].estacionado = "Não estacionado"
@@ -51,9 +51,11 @@ const ListarVeiculos = () => {
                     }
                     else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
                         resposta2[i].numero_notificacoes_pendentes = "Uma notificação"
+                        nofityvar[i] = { "notifi": "notify2" };
                     }
                     else {
-                        resposta2[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + " notificações"
+                        resposta2[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + " notificações";
+                        nofityvar[i] = { "notifi": "notify2" };
                     }
                     setPlacaVeiculo(response.data.data.usuario);
                 }
@@ -105,7 +107,7 @@ const ListarVeiculos = () => {
                                 <div class="h2 mb-0 d-flex align-items-center">
                                     {link.placa}
                                 </div>
-                                <div class="h6 mt-2 d-flex align-items-center">
+                                <div class="h6 mt-2 d-flex align-items-center" id={nofityvar[index].notifi}>
                                     <AiOutlineInfoCircle />‎ {link.numero_notificacoes_pendentes}
                                 </div>
                                 <div class="h6 mt-2 d-flex align-items-center">

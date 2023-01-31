@@ -1,19 +1,56 @@
 import React from 'react'
 import { useState } from 'react'
-
+import axios from 'axios'
 
 const RegistrarVeiculo = () => {
     const [placa, setPlaca] = useState("placa")
+    const [textoPlaca, setTextoPlaca] = useState("")
+    const [limite, setLimite] = useState(7)
+    const [inputVazio, setInputVazio] = useState("inputvazio")
 
     const handlePlaca = () => {
-    const clicado =document.getElementById("flexSwitchCheckDefault").checked
+    const clicado = document.getElementById("flexSwitchCheckDefault").checked
         if(clicado === true){
             setPlaca("placa2")
+            setLimite(100)
+            setInputVazio("inputvazio2")
         }
         else{
             setPlaca("placa")
+            setLimite(7)
+            setInputVazio("inputvazio")
         }
     }
+
+    const requisicao = () => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
+    console.log(user2.id_usuario)
+    console.log(token)
+    const veiculo = axios.create({
+        baseURL: "http://localhost:3001",
+        headers: {
+            'token': token,
+            'id_usuario': user2.id_usuario,
+            'perfil_usuario': "cliente"
+        }
+    })
+    
+    veiculo.post('/veiculo',{
+        placa: textoPlaca,
+        id_usuario: user2.id_usuario
+      }).then(
+        response => {
+            console.log(response.data)
+        }
+    ).catch(function (error) {
+        console.log(error);
+    });
+    }
+
+
+
     
     return (
         <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
@@ -33,20 +70,17 @@ const RegistrarVeiculo = () => {
                                 </div>
                                 <div class="col-3 px-3">
                                     <div class="form-check form-switch gap-2 d-md-block">
-                                        <input class="form-check-input align-self-end" type="checkbox" role="switch" onClick={handlePlaca} id="flexSwitchCheckDefault" />
+                                        <input class="form-check-input align-self-end" type="checkbox" 
+                                        role="switch" onClick={handlePlaca} id="flexSwitchCheckDefault"/>
                                     </div>
                                 </div>
                             </div>
-                            <div className="text-center text-md-center mb-3 pt-1 mt-md-0 w-100 p-6" id={placa}>
-                                <input type="text" id="inputvazio" className='mt-6 pt-4 fs-1 justify-content-center align-items-center text-align-center' />
+                            <div className="mb-3 pt-1 mt-md-0 w-100 p-6" id={placa}>
+                                <input type="text" id={inputVazio} className='mt-6 pt-4 fs-1 justify-content-center align-items-center text-align-center' value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
                             </div>
                             <div className="mt-1 mb-6 gap-2 d-md-block">
-                                    <button type="submit" className="btn2 botao"><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
-                                    </svg></span> <a href="/">Voltar</a></button>
-                                    <button type="submit" onClick="" className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                                    </svg></span></button>
+                                    <button type="submit" className="btn2 botao"><a href="/">Voltar</a></button>
+                                    <button type="submit" onClick={requisicao} className="btn3 botao">Cadastrar</button>
                                 </div>
                         </div>
                     </div>
