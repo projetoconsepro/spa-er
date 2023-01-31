@@ -43,6 +43,8 @@ const RegistrarVeiculo = () => {
       }).then(
         response => {
             console.log(response.data)
+            localStorage.setItem("componente", "MeusVeiculos")
+            window.location.reload();
         }
     ).catch(function (error) {
         console.log(error);

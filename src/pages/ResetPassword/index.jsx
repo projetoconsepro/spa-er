@@ -6,14 +6,19 @@ import "../LoginPage/styles.css"
 
 const ResetPassword = () => {
 
-    const { authenticated, login } = useContext(AuthContext);
-
     const [metodo, setMetodo] = useState("");
     const [inputLogin, setinputLogin] = useState("form-control");
 
     const handleSubmit = async (e) => {
         const checkValidate = document.getElementById("flexCheckDefault").checked;
-    
+        e.preventDefault();
+        if (checkValidate) {
+            if (metodo === "") {
+                setinputLogin("form-control is-invalid");
+            } else {
+                setinputLogin("form-control is-valid");
+            }
+        }
     }
 
     return (

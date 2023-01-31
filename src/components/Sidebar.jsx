@@ -33,7 +33,7 @@ const Sidebar = () => {
         }
     ]
     
-    if(teste.perfil[0] === "Cliente"){
+    if(teste.perfil[0] === "cliente"){
         links.push({
             className: styles.className,
             icon: <FaCarAlt />,
@@ -85,7 +85,7 @@ const Sidebar = () => {
             to: "/admin",
         })
     }
-    else if (teste.perfil[0] === "Monitor"){
+    else if (teste.perfil[0] === "monitor"){
         links.push({
             className: styles.className,
             name: "Monitor",
