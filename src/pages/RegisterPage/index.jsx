@@ -1,8 +1,7 @@
 import React, { useState, useContext } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/auth";
 import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import emailValidator from 'email-validator';
 import { IMaskInput } from 'react-imask';
@@ -80,16 +79,16 @@ const RegisterPage = () => {
                 }, 4000);
             }
         }
-        if(mail.length > 1){
-        if (!await emailValidator.validate(mail)) {
-            setEstado(true)
-            setInputMail("form-control is-invalid")
-            setMensagem("Email inválido!")
-            setTimeout(() => {
-                setInputMail("form-control")
-                setEstado(false)
-            }, 4000);
-        }
+        if (mail.length > 1) {
+            if (!await emailValidator.validate(mail)) {
+                setEstado(true)
+                setInputMail("form-control is-invalid")
+                setMensagem("Email inválido!")
+                setTimeout(() => {
+                    setInputMail("form-control")
+                    setEstado(false)
+                }, 4000);
+            }
         }
 
         else if (cpf.isValid(cpff) === false && cnpj.isValid(cpff) === false) {
@@ -188,7 +187,7 @@ const RegisterPage = () => {
                 icon: 'info',
                 html:
                     '<small>O cadastro online é a forma mais conveniente e econômica de efetuar seus pagamentos do dia a dia. <br/><br/>Além de prático e seguro é pré-carregado com valores os quais você define. <br/><br/>Dessa forma você mesmo limita seus gastos economizando muito mais. Você pode inclusive vincular placas de veículos de pessoas dependentes e familiares ao seu cadastro. <br/><br/>Uma vez cadastrado seu veículo, você compra créditos, recarrega sua conta de vários maneiras, pontos de venda, smartphone entre outras.</small>',
-                
+
                 showCloseButton: true,
                 confirmButtonText:
                     '<i class="fa fa-thumbs-up"></i> Legal!',
@@ -280,7 +279,7 @@ const RegisterPage = () => {
                                                                 <br />
                                                                 <br />
                                                                 <small>
-                                                                <strong>SEÇÃO 2 - CONSENTIMENTO</strong><br /><br />
+                                                                    <strong>SEÇÃO 2 - CONSENTIMENTO</strong><br /><br />
                                                                     Como vocês obtêm meu consentimento?
 
                                                                     Quando você fornece informações pessoais como nome, telefone e endereço, para completar: uma transação, verificar seu cartão de crédito, fazer um pedido, providenciar uma entrega ou retornar uma compra. Após a realização de ações entendemos que você está de acordo com a coleta de dados para serem utilizados pela nossa empresa.
@@ -294,13 +293,13 @@ const RegisterPage = () => {
                                                                 <br />
                                                                 <br />
                                                                 <small>
-                                                                <strong>SEÇÃO 3 - DIVULGAÇÃO</strong><br /><br />
+                                                                    <strong>SEÇÃO 3 - DIVULGAÇÃO</strong><br /><br />
                                                                     Podemos divulgar suas informações pessoais caso sejamos obrigados pela lei para fazê-lo ou se você violar nossos Termos de Serviço.
                                                                 </small>
                                                                 <br />
                                                                 <br />
                                                                 <small>
-                                                                <strong>SEÇÃO 4 - SERVIÇOS DE TERCEIROS</strong><br /><br />
+                                                                    <strong>SEÇÃO 4 - SERVIÇOS DE TERCEIROS</strong><br /><br />
                                                                     No geral, os fornecedores terceirizados usados por nós irão apenas coletar, usar e divulgar suas informações na medida do necessário para permitir que eles realizem os serviços que eles nos fornecem.
 
                                                                     Entretanto, certos fornecedores de serviços terceirizados, tais como gateways de pagamento e outros processadores de transação de pagamento, têm suas próprias políticas de privacidade com respeito à informação que somos obrigados a fornecer para eles de suas transações relacionadas com compras.
@@ -316,7 +315,7 @@ const RegisterPage = () => {
                                                                 <br />
                                                                 <br />
                                                                 <small>
-                                                                <strong>SEÇÃO 5 - SEGURANÇA</strong><br /><br />
+                                                                    <strong>SEÇÃO 5 - SEGURANÇA</strong><br /><br />
                                                                     Para proteger suas informações pessoais, tomamos precauções razoáveis e seguimos as melhores práticas da indústria para nos certificar que elas não serão perdidas inadequadamente, usurpadas, acessadas, divulgadas, alteradas ou destruídas.
 
                                                                     Se você nos fornecer as suas informações de cartão de crédito, essa informação é criptografada usando tecnologia "secure socket layer" (SSL) e armazenada com uma criptografia AES-256. Embora nenhum método de transmissão pela Internet ou armazenamento eletrônico é 100% seguro, nós seguimos todos os requisitos da PCI-DSS e implementamos padrões adicionais geralmente aceitos pela indústria.
@@ -339,8 +338,6 @@ const RegisterPage = () => {
                                             </span>
                                         </div>
                                     </div>
-
-
                                 </div>
                                 <div className="mt-5 mb-5 gap-2 d-md-block">
                                     <button type="submit" className="btn2 botao"><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">

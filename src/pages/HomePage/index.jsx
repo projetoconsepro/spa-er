@@ -3,10 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../contexts/auth";
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Dashboard from '../../components/Dashboard';
 import Sidebar from '../../components/Sidebar';
-import AdminMenu from '../../components/AdminMenu';
-import ListarVeiculos from '../../components/ListarVeiculos';
 import Veiculos from './veiculos';
 
 const HomePage =  () => {

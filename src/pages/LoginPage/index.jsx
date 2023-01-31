@@ -1,8 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthContext } from "../contexts/auth";
-import sha256 from 'crypto-js/sha256';
 
 import "./styles.css"
 
@@ -48,7 +46,7 @@ const LoginPage = () => {
         }
         else {
             e.preventDefault();
-            console.log("submit", { email, password });
+            //console.log("submit", { email, password });
             const resposta = await login(email, password);
             console.log(resposta);
             if (resposta.auth === false) {
@@ -62,7 +60,7 @@ const LoginPage = () => {
                     setinputLogin("form-control")
                     setInputSenha("form-control")
                     setClassolho("olho")
-                }, 4000);
+                }, 6000);
             }
         }
     }
@@ -112,7 +110,7 @@ const LoginPage = () => {
 
                             <div className="mt-5 mb-4 text-center">
                                 <button type="submit" className="btn botao" onClick={handleSubmit}>Acessar  <span className='align-self-end'>➜</span></button>
-                                <p className='text-muted' onClick={registrado}> <small>Ainda não possui uma conta?</small> <a href='/'><small>Clique aqui!</small></a></p>
+                                <p className='text-muted' onClick={registrado}> <small>Ainda não possui uma conta?</small> <a href='/register'><small>Clique aqui!</small></a></p>
                             </div>
                             <div class="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
