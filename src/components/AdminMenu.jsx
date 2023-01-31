@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 function AdminMenu(){
     const nome = localStorage.getItem("user");
     const teste = JSON.parse(nome);

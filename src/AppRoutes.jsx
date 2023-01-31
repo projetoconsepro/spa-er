@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 
 import {
     BrowserRouter as Router,
@@ -7,8 +7,6 @@ import {
     Navigate,
 } from "react-router-dom";
 
-import { redirect } from 'react-router-dom';
-
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import Loading from "./pages/LoginPage/loading";
@@ -16,6 +14,9 @@ import DoublePerfil from "./pages/DoublePerfil/doublePerfil";
 
 import { AuthProvider, AuthContext } from "./pages/contexts/auth";
 import RegisterPage from "./pages/RegisterPage";
+import ResetPassword from "./pages/ResetPassword/index.jsx";
+import Confirmation from "./pages/ResetPassword/confirmation";
+import NewPassword from "./pages/ResetPassword/newPassword";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -41,6 +42,9 @@ const AppRoutes = () => {
                 <Route exact path="/loading" element={<Loading />}/>
                 <Route exact path="/double" element={<DoublePerfil />}/>
                 <Route exact path="/register" element={<RegisterPage />}/>
+                <Route exact path="/recuperar" element={<ResetPassword />} />
+                <Route exact path="/confirmacao" element={<Confirmation />} />
+                <Route exact path="/novasenha" element={<NewPassword />} />
             </Routes>
             </AuthProvider>
         </Router>
