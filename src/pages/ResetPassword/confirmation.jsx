@@ -1,18 +1,59 @@
 import React, { useState, useContext } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { AuthContext } from "../contexts/auth";
+import axios from 'axios';
 
 import "../LoginPage/styles.css"
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Confirmation = () => {
-
-    const { authenticated, login } = useContext(AuthContext);
-
     const [codigo, setCodigo] = useState("");
     const [inputLogin, setinputLogin] = useState("form-control");
+    const [mensagem, setMensagem] = useState("");
+    const [estado, setEstado] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        const checkValidate = document.getElementById("flexCheckDefault").checked;
+        const veiculo = axios.create({
+            baseURL: "http://localhost:3001",
+        })
+        veiculo.get('/verificar?codigo=1221').then(
+            response => {
+                const resposta = response.data.msg.resultado;
+                console.log(resposta);
+                if (resposta === false){
+                    setMensagem(response.data.msg.msg);
+                    setEstado(true);
+                    setTimeout(() => {
+                        setEstado(false);
+                    }, 5000);
+                }
+                else{
+                    navigate('/novasenha')
+                }
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    const reenviarCodigo = async (e) => {
+        const veiculo = axios.create({
+            baseURL: "http://localhost:3001",
+        })
+        veiculo.get('/codigo-recuperacao-senha?email=wendelfi66@gmail.com').then(
+            response => {
+                const resposta = response.data.msg.resultado;
+                if (resposta === false){
+                    setMensagem(response.data.msg.msg);
+                    setEstado(true);
+                    setTimeout(() => {
+                        setEstado(false);
+                    }, 5000);
+                }
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
     }
 
     return (
@@ -31,10 +72,14 @@ const Confirmation = () => {
                                     <input className={inputLogin} name="email" id="email" value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="Digite seu login CPF/CNPJ ou Email" />
                                 </div>
                             </div>
+                            <p className="text-start" style={{cursor: "pointer"}} onClick={reenviarCodigo}><small>Reenviar código</small></p>
                             <div className="mt-5 mb-5 gap-2 d-md-block">
-                                    <button type="submit" onClick="aaa" className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                    <button type="submit" onClick={handleSubmit} className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
+                                </div>
+                                <div class="alert alert-danger" role="alert" style={{ display: estado ? "block" : "none" }}>
+                                    {mensagem}
                                 </div>
                         </div>
                     </div>

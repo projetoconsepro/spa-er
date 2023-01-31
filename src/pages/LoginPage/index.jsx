@@ -98,6 +98,7 @@ const LoginPage = () => {
                                         </svg>}
                                     </button>
                                 </div>
+                                <a href="/recuperar"><p className="esqueciSenha"><small>Esqueci minha senha</small></p></a>
                             </div>
                             <div>
                                 <div className="form-check">

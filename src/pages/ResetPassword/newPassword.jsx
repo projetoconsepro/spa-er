@@ -36,7 +36,7 @@ const NewPassword = () => {
                             <div className="text-center text-md-center mb-3 pt-3 mt-4mt-md-0">
                                 <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
                             </div>
-                            <p className="pt-2 pb-3 fs-5"><strong>Digite o código de verificação enviado ao seu Email</strong></p>
+                            <p className="pt-2 pb-3 fs-5"><strong>Digite sua nova senha:</strong></p>
                             <div className="form-group mb-4">
                                         <label htmlFor="password" id="labelLogin">Senha:</label>
                                         <div class="input-group">

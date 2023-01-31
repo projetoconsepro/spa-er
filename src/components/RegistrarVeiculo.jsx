@@ -7,6 +7,8 @@ const RegistrarVeiculo = () => {
     const [textoPlaca, setTextoPlaca] = useState("")
     const [limite, setLimite] = useState(7)
     const [inputVazio, setInputVazio] = useState("inputvazio")
+    const [mensagem, setMensagem] = useState("");
+    const [estado, setEstado] = useState(false);
 
     const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked
@@ -26,8 +28,8 @@ const RegistrarVeiculo = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-    console.log(user2.id_usuario)
-    console.log(token)
+    const uppercase = textoPlaca.toUpperCase();
+    console.log(uppercase)
     const veiculo = axios.create({
         baseURL: "http://localhost:3001",
         headers: {
@@ -38,11 +40,22 @@ const RegistrarVeiculo = () => {
     })
     
     veiculo.post('/veiculo',{
-        placa: textoPlaca,
+        placa: uppercase,
         id_usuario: user2.id_usuario
       }).then(
         response => {
-            console.log(response.data)
+            const resposta = response.data.msg.resultado;
+            if (resposta === false){
+                setMensagem(response.data.msg.msg)
+                setEstado(true)
+                setTimeout(() => {
+                    setEstado(false)
+                }, 4000);
+            }
+            else {
+            localStorage.setItem("componente", "MeusVeiculos")
+            window.location.reload();
+            }
         }
     ).catch(function (error) {
         console.log(error);
@@ -82,6 +95,9 @@ const RegistrarVeiculo = () => {
                                     <button type="submit" className="btn2 botao"><a href="/">Voltar</a></button>
                                     <button type="submit" onClick={requisicao} className="btn3 botao">Cadastrar</button>
                                 </div>
+                                <div class="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                                {mensagem}
+                            </div>
                         </div>
                     </div>
                 </div>
