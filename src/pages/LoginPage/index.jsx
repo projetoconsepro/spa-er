@@ -1,62 +1,127 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthContext } from "../contexts/auth";
-import sha256 from 'crypto-js/sha256';
 
 import "./styles.css"
 
 const LoginPage = () => {
-    const { authenticated, login} = useContext(AuthContext);
+
+    const { authenticated, login } = useContext(AuthContext);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [mensagem, setMensagem] = useState("");
+    const [estado, setEstado] = useState(false);
+    const [inputSenha, setInputSenha] = useState("form-control");
+    const [inputLogin, setinputLogin] = useState("form-control");
+    const [passwordType, setPasswordType] = useState("password");
+    const [classolho , setClassolho] = useState("olho");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("submit", { email, password });
-        login(email, password);
+    const togglePassword = () => {
+        if (passwordType === "password") {
+            setPasswordType("text")
+            return;
+        }
+        setPasswordType("password")
+    }
+
+    const handleSubmit = async (e) => {
+        const checkValidate = document.getElementById("flexCheckDefault").checked;
+        if (email === "" || password === "") {
+            setEstado(true)
+            setMensagem("Preencha todos os campos!")
+            if (email === "") {
+                setinputLogin("form-control is-invalid")
+            }
+            if (password === "") {
+                setInputSenha("form-control is-invalid")
+                setClassolho("olho-error")
+            }
+            setTimeout(() => {
+                setinputLogin("form-control")
+                setInputSenha("form-control")
+                setClassolho("olho")
+                setEstado(false)
+            }, 4000);
+        }
+        else {
+            e.preventDefault();
+            //console.log("submit", { email, password });
+            const resposta = await login(email, password);
+            console.log(resposta);
+            if (resposta.auth === false) {
+                setEstado(true)
+                setMensagem(resposta.message)
+                setinputLogin("form-control is-invalid")
+                setInputSenha("form-control is-invalid")
+                setClassolho("olho-error")
+                setTimeout(() => {
+                    setEstado(false)
+                    setinputLogin("form-control")
+                    setInputSenha("form-control")
+                    setClassolho("olho")
+                }, 6000);
+            }
+        }
+    }
+
+    const registrado = () => {
+        localStorage.setItem("registrou", "false");
     }
     
     return (
         <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
-            <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
-            <div className="col-12 d-flex align-items-center justify-content-center">
-            <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
-            <div className="text-center text-md-center mb-4 mt-md-0">
-                <h1 className="mb-0 h3">Faça login</h1>
-            </div>
-            <p>{String(authenticated)}</p>
-            <form className="mt-4" onSubmit={handleSubmit}>
-                <div className="form-group mb-4">
-                    <label htmlFor="email">Email</label>
-                    <div className="input-group">
-                       <span className="input-group-text" id="basic-addon1">
-                      <svg className="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
-                        </span>
-                    <input className="form-control" name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
+                    <div className="col-12 d-flex align-items-center justify-content-center">
+                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                            <div className="text-center text-md-center mb-3 pt-3 mt-4mt-md-0">
+                                <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
+                            </div>
+                            <div className="form-group mb-4">
+                                <label htmlFor="email" id="labelLogin">Login:</label>
+                                <div className="input-group">
+                                    <input className={inputLogin} name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Digite seu login CPF/CNPJ ou Email" />
+                                </div>
+                            </div>
+                            <div className="form-group mb-4">
+                                <label htmlFor="password" id="labelLogin">Senha:</label>
+                                <div class="input-group" >
+                                    <input className={inputSenha} type={passwordType} name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Digite sua senha" />
+                                    <button onClick={togglePassword} type="button" className={classolho}>
+                                        {passwordType === "password" ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                                            <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z" />
+                                            <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z" />
+                                        </svg> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                                        </svg>}
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
+                                    <span className="form-check-label" for="flexCheckDefault">
+                                        <small>Lembrar dados</small>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="mt-5 mb-4 text-center">
+                                <button type="submit" className="btn botao" onClick={handleSubmit}>Acessar  <span className='align-self-end'>➜</span></button>
+                                <p className='text-muted' onClick={registrado}> <small>Ainda não possui uma conta?</small> <a href='/register'><small>Clique aqui!</small></a></p>
+                            </div>
+                            <div class="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                                {mensagem}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="form-group mb-4">
-                    <label htmlFor="password">Senha</label>
-                    <div class="input-group">
-                        <span class="input-group-text" id="basic-addon2">
-                    <svg class="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
-                     </span>
-                    <input className="form-control" type="password" name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    </div>
-                </div>
-                <div className="mt-3 mb-4 text-center">
-                    <button type="submit" className="btn btn-gray-800">Entrar</button>
-                </div>
-            </form>
-            </div>
-            </div>
-            </div>
             </div>
         </section>
     )
 }
+
 
 export default LoginPage;

@@ -1,19 +1,22 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 
 import {
     BrowserRouter as Router,
     Route,
     Routes,
-    Navigate
+    Navigate,
 } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import Loading from "./pages/LoginPage/loading";
-import MonitorPage from "./pages/MonitorPage/monitor";
 import DoublePerfil from "./pages/DoublePerfil/doublePerfil";
 
 import { AuthProvider, AuthContext } from "./pages/contexts/auth";
+import RegisterPage from "./pages/RegisterPage";
+import ResetPassword from "./pages/ResetPassword/index.jsx";
+import Confirmation from "./pages/ResetPassword/confirmation";
+import NewPassword from "./pages/ResetPassword/newPassword";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -24,7 +27,7 @@ const AppRoutes = () => {
         }
 
         if(!authenticated){
-            return <Navigate to="/login" />
+            return <Navigate to="/" />
         }
 
         return children;
@@ -34,11 +37,14 @@ const AppRoutes = () => {
         <Router>
             <AuthProvider>
             <Routes>
-                <Route exact path="/login" element={<LoginPage />} />
+                <Route exact path="/" element={<LoginPage />} />
                 <Route exact path="/home" element={<HomePage />}/>
                 <Route exact path="/loading" element={<Loading />}/>
-                <Route exact path="/monitor" element={<MonitorPage />}/>
                 <Route exact path="/double" element={<DoublePerfil />}/>
+                <Route exact path="/register" element={<RegisterPage />}/>
+                <Route exact path="/recuperar" element={<ResetPassword />} />
+                <Route exact path="/confirmacao" element={<Confirmation />} />
+                <Route exact path="/novasenha" element={<NewPassword />} />
             </Routes>
             </AuthProvider>
         </Router>

@@ -1,10 +1,8 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import sha256 from 'crypto-js/sha256';
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
 
-import {api, createSession } from '../../services/api'
+import {api, createSession, registrar } from '../../services/api'
 
 export const AuthContext = createContext();
 
@@ -16,48 +14,69 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const recoveredUser = localStorage.getItem('user');
         const teste = JSON.parse(recoveredUser);
-        console.log(teste)
         if(teste){
             setUser(recoveredUser);
             navigate("/home")
         }
-        else(navigate("/login"))
-
         setLoading(false);
     }, []);
+
+    const register = async (nome, email, cpf, telefone , senha) => {
+    const password = sha256(senha).toString();
+    const response = await registrar(nome, email, cpf, telefone , password);
+    console.log("register", response.data.message);
+        try{
+        if(response.data.msg.resultado === true){
+        const registrou = localStorage.setItem("registrou", true)
+        console.log(registrou)
+        return {
+            auth: response.data.msg.resultado,
+            message: response.data.msg.msg
+        }
+        }
+        return {
+            auth: response.data.msg.resultado,
+            message: response.data.msg.msg
+        }
+    
+        }catch(error){
+            console.log(error)
+        }
+    }
 
     const login = async (login, senha) => {
         const password = sha256(senha).toString();
         console.log(password)
         const response = await createSession(login, password);
-        console.log("login", response.data);
         try{
-        if(response.data.auth === true && response.data.user.perfil.length === 1){
-        const loggedUser = response.data.user;
-        const token = response.data.token;
+        console.log("login", response.data);
+        if(response.data.msg.resultado === true) {
+        console.log("teste", response.data.dados.user.perfil.length)
+        if(response.data.msg.resultado === true && response.data.dados.user.perfil.length === 1){
+        const loggedUser = response.data.dados.user;
+        const token = response.data.dados.token;
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
+        console.log("Qwfowejfg")
         navigate('/home')
         }
-        else if(response.data.auth === true && response.data.user.perfil.length > 1){
-        const loggedUser = response.data.user;
+        else if(response.data.msg.resultado === true && response.data.dados.user.perfil.length > 1){
+        const loggedUser = response.data.dados.user;
         const token = response.data.token;
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
         navigate('/double')
         }
-        else{
-            const MySwal = withReactContent(Swal)
-
-            MySwal.fire({
-                icon: 'error',
-                title: 'Ops!',
-                text: 'Você provavelmente escreveu algo errado, tente novamente!',
-                footer: '<a href="/kkk">Ainda não possui uma conta? Clique aqui!</a>'
-              })
         }
+        else {
+        return {
+            auth: response.data.msg.resultado,
+            message: response.data.msg.msg
+        };
+    }
+        
 
         }catch(error){
             console.log(error);
@@ -71,14 +90,15 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token")
         localStorage.removeItem("perfil")
         localStorage.removeItem("perfil2")
+        localStorage.removeItem("componente")
         api.defaults.headers.Authorization = null;
         setUser(null);
-        navigate("/login")
+        navigate("/")
     }
 
     return(
     <AuthContext.Provider value={{ authenticated: 
-        !!user, user, loading, login, logout}}>
+        !!user, user, loading, login, logout, register}}>
             { children }
         </AuthContext.Provider>
     )
