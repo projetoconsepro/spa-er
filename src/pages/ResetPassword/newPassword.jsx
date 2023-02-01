@@ -1,22 +1,65 @@
-import React, { useState, useContext } from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { AuthContext } from "../contexts/auth";
+import { useNavigate } from 'react-router-dom';
+import sha256 from 'crypto-js/sha256';
 
 import "../LoginPage/styles.css"
 
 const NewPassword = () => {
-
-    const { authenticated, login } = useContext(AuthContext);
     const [inputSenha, setInputSenha] = useState("form-control");
     const [inputSenha2, setInputSenha2] = useState("form-control");
     const [passwordType, setPasswordType] = useState("password");
     const [classolho, setClassolho] = useState("olho");
     const [senha, setSenha] = useState("");
     const [senha2, setSenha2] = useState("");
+    const codigoConfirm = localStorage.getItem('codigoConfirm');
+    const [mensagem, setMensagem] = useState("");
+    const [estado, setEstado] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        const checkValidate = document.getElementById("flexCheckDefault").checked;
-    
+        e.preventDefault();
+        if (senha === senha2 && senha.length >= 8) {
+            const email = localStorage.getItem('email');
+            const password = sha256(senha).toString();
+            const veiculo = axios.create({
+                baseURL: "http://localhost:3001",
+            })
+            veiculo.post('/usuario/senha',{
+                codigo_seguranca: codigoConfirm,
+                senha: password
+            }).then(
+                response => {
+                    const resposta = response.data.msg.resultado;
+                    if (resposta === false){
+                        setMensagem(response.data.msg.msg);
+                        setEstado(true);
+                        setTimeout(() => {
+                        setMensagem("");
+                        setEstado(false);
+                        }, 4000);
+                    }
+                    else{
+                        localStorage.removeItem('codigoConfirm');
+                        navigate('/')
+                    }
+                }
+            ).catch(function (error) {
+                console.log(error);
+            });
+        }
+        else {
+            setInputSenha("form-control is-invalid");
+            setInputSenha2("form-control is-invalid");
+            setClassolho("olho is-invalid");
+
+            setTimeout(() => {
+                setClassolho("olho");
+                setInputSenha("form-control is-valid");
+                setInputSenha2("form-control is-valid");
+            }, 4000);
+        }
     }
 
     const togglePassword = () => {
@@ -59,10 +102,17 @@ const NewPassword = () => {
                                         </div>
                                     </div>
                             <div className="mt-5 mb-5 gap-2 d-md-block">
-                                    <button type="submit" onClick="aaa" className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                    <button type="submit" onClick={handleSubmit} className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
                                 </div>
+                                <div
+                class="alert alert-danger"
+                role="alert"
+                style={{ display: estado ? "block" : "none" }}
+              >
+                {mensagem}
+              </div>
                         </div>
                     </div>
                 </div>
