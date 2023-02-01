@@ -5,6 +5,7 @@ import { FaCarAlt, FaParking } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import '../pages/LoginPage/styles.css';
 import Detalhesveiculos from "./Detalhesveiculos.jsx";
+import { Navigate } from "react-router-dom";
 
 const ListarVeiculos = () => {
     const [placaVeiculo, setPlacaVeiculo] = useState("");
@@ -35,6 +36,10 @@ const ListarVeiculos = () => {
             response => {
                 setResposta(response?.data?.data);
                 console.log(response)
+                if(response.data.msg.resultado === false){
+                    localStorage.setItem("componente", "CadastrarVeiculo")
+                    window.location.reload();
+                }
                 for (let i = 0; i < response?.data?.data.length; i++) {
                     resposta2[i] = {};
                     mostrar2[i] = { "estado": false };
