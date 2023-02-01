@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
         }
         else if(response.data.msg.resultado === true && response.data.dados.user.perfil.length > 1){
         const loggedUser = response.data.dados.user;
-        const token = response.data.token;
+        const token = response.data.dados.token;
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;

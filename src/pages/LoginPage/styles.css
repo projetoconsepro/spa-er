@@ -4188,6 +4188,7 @@ textarea.form-control-lg {
     text-align: center;
     justify-content: left;
     align-items: left;
+    text-transform: uppercase !important;
 }
 
 #inputvazio2{
@@ -4226,6 +4227,12 @@ textarea.form-control-lg {
         margin-left: -50% !important;
         max-width: 200% !important;
     }
+}
+
+.esqueciSenha{
+    text-align: right !important;
+    font-size: 0.9rem !important;
+    color: #585858 !important;
 }
 
 

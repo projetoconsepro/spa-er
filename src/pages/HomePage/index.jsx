@@ -21,8 +21,7 @@ const HomePage =  () => {
         if(teste2.perfil.length > 1){
             navigate('/double')
         }
-    
-    
+
     }, [])
 
     if(!authenticated){
