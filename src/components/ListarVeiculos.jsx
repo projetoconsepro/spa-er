@@ -23,7 +23,7 @@ const ListarVeiculos = () => {
     const user2 = JSON.parse(user);
 
     const veiculo = axios.create({
-        baseURL: "http://localhost:3001",
+        baseURL: process.env.REACT_APP_HOST,
         headers: {
             'token': token,
             'id_usuario': user2.id_usuario,
@@ -79,21 +79,21 @@ const ListarVeiculos = () => {
 
 
     return (
-        <div class="col-12 px-3 mb-4">
-            <p class="text-start fs-2 fw-bold">Meus veículos</p>
-            <div class="card border-0 shadow">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between pb-3">
+        <div className="col-12 px-3 mb-4">
+            <p className="text-start fs-2 fw-bold">Meus veículos</p>
+            <div className="card border-0 shadow">
+                <div className="card-body">
+                    <div className="d-flex align-items-center justify-content-between pb-3">
                         <div>
                             <div className="h6 mb-0 d-flex align-items-center">
                                 Seu saldo é de:
                             </div>
-                            <div class="h1 mt-2 d-flex align-items-center">
+                            <div className="h1 mt-2 d-flex align-items-center">
                                 R$ 50,00
                             </div>
                         </div>
                         <div>
-                            <div class="d-flex align-items-center fw-bold">
+                            <div className="d-flex align-items-center fw-bold">
                                 <FcPlus size={40} />
                             </div>
                         </div>

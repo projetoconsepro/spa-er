@@ -31,7 +31,7 @@ const HomePage =  () => {
     return (
         <>
             <Sidebar />
-            <main class="content">
+            <main className="content">
             <Veiculos />
             </main>
         </>

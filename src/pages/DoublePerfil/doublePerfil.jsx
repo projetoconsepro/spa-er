@@ -32,7 +32,7 @@ if(analiseFeita.perfil.length > 1){
 
     if(analiseFeita.perfil.length === 2 ){
         return (
-          <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+          <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
           <div className="container">
           <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
           <div className="col-12 d-flex align-items-center justify-content-center">
@@ -42,13 +42,13 @@ if(analiseFeita.perfil.length > 1){
               <h1 className="mb-5 mt-5 h3 text-muted fs-24"><small>Selecione o perfil desejado:</small></h1>
           </div>
             
-            <div class="btn-group">
-  <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdown-basic" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+            <div className="btn-group">
+  <button type="button" className="btn btn-secondary dropdown-toggle" id="dropdown-basic" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
     Selecione
   </button>
-  <ul class="dropdown-menu dropdown-menu-lg-end" id="dropdown-select">
-    <li><button class="dropdown-item" type="button" id="dropdown-item" onClick={()=> { red(0,analiseFeita)}}>{analiseFeita.perfil[0]}</button></li>
-    <li><button class="dropdown-item" type="button" id="dropdown-item" onClick={()=> { red(1,analiseFeita)}}>{analiseFeita.perfil[1]}</button></li>
+  <ul className="dropdown-menu dropdown-menu-lg-end" id="dropdown-select">
+    <li><button className="dropdown-item" type="button" id="dropdown-item" onClick={()=> { red(0,analiseFeita)}}>{analiseFeita.perfil[0]}</button></li>
+    <li><button className="dropdown-item" type="button" id="dropdown-item" onClick={()=> { red(1,analiseFeita)}}>{analiseFeita.perfil[1]}</button></li>
   </ul>
 </div>
 
@@ -61,7 +61,7 @@ if(analiseFeita.perfil.length > 1){
     }
     if(analiseFeita.perfil.length === 3 ){
         return (
-          <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+          <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
           <div className="container">
           <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
           <div className="col-12 d-flex align-items-center justify-content-center">
@@ -90,7 +90,7 @@ if(analiseFeita.perfil.length > 1){
     }
     else if(analiseFeita.perfil.length === 4 ){
         return (
-          <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+          <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
           <div className="container">
           <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
           <div className="col-12 d-flex align-items-center justify-content-center">
@@ -120,7 +120,7 @@ if(analiseFeita.perfil.length > 1){
     }
     else if(analiseFeita.perfil.length === 5 ){
         return (
-          <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+          <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
           <div className="container">
           <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
           <div className="col-12 d-flex align-items-center justify-content-center">
