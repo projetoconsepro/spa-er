@@ -31,7 +31,7 @@ const RegistrarVeiculo = () => {
     const uppercase = textoPlaca.toUpperCase();
     console.log(uppercase)
     const veiculo = axios.create({
-        baseURL: "http://localhost:3001",
+        baseURL: process.env.REACT_APP_HOST,
         headers: {
             'token': token,
             'id_usuario': user2.id_usuario,
@@ -66,7 +66,7 @@ const RegistrarVeiculo = () => {
 
     
     return (
-        <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+        <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
@@ -74,16 +74,16 @@ const RegistrarVeiculo = () => {
                             <div className="text-center text-md-center mb-3 pt-3 mt-4 mt-md-0">
                                 <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
                             </div>
-                            <div class="h5 mt-2 align-items-center">
+                            <div className="h5 mt-2 align-items-center">
                                 Registre seu veículo aqui
                             </div>
                             <div className="row">
-                                <div class="col-9 px-3 mt-4 pt-1">
+                                <div className="col-9 px-3 mt-4 pt-1">
                                     <h5 for="flexSwitchCheckDefault align-self-start" id="h5Placa">Placa estrangeira</h5>
                                 </div>
-                                <div class="col-3 px-3">
-                                    <div class="form-check form-switch gap-2 d-md-block">
-                                        <input class="form-check-input align-self-end" type="checkbox" 
+                                <div className="col-3 px-3">
+                                    <div className="form-check form-switch gap-2 d-md-block">
+                                        <input className="form-check-input align-self-end" type="checkbox" 
                                         role="switch" onClick={handlePlaca} id="flexSwitchCheckDefault"/>
                                     </div>
                                 </div>
@@ -95,7 +95,7 @@ const RegistrarVeiculo = () => {
                                     <button type="submit" className="btn2 botao"><a href="/">Voltar</a></button>
                                     <button type="submit" onClick={requisicao} className="btn3 botao">Cadastrar</button>
                                 </div>
-                                <div class="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                                <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
                             </div>
                         </div>

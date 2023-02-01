@@ -69,7 +69,7 @@ const ResetPassword = () => {
     } 
     else{
       const veiculo = axios.create({
-        baseURL: "http://localhost:3001",
+        baseURL: process.env.REACT_APP_HOST,
     })
     veiculo.get(`/verificar?email=${metodo}`).then(
         response => {
@@ -85,7 +85,7 @@ const ResetPassword = () => {
             else{
               localStorage.setItem('email', metodo);
               const veiculo = axios.create({
-                baseURL: "http://localhost:3001",
+                baseURL: process.env.REACT_APP_HOST,
             })
             veiculo.get(`/codigo-recuperacao-senha?email=${metodo}`).then(
                 response => {
@@ -113,7 +113,7 @@ const ResetPassword = () => {
     }
   };
   return (
-    <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+    <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
       <div className="container">
         <div
           className="row justify-content-center form-bg-image"
@@ -193,7 +193,7 @@ const ResetPassword = () => {
                       width="16"
                       height="16"
                       fill="currentColor"
-                      class="bi bi-arrow-right"
+                      className="bi bi-arrow-right"
                       viewBox="0 0 16 16"
                     >
                       <path
@@ -205,7 +205,7 @@ const ResetPassword = () => {
                 </button>
               </div>
               <div
-                class="alert alert-danger"
+                className="alert alert-danger"
                 role="alert"
                 style={{ display: estado ? "block" : "none" }}
               >

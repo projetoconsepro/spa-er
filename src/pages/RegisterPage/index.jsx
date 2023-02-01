@@ -198,7 +198,7 @@ const RegisterPage = () => {
     }
 
     return (
-        <section class="vh-lg-150 bg-soft mt-5 mt-lg-5 d-flex align-items-center">
+        <section className="vh-lg-150 bg-soft mt-5 mt-lg-5 d-flex align-items-center">
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
@@ -209,7 +209,7 @@ const RegisterPage = () => {
                             <small className="text-left">O cadastro online é a forma mais conveniente e econômica de efetuar seus pagamentos do dia a dia. </small>
                             <small onClick={popup} className="pointer-cursor"><ins>Veja mais</ins></small>
                             <p className="pt-2"><strong>Preencha os dados abaixo e clique em avançar.</strong></p>
-                            <form action="#" class="mt-4">
+                            <form action="#" className="mt-4">
                                 <div className="form-group mb-4">
                                     <label htmlFor="email" id="labelLogin">Nome:</label>
                                     <div className="input-group">
@@ -234,10 +234,10 @@ const RegisterPage = () => {
                                         <IMaskInput className={inputTelefone} name="email" id="email" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div className="form-group">
                                     <div className="form-group mb-4">
                                         <label htmlFor="password" id="labelLogin">Senha:</label>
-                                        <div class="input-group">
+                                        <div className="input-group">
                                             <input className={inputSenha} type={passwordType} name="password" id="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Digite sua senha" />
                                             <button onClick={togglePassword} type="button" className={classolho}>
                                                 {passwordType === "password" ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
@@ -250,9 +250,9 @@ const RegisterPage = () => {
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="form-group mb-4">
+                                    <div className="form-group mb-4">
                                         <label htmlFor="password" id="labelLogin">Confirme sua senha:</label>
-                                        <div class="input-group">
+                                        <div className="input-group">
                                             <input className={inputSenha2} type="password" name="password" id="password" value={senha2} onChange={(e) => setSenha2(e.target.value)} placeholder="Digite sua senha novamente" />
                                         </div>
                                     </div>
@@ -261,14 +261,14 @@ const RegisterPage = () => {
                                             <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
                                             <span className="form-check-label" for="flexCheckDefault">
                                                 <small>Aceito os <a data-bs-toggle="modal" data-bs-target="#exampleModal"><u className="color-primary">termos de uso</u></a> e <a data-bs-toggle="modal" data-bs-target="#exampleModal"><u className="color-primary">política de privacidade.</u></a></small>
-                                                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Termos de uso e política de privacidade.</h1>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div className="modal-dialog">
+                                                        <div className="modal-content">
+                                                            <div className="modal-header">
+                                                                <h1 className="modal-title fs-5" id="exampleModalLabel">Termos de uso e política de privacidade.</h1>
+                                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
-                                                            <div class="modal-body" id="modalTexto">
+                                                            <div className="modal-body" id="modalTexto">
                                                                 <small><strong>SEÇÃO 1 - O QUE FAREMOS COM ESTA INFORMAÇÃO?</strong><br /><br />
                                                                     Quando você realiza alguma transação com nossa loja, como parte do processo de compra e venda, coletamos as informações pessoais que você nos dá tais como: nome, e-mail e endereço.
 
@@ -329,8 +329,8 @@ const RegisterPage = () => {
                                                                     Se nossa loja for adquirida ou fundida com outra empresa, suas informações podem ser transferidas para os novos proprietários para que possamos continuar a vender produtos para você.
                                                                 </small>
                                                             </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn botao" data-bs-dismiss="modal">Li e aceito.</button>
+                                                            <div className="modal-footer">
+                                                                <button type="button" className="btn botao" data-bs-dismiss="modal">Li e aceito.</button>
                                                             </div>
                                                         </div>
                                                     </div>
