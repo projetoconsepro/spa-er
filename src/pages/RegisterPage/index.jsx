@@ -39,7 +39,7 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         const checkValidate = document.getElementById("flexCheckDefault").checked;
         e.preventDefault();
-        if (nome === "" || cpf === "" || telefone === "" || senha === "") {
+        if (nome === "" || cpf === "" || telefone === "" || senha === "" || senha2 === "") {
             if (nome === "") {
                 setInputNome("form-control is-invalid")
             }
@@ -68,7 +68,7 @@ const RegisterPage = () => {
                 setInputSenha2("form-control")
                 setClassolho("olho")
             }, 4000);
-        } else if (!nome.includes(" ") && nome.length < 3) {
+        } else if (nome.includes(" ") && nome.length < 3) {
             if (!nome.includes(1, 2, 3, 4, 5, 6, 7, 8, 9, 0)) {
                 setEstado(true)
                 setMensagem("Digite seu nome completo")

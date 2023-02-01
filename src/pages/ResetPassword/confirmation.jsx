@@ -16,7 +16,7 @@ const Confirmation = () => {
         const veiculo = axios.create({
             baseURL: "http://localhost:3001",
         })
-        veiculo.get('/verificar?codigo=1221').then(
+        veiculo.get(`/verificar?codigo=${codigo}`).then(
             response => {
                 const resposta = response.data.msg.resultado;
                 console.log(resposta);
@@ -28,6 +28,8 @@ const Confirmation = () => {
                     }, 5000);
                 }
                 else{
+                    localStorage.setItem('codigoConfirm', codigo);
+                    localStorage.removeItem('email')
                     navigate('/novasenha')
                 }
             }
@@ -37,10 +39,11 @@ const Confirmation = () => {
     }
 
     const reenviarCodigo = async (e) => {
+        const email = localStorage.getItem('email');
         const veiculo = axios.create({
             baseURL: "http://localhost:3001",
         })
-        veiculo.get('/codigo-recuperacao-senha?email=wendelfi66@gmail.com').then(
+        veiculo.get(`/codigo-recuperacao-senha?email=${email}`).then(
             response => {
                 const resposta = response.data.msg.resultado;
                 if (resposta === false){
@@ -69,7 +72,7 @@ const Confirmation = () => {
                             <div className="form-group mb-4">
                                 <label htmlFor="email" id="labelLogin">Código de verificação:</label>
                                 <div className="input-group">
-                                    <input className={inputLogin} name="email" id="email" value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="Digite seu login CPF/CNPJ ou Email" />
+                                    <input className={inputLogin} name="email" id="email" value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="Digite o codigo enviado ao seu email" />
                                 </div>
                             </div>
                             <p className="text-start" style={{cursor: "pointer"}} onClick={reenviarCodigo}><small>Reenviar código</small></p>

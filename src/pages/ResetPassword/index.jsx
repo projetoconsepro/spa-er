@@ -4,6 +4,7 @@ import axios from "axios";
 
 import "../LoginPage/styles.css";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const ResetPassword = () => {
   const [metodo, setMetodo] = useState("");
@@ -15,9 +16,10 @@ const ResetPassword = () => {
   const [checkValidate3, setCheckValidate3] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const navigate = useNavigate();
-  const checks = document.querySelectorAll('input[type="checkbox"]');
+
 
   const checkBoxValidate = () => {
+    const checks = document.querySelectorAll('input[type="checkbox"]');
     if (checks[0].checked === true) {
       checks[1].disabled = true;
       checks[2].disabled = true;
@@ -35,10 +37,29 @@ const ResetPassword = () => {
   };
 
   const handleSubmit = async (e) => {
-    setCheckValidate1(document.getElementById("flexCheckDefault1").checked);
-    setCheckValidate1(document.getElementById("flexCheckDefault1").checked);
-    setCheckValidate1(document.getElementById("flexCheckDefault1").checked);
+    const checks = document.querySelectorAll('input[type="checkbox"]');
     if(!sucesso){
+      if (
+        checks[0].checked === false &&
+        checks[1].checked === false &&
+        checks[2].checked === false
+      ) {
+        setMensagem("Selecione um método de recuperação de senha");
+        setEstado(true);
+        setTimeout(() => {
+          setEstado(false);
+        }, 4000);
+      } else if (checks[1].checked || checks[2].checked) {
+        setMensagem("Método de recuperação de senha não implementado");
+        setEstado(true);
+        setTimeout(() => {
+          setEstado(false);
+        }, 4000);
+      }
+    else{
+        setSucesso(true);
+    } 
+  }else{
     if (metodo === "") {
       setMensagem("Digite seu dado de identificação");
       setEstado(true);
@@ -47,75 +68,50 @@ const ResetPassword = () => {
       }, 4000);
     } 
     else{
-        const veiculo = axios.create({
-            baseURL: "http://localhost:3001",
-        })
-        
-        veiculo.get('/verificar?cpf=03626831078').then(
-            response => {
-                const resposta = response.data.msg.resultado;
-                console.log(resposta);
-                if (resposta === false){
-                    setMensagem(response.data.msg.msg);
-                    setEstado(true);
-                    setTimeout(() => {
-                        setEstado(false);
-                    }, 4000);
-                }
-                else{
-                    setSucesso(true);
-                }
+      const veiculo = axios.create({
+        baseURL: "http://localhost:3001",
+    })
+    veiculo.get(`/verificar?email=${metodo}`).then(
+        response => {
+            const resposta = response.data.msg.resultado;
+            console.log(resposta);
+            if (resposta === false){
+                setMensagem(response.data.msg.msg);
+                setEstado(true);
+                setTimeout(() => {
+                    setEstado(false);
+                }, 4000);
             }
-        ).catch(function (error) {
-            console.log(error);
-        });
-    }
-    }else{
-     if (
-      checks[0].checked === false &&
-      checks[1].checked === false &&
-      checks[2].checked === false
-    ) {
-      setMensagem("Selecione um método de recuperação de senha");
-      setEstado(true);
-      setTimeout(() => {
-        setEstado(false);
-      }, 4000);
-    } else if (checks[1].checked || checks[2].checked) {
-      setMensagem("Método de recuperação de senha não implementado");
-      setEstado(true);
-      setTimeout(() => {
-        setEstado(false);
-      }, 4000);
-    }
-    else{
-
-        const veiculo = axios.create({
-            baseURL: "http://localhost:3001",
-        })
-        
-        veiculo.get('/codigo-recuperacao-senha?email=wendelfi66@gmail.com').then(
-            response => {
-                const resposta = response.data.msg.resultado;
-                console.log(resposta);
-                if (resposta === false){
-                    setMensagem(response.data.msg.msg);
-                    setEstado(true);
-                    setTimeout(() => {
-                        setEstado(false);
-                    }, 4000);
+            else{
+              localStorage.setItem('email', metodo);
+              const veiculo = axios.create({
+                baseURL: "http://localhost:3001",
+            })
+            veiculo.get(`/codigo-recuperacao-senha?email=${metodo}`).then(
+                response => {
+                    const resposta = response.data.msg.resultado;
+                    console.log(resposta);
+                    if (resposta === false){
+                        setMensagem(response.data.msg.msg);
+                        setEstado(true);
+                        setTimeout(() => {
+                            setEstado(false);
+                        }, 4000);
+                    }
+                    else{
+                        navigate('/confirmacao')
+                    }
                 }
-                else{
-                    navigate('/confirmacao')
-                }
-            }
-        ).catch(function (error) {
-            console.log(error);
-        });
-}
+            ).catch(function (error) {
+                console.log(error);
+            });
+        }
+      }).catch(function (error) {
+      console.log(error);
+      }); 
+    }
+    }
   };
-}
-
   return (
     <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
       <div className="container">
@@ -138,22 +134,7 @@ const ResetPassword = () => {
                   registrado abaixo.
                 </strong>
               </p>
-              <div className="form-group mb-4">
-                <label htmlFor="metodo" id="labelLogin">
-                  Email ou Telefone:
-                </label>
-                <div className="input-group">
-                  <input
-                    className={inputLogin}
-                    name="email"
-                    id="email"
-                    value={metodo}
-                    onChange={(e) => setMetodo(e.target.value)}
-                    placeholder="Digite seu email ou telefone"
-                  />
-                </div>
-              </div>
-              <div onChange={checkBoxValidate} style={{ display: sucesso ? 'block' : 'none' }}>
+              <div onChange={checkBoxValidate}>
                 <div className="form-check">
                   <input
                     className="form-check-input"
@@ -186,6 +167,21 @@ const ResetPassword = () => {
                   <span className="form-check-label" for="flexCheckDefault">
                     <small>Receber código por SMS</small>
                   </span>
+                </div>
+              </div>
+              <div className="form-group mb-4 pt-5" style={{ display: sucesso ? 'block' : 'none' }}>
+                <label htmlFor="metodo" id="labelLogin">
+                  Email ou Telefone:
+                </label>
+                <div className="input-group">
+                  <input
+                    className={inputLogin}
+                    name="email"
+                    id="email"
+                    value={metodo}
+                    onChange={(e) => setMetodo(e.target.value)}
+                    placeholder="Digite seu email ou telefone"
+                  />
                 </div>
               </div>
               <div className="mt-5 mb-5 gap-2 d-md-block">
