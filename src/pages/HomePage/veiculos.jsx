@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import AdminMenu from '../../components/AdminMenu';
 import ListarVeiculos from '../../components/ListarVeiculos';
 import RegistrarVeiculo from '../../components/RegistrarVeiculo';
+import RegistrarVagaCliente from '../../components/RegistrarVagaCliente';
 
 const Veiculos = () => {
     const componente = localStorage.getItem("componente");
@@ -10,7 +11,7 @@ const Veiculos = () => {
             return <ListarVeiculos />
         }
         else if (componente === "RegistrarEstacionamento"){
-            return <AdminMenu />
+            return <RegistrarVagaCliente />
         }
         else if(componente === "CadastrarVeiculo"){
             return <RegistrarVeiculo />

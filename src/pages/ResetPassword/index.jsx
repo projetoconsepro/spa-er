@@ -1,19 +1,18 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 
 import "../LoginPage/styles.css";
-import { Navigate, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
   const [metodo, setMetodo] = useState("");
-  const [inputLogin, setinputLogin] = useState("form-control");
+  const [inputLogin] = useState("form-control");
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [checkValidate1, setCheckValidate1] = useState(false);
-  const [checkValidate2, setCheckValidate2] = useState(false);
-  const [checkValidate3, setCheckValidate3] = useState(false);
+  const [checkValidate1] = useState(false);
+  const [checkValidate2] = useState(false);
+  const [checkValidate3] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const navigate = useNavigate();
 

@@ -6,14 +6,13 @@ import {
 import { BsConeStriped,
         BsCashCoin } from "react-icons/bs";
 import { RiSettings5Fill } from "react-icons/ri";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../pages/contexts/auth";
 
 const Sidebar = () => {
-        const { authenticated, logout } = useContext(AuthContext);
+        const { logout } = useContext(AuthContext);
         const nome = localStorage.getItem("user");
         const teste = JSON.parse(nome);
-        const [componente, setComponente] = useState("")
         const componentefunc = (componente) =>{
             localStorage.setItem("componente", componente)
             window.location.reload();
@@ -127,7 +126,7 @@ const Sidebar = () => {
                     </div>
                 </div>
                 <ul className="nav flex-column pt-md-0 ">
-                    <li className="nav-item"><a href="#" className="nav-link d-flex align-items-center pb-3"><span className="sidebar-icon"><img src="assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span className="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></li>
+                    <li className="nav-item"><a className="nav-link d-flex align-items-center pb-3"><span className="sidebar-icon"><img src="assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span className="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></li>
                     <li className="nav-item">
                     {links.map((link, key) => (<li key={key} className={link.className} onClick={() => componentefunc(link.componente)}>{link.icon}{link.name}</li>))}
                     </li>
@@ -141,20 +140,20 @@ const Sidebar = () => {
                     </div>
                     <ul className="navbar-nav align-items-center">
                         <li className="nav-item dropdown ms-lg-3">
-                            <a className="nav-link dropdown-toggle pt-1 px-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a className="nav-link dropdown-toggle pt-1 px-0" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div className="media d-flex align-items-center">
                                 <img className="avatar rounded-circle" alt="Image placeholder" src="assets/img/profile-picture-4.jpg" />
                                 <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block"><span className="mb-0 font-small fw-bold text-gray-900">{teste.nome}</span></div>
                             </div>
                             </a>
                             <div className="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1">
-                            <a className="dropdown-item d-flex align-items-center" href="#">
+                            <a className="dropdown-item d-flex align-items-center">
                                 <svg className="dropdown-icon text-gray-400 me-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
                                 </svg>
                                 Meu perfil
                             </a>
-                            <a className="dropdown-item d-flex align-items-center" href="#">
+                            <a className="dropdown-item d-flex align-items-center">
                                 <svg className="dropdown-icon text-gray-400 me-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd"></path>
                                 </svg>

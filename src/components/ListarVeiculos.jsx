@@ -5,22 +5,26 @@ import { FaCarAlt, FaParking } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import '../pages/LoginPage/styles.css';
 import Detalhesveiculos from "./Detalhesveiculos.jsx";
-import { Navigate } from "react-router-dom";
 
 const ListarVeiculos = () => {
-    const [placaVeiculo, setPlacaVeiculo] = useState("");
-    const [notificacao, setNotificacao] = useState("");
-    const [notificacao2, setNotificacao2] = useState("");
-    const [estacionado, setEstacionado] = useState("");
-    const [resposta, setResposta] = useState([{}]);
-    const [resposta2, setResposta2] = useState([]);
+    const [resposta] = useState([]);
     const [mostrar, setMostrar] = useState(false);
-    const [mostrar2, setMostrar2] = useState([]);
-    const [nofityvar , setNofityvar] = useState([]);
+    const [mostrar2] = useState([]);
+    const [nofityvar] = useState([]);
+    const [saldoCredito, setSaldoCredito] = useState("");
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
+
+    const saldo = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+            'token': token,
+            'id_usuario': user2.id_usuario,
+            'perfil_usuario': "cliente"
+        }
+    })
 
     const veiculo = axios.create({
         baseURL: process.env.REACT_APP_HOST,
@@ -34,36 +38,43 @@ const ListarVeiculos = () => {
     useEffect(() => {
         veiculo.get('/veiculo').then(
             response => {
-                setResposta(response?.data?.data);
                 console.log(response)
                 if(response.data.msg.resultado === false){
                     localStorage.setItem("componente", "CadastrarVeiculo")
                     window.location.reload();
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
-                    resposta2[i] = {};
+                    resposta[i] = {};
                     mostrar2[i] = { "estado": false };
                     nofityvar[i] = { "notifi": "notify" };
-                    resposta2[i].placa = response.data.data[i].usuario;
+                    resposta[i].placa = response.data.data[i].usuario;
                     if (response.data.data[i].estacionado === 'N') {
-                        resposta2[i].estacionado = "Não estacionado"
+                        resposta[i].estacionado = "Não estacionado"
                     }
                     else {
-                        resposta2[i].estacionado ="Estacionado - Vaga:";
+                        resposta[i].estacionado ="Estacionado - Vaga:";
                     }
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
-                        resposta2[i].numero_notificacoes_pendentes ="Sem notificações";
+                        resposta[i].numero_notificacoes_pendentes ="Sem notificações";
                     }
                     else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
-                        resposta2[i].numero_notificacoes_pendentes = "Uma notificação"
+                        resposta[i].numero_notificacoes_pendentes = "Uma notificação"
                         nofityvar[i] = { "notifi": "notify2" };
                     }
                     else {
-                        resposta2[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + " notificações";
+                        resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + " notificações";
                         nofityvar[i] = { "notifi": "notify2" };
                     }
-                    setPlacaVeiculo(response.data.data.usuario);
                 }
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
+
+        saldo.get('/usuario/saldo-credito').then(
+            response => {
+                console.log(response?.data?.data?.saldo)
+                setSaldoCredito(response?.data?.data?.saldo)
             }
         ).catch(function (error) {
             console.log(error);
@@ -89,7 +100,7 @@ const ListarVeiculos = () => {
                                 Seu saldo é de:
                             </div>
                             <div className="h1 mt-2 d-flex align-items-center">
-                                R$ 50,00
+                                R$ {saldoCredito}
                             </div>
                         </div>
                         <div>
@@ -104,7 +115,7 @@ const ListarVeiculos = () => {
 
 
 
-            {resposta2.map((link, index) => (
+            {resposta.map((link, index) => (
                 <div class="card border-0 shadow mt-5" key={index} >
                     <div class="card-body" onClick={()=>{handleClick(index)}}>
                         <div class="d-flex align-items-center justify-content-between pb-3">

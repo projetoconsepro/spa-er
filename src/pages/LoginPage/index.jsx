@@ -6,7 +6,7 @@ import "./styles.css"
 
 const LoginPage = () => {
 
-    const { authenticated, login } = useContext(AuthContext);
+    const { login } = useContext(AuthContext);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -26,7 +26,6 @@ const LoginPage = () => {
     }
 
     const handleSubmit = async (e) => {
-        const checkValidate = document.getElementById("flexCheckDefault").checked;
         if (email === "" || password === "") {
             setEstado(true)
             setMensagem("Preencha todos os campos!")
@@ -46,7 +45,6 @@ const LoginPage = () => {
         }
         else {
             e.preventDefault();
-            //console.log("submit", { email, password });
             const resposta = await login(email, password);
             console.log(resposta);
             if (resposta.auth === false) {

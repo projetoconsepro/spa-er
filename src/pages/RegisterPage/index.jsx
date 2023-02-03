@@ -79,8 +79,8 @@ const RegisterPage = () => {
                 }, 4000);
             }
         }
-        if (mail.length > 1) {
-            if (!await emailValidator.validate(mail)) {
+        else if(mail !== ""){
+        if (!await emailValidator.validate(mail)) {
                 setEstado(true)
                 setInputMail("form-control is-invalid")
                 setMensagem("Email inválido!")
@@ -90,7 +90,6 @@ const RegisterPage = () => {
                 }, 4000);
             }
         }
-
         else if (cpf.isValid(cpff) === false && cnpj.isValid(cpff) === false) {
             setEstado(true)
             setMensagem("CPF ou CNPJ inválido!")
