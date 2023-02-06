@@ -12,6 +12,7 @@ const RegistrarVagaCliente = () => {
     const [placaVeiculo, setPlacaVeiculo] = useState("");
     const [tempo, setTempo] = useState("00:10:00");
     const [valor, setValor] = useState(0);
+    const [valorcobranca, setValorCobranca] = useState("");
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -33,7 +34,6 @@ const RegistrarVagaCliente = () => {
             'perfil_usuario': "cliente"
         }
     })
-
     const estacionamento = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -42,12 +42,14 @@ const RegistrarVagaCliente = () => {
             'perfil_usuario': "cliente"
         }
     })
+    const parametros = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+    })
 
     useEffect(() => {
         veiculo.get('/veiculo').then(
             response => {
                 setResposta(response?.data?.data);
-                console.log(response)
                 if (response.data.msg.resultado === false) {
                     localStorage.setItem("componente", "MeusVeiculos")
                     window.location.reload();
@@ -66,9 +68,7 @@ const RegistrarVagaCliente = () => {
         saldo.get('/usuario/saldo-credito'
         ).then(
             response => {
-                console.log(response)
                 if(response.data.msg.resultado){
-                    console.log("entrou aqui")
                     setValor(response.data.data.saldo);
                 }
                 else{
@@ -78,16 +78,43 @@ const RegistrarVagaCliente = () => {
         ).catch(function (error) {
             console.log(error);
         });
+
+        ////////////////////
+
+        parametros.get('/parametros').then(
+            response => {
+                setValorCobranca(response.data.data.param.estacionamento.valorHora)
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
     }, [])
 
-    const handleSubmit = () => {
+    function mexerValores () {
+
+        const tempo1 = document.getElementById("tempos").value;
+
+        if(tempo1 === "02:00:00"){
+            return valorcobranca*2;
+        }
+        else if(tempo1 === "01:00:00"){
+            return valorcobranca;
+        }
+        else if(tempo1 === "00:30:00"){
+            return valorcobranca/2;
+        }
+        else if(tempo1 === "00:10:00"){
+            return 0;
+        }
+    }
+
+    const handleSubmit = async  () => {
         const tempo1 = document.getElementById("tempos").value;
         const placa2 = document.getElementById("placaa").value;
         const placa3 =  resposta2[placa2].placa
         console.log(placa3)
-        let valorcobran = 0;
-
-        if (vaga === "") {
+        
+        if (vaga.length === 0) {
             setinputVaga("form-control fs-5 is-invalid");
             setMensagem("Preencha o campo vaga.");
             setEstado(true);
@@ -95,22 +122,10 @@ const RegistrarVagaCliente = () => {
                 setMensagem("");
                 setEstado(false);
             }, 4000);
-        }
-        if(tempo1 === "02:00:00"){
-            valorcobran = 4;
-        }
-        else if(tempo1 === "01:00:00"){
-            valorcobran = 2;
-        }
-        else if(tempo1 === "00:30:00"){
-            valorcobran = 1;
-        }
-        else {
-            valorcobran = 0;
-        }
-    
-        console.log(valor)
-        if(valor < valorcobran){
+        }else{
+
+        const resposta = await mexerValores();
+        if(valor < resposta){
             setMensagem("Saldo insuficiente.");
             setEstado(true);
             setTimeout(() => {
@@ -132,7 +147,7 @@ const RegistrarVagaCliente = () => {
                         window.location.reload();
                     }
                     else {
-                        setMensagem("Erro ao registrar vaga.");
+                        setMensagem(response.data.msg.msg);
                         setEstado(true);
                         setTimeout(() => {
                             setMensagem("");
@@ -145,6 +160,8 @@ const RegistrarVagaCliente = () => {
             });
         }
     }
+    }
+
     return (
         <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
@@ -161,7 +178,7 @@ const RegistrarVagaCliente = () => {
                                 <p className='text-start'>Escolha seu veículo:</p>
                                 <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="placaa">
                                     {resposta2.map((link, index) => (
-                                            <option value={index}>{link.placa}</option>
+                                            <option value={index} key={index}>{link.placa}</option>
                                         ))}
                                 </select>
                             </div>
@@ -169,7 +186,7 @@ const RegistrarVagaCliente = () => {
                             <div className="h6 mt-3 ">
                                 <p className='text-start'>Determine um tempo:</p>
                                 <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tempos">
-                                    <option value="00:10:00" selected>Tolerância</option>
+                                    <option value="00:10:00">Tolerância</option>
                                     <option value="00:30:00">30</option>
                                     <option value="01:00:00">60</option>
                                     <option value="02:00:00">120</option>
