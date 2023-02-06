@@ -17,6 +17,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ResetPassword from "./pages/ResetPassword/index.jsx";
 import Confirmation from "./pages/ResetPassword/confirmation";
 import NewPassword from "./pages/ResetPassword/newPassword";
+import RegistrarVagaMonitor from "./components/RegistrarVagaMonitor";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -45,6 +46,7 @@ const AppRoutes = () => {
                 <Route exact path="/recuperar" element={<ResetPassword />} />
                 <Route exact path="/confirmacao" element={<Confirmation />} />
                 <Route exact path="/novasenha" element={<NewPassword />} />
+                <Route exact path="/registrarmonitor" element={<RegistrarVagaMonitor />} />
             </Routes>
             </AuthProvider>
         </Router>
