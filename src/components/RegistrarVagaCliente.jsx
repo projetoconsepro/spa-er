@@ -13,6 +13,7 @@ const RegistrarVagaCliente = () => {
     const [tempo, setTempo] = useState("00:10:00");
     const [valor, setValor] = useState(0);
     const [valorcobranca, setValorCobranca] = useState("");
+    const [valorcobranca2, setValorCobranca2] = useState("2");
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -90,6 +91,10 @@ const RegistrarVagaCliente = () => {
         });
     }, [])
 
+    function mudanca (){
+        localStorage.setItem("componente", "MeusVeiculos")
+    }
+
     function mexerValores () {
 
         const tempo1 = document.getElementById("tempos").value;
@@ -103,10 +108,21 @@ const RegistrarVagaCliente = () => {
         else if(tempo1 === "00:30:00"){
             return valorcobranca/2;
         }
-        else if(tempo1 === "00:10:00"){
-            return 0;
+    }
+    const atualizafunc = () => {
+        const tempo1 = document.getElementById("tempos").value;
+
+        if(tempo1 === "02:00:00"){
+            setValorCobranca2(valorcobranca*2);
+        }
+        else if(tempo1 === "01:00:00"){
+            setValorCobranca2(valorcobranca);
+        }
+        else if(tempo1 === "00:30:00"){
+            setValorCobranca2(valorcobranca/2);
         }
     }
+
 
     const handleSubmit = async  () => {
         const tempo1 = document.getElementById("tempos").value;
@@ -115,14 +131,8 @@ const RegistrarVagaCliente = () => {
         console.log(placa3)
         
         if (vaga.length === 0) {
-            setinputVaga("form-control fs-5 is-invalid");
-            setMensagem("Preencha o campo vaga.");
-            setEstado(true);
-            setTimeout(() => {
-                setMensagem("");
-                setEstado(false);
-            }, 4000);
-        }else{
+            setVaga([0])
+        }
 
         const resposta = await mexerValores();
         if(valor < resposta){
@@ -160,7 +170,6 @@ const RegistrarVagaCliente = () => {
             });
         }
     }
-    }
 
     return (
         <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
@@ -168,9 +177,6 @@ const RegistrarVagaCliente = () => {
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
                         <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
-                            <div className="text-center text-md-center mb-3 pt-3 mt-4 mt-md-0">
-                                <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
-                            </div>
                             <div className="h5 mt-2 align-items-center">
                                 <small>Registrar estacionamento</small>
                             </div>
@@ -183,14 +189,14 @@ const RegistrarVagaCliente = () => {
                                 </select>
                             </div>
 
-                            <div className="h6 mt-3 ">
+                            <div className="h6 mt-3" onChange={atualizafunc}>
                                 <p className='text-start'>Determine um tempo:</p>
-                                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tempos">
-                                    <option value="00:10:00">Tolerância</option>
-                                    <option value="00:30:00">30</option>
-                                    <option value="01:00:00">60</option>
-                                    <option value="02:00:00">120</option>
+                                <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                                    <option value="00:30:00">30 Minutos</option>
+                                    <option value="01:00:00" selected>60 Minutos</option>
+                                    <option value="02:00:00">120 Minutos</option>
                                 </select>
+                                <p id="tempoCusto" className="text-end">Esse tempo ira custar: R$ {valorcobranca2},00 </p>
                             </div>
 
                             <div className="form-group mb-4 mt-4">
@@ -200,8 +206,8 @@ const RegistrarVagaCliente = () => {
                                 </div>
                             </div>
 
-                            <div className="mt-1 mb-6 gap-2 d-md-block">
-                                <button type="submit" className="btn2 botao"><a href="/">Cancelar</a></button>
+                            <div className="mt-1 mb-5 gap-2 d-md-block">
+                                <button type="submit" onClick={mudanca} className="btn2 botao"><a href="/">Cancelar</a></button>
                                 <button type="submit" onClick={handleSubmit} className="btn3 botao">Confirmar</button>
                             </div>
                             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>

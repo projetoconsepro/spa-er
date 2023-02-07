@@ -5,13 +5,20 @@ import { FaCarAlt, FaParking } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import '../pages/LoginPage/styles.css';
 import Detalhesveiculos from "./Detalhesveiculos.jsx";
+import Swal from "sweetalert2";
 
 const ListarVeiculos = () => {
     const [resposta] = useState([]);
+    const [valorcobranca,setValorCobranca] = useState("");
+    const [valorcobranca2,setValorCobranca2] = useState("2");
     const [mostrar, setMostrar] = useState(false);
     const [mostrar2] = useState([]);
+    const [mostrardiv] = useState([]);
     const [nofityvar] = useState([]);
     const [saldoCredito, setSaldoCredito] = useState("");
+    const [vaga, setVaga] = useState([]);
+    const [estado] = useState([]);
+    const [mensagem] = useState([]);
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -25,6 +32,18 @@ const ListarVeiculos = () => {
             'perfil_usuario': "cliente"
         }
     })
+    const estacionamento = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+            'token': token,
+            'id_usuario': user2.id_usuario,
+            'perfil_usuario': "cliente"
+        }
+    })
+
+    const parametros = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+    })
 
     const veiculo = axios.create({
         baseURL: process.env.REACT_APP_HOST,
@@ -34,6 +53,20 @@ const ListarVeiculos = () => {
             'perfil_usuario': "cliente"
         }
     })
+
+    const atualizafunc = () => {
+        const tempo1 = document.getElementById("tempos").value;
+
+        if(tempo1 === "02:00:00"){
+            setValorCobranca2(valorcobranca*2);
+        }
+        else if(tempo1 === "01:00:00"){
+            setValorCobranca2(valorcobranca);
+        }
+        else if(tempo1 === "00:30:00"){
+            setValorCobranca2(valorcobranca/2);
+        }
+    }
 
     useEffect(() => {
         veiculo.get('/veiculo').then(
@@ -46,6 +79,7 @@ const ListarVeiculos = () => {
                 for (let i = 0; i < response?.data?.data.length; i++) {
                     resposta[i] = {};
                     mostrar2[i] = { "estado": false };
+                    mostrardiv[i] = { "estado": true };
                     nofityvar[i] = { "notifi": "notify" };
                     resposta[i].placa = response.data.data[i].usuario;
                     if (response.data.data[i].estacionado === 'N') {
@@ -67,6 +101,7 @@ const ListarVeiculos = () => {
                     }
                 }
             }
+
         ).catch(function (error) {
             console.log(error);
         });
@@ -79,7 +114,30 @@ const ListarVeiculos = () => {
         ).catch(function (error) {
             console.log(error);
         });
+
+        parametros.get('/parametros').then(
+            response => {
+                setValorCobranca(response.data.data.param.estacionamento.valorHora)
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
     }, [])
+
+    function mexerValores () {
+
+        const tempo1 = document.getElementById("tempos").value;
+
+        if(tempo1 === "02:00:00"){
+            return valorcobranca*2;
+        }
+        else if(tempo1 === "01:00:00"){
+            return valorcobranca;
+        }
+        else if(tempo1 === "00:30:00"){
+            return valorcobranca/2;
+        }
+    }
     
 
 
@@ -88,6 +146,54 @@ const ListarVeiculos = () => {
         mostrar2[index].estado = !mostrar2[index].estado;
     }
 
+    const hangleplaca = async (placa, index) => {
+
+        console.log(index)
+
+        const tempo1 = document.getElementById("tempos").value;
+
+        const resposta = await mexerValores();
+
+        if (vaga.length === 0) {
+            vaga[0]= 0;
+            console.log("entrou")
+        }
+        console.log("entrou2")
+
+        if(saldoCredito < resposta){
+            Swal.fire({
+                icon: 'error',
+                title: 'Saldo insuficiente',
+                footer: '<a href="">Clique aqui para adicionar crédito.</a>'
+              })
+        }
+        else{
+            estacionamento.post('/estacionamento', {
+                placa: placa,
+                numero_vaga: vaga,
+                tempo: tempo1,
+                pagamento: "credito"
+            }).then(
+                response => {
+                    console.log(response)
+                    if (response.data.msg.resultado === true) {
+                        window.location.reload();
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.data.msg.msg,
+                            footer: '<a href="">Por favor, tente novamente.</a>'
+                          })
+
+                    }
+                }
+            ).catch(function (error) {
+                console.log(error);
+            });
+            }
+}
 
     return (
         <div className="col-12 px-3 mb-4">
@@ -137,7 +243,34 @@ const ListarVeiculos = () => {
                             </div>
                         </div>
                     </div>
-                    {mostrar2[index].estado ? <Detalhesveiculos /> : null}
+                    {mostrar2[index].estado ? 
+                    <div>
+                        {mostrardiv[index].estado ? 
+                         <div className="h6 mt-3 mx-5" onChange={atualizafunc}>
+                         <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                                 <option value="00:30:00">30 Minutos</option>
+                                 <option value="01:00:00" selected>60 Minutos</option>
+                                 <option value="02:00:00">120 Minutos</option>
+                         </select>
+                                 <p id="tempoCusto" className="text-end">Esse tempo irá custar: R$ {valorcobranca2},00 </p>
+                                     <div className="form-group mb-4 mt-4">
+                                         <p className='text-start' id='vagaInput'>Numero da vaga:</p>
+                                         <div className="input-group">
+                                             <input className="form-control" value={vaga} onChange={(e) => setVaga([e.target.value])} placeholder="Exemplo: 3" />
+                                         </div>
+                                     </div>
+                                     <div className="mt-1 mb-5 gap-2 d-md-block">
+                                         <button type="submit" onClick={()=> {hangleplaca(link.placa, index)}} className="btn5 botao">Confirmar</button>
+                                     </div>
+                             </div>
+                                : 
+                                //outra div
+                                <div>
+                                    <p>Ola mundo</p>
+                                </div>
+                                }
+                    </div>
+                    : null}
                 </div>
             ))}
         </div>

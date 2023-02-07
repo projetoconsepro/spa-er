@@ -66,14 +66,11 @@ const RegistrarVeiculo = () => {
 
     
     return (
-        <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+        <section className="vh-lg-100 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
                         <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
-                            <div className="text-center text-md-center mb-3 pt-3 mt-4 mt-md-0">
-                                <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
-                            </div>
                             <div className="h5 mt-2 align-items-center">
                                 Registre seu veículo aqui
                             </div>
