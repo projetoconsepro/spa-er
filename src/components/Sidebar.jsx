@@ -110,13 +110,17 @@ const Sidebar = () => {
     
     return(
     <div className="header-container">
-         <nav className="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none">
-            <Link className="navbar-brand me-lg-5" to={{ pathname: "/"}}><img className="navbar-brand-dark" src="assets/img/logo.svg" alt="Rich logo" /> <img class="navbar-brand-light" src="assets/img/dark.svg" alt="Rich logo" /></Link>
-                <div className="d-flex align-items-center"><button className="navbar-toggler d-lg-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button></div>
+         <nav className="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none bg-blue-50">
+                <div className="d-flex align-items-center w-100 justify-content-between">
+                <img src="../../assets/img/logoconseproof3.png" alt="Rich Logo" className="w-25" />
+                    <button className="navbar-toggler d-lg-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                </div>
             </nav>
-            <nav id="sidebarMenu" className="sidebar d-lg-block bg-gray-800 text-white collapse" data-simplebar>
+            <nav id="sidebarMenu" className="sidebar d-lg-block bg-blue-50 text-white collapse" data-simplebar>
                 <div className="sidebar-inner px-3 pt-4">
-                <div className="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
+                <div className="d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
                     <div className="collapse-close d-md-none">
                         <a href="#sidebarMenu" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
                             <svg className="icon icon-xs" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -126,7 +130,7 @@ const Sidebar = () => {
                     </div>
                 </div>
                 <ul className="nav flex-column pt-md-0 ">
-                    <li className="nav-item"><a className="nav-link d-flex align-items-center pb-3"><span className="sidebar-icon"><img src="assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span className="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></li>
+                    <li className="nav-item"><a className="nav-link d-flex align-items-center pb-3"><span className="sidebar-icon"><img src="../../assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span className="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></li>
                     <li className="nav-item">
                     {links.map((link, key) => (<li key={key} className={link.className} onClick={() => componentefunc(link.componente)}>{link.icon}{link.name}</li>))}
                     </li>
@@ -142,7 +146,7 @@ const Sidebar = () => {
                         <li className="nav-item dropdown ms-lg-3">
                             <a className="nav-link dropdown-toggle pt-1 px-0" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div className="media d-flex align-items-center">
-                                <img className="avatar rounded-circle" alt="Image placeholder" src="assets/img/profile-picture-4.jpg" />
+                                <img className="avatar rounded-circle" alt="Image placeholder" src="assets/img/profile-picture-1.jpg" />
                                 <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block"><span className="mb-0 font-small fw-bold text-gray-900">{teste.nome}</span></div>
                             </div>
                             </a>
