@@ -6,6 +6,7 @@ import { cpf, cnpj } from 'cpf-cnpj-validator';
 import emailValidator from 'email-validator';
 import { IMaskInput } from 'react-imask';
 import '../LoginPage/styles.css';
+import { TailSpin } from 'react-loading-icons'
 
 
 const RegisterPage = () => {
@@ -19,6 +20,7 @@ const RegisterPage = () => {
     const [mensagem, setMensagem] = useState("");
     const [mensagem2, setMensagem2] = useState("");
     const [estado, setEstado] = useState(false);
+    const [estado2, setEstado2] = useState(false);
     const [sucesso, setSucesso] = useState(false);
     const [inputNome, setInputNome] = useState("form-control");
     const [inputMail, setInputMail] = useState("form-control");
@@ -76,17 +78,6 @@ const RegisterPage = () => {
                 setTimeout(() => {
                     setEstado(false)
                     setInputNome("form-control")
-                }, 4000);
-            }
-        }
-        else if(mail !== ""){
-        if (!await emailValidator.validate(mail)) {
-                setEstado(true)
-                setInputMail("form-control is-invalid")
-                setMensagem("Email inválido!")
-                setTimeout(() => {
-                    setInputMail("form-control")
-                    setEstado(false)
                 }, 4000);
             }
         }
@@ -151,25 +142,41 @@ const RegisterPage = () => {
                 setEstado(false)
             }, 4000);
         }
-        else {
-            const creito = await register(nome, mail, cpff, telefone, senha)
-            console.log(creito)
-            if (creito.auth) {
+        else if(mail.length >= 0){
+            if (!(await emailValidator.validate(mail)) && mail !== '') {
+                    setEstado(true)
+                    setInputMail("form-control is-invalid")
+                    setMensagem("Email inválido!")
+                    setTimeout(() => {
+                        setInputMail("form-control")
+                        setEstado(false)
+                    }, 4000);
+                }
+            else{
+                setEstado2(true)
+                const creito = await register(nome, mail, cpff, telefone, senha)
+                console.log(creito)
+                if (creito.auth) {
                 setMensagem2("Cadastro realizado com sucesso! Você será redirecionado a página de login")
+                console.log(nome, mail, cpff, telefone, senha)
                 setSucesso(true)
+                setEstado2(false)
                 setTimeout(() => {
                     setSucesso(false)
+                    setEstado2(false)
                     navigate("/")
                 }, 3000);
-            }
+                }
             else {
+                setEstado2(false)
                 setEstado(true)
                 setMensagem("Erro ao cadastrar! " + creito.message)
                 setTimeout(() => {
                     setEstado(false)
                 }, 4000);
             }
-        }
+            }
+            }
     }
     const togglePassword = () => {
         if (passwordType === "password") {
@@ -210,32 +217,32 @@ const RegisterPage = () => {
                             <p className="pt-2"><strong>Preencha os dados abaixo e clique em avançar.</strong></p>
                             <form action="#" className="mt-4">
                                 <div className="form-group mb-4">
-                                    <label htmlFor="email" id="labelLogin">Nome:</label>
+                                    <label id="labelLogin">Nome:</label>
                                     <div className="input-group">
                                         <input className={inputNome} name="nome" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite seu nome" />
                                     </div>
                                 </div>
                                 <div className="form-group mb-4">
-                                    <label htmlFor="email" id="labelLogin">Email:</label>
+                                    <label id="labelLogin">Email:</label>
                                     <div className="input-group">
                                         <input className={inputMail} name="email" id="email" value={mail} onChange={(e) => setMail(e.target.value)} placeholder="Digite seu endereço de email (não obrigatório)" />
                                     </div>
                                 </div>
                                 <div className="form-group mb-4">
-                                    <label htmlFor="email" id="labelLogin">CPF/CNPJ:</label>
+                                    <label id="labelLogin">CPF/CNPJ:</label>
                                     <div className="input-group">
                                         <input className={inputCpf} name="cpf" id="cpf" value={cpff} onChange={(e) => setCpff(e.target.value)} placeholder="Digite seu CPF p/ pessoa física ou CPNJ p/ jurídica" />
                                     </div>
                                 </div>
                                 <div className="form-group mb-4">
-                                    <label htmlFor="email" id="labelLogin">Telefone:</label>
+                                    <label id="labelLogin">Telefone:</label>
                                     <div className="input-group">
-                                        <IMaskInput className={inputTelefone} name="email" id="email" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
+                                        <IMaskInput className={inputTelefone} name="telefone" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
                                     </div>
                                 </div>
                                 <div className="form-group">
                                     <div className="form-group mb-4">
-                                        <label htmlFor="password" id="labelLogin">Senha:</label>
+                                        <label id="labelLogin">Senha:</label>
                                         <div className="input-group">
                                             <input className={inputSenha} type={passwordType} name="password" id="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Digite sua senha" />
                                             <button onClick={togglePassword} type="button" className={classolho}>
@@ -250,7 +257,7 @@ const RegisterPage = () => {
                                         </div>
                                     </div>
                                     <div className="form-group mb-4">
-                                        <label htmlFor="password" id="labelLogin">Confirme sua senha:</label>
+                                        <label id="labelLogin">Confirme sua senha:</label>
                                         <div className="input-group">
                                             <input className={inputSenha2} type="password" name="password" id="password" value={senha2} onChange={(e) => setSenha2(e.target.value)} placeholder="Digite sua senha novamente" />
                                         </div>
@@ -345,6 +352,11 @@ const RegisterPage = () => {
                                     <button type="submit" onClick={handleSubmit} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
+
+                                    <div className="mt-3" style={{ display: estado2 ? 'block' : 'none'}}>
+                                    <p><small>Carregando...</small></p>
+                                <TailSpin stroke="#3a58c8"/>
+                            </div>
                                     <p className='text-muted' onClick={registrado}> <small>Já possui uma conta?</small> <a href='/'><small className="color-primary"><u>Clique aqui!</u></small></a></p>
                                 </div>
                             </form>

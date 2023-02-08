@@ -2,6 +2,7 @@ import axios from "axios";
 import { FcPlus } from "react-icons/fc";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCarAlt, FaParking } from "react-icons/fa";
+import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import '../pages/LoginPage/styles.css';
 import Detalhesveiculos from "./Detalhesveiculos.jsx";
@@ -302,11 +303,11 @@ const ListarVeiculos = () => {
                     <div>
                         {mostrardiv[index].estado ? 
                          <div className="h6 mt-3 mx-5" onChange={atualizafunc}>
-                         <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                            <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
                                  <option value="00:30:00">30 Minutos</option>
                                  <option value="01:00:00" selected>60 Minutos</option>
                                  <option value="02:00:00">120 Minutos</option>
-                         </select>
+                            </select>
                                  <p id="tempoCusto" className="text-end">Esse tempo irá custar: R$ {valorcobranca2},00 </p>
                                      <div className="form-group mb-4 mt-4">
                                          <p className='text-start' id='vagaInput'>Numero da vaga:</p>
@@ -314,8 +315,13 @@ const ListarVeiculos = () => {
                                              <input className="form-control" value={vaga} onChange={(e) => setVaga([e.target.value])} placeholder="Exemplo: 3" />
                                          </div>
                                      </div>
-                                     <div className="mt-1 mb-5 gap-2 d-md-block">
-                                         <button type="submit" onClick={()=> {hangleplaca(link.placa, index)}} className="btn5 botao">Confirmar</button>
+                                     <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
+                                        <div>
+                                        </div>
+                                         <button type="submit" onClick={()=> {hangleplaca(link.placa, index)}} className="btn3 botao">Ativar</button>
+                                         <div>
+                                         <span><IoTrashSharp color="red" size={25}/></span>
+                                         </div>
                                      </div>
                              </div>
                                 : 
