@@ -68,6 +68,63 @@ const ListarVeiculos = () => {
         }
     }
 
+    const atualizacomp = async () => {
+        veiculo.get('/veiculo').then(
+            response => {
+                console.log(response)
+                if(response.data.msg.resultado === false){
+                    localStorage.setItem("componente", "CadastrarVeiculo")
+                    window.location.reload();
+                }
+                for (let i = 0; i < response?.data?.data.length; i++) {
+                    resposta[i] = {};
+                    mostrar2[i] = { "estado": false };
+                    mostrardiv[i] = { "estado": true };
+                    nofityvar[i] = { "notifi": "notify" };
+                    resposta[i].placa = response.data.data[i].usuario;
+                    if (response.data.data[i].estacionado === 'N') {
+                        resposta[i].estacionado = "Não estacionado"
+                    }
+                    else {
+                        resposta[i].estacionado ="Estacionado - Vaga:";
+                    }
+                    if (response.data.data[i].numero_notificacoes_pendentes === 0) {
+                        resposta[i].numero_notificacoes_pendentes ="Sem notificações";
+                    }
+                    else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
+                        resposta[i].numero_notificacoes_pendentes = "Uma notificação"
+                        nofityvar[i] = { "notifi": "notify2" };
+                    }
+                    else {
+                        resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + " notificações";
+                        nofityvar[i] = { "notifi": "notify2" };
+                    }
+                }
+            }
+
+        ).catch(function (error) {
+            console.log(error);
+        });
+
+        saldo.get('/usuario/saldo-credito').then(
+            response => {
+                console.log(response?.data?.data?.saldo)
+                setSaldoCredito(response?.data?.data?.saldo)
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
+
+        parametros.get('/parametros').then(
+            response => {
+                setValorCobranca(response.data.data.param.estacionamento.valorHora)
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+
     useEffect(() => {
         veiculo.get('/veiculo').then(
             response => {
@@ -156,9 +213,7 @@ const ListarVeiculos = () => {
 
         if (vaga.length === 0) {
             vaga[0]= 0;
-            console.log("entrou")
         }
-        console.log("entrou2")
 
         if(saldoCredito < resposta){
             Swal.fire({
@@ -177,7 +232,7 @@ const ListarVeiculos = () => {
                 response => {
                     console.log(response)
                     if (response.data.msg.resultado === true) {
-                        window.location.reload();
+                        atualizacomp();
                     }
                     else {
                         Swal.fire({
