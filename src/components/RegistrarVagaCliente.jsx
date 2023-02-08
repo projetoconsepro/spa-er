@@ -131,7 +131,7 @@ const RegistrarVagaCliente = () => {
         console.log(placa3)
         
         if (vaga.length === 0) {
-            setVaga([0])
+            vaga[0]= 0;
         }
 
         const resposta = await mexerValores();

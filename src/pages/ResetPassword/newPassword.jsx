@@ -21,7 +21,6 @@ const NewPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (senha === senha2 && senha.length >= 8) {
-            const email = localStorage.getItem('email');
             const password = sha256(senha).toString();
             const veiculo = axios.create({
                 baseURL: process.env.REACT_APP_HOST,
