@@ -89,6 +89,7 @@ const Sidebar = () => {
             className: styles.className,
             name: "Monitor",
             to: "/monitor",
+            componente: "RegistrarVagaMonitor"
         })
         links.push({
             className: styles.className,

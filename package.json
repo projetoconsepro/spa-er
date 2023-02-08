@@ -17,6 +17,7 @@
     "react-dropdown": "^1.11.0",
     "react-icons": "^4.7.1",
     "react-imask": "^6.4.3",
+    "react-loading-icons": "^1.1.0",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.6.2",
     "react-scripts": "5.0.1",

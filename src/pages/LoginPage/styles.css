@@ -3867,7 +3867,7 @@ progress {
 .form-control:focus{
     color: #6B7280;
     background-color: unset !important;
-    border-bottom: 2px solid #000000 !important ;
+    border-bottom: 2px solid #6B7280 !important ;
     outline: 0;
 }
 
@@ -3875,11 +3875,13 @@ progress {
     height: 1.5em;
 }
 
+
 .olho {
     background-color: unset;
     border-right: 0;
     border-left: 0;
     border-top: 0;
+    border-bottom: 2px solid #6B7280 !important ;
 }
 .olho-error {
     background-color: unset;

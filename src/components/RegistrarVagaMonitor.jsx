@@ -55,7 +55,9 @@ const RegistrarVagaMonitor = () => {
                             <div className="h6 mt-3 ">
                                 <p className='text-start'>Forma de pagamento:</p>
                                 <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="placaa">
-                                <option value="1">1</option>
+                                <option value="pix">PIX</option>
+                                <option value="dinheiro">Dinheiro</option>
+                                <option value="credito" selected>Crédito</option>
                                 </select>
                             </div>
 
