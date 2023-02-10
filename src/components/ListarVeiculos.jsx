@@ -2,6 +2,7 @@ import axios from "axios";
 import { FcPlus } from "react-icons/fc";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCarAlt, FaParking } from "react-icons/fa";
+import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import '../pages/LoginPage/styles.css';
@@ -70,7 +71,7 @@ const ListarVeiculos = () => {
     }
 
     const atualizacomp = async () => {
-        veiculo.get('/veiculo').then(
+        await veiculo.get('/veiculo').then(
             response => {
                 console.log(response)
                 if(response.data.msg.resultado === false){
@@ -87,7 +88,13 @@ const ListarVeiculos = () => {
                         resposta[i].estacionado = "Não estacionado"
                     }
                     else {
-                        resposta[i].estacionado ="Estacionado - Vaga:";
+                        mostrardiv[i] = { "estado": false };
+                        resposta[i].vaga = response.data.data[i].numerovaga;
+                        resposta[i].estacionado ="Estacionado - Vaga: " + response.data.data[i].numerovaga;
+                        resposta[i].tempo = response.data.data[i].tempo;
+                        resposta[i].chegada = response.data.data[i].chegada;
+                        resposta[i].id_vaga_veiculo =  response.data.data[i].id_vaga_veiculo;
+                        resposta[i].temporestante = response.data.data[i].temporestante;
                     }
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
                         resposta[i].numero_notificacoes_pendentes ="Sem notificações";
@@ -107,7 +114,7 @@ const ListarVeiculos = () => {
             console.log(error);
         });
 
-        saldo.get('/usuario/saldo-credito').then(
+        await saldo.get('/usuario/saldo-credito').then(
             response => {
                 console.log(response?.data?.data?.saldo)
                 setSaldoCredito(response?.data?.data?.saldo)
@@ -116,7 +123,7 @@ const ListarVeiculos = () => {
             console.log(error);
         });
 
-        parametros.get('/parametros').then(
+        await parametros.get('/parametros').then(
             response => {
                 setValorCobranca(response.data.data.param.estacionamento.valorHora)
             }
@@ -127,59 +134,7 @@ const ListarVeiculos = () => {
 
 
     useEffect(() => {
-        veiculo.get('/veiculo').then(
-            response => {
-                console.log(response)
-                if(response.data.msg.resultado === false){
-                    localStorage.setItem("componente", "CadastrarVeiculo")
-                    window.location.reload();
-                }
-                for (let i = 0; i < response?.data?.data.length; i++) {
-                    resposta[i] = {};
-                    mostrar2[i] = { "estado": false };
-                    mostrardiv[i] = { "estado": true };
-                    nofityvar[i] = { "notifi": "notify" };
-                    resposta[i].placa = response.data.data[i].usuario;
-                    if (response.data.data[i].estacionado === 'N') {
-                        resposta[i].estacionado = "Não estacionado"
-                    }
-                    else {
-                        resposta[i].estacionado ="Estacionado - Vaga:";
-                    }
-                    if (response.data.data[i].numero_notificacoes_pendentes === 0) {
-                        resposta[i].numero_notificacoes_pendentes ="Sem notificações";
-                    }
-                    else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
-                        resposta[i].numero_notificacoes_pendentes = "Uma notificação"
-                        nofityvar[i] = { "notifi": "notify2" };
-                    }
-                    else {
-                        resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + " notificações";
-                        nofityvar[i] = { "notifi": "notify2" };
-                    }
-                }
-            }
-
-        ).catch(function (error) {
-            console.log(error);
-        });
-
-        saldo.get('/usuario/saldo-credito').then(
-            response => {
-                console.log(response?.data?.data?.saldo)
-                setSaldoCredito(response?.data?.data?.saldo)
-            }
-        ).catch(function (error) {
-            console.log(error);
-        });
-
-        parametros.get('/parametros').then(
-            response => {
-                setValorCobranca(response.data.data.param.estacionamento.valorHora)
-            }
-        ).catch(function (error) {
-            console.log(error);
-        });
+       atualizacomp();
     }, [])
 
     function mexerValores () {
@@ -250,6 +205,54 @@ const ListarVeiculos = () => {
             });
             }
 }
+ const AddTempo = async (placa , index ,id_vaga_veiculo,vaga) => {
+
+    const vagaa = [];
+
+    vagaa[0] = vaga;
+
+    console.log(index)
+
+    const tempo1 = document.getElementById("tempos").value;
+
+    const resposta = await mexerValores();
+
+    if(saldoCredito < resposta){
+        Swal.fire({
+            icon: 'error',
+            title: 'Saldo insuficiente',
+            footer: '<a href="">Clique aqui para adicionar crédito.</a>'
+          })
+    }
+    else{
+        estacionamento.post('/estacionamento', {
+            placa: placa,
+            numero_vaga: vagaa,
+            tempo: tempo1,
+            pagamento: "credito",
+            id_vaga_veiculo: id_vaga_veiculo
+        }).then(
+            response => {
+                console.log(response)
+                if (response.data.msg.resultado === true) {
+                    atualizacomp();
+                    window.location.reload();
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.data.msg.msg,
+                        footer: '<a href="">Por favor, tente novamente.</a>'
+                      })
+
+                }
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
+        }
+    }
 
     return (
         <div className="col-12 px-3 mb-4">
@@ -285,12 +288,15 @@ const ListarVeiculos = () => {
                                 <div class="h2 mb-0 d-flex align-items-center">
                                     {link.placa}
                                 </div>
-                                <div class="h6 mt-2 d-flex align-items-center" id={nofityvar[index].notifi}>
-                                    <AiOutlineInfoCircle />‎ {link.numero_notificacoes_pendentes}
-                                </div>
-                                <div class="h6 mt-2 d-flex align-items-center">
+                                <div class="h6 mt-2 d-flex align-items-center fs-6" id="estacionadocarro">
                                     <h6><FaParking />‎ {link.estacionado}</h6>
                                 </div>
+                                {mostrardiv[index].estado ?  null
+                                :
+                                <div class="h6 d-flex align-items-center fs-6">
+                                    <h6><RxLapTimer />‎ Tempo restante: {link.temporestante} </h6>
+                                </div>
+                                }
                             </div>
                             <div>
                                 <div class="d-flex align-items-center fw-bold">
@@ -300,7 +306,7 @@ const ListarVeiculos = () => {
                         </div>
                     </div>
                     {mostrar2[index].estado ? 
-                    <div>
+                    <div className="mb-1">
                         {mostrardiv[index].estado ? 
                          <div className="h6 mt-3 mx-5" onChange={atualizafunc}>
                             <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
@@ -325,11 +331,18 @@ const ListarVeiculos = () => {
                                      </div>
                              </div>
                                 : 
-                                //outra div
-                                <div>
-                                    <p>Ola mundo</p>
+                                <div className="h6 mx-5" onChange={atualizafunc}>
+                                <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                                 <option value="00:30:00">30 Minutos</option>
+                                 <option value="01:00:00" selected>60 Minutos</option>
+                                 <option value="02:00:00">120 Minutos</option>
+                                 </select>
+                                 <p id="tempoCusto" className="text-end">Esse tempo irá custar: R$ {valorcobranca2},00 </p>
+                                    <p className="text-start" id="horarioChegada">Horário chegada: {link.chegada} </p>
+                                    <p className="text-start pb-3" id="horarioChegada">Tempo Creditado: {link.tempo} </p>
+                                    <button type="submit" onClick={()=> {AddTempo(link.placa, index , link.id_vaga_veiculo, link.vaga)}} className="btn3 botao">Ativar</button>
                                 </div>
-                                }
+                            }
                     </div>
                     : null}
                 </div>

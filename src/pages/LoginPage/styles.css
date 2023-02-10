@@ -3891,6 +3891,16 @@ progress {
     border-bottom: 2.5px solid #ff0000;
 }
 
+#horarioChegada{
+    font-size: 0.8rem !important;
+    margin-bottom: 0 !important;
+}
+
+#estacionadocarro{
+    font-size: 0.8rem !important;
+    margin-bottom: 0 !important;
+}
+
 .form-control:-ms-input-placeholder {
     color: #4B5563;
     opacity: 1;
