@@ -1,12 +1,10 @@
 import axios from "axios";
 import { FcPlus } from "react-icons/fc";
-import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCarAlt, FaParking } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import '../pages/LoginPage/styles.css';
-import Detalhesveiculos from "./Detalhesveiculos.jsx";
 import Swal from "sweetalert2";
 
 const ListarVeiculos = () => {
@@ -19,30 +17,22 @@ const ListarVeiculos = () => {
     const [nofityvar] = useState([]);
     const [saldoCredito, setSaldoCredito] = useState("");
     const [vaga, setVaga] = useState([]);
-    const [estado] = useState([]);
-    const [mensagem] = useState([]);
     const [tempoAgora, setTempoAgora] = useState("");
     const [totalHoras, setTotalHoras] = useState("");
-    const [segundos, setSegundos] = useState(0);
-    
-
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
 
     const saldo = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
-            'token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlhdCI6MTY3NjIzODQ2NSwiZXhwIjoxNjc2MjY3MjY1fQ.Z-qg9sIAUhE47j-38IzbM3OkX1VF-cvG7r5pcmGkTRQ",
-            'id_usuario': 12,
+            'token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjc2MjkwODU1LCJleHAiOjE2NzYzMTk2NTV9.FzYA8zWKCDv5ypTlf6-aEiViDWpx8X0zPUhxwHQjWIY",
+            'id_usuario': 3,
             'perfil_usuario': "cliente"
         }
     })
     const estacionamento = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
-            'token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlhdCI6MTY3NjIzODQ2NSwiZXhwIjoxNjc2MjY3MjY1fQ.Z-qg9sIAUhE47j-38IzbM3OkX1VF-cvG7r5pcmGkTRQ",
-            'id_usuario': 12,
+            'token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjc2MjkwODU1LCJleHAiOjE2NzYzMTk2NTV9.FzYA8zWKCDv5ypTlf6-aEiViDWpx8X0zPUhxwHQjWIY",
+            'id_usuario': 3,
             'perfil_usuario': "cliente"
         }
     })
@@ -54,8 +44,8 @@ const ListarVeiculos = () => {
     const veiculo = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
-            'token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsImlhdCI6MTY3NjIzODQ2NSwiZXhwIjoxNjc2MjY3MjY1fQ.Z-qg9sIAUhE47j-38IzbM3OkX1VF-cvG7r5pcmGkTRQ",
-            'id_usuario': 12,
+            'token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjc2MjkwODU1LCJleHAiOjE2NzYzMTk2NTV9.FzYA8zWKCDv5ypTlf6-aEiViDWpx8X0zPUhxwHQjWIY",
+            'id_usuario': 3,
             'perfil_usuario': "cliente"
         }
     })
@@ -108,7 +98,7 @@ const ListarVeiculos = () => {
                         nofityvar[i] = { "notifi": "notify2" };
                     }
                     else {
-                        resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + " notificações";
+                        resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + ` notificações`;
                         nofityvar[i] = { "notifi": "notify2" };
                     }
 
@@ -167,6 +157,7 @@ const ListarVeiculos = () => {
         });
 
     }
+
 
 
     useEffect(() => {

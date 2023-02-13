@@ -154,9 +154,9 @@ const RegisterPage = () => {
                 }
             else{
                 setEstado2(true)
-                const creito = await register(nome, mail, cpff, telefone, senha)
-                console.log(creito)
-                if (creito.auth) {
+                const cadastro = await register(nome, mail, cpff, telefone, senha)
+                console.log(cadastro)
+                if (cadastro.auth) {
                 setMensagem2("Cadastro realizado com sucesso! Você será redirecionado a página de login")
                 console.log(nome, mail, cpff, telefone, senha)
                 setSucesso(true)
@@ -170,7 +170,7 @@ const RegisterPage = () => {
             else {
                 setEstado2(false)
                 setEstado(true)
-                setMensagem("Erro ao cadastrar! " + creito.message)
+                setMensagem("Erro ao cadastrar! " + cadastro.message)
                 setTimeout(() => {
                     setEstado(false)
                 }, 4000);

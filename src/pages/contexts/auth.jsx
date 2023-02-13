@@ -46,19 +46,21 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (login, senha) => {
         const password = sha256(senha).toString();
-        console.log(password)
         const response = await createSession(login, password);
         try{
-        console.log("login", response.data);
         if(response.data.msg.resultado === true) {
         console.log("teste", response.data.dados.user.perfil.length)
         if(response.data.msg.resultado === true && response.data.dados.user.perfil.length === 1){
         const loggedUser = response.data.dados.user;
         const token = response.data.dados.token;
+        if(response.data.dados.user.perfil[0] === 'cliente'){
+            localStorage.setItem('componente', 'MeusVeiculos');
+        }else if (response.data.dados.user.perfil[0]  === 'monitor'){
+            localStorage.setItem('componente', 'ListarVagasMonitor');
+        }
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
-        console.log("Qwfowejfg")
         navigate('/home')
         }
         else if(response.data.msg.resultado === true && response.data.dados.user.perfil.length > 1){

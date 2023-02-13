@@ -89,7 +89,7 @@ const Sidebar = () => {
             className: styles.className,
             name: "Monitor",
             to: "/monitor",
-            componente: "RegistrarVagaMonitor"
+            componente: "NADA"
         })
         links.push({
             className: styles.className,
@@ -105,6 +105,12 @@ const Sidebar = () => {
             className: styles.className,
             name: "Vaga livre",
             to: "/vagalivre",
+        })
+        links.push({
+            className: styles.className,
+            name: "Listar Vagas",
+            to: "/listarvagas",
+            componente: "ListarVagasMonitor"
         })
     }
 

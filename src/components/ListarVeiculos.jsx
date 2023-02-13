@@ -73,7 +73,6 @@ const ListarVeiculos = () => {
     const atualizacomp = async () => {
         await veiculo.get('/veiculo').then(
             response => {
-                console.log(response)
                 if(response.data.msg.resultado === false){
                     localStorage.setItem("componente", "CadastrarVeiculo")
                     window.location.reload();
@@ -116,7 +115,6 @@ const ListarVeiculos = () => {
 
         await saldo.get('/usuario/saldo-credito').then(
             response => {
-                console.log(response?.data?.data?.saldo)
                 setSaldoCredito(response?.data?.data?.saldo)
             }
         ).catch(function (error) {
@@ -161,8 +159,6 @@ const ListarVeiculos = () => {
 
     const hangleplaca = async (placa, index) => {
 
-        console.log(index)
-
         const tempo1 = document.getElementById("tempos").value;
 
         const resposta = await mexerValores();
@@ -186,7 +182,6 @@ const ListarVeiculos = () => {
                 pagamento: "credito"
             }).then(
                 response => {
-                    console.log(response)
                     if (response.data.msg.resultado === true) {
                         atualizacomp();
                     }
@@ -211,8 +206,6 @@ const ListarVeiculos = () => {
 
     vagaa[0] = vaga;
 
-    console.log(index)
-
     const tempo1 = document.getElementById("tempos").value;
 
     const resposta = await mexerValores();
@@ -233,7 +226,6 @@ const ListarVeiculos = () => {
             id_vaga_veiculo: id_vaga_veiculo
         }).then(
             response => {
-                console.log(response)
                 if (response.data.msg.resultado === true) {
                     atualizacomp();
                     window.location.reload();

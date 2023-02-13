@@ -23,7 +23,11 @@ function red(id,analiseFeita) {
     const perfil = [analiseFeita.perfil[id]];
     analiseFeita.perfil = perfil;
     localStorage.setItem('user', JSON.stringify(analiseFeita));
-    console.log(analiseFeita)
+    if(analiseFeita.perfil[0] === 'cliente'){
+    localStorage.setItem('componente', 'MeusVeiculos');
+    }else if (analiseFeita.perfil[0] === 'monitor'){
+    localStorage.setItem('componente', 'ListarVagasMonitor');
+    }
     navigate('/home')
     
 }

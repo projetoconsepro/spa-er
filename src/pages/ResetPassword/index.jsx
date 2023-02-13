@@ -183,8 +183,9 @@ const ResetPassword = () => {
                   />
                 </div>
               </div>
-              <div className="mt-5 mb-5 gap-2 d-md-block">
-                <button onClick={handleSubmit} className="btn4 botao">
+              <div className="mt-5 mb-6 gap-2 d-md-block">
+                <a href="/"><button type="submit" className="btn2 botao">Voltar</button></a>
+                <button onClick={handleSubmit} className="btn3 botao">
                   {sucesso ? "Gerar código " : "Avançar "}
                   <span className="align-self-end">
                     <svg

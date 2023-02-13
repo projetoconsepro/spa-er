@@ -1,24 +1,17 @@
 import { useContext } from "react";
-
-import {
-    BrowserRouter as Router,
-    Route,
-    Routes,
-    Navigate,
-} from "react-router-dom";
-
+import {BrowserRouter as Router, Route, Routes, Navigate} from "react-router-dom";
+import { AuthProvider, AuthContext } from "./pages/contexts/auth";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import Loading from "./pages/LoginPage/loading";
 import DoublePerfil from "./pages/DoublePerfil/doublePerfil";
-
-import { AuthProvider, AuthContext } from "./pages/contexts/auth";
 import RegisterPage from "./pages/RegisterPage";
 import ResetPassword from "./pages/ResetPassword/index.jsx";
 import Confirmation from "./pages/ResetPassword/confirmation";
 import NewPassword from "./pages/ResetPassword/newPassword";
 import RegistrarVagaMonitor from "./components/RegistrarVagaMonitor";
 import Countdown from "./components/Countdown";
+import Error from "./components/Error";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -49,6 +42,7 @@ const AppRoutes = () => {
                 <Route exact path="/novasenha" element={<NewPassword />} />
                 <Route exact path="/registrarmonitor" element={<RegistrarVagaMonitor />} />
                 <Route exact path="/countdown" element={<Countdown />} />
+                <Route exact path="/*" element={<Error />} />
             </Routes>
             </AuthProvider>
         </Router>

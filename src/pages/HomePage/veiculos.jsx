@@ -1,10 +1,11 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AdminMenu from '../../components/AdminMenu';
+import ListarVagasMonitor from '../../components/ListarVagasMonitor';
 import ListarVeiculos from '../../components/ListarVeiculos';
 import RegistrarVeiculo from '../../components/RegistrarVeiculo';
 import RegistrarVagaCliente from '../../components/RegistrarVagaCliente';
 import RegistrarVagaMonitor from '../../components/RegistrarVagaMonitor';
+import Error from '../../components/Error';
 
 const Veiculos = () => {
     const componente = localStorage.getItem("componente");
@@ -20,8 +21,11 @@ const Veiculos = () => {
         else if(componente === "RegistrarVagaMonitor"){
             return <RegistrarVagaMonitor />
         }
+        else if (componente === "ListarVagasMonitor"){
+            return <ListarVagasMonitor />
+        }
         else {
-            return <AdminMenu />
+            return <Error />
         }
     }
 
