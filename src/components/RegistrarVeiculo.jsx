@@ -29,7 +29,6 @@ const RegistrarVeiculo = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const uppercase = textoPlaca.toUpperCase();
-    console.log(uppercase)
     const veiculo = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -62,6 +61,11 @@ const RegistrarVeiculo = () => {
     });
     }
 
+    const HangleBack = () => {
+        localStorage.setItem('componente', 'MeusVeiculos')
+        window.location.reload();
+    }
+
 
 
     
@@ -89,7 +93,7 @@ const RegistrarVeiculo = () => {
                                 <input type="text" id={inputVazio} className='mt-6 pt-4 fs-1 justify-content-center align-items-center text-align-center' value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
                             </div>
                             <div className="mt-1 mb-6 gap-2 d-md-block">
-                                    <button type="submit" className="btn2 botao"><a href="/">Voltar</a></button>
+                                    <button type="submit" className="btn2 botao" onClick={HangleBack}>Voltar</button>
                                     <button type="submit" onClick={requisicao} className="btn3 botao">Cadastrar</button>
                                 </div>
                                 <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>

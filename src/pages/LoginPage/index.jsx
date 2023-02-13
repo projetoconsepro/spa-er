@@ -96,7 +96,7 @@ const LoginPage = () => {
                                         </svg>}
                                     </button>
                                 </div>
-                                <a href="/recuperar"><p className="esqueciSenha"><small>Esqueci minha senha</small></p></a>
+                                <p className="esqueciSenha"><a href="/recuperar"><small>Esqueci minha senha</small></a></p>
                             </div>
                             <div>
                                 <div className="form-check">
