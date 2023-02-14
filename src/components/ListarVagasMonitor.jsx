@@ -24,8 +24,9 @@ const ListarVagasMonitor = () =>{
         ).then(
             response => {
                 for(let i = 0; i < response?.data?.data.length; i++){
-                    resposta[i] = {};
                     setSetor(response.data.data[0].nome);
+                    if(response.data.data[i].numero !== 0) {
+                    resposta[i] = {};
                     resposta[i].numero = response.data.data[i].numero;
                     resposta[i].cor = response.data.data[i].cor;
                     if(response.data.data[i].estacionado === 'N') {
@@ -38,11 +39,14 @@ const ListarVagasMonitor = () =>{
                         resposta[i].placa = response.data.data[i].placa;
                         resposta[i].temporestante = response.data.data[i].temporestante;
                     }
+                    }
                     const data = new Date();
                     const hora = data.getHours();
                     const minuto = data.getMinutes();
                     const horaAtual = hora + ":" + minuto;
                     setTempoAtual(horaAtual);
+                    
+                    
             }
         }
         ).catch(function (error) {
@@ -54,15 +58,12 @@ const ListarVagasMonitor = () =>{
         getVagas();
     }, [])
 
+
     const estaciona = (numero) => {
         localStorage.setItem('vaga', numero);
         localStorage.setItem('componente', 'RegistrarVagaMonitor');
         window.location.reload();
     }
-
-        
-
-        
 
 
     return(
@@ -93,8 +94,8 @@ const ListarVagasMonitor = () =>{
                             </thead>
                             <tbody>
                                 {resposta.map((vaga , index) => (  
-                                <tr key={index} style={{ backgroundColor: vaga.cor }} onClick={()=>{estaciona(vaga.numero)}}> 
-                                    <th className="text-gray-900" scope="row">{vaga.numero}</th>
+                                <tr key={index} onClick={()=>{estaciona(vaga.numero)}}> 
+                                    <th className="text-white" scope="row" style={{ backgroundColor: vaga.cor}}>{vaga.numero}</th>
                                     <td className="fw-bolder text-gray-500">{vaga.placa}</td>
                                     <td className="fw-bolder text-gray-500">{vaga.chegada}</td>
                                     <td className="fw-bolder text-gray-500">{vaga.temporestante}</td>
