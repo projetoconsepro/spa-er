@@ -6500,6 +6500,14 @@ textarea.form-control-lg {
     border-radius: 0.5rem;
 }
 
+#setoresSelect{
+    width: 35% !important;
+}
+
+#optionSetores{
+    border-radius: 25px !important;
+}
+
 .fade {
     transition: opacity 0.15s linear;
 }
@@ -27604,8 +27612,11 @@ label {
 
 .table td,
 .table th {
-    font-size: 0.875rem;
+    font-size: 1rem;
     white-space: nowrap;
+}
+.fontbold {
+    font-weight: bolder !important;
 }
 
 .table.user-table thead th {
@@ -27667,8 +27678,8 @@ label {
 
 .card .table td,
   .card .table th {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 0rem !important;
+    padding-right: 0rem !important;
 }
 
 .table [data-sort] {

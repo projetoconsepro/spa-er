@@ -48,7 +48,6 @@ const RegistrarVagaMonitor = () => {
         const tempoo = document.getElementById('tempos').value;
         const valorr = document.getElementById('pagamentos').value;
         setTempo(tempoo);
-        console.log('bun', valorr)
         setValor(valorr);
         if(tempoo === "00:10:00"){
         SetMostrapag(false)
@@ -67,8 +66,11 @@ const RegistrarVagaMonitor = () => {
         else if(tempoo === "00:30:00"){
             setValorCobranca2(valorCobranca/2);
         }
-        else{
+        else if(tempoo === "00:10:00"){
             setValorCobranca2(valorCobranca*0);
+        }
+        else{
+            //redirecionar para tela notificacao
         }
     }
 
@@ -78,7 +80,6 @@ const RegistrarVagaMonitor = () => {
         window.location.reload();
     }
         
-
 
     const handleSubmit = async  () => {
         const vagaa = [];
@@ -150,6 +151,7 @@ const RegistrarVagaMonitor = () => {
                                     <option value="00:30:00">30</option>
                                     <option value="01:00:00">60</option>
                                     <option value="02:00:00">120</option>
+                                    <option value="notificacao">Notificação</option>
                                 </select>
                                 <p id="tempoCusto" className="text-end"> Valor a ser cobrado: R$ {valorcobranca2},00 </p>
                             </div>
