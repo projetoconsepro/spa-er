@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import '../pages/LoginPage/styles.css';
 import Detalhesveiculos from "./Detalhesveiculos.jsx";
 import Swal from "sweetalert2";
+import Countdown from 'react-countdown';
 
 const ListarVeiculos = () => {
     const [resposta] = useState([]);
@@ -85,6 +86,8 @@ const ListarVeiculos = () => {
                     resposta[i].placa = response.data.data[i].usuario;
                     if (response.data.data[i].estacionado === 'N') {
                         resposta[i].estacionado = "Não estacionado"
+                        resposta[i].temporestante = "";
+
                     }
                     else {
                         mostrardiv[i] = { "estado": false };
@@ -94,6 +97,23 @@ const ListarVeiculos = () => {
                         resposta[i].chegada = response.data.data[i].chegada;
                         resposta[i].id_vaga_veiculo =  response.data.data[i].id_vaga_veiculo;
                         resposta[i].temporestante = response.data.data[i].temporestante;
+                        const tempo = resposta[i].temporestante.split(':');
+                        const data = new Date();
+                        const ano = data.getFullYear();
+                        const mes = data.getMonth() + 1;
+                        const dia = data.getDate();
+                        tempo[0] = (parseInt(tempo[0].replace(0, '')));
+                        tempo[1] = (parseInt(tempo[1].replace(0, '')))
+                        let minuto = data.getMinutes() + tempo[1];
+                        if (minuto >= 60 ) {
+                            tempo[0] = tempo[0] + 1;
+                            minuto = minuto - 60;
+                        }
+                        const hora = data.getHours() + tempo[0];
+                        const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
+                        resposta[i].Countdown = formatada;
+                        console.log(formatada)
+
                     }
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
                         resposta[i].numero_notificacoes_pendentes ="Sem notificações";
@@ -286,7 +306,7 @@ const ListarVeiculos = () => {
                                 {mostrardiv[index].estado ?  null
                                 :
                                 <div class="h6 d-flex align-items-center fs-6">
-                                    <h6><RxLapTimer />‎ Tempo restante: {link.temporestante} </h6>
+                                    <h6><RxLapTimer />‎ Tempo restante: <Countdown date={link.Countdown}/> </h6>
                                 </div>
                                 }
                             </div>

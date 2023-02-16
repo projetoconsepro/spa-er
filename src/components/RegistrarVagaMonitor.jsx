@@ -82,11 +82,13 @@ const RegistrarVagaMonitor = () => {
         
 
     const handleSubmit = async  () => {
+        const placaString = placaVeiculo.toString()
+        const placaMaiuscula = placaString.toUpperCase();
         const vagaa = [];
         vagaa[0] = localStorage.getItem('vaga');
         if(placaVeiculo === ""){
             setInputPlaca("form-control fs-5 is-invalid");
-            setEstado(true);
+            setEstado(true); 
             setMensagem("Preencha o campo placa");
             setTimeout(() => {
                 setInputPlaca("form-control fs-5");
@@ -95,8 +97,10 @@ const RegistrarVagaMonitor = () => {
             }, 4000);
             return;
         }
+     
+     
      await estacionamento.post('/estacionamento', {
-        placa: placaVeiculo,
+        placa: placaMaiuscula,
         numero_vaga: vagaa,
         tempo: tempo,
         pagamento: valor
@@ -141,7 +145,7 @@ const RegistrarVagaMonitor = () => {
                             <div className="form-group mb-4 mt-4">
                                 <p className='text-start'>Placa:</p>
                                 <div className="input-group">
-                                    <input className={InputPlaca} value={placaVeiculo} onChange={(e) => setPlacaVeiculo([e.target.value])} placeholder="Exemplo: IKW8K88" />
+                                    <input className={InputPlaca} value={placaVeiculo} onChange={(e) => setPlacaVeiculo([e.target.value])} placeholder="Exemplo: IKW8K88" id="seFuncionarFuncionou"/>
                                 </div>
                             </div>
                             <div className="h6 mt-3 " onChange={atualizafunc}>
