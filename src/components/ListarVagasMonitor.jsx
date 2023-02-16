@@ -15,6 +15,7 @@ const ListarVagasMonitor = () =>{
     const [estado , setEstado] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [salvaSetor, setSalvaSetor] = useState('');
+    const [tolerancia, setTolerancia] = useState(10);
 
     const vagas = axios.create({
         baseURL: process.env.REACT_APP_HOST,
@@ -43,6 +44,10 @@ const ListarVagasMonitor = () =>{
         }
     })
 
+    //setTimeout(() => {
+      //  window.location.reload();
+    //}, 30000);
+
     const getVagas = async (setor) => {
         const setor2 = document.getElementById('setoresSelect').value;
         if(setor2 !== undefined && setor2 !== null && setor2 !== ''){
@@ -68,6 +73,8 @@ const ListarVagasMonitor = () =>{
                         resposta[i].chegada = "";
                         resposta[i].placa = '';
                         resposta[i].temporestante = "";
+                        const date = new Date();
+                        resposta[i].Countdown= "";
                     }
                     else{
                         resposta[i].id_vaga_veiculo = response.data.data[i].id_vaga_veiculo;
@@ -75,14 +82,49 @@ const ListarVagasMonitor = () =>{
                         resposta[i].placa = response.data.data[i].placa;
                         resposta[i].temporestante = (response.data.data[i].temporestante);
                         resposta[i].tempo = (response.data.data[i].tempo);
+
+                        const horasplit = resposta[i].temporestante.split(':');
+
                         if(resposta[i].temporestante === '00:00:00'){
                             resposta[i].corline = '#F8D7DA';
                             resposta[i].cor = '#842029';
+                        }
+                        else if (horasplit[0] === '00'){
+                            const minutos = parseInt(horasplit[1]);
+                            if(minutos <= tolerancia){
+                                resposta[i].corline = '#FFF3CD';
+                                resposta[i].cor = '#664D03';
+                            }
+                            else {
+                                resposta[i].corline = '#D1E7DD';
+                                resposta[i].cor = '#0F5132';
+                            }
+                        }
+                        else if (horasplit[0] !== '00'){
+                            resposta[i].corline = '#D1E7DD';
+                                resposta[i].cor = '#0F5132';
                         }
                         else{
                             resposta[i].corline = '#fff';
                             resposta[i].cor = '#000';
                         }
+                        const tempo = resposta[i].temporestante.split(':');
+                        const data = new Date();
+                        const ano = data.getFullYear();
+                        const mes = data.getMonth() + 1;
+                        const dia = data.getDate();
+                        tempo[0] = (parseInt(tempo[0].replace(0, '')));
+                        tempo[1] = (parseInt(tempo[1].replace(0, '')))
+                        let minuto = data.getMinutes() + tempo[1];
+                        if (minuto >= 60 ) {
+                            tempo[0] = tempo[0] + 1;
+                            minuto = minuto - 60;
+                            console.log('entrou')
+                        }
+                        const hora = data.getHours() + tempo[0];
+                        const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
+                        resposta[i].Countdown = formatada;
+                        console.log(formatada)
                     }
                     }
                     const data = new Date();
@@ -90,6 +132,7 @@ const ListarVagasMonitor = () =>{
                     const minuto = data.getMinutes();
                     const horaAtual = hora + ":" + minuto;
                     setTempoAtual(horaAtual);
+
             }
         }
         else {
@@ -103,8 +146,6 @@ const ListarVagasMonitor = () =>{
     }
 
     useEffect(() => {
-        const setor = 'A'
-        getVagas(setor);
         
         setores.get('/setores'
         ).then(
@@ -118,8 +159,24 @@ const ListarVagasMonitor = () =>{
             console.log(error);
         }
         );
-    }, [])
 
+        setores.get('setores/tolerancia').then(
+            response => {
+                const timestamp = response.data.data.tolerancia;
+                console.log(timestamp)
+                const data = new Date(timestamp * 1000);
+                console.log(data)
+                const minutes = data.getMinutes();
+                console.log(minutes)
+                const teste = parseInt(minutes)
+                setTolerancia(teste);
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
+        const setor = 'A'
+        getVagas(setor);
+    }, [])
 
     const estaciona = (numero, id_vaga, tempo) => {
         if(tempo === '00:00:00'){
@@ -137,10 +194,9 @@ const ListarVagasMonitor = () =>{
                     }).then(
                         response => {
                             if(response.data.msg.resultado){
-                            const setor = salvaSetor;
                             Swal.fire('Veículo liberado', '', 'success')
                             setTimeout(() => {
-                                getVagas(setor);
+                                window.location.reload();
                             }, 1000);
                             }else {
                                 Swal.fire(`${response.data.msg.msg}`, '', 'error')
@@ -197,10 +253,10 @@ const ListarVagasMonitor = () =>{
                             <tbody>
                                 {resposta.map((vaga , index) => (  
                                 <tr key={index} onClick={()=>{estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante)}}> 
-                                    <th className="text-white" scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
-                                    <td className="fw-bolder text-gray-500" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.placa}</td>
-                                    <td className="fw-bolder text-gray-500" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.chegada}</td>
-                                    <td className="fw-bolder text-gray-500 fontbold" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.temporestante}</td>
+                                    <th className="text-white"scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
+                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.placa}</td>
+                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.chegada}</td>
+                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}><Countdown date={vaga.Countdown}/></td>
                                 </tr>
                                 ))}
                             </tbody>

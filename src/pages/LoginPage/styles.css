@@ -4172,6 +4172,14 @@ textarea.form-control-lg {
     justify-content: center;
     align-items: center;
 }
+#placa3 {
+    background-image: url("../../../public/assets/img/placa3.png")!important;
+    background-repeat: no-repeat;   
+    background-position: center;
+    background-size: contain;
+    justify-content: center;
+    align-items: center;
+}
 #placa2{
     border-top: 0;
     border-left: 0;
@@ -6502,6 +6510,15 @@ textarea.form-control-lg {
 
 #setoresSelect{
     width: 35% !important;
+}
+
+#seFuncionarFuncionou{
+    font-family: "FE" !important;
+}
+
+#seFuncionarFuncionou::placeholder{
+    font-family: "Inter", sans-serif;
+    font-size: 1rem;
 }
 
 #optionSetores{
@@ -22957,7 +22974,7 @@ textarea.form-control-lg {
 }
 
 #tempoCusto{
-    font-size: 0.7rem;
+    font-size: 0.8rem;
 }
 
 #vagaInput{

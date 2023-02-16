@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
 
 const RegistrarVeiculo = () => {
     const [placa, setPlaca] = useState("placa")
     const [textoPlaca, setTextoPlaca] = useState("")
-    const [limite, setLimite] = useState(7)
+    const [limite, setLimite] = useState(8)
     const [inputVazio, setInputVazio] = useState("inputvazio")
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
+    const [cont, setCont] = useState(0);
+    const [teste, setTeste] = useState("")
 
     const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked
@@ -19,7 +21,7 @@ const RegistrarVeiculo = () => {
         }
         else{
             setPlaca("placa")
-            setLimite(7)
+            setLimite(8)
             setInputVazio("inputvazio")
         }
     }
@@ -28,7 +30,7 @@ const RegistrarVeiculo = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-    const uppercase = textoPlaca.toUpperCase();
+    const uppercase = teste.toUpperCase();
     const veiculo = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -37,7 +39,9 @@ const RegistrarVeiculo = () => {
             'perfil_usuario': "cliente"
         }
     })
-    
+
+    console.log(uppercase)
+
     veiculo.post('/veiculo',{
         placa: uppercase,
         id_usuario: user2.id_usuario
@@ -66,7 +70,35 @@ const RegistrarVeiculo = () => {
         window.location.reload();
     }
 
+    useEffect(() => {
+        if (textoPlaca.at(4) === '1' || textoPlaca.at(4) === '2' 
+        || textoPlaca.at(4) === '3' || textoPlaca.at(4) === '4' || textoPlaca.at(4) === '5'
+        || textoPlaca.at(4) === '6' || textoPlaca.at(4) === '7' || textoPlaca.at(4) === '8'
+        || textoPlaca.at(4) === '9' || textoPlaca.at(4) === '0') {
+            setPlaca("placa3")
+            if (cont === 0) {
+                const fim = textoPlaca.substring(3, textoPlaca.length);
+                console.log(fim)
+                const texto = textoPlaca.substring(0, 3);
+                const traco = "-"
+                setTextoPlaca(texto +traco+ fim)
+                setCont(cont + 1)
+                }
+                else {
+                const fim = textoPlaca.substring(4, textoPlaca.length);
+                console.log(fim)
+                const texto = textoPlaca.substring(0, 3);
+                const traco = "-"
+                setTextoPlaca(texto +traco+ fim)
+                setCont(cont + 1)
+                }
+        } else {
+        setPlaca("placa")
+        setCont(0)
+        }
+        setTeste(textoPlaca.replace("-", ""))
 
+    }, [textoPlaca])
 
     
     return (
