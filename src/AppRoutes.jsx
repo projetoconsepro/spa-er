@@ -10,8 +10,8 @@ import ResetPassword from "./pages/ResetPassword/index.jsx";
 import Confirmation from "./pages/ResetPassword/confirmation";
 import NewPassword from "./pages/ResetPassword/newPassword";
 import RegistrarVagaMonitor from "./components/RegistrarVagaMonitor";
-import Countdown from "./components/Countdown";
 import Error from "./components/Error";
+import Camera from "./components/Camera";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -41,8 +41,8 @@ const AppRoutes = () => {
                 <Route exact path="/confirmacao" element={<Confirmation />} />
                 <Route exact path="/novasenha" element={<NewPassword />} />
                 <Route exact path="/registrarmonitor" element={<RegistrarVagaMonitor />} />
-                <Route exact path="/countdown" element={<Countdown />} />
                 <Route exact path="/*" element={<Error />} />
+                <Route exact path="/camera" element={<Camera />} />
             </Routes>
             </AuthProvider>
         </Router>

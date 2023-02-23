@@ -4192,6 +4192,11 @@ textarea.form-control-lg {
     color: red !important;
 }
 
+#testeCanvas{
+    width: 100%;
+    padding: 0 !important;
+}
+
 .form-check-input:focus {
     border-color: #4d6689;
     outline: 0;
@@ -6512,11 +6517,11 @@ textarea.form-control-lg {
     width: 35% !important;
 }
 
-#seFuncionarFuncionou{
+#fonteInputPlaca{
     font-family: "FE" !important;
 }
 
-#seFuncionarFuncionou::placeholder{
+#fonteInputPlaca::placeholder{
     font-family: "Inter", sans-serif;
     font-size: 1rem;
 }

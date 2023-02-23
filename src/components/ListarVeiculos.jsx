@@ -1,12 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import { FcPlus } from "react-icons/fc";
-import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCarAlt, FaParking } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import '../pages/LoginPage/styles.css';
-import Detalhesveiculos from "./Detalhesveiculos.jsx";
 import Swal from "sweetalert2";
 import Countdown from 'react-countdown';
 
@@ -20,8 +19,6 @@ const ListarVeiculos = () => {
     const [nofityvar] = useState([]);
     const [saldoCredito, setSaldoCredito] = useState("");
     const [vaga, setVaga] = useState([]);
-    const [estado] = useState([]);
-    const [mensagem] = useState([]);
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -112,7 +109,6 @@ const ListarVeiculos = () => {
                         const hora = data.getHours() + tempo[0];
                         const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
                         resposta[i].Countdown = formatada;
-                        console.log(formatada)
 
                     }
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
@@ -123,7 +119,7 @@ const ListarVeiculos = () => {
                         nofityvar[i] = { "notifi": "notify2" };
                     }
                     else {
-                        resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes}` + " notificações";
+                        resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
                         nofityvar[i] = { "notifi": "notify2" };
                     }
                 }
@@ -153,7 +149,7 @@ const ListarVeiculos = () => {
 
     useEffect(() => {
        atualizacomp();
-    }, [])
+    },[])
 
     function mexerValores () {
 

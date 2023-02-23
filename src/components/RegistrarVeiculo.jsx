@@ -98,7 +98,7 @@ const RegistrarVeiculo = () => {
         }
         setTeste(textoPlaca.replace("-", ""))
 
-    }, [textoPlaca])
+    },[cont, textoPlaca])
 
     
     return (
