@@ -119,12 +119,10 @@ const ListarVagasMonitor = () =>{
                         if (minuto >= 60 ) {
                             tempo[0] = tempo[0] + 1;
                             minuto = minuto - 60;
-                            console.log('entrou')
                         }
                         const hora = data.getHours() + tempo[0];
                         const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
                         resposta[i].Countdown = formatada;
-                        console.log(formatada)
                     }
                     }
                     const data = new Date();
@@ -155,7 +153,7 @@ const ListarVagasMonitor = () =>{
                     resposta2[i].setores = response.data.data.setores[i].nome;
                 }
             }
-        ).catch(function (error) {
+        ).catch(function (error){
             console.log(error);
         }
         );
@@ -163,11 +161,8 @@ const ListarVagasMonitor = () =>{
         setores.get('setores/tolerancia').then(
             response => {
                 const timestamp = response.data.data.tolerancia;
-                console.log(timestamp)
                 const data = new Date(timestamp * 1000);
-                console.log(data)
                 const minutes = data.getMinutes();
-                console.log(minutes)
                 const teste = parseInt(minutes)
                 setTolerancia(teste);
             }
@@ -178,7 +173,7 @@ const ListarVagasMonitor = () =>{
         getVagas(setor);
     }, [])
 
-    const estaciona = (numero, id_vaga, tempo) => {
+    const estaciona = (numero, id_vaga, tempo, placa) => {
         if(tempo === '00:00:00'){
             Swal.fire({
                 title: 'Deseja liberar esse veículo?',
@@ -208,7 +203,10 @@ const ListarVagasMonitor = () =>{
                     );
                     
                 } else if (result.isDenied) {
-                  Swal.fire('Notificado', '', 'info')
+                  localStorage.setItem('vaga', numero);
+                  localStorage.setItem('placa', placa);
+                  localStorage.setItem('componente', 'Notificacao');
+                  window.location.reload();
                 }
 
               })
@@ -252,7 +250,7 @@ const ListarVagasMonitor = () =>{
                             </thead>
                             <tbody>
                                 {resposta.map((vaga , index) => (  
-                                <tr key={index} onClick={()=>{estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante)}}> 
+                                <tr key={index} onClick={()=>{estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante ,vaga.placa)}}> 
                                     <th className="text-white"scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.placa}</td>
                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.chegada}</td>

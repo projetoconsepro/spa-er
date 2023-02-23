@@ -49,13 +49,13 @@ export const AuthProvider = ({ children }) => {
         const response = await createSession(login, password);
         try{
         if(response.data.msg.resultado === true) {
-        console.log("teste", response.data.dados.user.perfil.length)
-        if(response.data.msg.resultado === true && response.data.dados.user.perfil.length === 1){
-        const loggedUser = response.data.dados.user;
+        if(response.data.msg.resultado === true && response.data.dados.usuario.perfil.length === 1){
+        let loggedUser = response.data.dados.usuario;
+        loggedUser.perfil = [loggedUser.perfil[0].perfil];
         const token = response.data.dados.token;
-        if(response.data.dados.user.perfil[0] === 'cliente'){
+        if(loggedUser.perfil[0] === 'cliente'){
             localStorage.setItem('componente', 'MeusVeiculos');
-        }else if (response.data.dados.user.perfil[0]  === 'monitor'){
+        }else if (loggedUser.perfil[0] === 'monitor'){
             localStorage.setItem('componente', 'ListarVagasMonitor');
         }
         localStorage.setItem("user", JSON.stringify(loggedUser));
@@ -63,8 +63,8 @@ export const AuthProvider = ({ children }) => {
         api.defaults.headers.Authorization = `Bearer ${token}`;
         navigate('/home')
         }
-        else if(response.data.msg.resultado === true && response.data.dados.user.perfil.length > 1){
-        const loggedUser = response.data.dados.user;
+        else if(response.data.msg.resultado === true && response.data.dados.usuario.perfil.length > 1){
+        const loggedUser = response.data.dados.usuario;
         const token = response.data.dados.token;
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);

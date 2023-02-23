@@ -6,6 +6,8 @@ import RegistrarVeiculo from '../../components/RegistrarVeiculo';
 import RegistrarVagaCliente from '../../components/RegistrarVagaCliente';
 import RegistrarVagaMonitor from '../../components/RegistrarVagaMonitor';
 import Error from '../../components/Error';
+import Notificacao from '../../components/Notificacao';
+import Camera from '../../components/Camera';
 
 const Veiculos = () => {
     const componente = localStorage.getItem("componente");
@@ -23,6 +25,12 @@ const Veiculos = () => {
         }
         else if (componente === "ListarVagasMonitor"){
             return <ListarVagasMonitor />
+        }
+        else if ( componente === "Notificacao"){
+            return <Notificacao />
+        }
+        else if ( componente === "Camera"){
+            return <Camera />
         }
         else {
             return <Error />

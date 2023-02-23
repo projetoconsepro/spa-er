@@ -112,6 +112,12 @@ const Sidebar = () => {
             to: "/listarvagas",
             componente: "ListarVagasMonitor"
         })
+        links.push({
+            className: styles.className,
+            name: "Notificação",
+            to: "/notificacao",
+            componente: "Notificacao"
+        })
     }
 
     
