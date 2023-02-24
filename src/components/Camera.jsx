@@ -6,10 +6,8 @@ function Camera() {
   let videoRef = useRef(null);
   let photoRef1 = useRef(null)
   let [ response ] = useState([])
-  const [ cont , setCont] = useState(0)
+  const [cont, setCont] = useState(0)
   const [imagens, setImagens] = useState([]);
-
-
 
   const getVideo = () => {
     navigator.mediaDevices
