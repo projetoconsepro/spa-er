@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
 import { FaCarAlt } from 'react-icons/fa';
@@ -12,16 +13,28 @@ const Notificacao = () => {
     const [placa, setPlaca] = useState("");
     const [imagens] = useState([]);
     let [cont, setCont] = useState(0);
-
-
     const token = localStorage.getItem('token');
+    const [tipos, setTipos] = useState([]);
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
+    const [id_vagaveiculo, setIdVagaVeiculo] = useState("");
+
+    const notificacao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+            'token': token,
+            'id_usuario': user2.id_usuario,
+            'perfil_usuario': "monitor"
+        }
+    })
 
     const back = () => {
         localStorage.setItem("componente", "ListarVagasMonitor");
         localStorage.removeItem("vaga");
         localStorage.removeItem("placa");
+        for (let i = 0; i < 6; i++) {
+            localStorage.removeItem(`foto${i}`);
+        }
         window.location.reload();
     }
 
@@ -30,27 +43,37 @@ const Notificacao = () => {
         window.location.reload();
     }
 
-    const teste = () => {
+    const pegarFotos = () => {
         for (let i = 0; i < 6; i++) {
             if (localStorage.getItem(`foto${i}`) !== null) {
                 imagens.push(localStorage.getItem(`foto${i}`));
             }
-        }
     }
+    }
+
+
     useEffect(() => {
         const getVaga = localStorage.getItem("vaga");
         const getPlaca = localStorage.getItem("placa");
-        if (getVaga !== null && getPlaca !== null) {
+        const getid_vagaveiculo = localStorage.getItem("id_vagaveiculo");
+        if (getVaga !== null && getPlaca !== null ) {
             setSemInfo(true);
+            setIdVagaVeiculo(getid_vagaveiculo);
             setPlaca(getPlaca);
             setVaga(getVaga);
         }
         if (cont === 0) {
-            teste();
+            pegarFotos();
         }
 
+        notificacao.get('/notificacao/tipos').then((response) => {
+            const data = response.data.data;
+            setTipos(data)
+        }).catch((error) => {
+            console.log(error);
+        })
+
         setCont(cont++);
-        console.log('teste')
     }, [])
 
     return (
