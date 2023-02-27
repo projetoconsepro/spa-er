@@ -205,6 +205,7 @@ const ListarVagasMonitor = () =>{
                 } else if (result.isDenied) {
                   localStorage.setItem('vaga', numero);
                   localStorage.setItem('placa', placa);
+                  localStorage.setItem('idVagaVeiculo', id_vaga);
                   localStorage.setItem('componente', 'Notificacao');
                   window.location.reload();
                 }

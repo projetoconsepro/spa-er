@@ -1,27 +1,62 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
 import { FaCarAlt } from 'react-icons/fa';
 
 const Notificacao = () => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
-    const [inputVaga, setinputVaga] = useState("form-control fs-5");
     const [vaga, setVaga] = useState([]);
     const [dados, setDados] = useState(true);
     const [seminfo, setSemInfo] = useState(false);
     const [placa, setPlaca] = useState("");
     const [imagens] = useState([]);
+    const [modelo, setModelo] = useState("Celta");
+    const [cor, setCor] = useState("Preto");
+    const [fabricante, setFabricante] = useState("Chevrolet");
     let [cont, setCont] = useState(0);
 
+    const setores = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+            'token': token,
+            'id_usuario': user2.id_usuario,
+            'perfil_usuario': "monitor"
+        }
+    });
 
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
+    const submit = async () => {
+        let foto = []
+        for (let i = 0; i < 6; i++) {
+            if (localStorage.getItem(`foto${i}`) !== null) {
+                foto.push(localStorage.getItem(`foto${i}`));
+            }
+        }
+        console.log(foto)
+        setores.post('/setores/fotos', {
+            "foto": foto
+        }
+        ).then(
+            response => {
+               console.log(response)
+            }
+        ).catch(function (error){
+            console.log(error);
+        }
+        );
+    }
 
     const back = () => {
         localStorage.setItem("componente", "ListarVagasMonitor");
         localStorage.removeItem("vaga");
+        localStorage.removeItem("id_vaga");
         localStorage.removeItem("placa");
+        for (let i = 0; i < 6; i++) {
+            localStorage.removeItem(`foto${i}`);
+        }
         window.location.reload();
     }
 
@@ -50,7 +85,6 @@ const Notificacao = () => {
         }
 
         setCont(cont++);
-        console.log('teste')
     }, [])
 
     return (
@@ -69,9 +103,9 @@ const Notificacao = () => {
                                     <div className='text-start bg-gray-200 text-dark rounded'>
                                         <div class="row justify-content-center">
                                             <div className="col-8">
-                                                <h6 className='mx-3 pt-2'><small>Modelo: Celta</small></h6>
-                                                <h6 className='mx-3'><small>Cor: Preto</small></h6>
-                                                <h6 className='mx-3 pb-2'><small>Fabricante: Chevrolet</small></h6>
+                                                <h6 className='mx-3 pt-2'><small>Modelo: {modelo}</small></h6>
+                                                <h6 className='mx-3'><small>Cor: {cor}</small></h6>
+                                                <h6 className='mx-3 pb-2'><small>Fabricante: {fabricante}</small></h6>
                                             </div>
                                             <div className="col-4 text-center pt-3 mt-3">
                                                 <FaCarAlt size={35} />
@@ -82,8 +116,8 @@ const Notificacao = () => {
                                         <p className='text-start'>Tipo de notificação:</p>
                                         <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="placaa">
                                             <option value="tempoExcedido">Tempo excedido</option>
-                                            <option value="tempoExcedido">Vaga de idoso</option>
-                                            <option value="tempoExcedido">Vaga de deficiente</option>
+                                            <option value="vagaIdoso">Vaga de idoso</option>
+                                            <option value="vagaNotificacao">Vaga de deficiente</option>
                                         </select>
                                     </div>
                                     <div className="h6 mt-5">
@@ -101,7 +135,7 @@ const Notificacao = () => {
                                     </div>
                                     <div className="mt-4 mb-5 gap-2 d-md-block">
                                         <button type="submit" className="btn2 botao" onClick={back}>Cancelar</button>
-                                        <button type="submit" className="btn3 botao">Confirmar</button>
+                                        <button type="submit" className="btn3 botao" onClick={submit}>Confirmar</button>
                                     </div>
                                     <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                         {mensagem}
