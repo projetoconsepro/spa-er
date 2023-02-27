@@ -10,6 +10,7 @@ const Notificacao = () => {
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
     const [vaga, setVaga] = useState([]);
+    const [vagaVeiculo, setVagaVeiculo] = useState("");
     const [dados, setDados] = useState(true);
     const [seminfo, setSemInfo] = useState(false);
     const [placa, setPlaca] = useState("");
@@ -17,9 +18,11 @@ const Notificacao = () => {
     const [modelo, setModelo] = useState("Celta");
     const [cor, setCor] = useState("Preto");
     const [fabricante, setFabricante] = useState("Chevrolet");
+    const [tipoNot, setTipoNot] = useState("1");
+    const [data, setData] = useState([]);
     let [cont, setCont] = useState(0);
 
-    const setores = axios.create({
+    const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
             'token': token,
@@ -28,31 +31,26 @@ const Notificacao = () => {
         }
     });
 
+
     const submit = async () => {
-        let foto = []
-        for (let i = 0; i < 6; i++) {
-            if (localStorage.getItem(`foto${i}`) !== null) {
-                foto.push(localStorage.getItem(`foto${i}`));
-            }
-        }
-        console.log(foto)
-        setores.post('/setores/fotos', {
-            "foto": foto
-        }
-        ).then(
+        console.log(tipoNot)
+        console.log(vagaVeiculo)
+        requisicao.post('/notificacao', {
+            "id_vaga_veiculo": vagaVeiculo,
+            "id_tipo_notificacao": tipoNot,
+            "imagens": imagens,
+    }).then(
             response => {
-               console.log(response)
-            }
-        ).catch(function (error){
+                console.log(response)
+            }).catch(function (error) {
             console.log(error);
-        }
-        );
-    }
+        });
+}
 
     const back = () => {
         localStorage.setItem("componente", "ListarVagasMonitor");
         localStorage.removeItem("vaga");
-        localStorage.removeItem("id_vaga");
+        localStorage.removeItem("id_vagaveiculo");
         localStorage.removeItem("placa");
         for (let i = 0; i < 6; i++) {
             localStorage.removeItem(`foto${i}`);
@@ -65,25 +63,46 @@ const Notificacao = () => {
         window.location.reload();
     }
 
-    const teste = () => {
+    const pegarFotos = async () => {
         for (let i = 0; i < 6; i++) {
             if (localStorage.getItem(`foto${i}`) !== null) {
                 imagens.push(localStorage.getItem(`foto${i}`));
             }
         }
+
     }
+
+    const getTipoNot= () => {
+        const tipoNotificacao = document.getElementById('tiposNot').value;
+        console.log(tipoNotificacao)
+        setTipoNot(tipoNotificacao);
+    }
+
     useEffect(() => {
+        requisicao.get('/notificacao/tipos').then(
+            response => {
+                const newData = response?.data?.data?.map(item => ({
+                    nome: item.nome,
+                    id_tipo_notificacao: item.id_tipo_notificacao
+                  }));
+                setData(newData);
+            }
+        ).catch(function (error){
+            console.log(error);
+        });
+
         const getVaga = localStorage.getItem("vaga");
         const getPlaca = localStorage.getItem("placa");
+        const getVagaVeiculo = localStorage.getItem("id_vagaveiculo");
         if (getVaga !== null && getPlaca !== null) {
+            setVagaVeiculo(getVagaVeiculo)
             setSemInfo(true);
             setPlaca(getPlaca);
             setVaga(getVaga);
         }
         if (cont === 0) {
-            teste();
+            pegarFotos();
         }
-
         setCont(cont++);
     }, [])
 
@@ -112,13 +131,13 @@ const Notificacao = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="h6 mt-3 ">
+                                    <div className="h6 mt-3" onChange={getTipoNot}>
                                         <p className='text-start'>Tipo de notificação:</p>
-                                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="placaa">
-                                            <option value="tempoExcedido">Tempo excedido</option>
-                                            <option value="vagaIdoso">Vaga de idoso</option>
-                                            <option value="vagaNotificacao">Vaga de deficiente</option>
-                                        </select>
+                                       <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
+                                    {data.map((link, index) => (
+                                            <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
+                                        ))}
+                                </select>
                                     </div>
                                     <div className="h6 mt-5">
                                         <button type="submit" className="btn4 botao" onClick={renderCamera}>Tirar fotos do veículo <AiFillCamera /></button>

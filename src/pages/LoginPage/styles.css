@@ -7467,6 +7467,11 @@ textarea.form-control-lg {
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
 }
+.card-body2 {
+    height: 10rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
 
 .card-title {
     margin-bottom: 0.875rem;
@@ -22838,6 +22843,16 @@ textarea.form-control-lg {
         width: 100%;
         max-width: 260px;
     }
+}
+
+#testeNot{
+    border: 1px solid red;
+  border-radius: 50%;
+  padding: 0.1em 0.4em; 
+  color: red !important;
+}
+#testeNot2{
+    display: none !important;
 }
 
 .sidebar .nav {

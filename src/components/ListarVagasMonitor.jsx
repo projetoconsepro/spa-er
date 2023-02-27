@@ -17,25 +17,7 @@ const ListarVagasMonitor = () =>{
     const [salvaSetor, setSalvaSetor] = useState('');
     const [tolerancia, setTolerancia] = useState(10);
 
-    const vagas = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "monitor"
-        }
-    })
-
-    const setores = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "monitor"
-        }
-    })
-
-    const saida = axios.create({
+    const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
             'token': token,
@@ -57,7 +39,7 @@ const ListarVagasMonitor = () =>{
         }
     }
     setSalvaSetor(setor);
-        await vagas.get(`/vagas?setor=${setor}`
+        await requisicao.get(`/vagas?setor=${setor}`
         ).then(
             response => {
                 if(response.data.msg.resultado !== false){
@@ -77,6 +59,14 @@ const ListarVagasMonitor = () =>{
                         resposta[i].Countdown= "";
                     }
                     else{
+                        if (response.data.data[i].numero_notificacoes_pendentes !== 0){
+                            resposta[i].display = 'testeNot';
+                            resposta[i].numero_notificacoes_pendentes = response.data.data[i].numero_notificacoes_pendentes;
+                        }
+                        else {
+                            resposta[i].display = 'testeNot2';
+                            resposta[i].numero_notificacoes_pendentes = 0;
+                        }
                         resposta[i].id_vaga_veiculo = response.data.data[i].id_vaga_veiculo;
                         resposta[i].chegada = response.data.data[i].chegada;
                         resposta[i].placa = response.data.data[i].placa;
@@ -108,6 +98,11 @@ const ListarVagasMonitor = () =>{
                             resposta[i].corline = '#fff';
                             resposta[i].cor = '#000';
                         }
+                        if(resposta[i].numero_notificacoes_pendentes !== 0){
+                            resposta[i].corline = '#000';
+                            resposta[i].cor = '#fff';
+                        }
+
                         const tempo = resposta[i].temporestante.split(':');
                         const data = new Date();
                         const ano = data.getFullYear();
@@ -122,7 +117,9 @@ const ListarVagasMonitor = () =>{
                         }
                         const hora = data.getHours() + tempo[0];
                         const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
+                        const formatada2 = (hora * 3600) + (minuto * 60);
                         resposta[i].Countdown = formatada;
+                        console.log(formatada)
                     }
                     }
                     const data = new Date();
@@ -144,8 +141,7 @@ const ListarVagasMonitor = () =>{
     }
 
     useEffect(() => {
-        
-        setores.get('/setores'
+        requisicao.get('/setores'
         ).then(
             response => {
                 for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
@@ -158,7 +154,7 @@ const ListarVagasMonitor = () =>{
         }
         );
 
-        setores.get('setores/tolerancia').then(
+        requisicao.get('setores/tolerancia').then(
             response => {
                 const timestamp = response.data.data.tolerancia;
                 const data = new Date(timestamp * 1000);
@@ -184,7 +180,7 @@ const ListarVagasMonitor = () =>{
                 denyButtonText: `Notificar`,
               }).then((result) => {
                 if (result.isConfirmed) {
-                    saida.post(`/estacionamento/saida`, {
+                    requisicao.post(`/estacionamento/saida`, {
                         idvagaVeiculo: id_vaga
                     }).then(
                         response => {
@@ -203,6 +199,7 @@ const ListarVagasMonitor = () =>{
                     );
                     
                 } else if (result.isDenied) {
+                  localStorage.setItem('id_vagaveiculo', id_vaga);
                   localStorage.setItem('vaga', numero);
                   localStorage.setItem('placa', placa);
                   localStorage.setItem('idVagaVeiculo', id_vaga);
@@ -253,7 +250,7 @@ const ListarVagasMonitor = () =>{
                                 {resposta.map((vaga , index) => (  
                                 <tr key={index} onClick={()=>{estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante ,vaga.placa)}}> 
                                     <th className="text-white"scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
-                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.placa}</td>
+                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificacoes_pendentes}</small></td>
                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}>{vaga.chegada}</td>
                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor}}><Countdown date={vaga.Countdown}/></td>
                                 </tr>
