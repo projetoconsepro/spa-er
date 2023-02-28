@@ -35,16 +35,67 @@ const Notificacao = () => {
     const submit = async () => {
         console.log(tipoNot)
         console.log(vagaVeiculo)
+        if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") { 
         requisicao.post('/notificacao', {
             "id_vaga_veiculo": vagaVeiculo,
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
     }).then(
             response => {
-                console.log(response)
+                if(response.data.msg.resultado === true){
+                    localStorage.setItem("componente", "ListarVagasMonitor");
+                    localStorage.removeItem("vaga");
+                    localStorage.removeItem("id_vagaveiculo");
+                    localStorage.removeItem("placa");
+                    for (let i = 0; i < 6; i++) {
+                        localStorage.removeItem(`foto${i}`);
+                    }
+                    window.location.reload();
+                }
+                else {
+                    setMensagem(response.data.msg.msg)
+                    setEstado(true)
+                    setTimeout(() => {
+                        setEstado(false);
+                        setMensagem("");
+                    }, 4000);
+                }
             }).catch(function (error) {
             console.log(error);
         });
+    }
+    else{
+        console.log(vaga)
+        requisicao.post('/notificacao', {
+            "placa": placa,
+            "vaga": vaga,
+            "id_tipo_notificacao": tipoNot,
+            "imagens": imagens,
+    }).then(
+            response => {
+                if(response.data.msg.resultado === true){
+                    localStorage.setItem("componente", "ListarVagasMonitor");
+                    localStorage.removeItem("vaga");
+                    localStorage.removeItem("id_vagaveiculo");
+                    localStorage.removeItem("placa");
+                    for (let i = 0; i < 6; i++) {
+                        localStorage.removeItem(`foto${i}`);
+                    }
+                    window.location.reload();
+                }
+                else {
+                    setMensagem(response.data.msg.msg)
+                    setEstado(true)
+                    setTimeout(() => {
+                        setEstado(false);
+                        setMensagem("");
+                    }, 4000);
+                }
+            }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
 }
 
     const back = () => {
