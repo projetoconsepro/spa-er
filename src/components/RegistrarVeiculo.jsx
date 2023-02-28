@@ -71,6 +71,8 @@ const RegistrarVeiculo = () => {
     }
 
     useEffect(() => {
+        const clicado = document.getElementById("flexSwitchCheckDefault").checked
+        if(clicado === false){
         if (textoPlaca.at(4) === '1' || textoPlaca.at(4) === '2' 
         || textoPlaca.at(4) === '3' || textoPlaca.at(4) === '4' || textoPlaca.at(4) === '5'
         || textoPlaca.at(4) === '6' || textoPlaca.at(4) === '7' || textoPlaca.at(4) === '8'
@@ -97,6 +99,7 @@ const RegistrarVeiculo = () => {
         setCont(0)
         }
         setTeste(textoPlaca.replace("-", ""))
+    }
 
     },[cont, textoPlaca])
 

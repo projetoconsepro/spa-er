@@ -23688,6 +23688,13 @@ label {
     margin-bottom: 0px !important;
 }
 
+#aparece {
+    display: visible !important;
+}
+
+#escondido{
+    display: none !important;
+}
 /**
  * = Avatars
  */
