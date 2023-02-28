@@ -55,10 +55,10 @@ const ListarVagasMonitor = () =>{
                         resposta[i].chegada = "";
                         resposta[i].placa = '';
                         resposta[i].temporestante = "";
-                        const date = new Date();
                         resposta[i].Countdown= "";
                     }
                     else{
+                        console.log(response.data.data[i].numero_notificacoes_pendentes)
                         if (response.data.data[i].numero_notificacoes_pendentes !== 0){
                             resposta[i].display = 'testeNot';
                             resposta[i].numero_notificacoes_pendentes = response.data.data[i].numero_notificacoes_pendentes;

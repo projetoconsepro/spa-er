@@ -90,6 +90,24 @@ const ListarVeiculos = () => {
                         resposta[i].estacionado = "Não estacionado"
                         resposta[i].temporestante = "";
                         notificacao[i] = {"estado": true};
+                        if (response.data.data[i].numero_notificacoes_pendentes === 0) {
+                            resposta[i].div = "card-body";
+                            resposta[i].numero_notificacoes_pendentes = "Sem notificações";
+                            notificacao[i] = {"estado": true};
+                        }
+                        else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
+                            resposta[i].div = "card-body2";
+                            notificacao[i] = {"estado": false};
+                            resposta[i].numero_notificacoes_pendentes = "Uma notificação"
+                            nofityvar[i] = { "notifi": "notify2" };
+                        }
+                        else {
+                            resposta[i].div = "card-body2";
+                            resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
+                            nofityvar[i] = { "notifi": "notify2" };
+                            notificacao[i] = {"estado": false};
+                        }
+                        
                     }
                     else {
                         mostrardiv[i] = { "estado": false };
@@ -311,13 +329,13 @@ const ListarVeiculos = () => {
                                 </div>
                                 {mostrardiv[index].estado ?  null
                                 :
-                                <div class="h6 d-flex align-items-center fs-6">
+                                <div class="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
                                     <h6><RxLapTimer />‎ Tempo restante: <Countdown date={link.Countdown}/> </h6>
                                 </div>
                                 }
                                 {notificacao[index].estado ?  null
                                 :
-                                <div class="h6 d-flex align-items-center fs-6">
+                                <div class="h6 d-flex align-items-center fs-6" >
                                     <h6><AiOutlineInfoCircle/>‎ {link.numero_notificacoes_pendentes}</h6>
                                 </div>
                                 }

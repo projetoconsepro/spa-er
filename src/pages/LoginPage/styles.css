@@ -23683,6 +23683,11 @@ label {
     font-size: 2rem;
 }
 
+#estacionadocarroo{
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+}
+
 /**
  * = Avatars
  */
