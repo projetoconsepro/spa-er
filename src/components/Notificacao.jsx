@@ -4,33 +4,53 @@ import { AiFillCamera } from 'react-icons/ai';
 import { FaCarAlt } from 'react-icons/fa';
 
 const Notificacao = () => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
-    const [inputVaga, setinputVaga] = useState("form-control fs-5");
     const [vaga, setVaga] = useState([]);
+    const [vagaVeiculo, setVagaVeiculo] = useState("");
     const [dados, setDados] = useState(true);
     const [seminfo, setSemInfo] = useState(false);
     const [placa, setPlaca] = useState("");
     const [imagens] = useState([]);
+    const [modelo, setModelo] = useState("Celta");
+    const [cor, setCor] = useState("Preto");
+    const [fabricante, setFabricante] = useState("Chevrolet");
+    const [tipoNot, setTipoNot] = useState("1");
+    const [data, setData] = useState([]);
     let [cont, setCont] = useState(0);
-    const token = localStorage.getItem('token');
-    const [tipos, setTipos] = useState([]);
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
-    const [id_vagaveiculo, setIdVagaVeiculo] = useState("");
 
-    const notificacao = axios.create({
+    const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
             'token': token,
             'id_usuario': user2.id_usuario,
             'perfil_usuario': "monitor"
         }
-    })
+    });
+
+
+    const submit = async () => {
+        console.log(tipoNot)
+        console.log(vagaVeiculo)
+        requisicao.post('/notificacao', {
+            "id_vaga_veiculo": vagaVeiculo,
+            "id_tipo_notificacao": tipoNot,
+            "imagens": imagens,
+    }).then(
+            response => {
+                console.log(response)
+            }).catch(function (error) {
+            console.log(error);
+        });
+}
 
     const back = () => {
         localStorage.setItem("componente", "ListarVagasMonitor");
         localStorage.removeItem("vaga");
+        localStorage.removeItem("id_vagaveiculo");
         localStorage.removeItem("placa");
         for (let i = 0; i < 6; i++) {
             localStorage.removeItem(`foto${i}`);
@@ -43,36 +63,46 @@ const Notificacao = () => {
         window.location.reload();
     }
 
-    const pegarFotos = () => {
+    const pegarFotos = async () => {
         for (let i = 0; i < 6; i++) {
             if (localStorage.getItem(`foto${i}`) !== null) {
                 imagens.push(localStorage.getItem(`foto${i}`));
             }
-    }
+        }
+
     }
 
+    const getTipoNot= () => {
+        const tipoNotificacao = document.getElementById('tiposNot').value;
+        console.log(tipoNotificacao)
+        setTipoNot(tipoNotificacao);
+    }
 
     useEffect(() => {
+        requisicao.get('/notificacao/tipos').then(
+            response => {
+                const newData = response?.data?.data?.map(item => ({
+                    nome: item.nome,
+                    id_tipo_notificacao: item.id_tipo_notificacao
+                  }));
+                setData(newData);
+            }
+        ).catch(function (error){
+            console.log(error);
+        });
+
         const getVaga = localStorage.getItem("vaga");
         const getPlaca = localStorage.getItem("placa");
-        const getid_vagaveiculo = localStorage.getItem("id_vagaveiculo");
-        if (getVaga !== null && getPlaca !== null ) {
+        const getVagaVeiculo = localStorage.getItem("id_vagaveiculo");
+        if (getVaga !== null && getPlaca !== null) {
+            setVagaVeiculo(getVagaVeiculo)
             setSemInfo(true);
-            setIdVagaVeiculo(getid_vagaveiculo);
             setPlaca(getPlaca);
             setVaga(getVaga);
         }
         if (cont === 0) {
             pegarFotos();
         }
-
-        notificacao.get('/notificacao/tipos').then((response) => {
-            const data = response.data.data;
-            setTipos(data)
-        }).catch((error) => {
-            console.log(error);
-        })
-
         setCont(cont++);
     }, [])
 
@@ -92,22 +122,22 @@ const Notificacao = () => {
                                     <div className='text-start bg-gray-200 text-dark rounded'>
                                         <div class="row justify-content-center">
                                             <div className="col-8">
-                                                <h6 className='mx-3 pt-2'><small>Modelo: Celta</small></h6>
-                                                <h6 className='mx-3'><small>Cor: Preto</small></h6>
-                                                <h6 className='mx-3 pb-2'><small>Fabricante: Chevrolet</small></h6>
+                                                <h6 className='mx-3 pt-2'><small>Modelo: {modelo}</small></h6>
+                                                <h6 className='mx-3'><small>Cor: {cor}</small></h6>
+                                                <h6 className='mx-3 pb-2'><small>Fabricante: {fabricante}</small></h6>
                                             </div>
                                             <div className="col-4 text-center pt-3 mt-3">
                                                 <FaCarAlt size={35} />
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="h6 mt-3 ">
+                                    <div className="h6 mt-3" onChange={getTipoNot}>
                                         <p className='text-start'>Tipo de notificação:</p>
-                                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="placaa">
-                                            <option value="tempoExcedido">Tempo excedido</option>
-                                            <option value="tempoExcedido">Vaga de idoso</option>
-                                            <option value="tempoExcedido">Vaga de deficiente</option>
-                                        </select>
+                                       <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
+                                    {data.map((link, index) => (
+                                            <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
+                                        ))}
+                                </select>
                                     </div>
                                     <div className="h6 mt-5">
                                         <button type="submit" className="btn4 botao" onClick={renderCamera}>Tirar fotos do veículo <AiFillCamera /></button>
@@ -124,7 +154,7 @@ const Notificacao = () => {
                                     </div>
                                     <div className="mt-4 mb-5 gap-2 d-md-block">
                                         <button type="submit" className="btn2 botao" onClick={back}>Cancelar</button>
-                                        <button type="submit" className="btn3 botao">Confirmar</button>
+                                        <button type="submit" className="btn3 botao" onClick={submit}>Confirmar</button>
                                     </div>
                                     <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                         {mensagem}

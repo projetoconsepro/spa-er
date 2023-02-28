@@ -28,6 +28,20 @@ function Camera() {
 }, [])
 
   const LocalStorage = () => {
+    let cont2 = 0;
+    for (let i = 0; i < response.length; i++) {
+      if (response[i].foto !== null) {
+        cont2++;
+      }
+    }
+    if (cont2 < 4) { 
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Minimo de 4 fotos!',
+        footer: '<a href>Why do I have this issue?</a>'
+      })
+    }else {
     for(let i = 0; i < response.length; i++){
       if(response[i].foto !== null){
         localStorage.setItem(`foto${i}`, response[i].foto);
@@ -35,6 +49,7 @@ function Camera() {
     }
     localStorage.setItem("componente", "Notificacao");
     window.location.reload();
+  }
   }
 
   function removerImagem(id){
@@ -83,7 +98,7 @@ function Camera() {
       })
     }
     else {
-      response.push({ "id": cont, "foto": photoo.current.toDataURL() })
+      response.push({ "id": cont, "foto": photoo.current.toDataURL('image/png') })
     setCont(cont + 1)
   }
   }

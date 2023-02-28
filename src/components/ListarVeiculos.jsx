@@ -5,6 +5,7 @@ import { FaCarAlt, FaParking } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import '../pages/LoginPage/styles.css';
 import Swal from "sweetalert2";
 import Countdown from 'react-countdown';
@@ -19,6 +20,7 @@ const ListarVeiculos = () => {
     const [nofityvar] = useState([]);
     const [saldoCredito, setSaldoCredito] = useState("");
     const [vaga, setVaga] = useState([]);
+    const [notificacao ] = useState([]);
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -76,7 +78,10 @@ const ListarVeiculos = () => {
                     window.location.reload();
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
+                    console.log(response.data.data[i])
                     resposta[i] = {};
+                    resposta[i].div = "card-body";
+                    notificacao[i] = {"estado": true};
                     mostrar2[i] = { "estado": false };
                     mostrardiv[i] = { "estado": true };
                     nofityvar[i] = { "notifi": "notify" };
@@ -84,7 +89,25 @@ const ListarVeiculos = () => {
                     if (response.data.data[i].estacionado === 'N') {
                         resposta[i].estacionado = "Não estacionado"
                         resposta[i].temporestante = "";
-
+                        notificacao[i] = {"estado": true};
+                        if (response.data.data[i].numero_notificacoes_pendentes === 0) {
+                            resposta[i].div = "card-body";
+                            resposta[i].numero_notificacoes_pendentes = "Sem notificações";
+                            notificacao[i] = {"estado": true};
+                        }
+                        else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
+                            resposta[i].div = "card-body2";
+                            notificacao[i] = {"estado": false};
+                            resposta[i].numero_notificacoes_pendentes = "Uma notificação"
+                            nofityvar[i] = { "notifi": "notify2" };
+                        }
+                        else {
+                            resposta[i].div = "card-body2";
+                            resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
+                            nofityvar[i] = { "notifi": "notify2" };
+                            notificacao[i] = {"estado": false};
+                        }
+                        
                     }
                     else {
                         mostrardiv[i] = { "estado": false };
@@ -109,19 +132,24 @@ const ListarVeiculos = () => {
                         const hora = data.getHours() + tempo[0];
                         const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
                         resposta[i].Countdown = formatada;
-
-                    }
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
-                        resposta[i].numero_notificacoes_pendentes ="Sem notificações";
+                        resposta[i].div = "card-body";
+                        resposta[i].numero_notificacoes_pendentes = "Sem notificações";
+                        notificacao[i] = {"estado": true};
                     }
                     else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
+                        resposta[i].div = "card-body2";
+                        notificacao[i] = {"estado": false};
                         resposta[i].numero_notificacoes_pendentes = "Uma notificação"
                         nofityvar[i] = { "notifi": "notify2" };
                     }
                     else {
+                        resposta[i].div = "card-body2";
                         resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
                         nofityvar[i] = { "notifi": "notify2" };
+                        notificacao[i] = {"estado": false};
                     }
+                }
                 }
             }
 
@@ -290,7 +318,7 @@ const ListarVeiculos = () => {
 
             {resposta.map((link, index) => (
                 <div class="card border-0 shadow mt-5" key={index} >
-                    <div class="card-body" onClick={()=>{handleClick(index)}}>
+                    <div class={link.div} onClick={()=>{handleClick(index)}}>
                         <div class="d-flex align-items-center justify-content-between pb-3">
                             <div>
                                 <div class="h2 mb-0 d-flex align-items-center">
@@ -301,8 +329,14 @@ const ListarVeiculos = () => {
                                 </div>
                                 {mostrardiv[index].estado ?  null
                                 :
-                                <div class="h6 d-flex align-items-center fs-6">
+                                <div class="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
                                     <h6><RxLapTimer />‎ Tempo restante: <Countdown date={link.Countdown}/> </h6>
+                                </div>
+                                }
+                                {notificacao[index].estado ?  null
+                                :
+                                <div class="h6 d-flex align-items-center fs-6" >
+                                    <h6><AiOutlineInfoCircle/>‎ {link.numero_notificacoes_pendentes}</h6>
                                 </div>
                                 }
                             </div>
