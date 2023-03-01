@@ -26,7 +26,7 @@ const Cronometro = ({ time }) => {
   };
 
   return (
-    <div>{formatTime(seconds)}</div>
+    <span>{formatTime(seconds)}</span>
   );
 };
 
