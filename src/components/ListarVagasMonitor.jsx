@@ -62,9 +62,9 @@ const ListarVagasMonitor = () => {
                             }
                             else {
                                 resposta[i].variaDisplay = "aparece";
-                                if (response.data.data[i].numero_notificacoes_pendentes !== 0) {
+                                if (response.data.data[i].numero_notificacoes_pendentess !== 0) {
                                     resposta[i].display = 'testeNot';
-                                    resposta[i].numero_notificacoes_pendentes = response.data.data[i].numero_notificacoes_pendentes;
+                                    resposta[i].numero_notificacoes_pendentes = response.data.data[i].numero_notificacoes_pendentess;
                                 }
                                 else {
                                     resposta[i].display = 'testeNot2';
@@ -108,7 +108,6 @@ const ListarVagasMonitor = () => {
                                 }
 
                                 const tempo = resposta[i].temporestante.split(':');
-                                console.log(resposta[i].temporestante)
                                 const data = new Date();
                                 const ano = data.getFullYear();
                                 const mes = data.getMonth() + 1;
@@ -122,7 +121,6 @@ const ListarVagasMonitor = () => {
                                 }
                                 const hora = data.getHours() + tempo[0];
                                 const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
-                                console.log(formatada)
                                 resposta[i].Countdown = formatada;
                             }
                         }
@@ -173,10 +171,42 @@ const ListarVagasMonitor = () => {
         getVagas(setor);
     }, [])
 
-    const estaciona = (numero, id_vaga, tempo, placa) => {
+    const estaciona = (numero, id_vaga, tempo, placa, notificacoes) => {
         if (tempo === '00:00:00') {
+            if ( notificacoes !== 0) {
+
+                Swal.fire({
+                    title: 'Deseja liberar esta vaga?',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonText: 'Liberar',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        requisicao.post(`/estacionamento/saida`, {
+                            idvagaVeiculo: id_vaga
+                        }).then(
+                            response => {
+                                if (response.data.msg.resultado) {
+                                    Swal.fire('Vaga liberada', '', 'success')
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 1000);
+                                } else {
+                                    Swal.fire(`${response.data.msg.msg}`, '', 'error')
+                                }
+                            }
+                        ).catch(function (error) {
+                            console.log(error);
+                        }
+                        );
+    
+                    }
+                })
+
+            }
+            else {
             Swal.fire({
-                title: 'Deseja liberar esse veículo?',
+                title: 'Deseja liberar esta vaga?',
                 showDenyButton: true,
                 showCancelButton: true,
                 cancelButtonText: 'Cancelar',
@@ -189,7 +219,7 @@ const ListarVagasMonitor = () => {
                     }).then(
                         response => {
                             if (response.data.msg.resultado) {
-                                Swal.fire('Veículo liberado', '', 'success')
+                                Swal.fire('Vaga liberada', '', 'success')
                                 setTimeout(() => {
                                     window.location.reload();
                                 }, 1000);
@@ -210,13 +240,57 @@ const ListarVagasMonitor = () => {
                     localStorage.setItem('componente', 'Notificacao');
                     window.location.reload();
                 }
+                
 
             })
         }
-        else {
-            localStorage.setItem('vaga', numero);
-            localStorage.setItem('componente', 'RegistrarVagaMonitor');
-            window.location.reload();
+        } else {
+            if ( placa === ''){
+                localStorage.setItem('vaga', numero);
+                localStorage.setItem('componente', 'RegistrarVagaMonitor');
+                window.location.reload(); 
+            }
+            else {
+                Swal.fire({
+                    title: 'Deseja liberar esse veículo?',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonText: 'Liberar',
+                    denyButtonText: `Adicionar tempo`,
+                    denyButtonColor: 'green'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        requisicao.post(`/estacionamento/saida`, {
+                            idvagaVeiculo: id_vaga
+                        }).then(
+                            response => {
+                                if (response.data.msg.resultado) {
+                                    Swal.fire('Vaga liberada', '', 'success')
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 1000);
+                                } else {
+                                    Swal.fire(`${response.data.msg.msg}`, '', 'error')
+                                }
+                            }
+                        ).catch(function (error) {
+                            console.log(error);
+                        }
+                        );
+    
+                    } else if (result.isDenied) {
+                        localStorage.setItem('vaga', numero);
+                        localStorage.setItem('id_vagaveiculo', id_vaga);
+                        localStorage.setItem('placa', placa);
+                        localStorage.setItem('popup', true);
+                        localStorage.setItem('componente', 'RegistrarVagaMonitor');
+                        window.location.reload();
+                        
+                    }
+    
+                })
+            }
         }
     }
 
@@ -252,7 +326,7 @@ const ListarVagasMonitor = () => {
                                         </thead>
                                         <tbody>
                                             {resposta.map((vaga, index) => (
-                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa) }}>
+                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes) }}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificacoes_pendentes}</small></td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.chegada}</td>

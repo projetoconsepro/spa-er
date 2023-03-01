@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import '../pages/LoginPage/styles.css';
 import Swal from "sweetalert2";
-import Countdown from 'react-countdown';
+import Cronometro from './Cronometro';
 
 const ListarVeiculos = () => {
     const [resposta] = useState([]);
@@ -132,6 +132,7 @@ const ListarVeiculos = () => {
                         const hora = data.getHours() + tempo[0];
                         const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
                         resposta[i].Countdown = formatada;
+                        console.log(formatada)
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
                         resposta[i].div = "card-body";
                         resposta[i].numero_notificacoes_pendentes = "Sem notificações";
@@ -244,7 +245,7 @@ const ListarVeiculos = () => {
             });
             }
 }
- const AddTempo = async (placa , index ,id_vaga_veiculo,vaga) => {
+ const AddTempo = async (placa , index , id_vaga_veiculo, vaga) => {
 
     const vagaa = [];
 
@@ -330,7 +331,7 @@ const ListarVeiculos = () => {
                                 {mostrardiv[index].estado ?  null
                                 :
                                 <div class="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
-                                    <h6><RxLapTimer />‎ Tempo restante: <Countdown date={link.Countdown}/> </h6>
+                                    <h6><RxLapTimer />‎ Tempo restante: <Cronometro time={link.temporestante}/> </h6>
                                 </div>
                                 }
                                 {notificacao[index].estado ?  null

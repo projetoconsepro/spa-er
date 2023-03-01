@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { React, useState, useEffect } from 'react'
 import '../pages/LoginPage/styles.css'
+import Swal from 'sweetalert2'
 
 const RegistrarVagaMonitor = () => {
     const [mensagem, setMensagem] = useState("");
@@ -13,6 +14,7 @@ const RegistrarVagaMonitor = () => {
     const [valorcobranca2, setValorCobranca2] = useState(0);
     const [vaga, setVaga] = useState("");
     const [InputPlaca, setInputPlaca] = useState(" form-control fs-5");
+    const [visible , setVisible] = useState(false);
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -70,14 +72,26 @@ const RegistrarVagaMonitor = () => {
             setValorCobranca2(valorCobranca*0);
         }
         else{
-            localStorage.setItem('componente', 'Notificacao')
-            window.location.reload();
-            localStorage.setItem('placa', `${placaVeiculo}`)
+            if (placaVeiculo !== "") {
+                localStorage.setItem('componente', 'Notificacao')
+                localStorage.setItem('placa',`${placaVeiculo}`)
+                window.location.reload();
+                }
+                else{
+                    setEstado(true);
+                    setMensagem("Preencha o campo placa");
+                    setTimeout(() => {
+                        setEstado(false);
+                        setMensagem("");
+                    }, 4000);
+            }
         }
     }
 
     const HangleBack = () => {
         localStorage.removeItem('vaga');
+        localStorage.removeItem('popup');
+        localStorage.removeItem('id_vagaveiculo');
         localStorage.setItem('componente', 'ListarVagasMonitor')
         window.location.reload();
     }
@@ -100,7 +114,42 @@ const RegistrarVagaMonitor = () => {
             return;
         }
      
-     
+     if (localStorage.getItem('popup')) {
+        const idvaga = localStorage.getItem('id_vagaveiculo');
+
+        estacionamento.post('/estacionamento', {
+            placa: placaMaiuscula,
+            numero_vaga: vagaa,
+            tempo: tempo,
+            pagamento: valor,
+            id_vaga_veiculo: idvaga
+        }).then(
+            response => {
+                if (response.data.msg.resultado === true) {
+                    localStorage.removeItem('vaga');
+                    localStorage.removeItem('popup');
+                    localStorage.removeItem('id_vagaveiculo');
+                    localStorage.setItem('componente', 'ListarVagasMonitor')
+                    window.location.reload();
+                }
+                else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.data.msg.msg,
+                        footer: '<a href="">Por favor, tente novamente.</a>'
+                      })
+
+                }
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
+
+
+
+     }
+     else {
      await estacionamento.post('/estacionamento', {
         placa: placaMaiuscula,
         numero_vaga: vagaa,
@@ -127,12 +176,26 @@ const RegistrarVagaMonitor = () => {
             setEstado(true);
             setMensagem(error.response.data.data.message);
         }
-    ) 
+    )
     }
+}
 
     useEffect(() => {
         param();
+        if (localStorage.getItem('popup')) {
+            setPlacaVeiculo(localStorage.getItem('placa'))
+            setVisible(true);
+            setValorCobranca2(1);
+            SetMostrapag(true);
+            setValor("dinheiro");
+            setTempo("00:30:00");
+        }
+        else {
+            setVisible(false);
+
+        }  
     }, [])
+
     return (
         <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
@@ -152,13 +215,21 @@ const RegistrarVagaMonitor = () => {
                             </div>
                             <div className="h6 mt-3 " onChange={atualizafunc}>
                                 <p className='text-start'>Determine um tempo:</p>
-                                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tempos">
+                                    {visible ? 
+                                    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tempos">
+                                    <option value="00:30:00">30</option>
+                                    <option value="01:00:00">60</option>
+                                    <option value="02:00:00">120</option>
+                                    </select>
+                                    :
+                                    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tempos">
                                     <option value="00:10:00" selected>Tolerância</option>
                                     <option value="00:30:00">30</option>
                                     <option value="01:00:00">60</option>
                                     <option value="02:00:00">120</option>
                                     <option value="notificacao">Notificação</option>
-                                </select>
+                                    </select>
+                                    }
                                 <p id="tempoCusto" className="text-end"> Valor a ser cobrado: R$ {valorcobranca2},00 </p>
                             </div>
 
