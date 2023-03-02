@@ -6,6 +6,7 @@ import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { TbHandClick, TbClick } from "react-icons/tb";
 import '../pages/LoginPage/styles.css';
 import Swal from "sweetalert2";
 import Cronometro from './Cronometro';
@@ -26,15 +27,7 @@ const ListarVeiculos = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
-    const saldo = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "cliente"
-        }
-    })
-    const estacionamento = axios.create({
+    const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
             'token': token,
@@ -45,15 +38,6 @@ const ListarVeiculos = () => {
 
     const parametros = axios.create({
         baseURL: process.env.REACT_APP_HOST,
-    })
-
-    const veiculo = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "cliente"
-        }
     })
 
     const atualizafunc = () => {
@@ -71,7 +55,7 @@ const ListarVeiculos = () => {
     }
 
     const atualizacomp = async () => {
-        await veiculo.get('/veiculo').then(
+        await requisicao.get('/veiculo').then(
             response => {
                 if(response.data.msg.resultado === false){
                     localStorage.setItem("componente", "CadastrarVeiculo")
@@ -87,6 +71,8 @@ const ListarVeiculos = () => {
                     nofityvar[i] = { "notifi": "notify" };
                     resposta[i].placa = response.data.data[i].usuario;
                     if (response.data.data[i].estacionado === 'N') {
+                        resposta[i].div = "card-body";
+                        resposta[i].textoestacionado = "Clique aqui para estacionar";
                         resposta[i].estacionado = "Não estacionado"
                         resposta[i].temporestante = "";
                         notificacao[i] = {"estado": true};
@@ -110,6 +96,8 @@ const ListarVeiculos = () => {
                         
                     }
                     else {
+                        resposta[i].div = "card-body2";
+                        resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
                         mostrardiv[i] = { "estado": false };
                         resposta[i].vaga = response.data.data[i].numerovaga;
                         resposta[i].estacionado ="Estacionado - Vaga: " + response.data.data[i].numerovaga;
@@ -134,18 +122,15 @@ const ListarVeiculos = () => {
                         resposta[i].Countdown = formatada;
                         console.log(formatada)
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
-                        resposta[i].div = "card-body";
                         resposta[i].numero_notificacoes_pendentes = "Sem notificações";
                         notificacao[i] = {"estado": true};
                     }
                     else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
-                        resposta[i].div = "card-body2";
                         notificacao[i] = {"estado": false};
                         resposta[i].numero_notificacoes_pendentes = "Uma notificação"
                         nofityvar[i] = { "notifi": "notify2" };
                     }
                     else {
-                        resposta[i].div = "card-body2";
                         resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
                         nofityvar[i] = { "notifi": "notify2" };
                         notificacao[i] = {"estado": false};
@@ -158,7 +143,7 @@ const ListarVeiculos = () => {
             console.log(error);
         });
 
-        await saldo.get('/usuario/saldo-credito').then(
+        await requisicao.get('/usuario/saldo-credito').then(
             response => {
                 setSaldoCredito(response?.data?.data?.saldo)
             }
@@ -220,7 +205,7 @@ const ListarVeiculos = () => {
               })
         }
         else{
-            estacionamento.post('/estacionamento', {
+            requisicao.post('/estacionamento', {
                 placa: placa,
                 numero_vaga: vaga,
                 tempo: tempo1,
@@ -263,7 +248,7 @@ const ListarVeiculos = () => {
           })
     }
     else{
-        estacionamento.post('/estacionamento', {
+        requisicao.post('/estacionamento', {
             placa: placa,
             numero_vaga: vagaa,
             tempo: tempo1,
@@ -273,7 +258,6 @@ const ListarVeiculos = () => {
             response => {
                 if (response.data.msg.resultado === true) {
                     atualizacomp();
-                    window.location.reload();
                 }
                 else {
                     Swal.fire({
@@ -336,10 +320,13 @@ const ListarVeiculos = () => {
                                 }
                                 {notificacao[index].estado ?  null
                                 :
-                                <div class="h6 d-flex align-items-center fs-6" >
+                                <div class="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
                                     <h6><AiOutlineInfoCircle/>‎ {link.numero_notificacoes_pendentes}</h6>
                                 </div>
                                 }
+                                <div className="h6 d-flex align-items-center fs-6 opacity-75 text-start">
+                                <h6 className="fs-6"><TbHandClick /> <small>{link.textoestacionado}</small></h6>
+                                </div>
                             </div>
                             <div>
                                 <div class="d-flex align-items-center fw-bold">

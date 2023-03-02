@@ -210,7 +210,7 @@ const RegistrarVagaMonitor = () => {
                             <div className="form-group mb-4 mt-4">
                                 <p className='text-start'>Placa:</p>
                                 <div className="input-group">
-                                    <input className={InputPlaca} value={placaVeiculo} onChange={(e) => setPlacaVeiculo([e.target.value])} placeholder="Exemplo: IKW8K88" id="fonteInputPlaca"/>
+                                    <input className={InputPlaca} value={placaVeiculo} onChange={(e) => setPlacaVeiculo([e.target.value])} maxLength="7" placeholder="Exemplo: IKW8K88" id="fonteInputPlaca"/>
                                 </div>
                             </div>
                             <div className="h6 mt-3 " onChange={atualizafunc}>

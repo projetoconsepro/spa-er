@@ -19,7 +19,7 @@ const RegistrarVagaCliente = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
-    const veiculo = axios.create({
+    const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
             'token': token,
@@ -27,28 +27,13 @@ const RegistrarVagaCliente = () => {
             'perfil_usuario': "cliente"
         }
     })
-    const saldo = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "cliente"
-        }
-    })
-    const estacionamento = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "cliente"
-        }
-    })
+   
     const parametros = axios.create({
         baseURL: process.env.REACT_APP_HOST,
     })
 
     useEffect(() => {
-        veiculo.get('/veiculo').then(
+        requisicao.get('/veiculo').then(
             response => {
                 setResposta(response?.data?.data);
                 if (response.data.msg.resultado === false) {
@@ -64,9 +49,7 @@ const RegistrarVagaCliente = () => {
             console.log(error);
         });
 
-        ////////////////////
-
-        saldo.get('/usuario/saldo-credito'
+        requisicao.get('/usuario/saldo-credito'
         ).then(
             response => {
                 if(response.data.msg.resultado){
@@ -79,8 +62,6 @@ const RegistrarVagaCliente = () => {
         ).catch(function (error) {
             console.log(error);
         });
-
-        ////////////////////
 
         parametros.get('/parametros').then(
             response => {
@@ -144,7 +125,7 @@ const RegistrarVagaCliente = () => {
             }, 4000);
         }
         else{
-            estacionamento.post('/estacionamento', {
+            requisicao.post('/estacionamento', {
                 placa: placa3,
                 numero_vaga: vaga,
                 tempo: tempo1,

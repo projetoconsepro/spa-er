@@ -159,7 +159,7 @@ const Sidebar = () => {
                         <li className="nav-item dropdown ms-lg-3">
                             <a className="nav-link dropdown-toggle pt-1 px-0" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div className="media d-flex align-items-center">
-                                <img className="avatar rounded-circle" alt="Image placeholder" src="assets/img/avatar.png" />
+                                <img className="avatar rounded-circle" alt="Image placeholder" src="assets/img/img_avatar.png" />
                                 <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block"><span className="mb-0 font-small fw-bold text-gray-900">{teste.nome}</span></div>
                             </div>
                             </a>
