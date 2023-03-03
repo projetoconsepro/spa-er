@@ -173,8 +173,11 @@ const ListarVagasMonitor = () => {
                 Swal.fire({
                     title: 'Deseja liberar esta vaga?',
                     showCancelButton: true,
+                    showDenyButton: true,
                     cancelButtonText: 'Cancelar',
                     confirmButtonText: 'Liberar',
+                    denyButtonText: `Regularizar`,
+                    denyButtonColor: '#3085d6',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         requisicao.post(`/estacionamento/saida`, {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
-import { FaCarAlt } from 'react-icons/fa';
+import { FaCarAlt, FaEdit } from 'react-icons/fa';
 import arrayCores from './cores';
 
 const Notificacao = () => {
@@ -15,12 +15,16 @@ const Notificacao = () => {
     const [dados, setDados] = useState(true);
     const [seminfo, setSemInfo] = useState(false);
     const [infoBanco, setInfoBanco] = useState(false);
+    const [imagensSalvas, setImagenSalvas] = useState(false);
     const [placa, setPlaca] = useState("");
     const [imagens] = useState([]);
     const [modelo, setModelo] = useState([]);
+    const [modeloVeiculo, setModeloVeiculo] = useState("");
     const [cor, setCor] = useState([]);
+    const [corVeiculo, setCorVeiculo] = useState("");
     const [cor2, setCor2] = useState("");
     const [fabricante, setFabricante] = useState([]);
+    const [fabricanteVeiculo, setFabricanteVeiculo] = useState("");
     const [tipoNot, setTipoNot] = useState("1");
     const [tiposNotificacao, setTiposNot] = useState([]);
     let [cont, setCont] = useState(0);
@@ -36,8 +40,49 @@ const Notificacao = () => {
     });
 
     const submit = async () => {
-        console.log(tipoNot)
-        console.log(vagaVeiculo)
+        if (infoBanco === false) {
+                const getmodelo = document.getElementById("selectModelos").value;
+                const getfabricante = document.getElementById("selectFabricantes").value;
+                console.log(getmodelo)
+                console.log(getfabricante)
+            if (outro === true){
+                const getcor = document.getElementById("selectCores").value;
+                console.log(getcor)
+        requisicao.post(`/veiculo/${placa}`, {
+            "placa": placa,
+             "modelo": {
+                "idModelo": getmodelo,
+                "fabricante": {
+                    "idFabricante": getfabricante,
+                }
+            },
+            "cor": getcor,
+    }).then(
+            response => {
+                console.log(response)
+            }
+        ).catch(function (error) {
+            console.log(error);
+        });
+    }
+    else{
+        console.log(cor2)
+        requisicao.post(`/veiculo/${placa}`, {
+            "placa": placa,
+             "modelo": {
+                "idModelo": getmodelo,
+                "fabricante": {
+                    "idFabricante": getfabricante,
+                }
+            },
+            "cor": cor2,
+        }).then(
+        ).catch(function (error) {
+            console.log(error);
+        });
+    }
+    }
+    if (imagens.length !== 0) {
         if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") { 
         requisicao.post('/notificacao', {
             "id_vaga_veiculo": vagaVeiculo,
@@ -66,8 +111,7 @@ const Notificacao = () => {
             }).catch(function (error) {
             console.log(error);
         });
-    }
-    else{
+    } else{
         console.log(vaga)
         requisicao.post('/notificacao', {
             "placa": placa,
@@ -98,7 +142,14 @@ const Notificacao = () => {
             console.log(error);
         });
     }
-
+ } else {
+    setMensagem("Necessário retirar fotos do veículo")
+    setEstado(true)
+    setTimeout(() => {
+        setEstado(false);
+        setMensagem("");
+    }, 4000);
+ }
 }
 
     const back = () => {
@@ -123,8 +174,13 @@ const Notificacao = () => {
                 imagens.push(localStorage.getItem(`foto${i}`));
             }
         }
-
+     if (imagens.length !== 0) {
+        setImagenSalvas(true);
     }
+    else {
+        setImagenSalvas(false);
+    }
+}
 
     const getTipoNot= () => {
         const tipoNotificacao = document.getElementById('tiposNot').value;
@@ -133,7 +189,7 @@ const Notificacao = () => {
     }
 
     const getModelos = () => {
-        const fabricante = document.getElementById('fabricantes').value;
+        const fabricante = document.getElementById('selectFabricantes').value;
         console.log(fabricante)
         requisicao.get(`/veiculo/modelos/${fabricante}`).then(
             response => {
@@ -156,7 +212,29 @@ const Notificacao = () => {
 }
 
     useEffect(() => {
+        const getVaga = localStorage.getItem("vaga");
+        const getPlaca = localStorage.getItem("placa");
+        const getVagaVeiculo = localStorage.getItem("id_vagaveiculo");
         getCor();
+        
+        requisicao.get(`/veiculo/${getPlaca}`).then(
+            response => {
+                console.log(response.data.data.resposta.cor)
+                if(response.data.msg.resultado === true){
+                    setInfoBanco(true);
+                    setCorVeiculo(response.data.data.resposta.cor)
+                    setModeloVeiculo(response.data.data.resposta.nome)
+                    setFabricanteVeiculo(response.data.data.resposta.fabricante)
+                }
+                else{
+                    setInfoBanco(false);
+                }
+            }
+        ).catch(function (error){
+            console.log(error);
+        });
+
+
         requisicao.get('/notificacao/tipos').then(
             response => {
                 const newData = response?.data?.data?.map(item => ({
@@ -194,13 +272,6 @@ const Notificacao = () => {
             console.log(error);
         });
 
-        //
-        //requisicao info veiculos
-        //
-
-        const getVaga = localStorage.getItem("vaga");
-        const getPlaca = localStorage.getItem("placa");
-        const getVagaVeiculo = localStorage.getItem("id_vagaveiculo");
         if (getVaga !== null && getPlaca !== null) {
             setVagaVeiculo(getVagaVeiculo)
             setSemInfo(true);
@@ -235,16 +306,41 @@ const Notificacao = () => {
                                         <p>Veículo selecionado: {placa}</p>
                                         <p><small>Vaga selecionada: {vaga}</small></p>
                                     </div>
-                                    <div className='text-start bg-gray-200 text-dark rounded'>
-                                        {infoBanco ?
-                                        <div class="row justify-content-center">
-                                            <div className="col-8">
-                                                <h6 className='mx-3 pt-2'><small>Modelo: {modelo}</small></h6>
-                                                <h6 className='mx-3'><small>Cor: {cor}</small></h6>
-                                                <h6 className='mx-3 pb-2'><small>Fabricante: {fabricante}</small></h6>
+                                    <div className="h6 mt-3" onChange={getTipoNot}>
+                                        <p className='text-start'>Tipo de notificação:</p>
+                                       <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
+                                    {tiposNotificacao.map((link, index) => (
+                                            <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
+                                        ))}
+                                </select>
+                                    </div>
+                                    <div className="h6 mt-5">
+                                        <button type="submit" className="btn4 botao" onClick={renderCamera}>Tirar fotos do veículo <AiFillCamera /></button>
+                                    </div>
+                                    <div className='row pb-5'>
+                                        {imagens.map((imagem, key) => (
+                                            <div key={key} className="col">
+                                                {imagem !== null ?
+                                                        <img src={imagem} alt="foto" />
+                                                    : null}
                                             </div>
-                                            <div className="col-4 text-center pt-3 mt-3">
+                                        ))}
+
+                                    </div>
+                                    {imagensSalvas ? 
+                                    <div className='text-start bg-gray-200 text-dark rounded'>
+                                    {infoBanco ?
+                                        <div class="row justify-content-center">
+                                            <div className="col-7">
+                                                <h6 className='mx-3 pt-2'><small>Modelo: {modeloVeiculo}</small></h6>
+                                                <h6 className='mx-3'><small>Cor: {corVeiculo}</small></h6>
+                                                <h6 className='mx-3 pb-2'><small>Fabricante: {fabricanteVeiculo}</small></h6>
+                                            </div>
+                                            <div className="col-3 text-center pt-3 mt-3">
                                                 <FaCarAlt size={35} />
+                                                </div>
+                                            <div className="col-2 pt-3 mt-5">
+                                                <FaEdit size={20} className='mt-2' onClick={()=>{setInfoBanco(false)}}/>
                                             </div>
                                         </div>
                                         : 
@@ -252,7 +348,7 @@ const Notificacao = () => {
                                         <div className="col-8">
                                             <div onChange={()=>{getModelos()}}>
                                             <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
-                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example" id="fabricantes">
+                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example" id="selectFabricantes">
                                         {fabricante.map((link, index) => (
                                             <option value={link.id_fabricante_veiculo} key={index}>{link.nome}</option>
                                         ))}
@@ -260,7 +356,7 @@ const Notificacao = () => {
                                             </div>
                                             <div>
                                             <h6 className='mx-4'><small>Modelo:</small></h6>
-                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example">
+                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example" id="selectModelos">
                                         {modelo.map((link, index) => (
                                             <option value={link.id_modelo} key={index}>{link.nome}</option>
                                         ))}
@@ -287,28 +383,9 @@ const Notificacao = () => {
                                         </div>
                                     </div>
                                         }
-                                    </div>
-                                    <div className="h6 mt-3" onChange={getTipoNot}>
-                                        <p className='text-start'>Tipo de notificação:</p>
-                                       <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
-                                    {tiposNotificacao.map((link, index) => (
-                                            <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
-                                        ))}
-                                </select>
-                                    </div>
-                                    <div className="h6 mt-5">
-                                        <button type="submit" className="btn4 botao" onClick={renderCamera}>Tirar fotos do veículo <AiFillCamera /></button>
-                                    </div>
-                                    <div className='row'>
-                                        {imagens.map((imagem, key) => (
-                                            <div key={key} className="col">
-                                                {imagem !== null ?
-                                                        <img src={imagem} alt="foto" />
-                                                    : null}
-                                            </div>
-                                        ))}
 
                                     </div>
+                                    : null}
                                     <div className="mt-4 mb-5 gap-2 d-md-block">
                                         <button type="submit" className="btn2 botao" onClick={back}>Cancelar</button>
                                         <button type="submit" className="btn3 botao" onClick={submit}>Confirmar</button>
@@ -359,4 +436,4 @@ const Notificacao = () => {
     )
 }
 
-export default Notificacao
+export default Notificacao;
