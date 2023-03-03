@@ -38,6 +38,10 @@ const RegisterPage = () => {
         localStorage.setItem("registrou", "true");
     }
 
+    function extrairNumeros(string) {
+        return string ? string.replace(/\D/g, '') : string;
+    }
+
     const handleSubmit = async (e) => {
         const checkValidate = document.getElementById("flexCheckDefault").checked;
         e.preventDefault();
@@ -153,8 +157,10 @@ const RegisterPage = () => {
                     }, 4000);
                 }
             else{
+                const cell =extrairNumeros(telefone)
+
                 setEstado2(true)
-                const cadastro = await register(nome, mail, cpff, telefone, senha)
+                const cadastro = await register(nome, mail, cpff, cell, senha)
                 console.log(cadastro)
                 if (cadastro.auth) {
                 setMensagem2("Cadastro realizado com sucesso! Você será redirecionado a página de login")
@@ -237,7 +243,7 @@ const RegisterPage = () => {
                                 <div className="form-group mb-4">
                                     <label id="labelLogin">Telefone:</label>
                                     <div className="input-group">
-                                        <IMaskInput className={inputTelefone} name="telefone" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
+                                        <IMaskInput mask={'(00) 00000-0000'} className={inputTelefone} name="telefone" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
                                     </div>
                                 </div>
                                 <div className="form-group">
