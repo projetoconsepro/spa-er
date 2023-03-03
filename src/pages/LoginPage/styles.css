@@ -7462,13 +7462,17 @@ textarea.form-control-lg {
     display: none !important;
 }
 
+#infoVeiculos{
+    width: 75% !important;
+}
+
 .card-body {
     height: 8rem;
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
 }
 .card-body2 {
-    height: 10rem;
+    height: 12rem;
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
 }

@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
 import { FaCarAlt } from 'react-icons/fa';
+import arrayCores from './cores';
 
 const Notificacao = () => {
     const token = localStorage.getItem('token');
@@ -13,14 +14,17 @@ const Notificacao = () => {
     const [vagaVeiculo, setVagaVeiculo] = useState("");
     const [dados, setDados] = useState(true);
     const [seminfo, setSemInfo] = useState(false);
+    const [infoBanco, setInfoBanco] = useState(false);
     const [placa, setPlaca] = useState("");
     const [imagens] = useState([]);
-    const [modelo, setModelo] = useState("Celta");
-    const [cor, setCor] = useState("Preto");
-    const [fabricante, setFabricante] = useState("Chevrolet");
+    const [modelo, setModelo] = useState([]);
+    const [cor, setCor] = useState([]);
+    const [cor2, setCor2] = useState("");
+    const [fabricante, setFabricante] = useState([]);
     const [tipoNot, setTipoNot] = useState("1");
-    const [data, setData] = useState([]);
+    const [tiposNotificacao, setTiposNot] = useState([]);
     let [cont, setCont] = useState(0);
+    const [outro, setOutro] = useState (true);
 
     const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
@@ -30,7 +34,6 @@ const Notificacao = () => {
             'perfil_usuario': "monitor"
         }
     });
-
 
     const submit = async () => {
         console.log(tipoNot)
@@ -129,18 +132,71 @@ const Notificacao = () => {
         setTipoNot(tipoNotificacao);
     }
 
+    const getModelos = () => {
+        const fabricante = document.getElementById('fabricantes').value;
+        console.log(fabricante)
+        requisicao.get(`/veiculo/modelos/${fabricante}`).then(
+            response => {
+                const newData = response?.data?.data?.modelos.map(item => ({
+                    nome: item.nome,
+                    id_modelo: item.id_modelo
+                }));
+                setModelo(newData);
+            }
+        ).catch(function (error){
+            console.log(error);
+        });
+    }
+
+    const getCor = () => {
+        const newData = arrayCores.map(item => ({
+            cor: item.cor,
+    }));
+    setCor(newData);
+}
+
     useEffect(() => {
+        getCor();
         requisicao.get('/notificacao/tipos').then(
             response => {
                 const newData = response?.data?.data?.map(item => ({
                     nome: item.nome,
                     id_tipo_notificacao: item.id_tipo_notificacao
                   }));
-                setData(newData);
+                setTiposNot(newData);
             }
         ).catch(function (error){
             console.log(error);
         });
+        
+        requisicao.get('/veiculo/fabricantes').then(
+            response => {
+                console.log(response?.data?.data.fabricantes)
+                const newData = response?.data?.data?.fabricantes.map(item => ({
+                    nome: item.nome,
+                    id_fabricante_veiculo: item.id_fabricante_veiculo
+                    }));
+                setFabricante(newData);
+            }
+        ).catch(function (error){
+            console.log(error);
+        });
+
+        requisicao.get(`/veiculo/modelos/1`).then(
+            response => {
+                const newData = response?.data?.data?.modelos.map(item => ({
+                    nome: item.nome,
+                    id_modelo: item.id_modelo
+                }));
+                setModelo(newData);
+            }
+        ).catch(function (error){
+            console.log(error);
+        });
+
+        //
+        //requisicao info veiculos
+        //
 
         const getVaga = localStorage.getItem("vaga");
         const getPlaca = localStorage.getItem("placa");
@@ -157,6 +213,15 @@ const Notificacao = () => {
         setCont(cont++);
     }, [])
 
+    const attcor = () => {
+
+        const cor = document.getElementById('selectCores').value;
+        if (cor === "Outra") {
+            setOutro(false);
+        }
+    }
+
+
     return (
         <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
@@ -171,6 +236,7 @@ const Notificacao = () => {
                                         <p><small>Vaga selecionada: {vaga}</small></p>
                                     </div>
                                     <div className='text-start bg-gray-200 text-dark rounded'>
+                                        {infoBanco ?
                                         <div class="row justify-content-center">
                                             <div className="col-8">
                                                 <h6 className='mx-3 pt-2'><small>Modelo: {modelo}</small></h6>
@@ -181,11 +247,51 @@ const Notificacao = () => {
                                                 <FaCarAlt size={35} />
                                             </div>
                                         </div>
+                                        : 
+                                        <div class="row justify-content-center">
+                                        <div className="col-8">
+                                            <div onChange={()=>{getModelos()}}>
+                                            <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
+                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example" id="fabricantes">
+                                        {fabricante.map((link, index) => (
+                                            <option value={link.id_fabricante_veiculo} key={index}>{link.nome}</option>
+                                        ))}
+                                            </select>
+                                            </div>
+                                            <div>
+                                            <h6 className='mx-4'><small>Modelo:</small></h6>
+                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example">
+                                        {modelo.map((link, index) => (
+                                            <option value={link.id_modelo} key={index}>{link.nome}</option>
+                                        ))}
+                                            </select>
+                                            </div>
+                                            {outro ?
+                                            <div  onChange={()=>{attcor()}}>
+                                            <h6 className='mx-4'><small>Cor:</small></h6>
+                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example" id="selectCores">
+                                            {cor.map((link, index) => (
+                                                <option value={link.cor} key={index}>{link.cor}</option>
+                                            ))}
+                                            </select>
+                                            </div>
+                                            :
+                                            <div>
+                                            <h6 className='mx-4'><small>Cor:</small></h6>
+                                            <input type="text" className="form-control mx-3 mb-3" id="infoVeiculos" placeholder="Outra cor" value={cor2} onChange={(e) => setCor2(e.target.value)}/>
+                                            </div>
+                                            }
+                                        </div>
+                                        <div className="col-4 text-center pt-6 mt-4">
+                                            <FaCarAlt size={35} />
+                                        </div>
+                                    </div>
+                                        }
                                     </div>
                                     <div className="h6 mt-3" onChange={getTipoNot}>
                                         <p className='text-start'>Tipo de notificação:</p>
                                        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
-                                    {data.map((link, index) => (
+                                    {tiposNotificacao.map((link, index) => (
                                             <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
                                         ))}
                                 </select>

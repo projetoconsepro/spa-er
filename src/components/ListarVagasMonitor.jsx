@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
-import Countdown from "react-countdown";
 import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
 
@@ -26,10 +25,6 @@ const ListarVagasMonitor = () => {
             'perfil_usuario': "monitor"
         }
     })
-
-    //setTimeout(() => {
-    //  window.location.reload();
-    //}, 30000);
 
     const getVagas = async (setor) => {
         const setor2 = document.getElementById('setoresSelect').value;
@@ -103,8 +98,8 @@ const ListarVagasMonitor = () => {
                                     resposta[i].cor = '#000';
                                 }
                                 if (resposta[i].numero_notificacoes_pendentes !== 0) {
-                                    resposta[i].corline = '#000';
-                                    resposta[i].cor = '#fff';
+                                    resposta[i].corline = '#D3D3D4';
+                                    resposta[i].cor = '#141619';
                                 }
 
                                 const tempo = resposta[i].temporestante.split(':');
