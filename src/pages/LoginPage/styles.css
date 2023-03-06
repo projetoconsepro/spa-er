@@ -4172,6 +4172,7 @@ textarea.form-control-lg {
     justify-content: center;
     align-items: center;
 }
+
 #placa3 {
     background-image: url("../../../public/assets/img/placa3.png")!important;
     background-repeat: no-repeat;   
@@ -4216,7 +4217,7 @@ textarea.form-control-lg {
     text-transform: uppercase !important;
 }
 
-#inputvazio2{
+#inputvazio2 {
     font-family: "FE" !important;
     outline: 0;
     border: 0;
@@ -6517,6 +6518,46 @@ textarea.form-control-lg {
     width: 35% !important;
 }
 
+.swal2-title{
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+}
+.swal2-input{
+    font-family: "FE" !important;
+}
+
+.swal2-input[type="number"] {
+    font-family: var(--bs-font-sans-serif) !important;
+    margin: 0 auto !important;
+    margin-top: 15px !important;
+}
+
+.swal2-input[type="date"]{
+    font-family: var(--bs-font-sans-serif) !important;
+}
+
+.swal2-select {
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #fff;
+    background-color: #3a58c8;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231F2937' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+    border: 0.0625rem solid #D1D5DB;
+    border-radius: 0.5rem;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+#filtroSelect{
+    width: 50% !important;
+}
+
 #fonteInputPlaca{
     font-family: "FE" !important;
 }
@@ -7475,6 +7516,16 @@ textarea.form-control-lg {
     height: 12rem;
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
+}
+
+.card-body3 {
+    height: 8rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+
+#vamove{
+    border-bottom: 1px solid #b1b1b1;  
 }
 
 .card-title {
@@ -23694,10 +23745,12 @@ label {
 
 #aparece {
     display: visible !important;
+    margin-bottom: 0px !important;
 }
 
 #escondido{
     display: none !important;
+    margin-bottom: 0px !important;
 }
 /**
  * = Avatars

@@ -8,6 +8,7 @@ import RegistrarVagaMonitor from '../../components/RegistrarVagaMonitor';
 import Error from '../../components/Error';
 import Notificacao from '../../components/Notificacao';
 import Camera from '../../components/Camera';
+import ListarNotificacoes from '../../components/ListarNotificacoes';
 
 const Veiculos = () => {
     const componente = localStorage.getItem("componente");
@@ -31,6 +32,9 @@ const Veiculos = () => {
         }
         else if ( componente === "Camera"){
             return <Camera />
+        }
+        else if ( componente === "ListarNotificacoes"){
+            return <ListarNotificacoes />
         }
         else {
             return <Error />

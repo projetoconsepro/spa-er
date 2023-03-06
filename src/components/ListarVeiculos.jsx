@@ -302,25 +302,25 @@ const ListarVeiculos = () => {
 
 
             {resposta.map((link, index) => (
-                <div class="card border-0 shadow mt-5" key={index} >
-                    <div class={link.div} onClick={()=>{handleClick(index)}}>
-                        <div class="d-flex align-items-center justify-content-between pb-3">
+                <div className="card border-0 shadow mt-5" key={index} >
+                    <div className={link.div} onClick={()=>{handleClick(index)}}>
+                        <div className="d-flex align-items-center justify-content-between pb-3">
                             <div>
-                                <div class="h2 mb-0 d-flex align-items-center">
+                                <div className="h2 mb-0 d-flex align-items-center">
                                     {link.placa}
                                 </div>
-                                <div class="h6 mt-2 d-flex align-items-center fs-6" id="estacionadocarro">
+                                <div className="h6 mt-2 d-flex align-items-center fs-6" id="estacionadocarro">
                                     <h6><FaParking />‎ {link.estacionado}</h6>
                                 </div>
                                 {mostrardiv[index].estado ?  null
                                 :
-                                <div class="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
+                                <div className="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
                                     <h6><RxLapTimer />‎ Tempo restante: <Cronometro time={link.temporestante}/> </h6>
                                 </div>
                                 }
                                 {notificacao[index].estado ?  null
                                 :
-                                <div class="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
+                                <div className="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
                                     <h6><AiOutlineInfoCircle/>‎ {link.numero_notificacoes_pendentes}</h6>
                                 </div>
                                 }
@@ -329,7 +329,7 @@ const ListarVeiculos = () => {
                                 </div>
                             </div>
                             <div>
-                                <div class="d-flex align-items-center fw-bold">
+                                <div className="d-flex align-items-center fw-bold">
                                     <FaCarAlt size={40} />
                                 </div>
                             </div>
@@ -339,7 +339,7 @@ const ListarVeiculos = () => {
                     <div className="mb-1">
                         {mostrardiv[index].estado ? 
                          <div className="h6 mt-3 mx-5" onChange={atualizafunc}>
-                            <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                            <select className="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
                                  <option value="00:30:00">30 Minutos</option>
                                  <option value="01:00:00" selected>60 Minutos</option>
                                  <option value="02:00:00">120 Minutos</option>
@@ -362,7 +362,7 @@ const ListarVeiculos = () => {
                              </div>
                                 : 
                                 <div className="h6 mx-5" onChange={atualizafunc}>
-                                <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                                <select className="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
                                  <option value="00:30:00">30 Minutos</option>
                                  <option value="01:00:00" selected>60 Minutos</option>
                                  <option value="02:00:00">120 Minutos</option>

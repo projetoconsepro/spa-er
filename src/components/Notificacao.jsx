@@ -348,7 +348,7 @@ const Notificacao = () => {
                                         <div className="col-8">
                                             <div onChange={()=>{getModelos()}}>
                                             <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
-                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example" id="selectFabricantes">
+                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectFabricantes">
                                         {fabricante.map((link, index) => (
                                             <option value={link.id_fabricante_veiculo} key={index}>{link.nome}</option>
                                         ))}
@@ -356,7 +356,7 @@ const Notificacao = () => {
                                             </div>
                                             <div>
                                             <h6 className='mx-4'><small>Modelo:</small></h6>
-                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example" id="selectModelos">
+                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectModelos">
                                         {modelo.map((link, index) => (
                                             <option value={link.id_modelo} key={index}>{link.nome}</option>
                                         ))}
@@ -365,7 +365,7 @@ const Notificacao = () => {
                                             {outro ?
                                             <div  onChange={()=>{attcor()}}>
                                             <h6 className='mx-4'><small>Cor:</small></h6>
-                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-lg example" id="selectCores">
+                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectCores">
                                             {cor.map((link, index) => (
                                                 <option value={link.cor} key={index}>{link.cor}</option>
                                             ))}

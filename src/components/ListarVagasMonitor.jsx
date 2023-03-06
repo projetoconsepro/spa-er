@@ -177,7 +177,7 @@ const ListarVagasMonitor = () => {
                     cancelButtonText: 'Cancelar',
                     confirmButtonText: 'Liberar',
                     denyButtonText: `Regularizar`,
-                    denyButtonColor: '#3085d6',
+                    denyButtonColor: '#3A58C8',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         requisicao.post(`/estacionamento/saida`, {
