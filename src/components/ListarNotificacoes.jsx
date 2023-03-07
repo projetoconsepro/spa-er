@@ -186,9 +186,6 @@ const ListarNotificacoes = () => {
     console.log(oi);
     }
 
-
-
-
   return (
     <div className="col-12 px-3">
       <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
