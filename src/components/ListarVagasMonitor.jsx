@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
+import ListarNotificacoes from "./ListarNotificacoes";
 
 const ListarVagasMonitor = () => {
     const token = localStorage.getItem('token');
@@ -138,6 +139,7 @@ const ListarVagasMonitor = () => {
     }
 
     useEffect(() => {
+        localStorage.removeItem('idVagaVeiculo');
         requisicao.get('/setores'
         ).then(
             response => {
@@ -197,10 +199,13 @@ const ListarVagasMonitor = () => {
                             console.log(error);
                         }
                         );
-    
                     }
-                })
-
+                    else if (result.isDenied) {
+                        localStorage.setItem('VagaVeiculoId', id_vaga);
+                        localStorage.setItem('componente', 'ListarNotificacoes');
+                        window.location.reload();
+                }
+                });
             }
             else {
             Swal.fire({

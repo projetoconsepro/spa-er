@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
-import { AiFillCheckCircle } from "react-icons/ai";
+import { AiFillCheckCircle, AiFillPrinter } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin} from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal  from "sweetalert2";
@@ -14,10 +14,10 @@ const ListarNotificacoes = () => {
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
-    const [filtro, setFiltro] = useState("");
+  const [filtro, setFiltro] = useState("");
 
   const requisicao = axios.create({
-    baseURL: "https://2b7aa0fe-b0f8-4f65-a1ee-11309f25f174.mock.pstmn.io",
+    baseURL: process.env.REACT_APP_HOST,
     headers: {
       token: token,
       id_usuario: user2.id_usuario,
@@ -31,29 +31,83 @@ const ListarNotificacoes = () => {
   };
 
   const regularizar = (index) => {
-    Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
+    const idVagaVeiculo = data[index].id_vaga_veiculo;
+    console.log(data[index])
+    console.log(data[index].id_vaga_veiculo)
+    console.log(idVagaVeiculo)
+    requisicao.put('/notificacao/',{
+        "id_vaga_veiculo": idVagaVeiculo,
+    }).then((response) => {
+      console.log(response.data)
+      if(response.data.msg.resultado){
+        Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
+        data[index].pago = 'S';
+        setData([...data]);
+        
+      }
+    }).catch((error) => {
+    })
   }
 
   
 
     function ArrumaHora(data) {
-    const data2 = data.split(" ");
+    const data2 = data.split("T");
     const data3 = data2[0].split("-");
     const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
     const data6 = data2[1].split(":");
-    const data5 = data4 + " " + data6[0] + ":" + data6[1];
+    const data5 = data4 + " " + (data6[0]-3) + ":" + data6[1];
     return data5;
     }
 
-  useEffect(() => {
-    requisicao
-      .get("/notificacoes/?query=e3doZXJlOntkYXRhPScyMDIyLTAyLTE1J319")
+    const startVagaVeiculo = async (localVagaVeiculo) => {
+      const idrequisicao= `{where:{vaga_veiculo='${localVagaVeiculo}'}}`
+      const passar = btoa(idrequisicao)
+      
+      await requisicao
+        .get(`/notificacao/?query=${passar}`)
+        .then((response) => {
+          console.log(response.data.data)
+          const newData = response?.data.data.map((item) => ({
+            data: ArrumaHora(item.data),
+            id_notificacao: item.id_notificacao,
+            id_vaga_veiculo: item.id_vaga_veiculo,
+            tipo_notificacao: item.tipo_notificacao.nome,
+            monitor: item.monitor.nome,
+            vaga: item.vaga,
+            modelo: item.veiculo.modelo.nome,
+            valor: item.valor,
+            placa: item.veiculo.placa,
+            estado: false,
+            pago: item.pago,
+          }));
+          setData(newData);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+        setTimeout(() => {
+          localStorage.removeItem("VagaVeiculoId");
+        }, 5000);
+      };
+
+
+
+    const startNotificao = async () => {
+      const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
+    const passar = btoa(idrequisicao)
+    console.log(passar)
+    
+    await requisicao
+      .get(`/notificacao/?query=${passar}`)
       .then((response) => {
-        const hora = ArrumaHora(response.data.data[0].data);
+        console.log(response.data.data)
         const newData = response?.data.data.map((item) => ({
-          data: hora,
+          data: ArrumaHora(item.data),
           id_notificacao: item.id_notificacao,
-          tipo_notificacao: item.tipo_notificacao.tipo,
+          id_vaga_veiculo: item.id_vaga_veiculo,
+          tipo_notificacao: item.tipo_notificacao.nome,
           monitor: item.monitor.nome,
           vaga: item.vaga,
           modelo: item.veiculo.modelo.nome,
@@ -67,11 +121,20 @@ const ListarNotificacoes = () => {
       .catch((error) => {
         console.log(error);
       });
+    };
+
+  useEffect(() => {
+    const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
+    if (localVagaVeiculo !== null && localVagaVeiculo !== undefined && localVagaVeiculo !== "") {
+      startVagaVeiculo(localVagaVeiculo)
+    } else {
+      startNotificao();
+    }
   }, []);
 
-    const tirarOpcao = () => {
+    const tirarOpcao = async() => {
 
-        const select = document.getElementById("filtroSelect").value;
+    const select = document.getElementById("filtroSelect").value;
     if (cont === 0) {
     let select = document.getElementById("filtro");
     select.remove();
@@ -99,8 +162,39 @@ const ListarNotificacoes = () => {
         type = "text";
         input = "tipo";
     }
+    else if (select === "selectStatus") {
+        text = "Digite o status da notificação";
+        type = "text";
+        input = "status";
+    }
+
 
     if (select !== "selectData" && select !== "selectTipo") {
+      if(select === "selectStatus") {
+        const inputOptions = new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+              'Pago': 'Pago',
+              'Pendente': 'Pendente'
+            })
+          }, 1000)
+        })
+        
+        const { value: color } = await Swal.fire({
+          title: 'Selecione o status',
+          input: 'radio',
+          inputOptions: inputOptions,
+          inputValidator: (value) => {
+            if (!value) {
+              return 'Você deve selecionar um status de notificação!'
+            }
+          }
+        })
+        
+        if (color) {
+         teste(color);
+        }
+      }else {
     Swal.fire({
         title: text,
         input: type,
@@ -127,14 +221,15 @@ const ListarNotificacoes = () => {
       }).then((result) => {
         }
         )
+      }
     } else if (select === "selectTipo") {
         Swal.fire({
             title: text,
             input: 'select',
             inputOptions: {
-                'Tempo excedido' : 'Tempo excedido',
-                'Estacionar em vaga de idoso' : 'Estacionar em vaga de idoso',
-                'Estacionar em vada de cadeirante' : 'Estacionar em vada de cadeirante'
+                'Tempo limite excedido': 'Tempo limite excedido',
+                'Ocupando vaga de idoso': 'Ocupando vaga de idoso',
+                'Ocupando vaga de deficiente': 'Ocupando vaga de deficiente'
             },
             inputAttributes: {
                 autocapitalize: 'off'
@@ -182,9 +277,58 @@ const ListarNotificacoes = () => {
     }
 }
 
-    const teste = (oi) => {
-    console.log(oi);
+    const teste = (resposta) => {
+    for (let i = 0; i < data.length; i++) {
+        delete data[i];
     }
+    const select = document.getElementById("filtroSelect").value;
+    let idrequisicao = "";
+    let passar = "";
+    if (select === "selectData") {
+       idrequisicao= `{where:{hora=${resposta}}}`
+        passar = btoa(idrequisicao)
+    }
+    else if(select === "selectPlaca") {
+        idrequisicao= `{where:{placa='${resposta}'}}`
+        passar = btoa(idrequisicao)
+    }
+    else if(select === "selectVaga") {
+        idrequisicao= `{where:{vaga='${resposta}'}}`
+        passar = btoa(idrequisicao)
+    }
+    else if(select === "selectTipo") {
+        idrequisicao= `{where:{tipo='${resposta}'}}`
+        passar = btoa(idrequisicao)
+    }
+    else if(select === "selectStatus"){
+        idrequisicao= `{where:{status='${resposta}'}}`
+        passar = btoa(idrequisicao)
+    }
+
+    if (idrequisicao !== "" && passar !== "") {
+        requisicao.get(`/notificacao/?query=${passar}`)
+        .then((response) => {
+          const arraySemNulos = response?.data.data.filter(valor => valor !== null);
+          const newData = arraySemNulos.map((item) => ({
+              data: ArrumaHora(item.data),
+              id_notificacao: item.id_notificacao,
+              tipo_notificacao: item.tipo_notificacao.nome,
+              monitor: item.monitor.nome,
+              id_vaga_veiculo: item.id_vaga_veiculo,
+              vaga: item.vaga,
+              modelo: item.veiculo.modelo.nome,
+              valor: item.valor,
+              placa: item.veiculo.placa,
+              estado: false,
+              pago: item.pago,
+            }));
+            setData(newData);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+}
 
   return (
     <div className="col-12 px-3">
@@ -195,6 +339,7 @@ const ListarNotificacoes = () => {
         <option value="selectData">Data</option>
         <option value="selectPlaca">Placa</option>
         <option value="selectVaga">Vaga</option>
+        <option value="selectStatus">Status</option>
         <option value="selectTipo">Tipo de notificação</option>
         </select>
         <h6 className="text-start"><small>{filtro}</small></h6>
@@ -287,12 +432,17 @@ const ListarNotificacoes = () => {
                       Dinheiro
                     </option>
                   </select>
-                  <div className="pt-3">
-                  <button type="submit" className="btn4 botao fs-5" onClick={()=> {regularizar(index)}}>
-                    Regularizar
-                  </button>
+                  <div className="pt-3 gap-6 d-md-block">
+                    <div className="row">
+                      <div className="col-10">
+                      <button type="submit" className="btn5 botao align-itens-center fs-6" onClick={()=>{regularizar(index)}}>Regularizar</button>
+                      </div>
+                      <div className="col-2 pt-2">
+                      <span className=""> <AiFillPrinter size={25}/> </span>
+                      </div>
+                      </div> 
+                      </div>
                   </div>
-                </div>
                 )}
             </div>
           ) : null}
