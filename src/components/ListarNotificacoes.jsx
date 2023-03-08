@@ -10,6 +10,8 @@ import Swal  from "sweetalert2";
 const ListarNotificacoes = () => {
   const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);
+  const [estado, setEstado ] = useState(false);
+  const [mensagem, setMensagem] = useState("");
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
@@ -43,7 +45,14 @@ const ListarNotificacoes = () => {
         Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
         data[index].pago = 'S';
         setData([...data]);
-        
+      }
+      else {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("")
+        }, 5000);
       }
     }).catch((error) => {
     })
@@ -67,7 +76,7 @@ const ListarNotificacoes = () => {
       await requisicao
         .get(`/notificacao/?query=${passar}`)
         .then((response) => {
-          console.log(response.data.data)
+          if (response.data.msg.resultado) {
           const newData = response?.data.data.map((item) => ({
             data: ArrumaHora(item.data),
             id_notificacao: item.id_notificacao,
@@ -82,6 +91,14 @@ const ListarNotificacoes = () => {
             pago: item.pago,
           }));
           setData(newData);
+        } else {
+          setEstado(true);
+          setMensagem(response.data.msg.msg);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("")
+          }, 5000);
+        }
         })
         .catch((error) => {
           console.log(error);
@@ -89,7 +106,7 @@ const ListarNotificacoes = () => {
 
         setTimeout(() => {
           localStorage.removeItem("VagaVeiculoId");
-        }, 5000);
+        }, 2000);
       };
 
 
@@ -102,7 +119,7 @@ const ListarNotificacoes = () => {
     await requisicao
       .get(`/notificacao/?query=${passar}`)
       .then((response) => {
-        console.log(response.data.data)
+        if (response.data.msg.resultado) {
         const newData = response?.data.data.map((item) => ({
           data: ArrumaHora(item.data),
           id_notificacao: item.id_notificacao,
@@ -117,17 +134,70 @@ const ListarNotificacoes = () => {
           pago: item.pago,
         }));
         setData(newData);
+      } else {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("")
+        }, 5000);
+      }
       })
       .catch((error) => {
         console.log(error);
       });
     };
 
+    const startPlaca = async (placa) => {
+      const idrequisicao= `{where:{placa='${placa}'}}`
+      const passar = btoa(idrequisicao)
+      await requisicao
+      .get(`/notificacao/?query=${passar}`)
+      .then((response) => {
+        if (response.data.msg.resultado) {
+        const newData = response?.data.data.map((item) => ({
+          data: ArrumaHora(item.data),
+          id_notificacao: item.id_notificacao,
+          id_vaga_veiculo: item.id_vaga_veiculo,
+          tipo_notificacao: item.tipo_notificacao.nome,
+          monitor: item.monitor.nome,
+          vaga: item.vaga,
+          modelo: item.veiculo.modelo.nome,
+          valor: item.valor,
+          placa: item.veiculo.placa,
+          estado: false,
+          pago: item.pago,
+        }));
+        setData(newData);
+      } else {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("")
+        }, 5000);
+      }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+      setTimeout(() => {
+        localStorage.removeItem("placaCarro");
+      }, 2000);
+    }
+      
+      
+
   useEffect(() => {
     const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
+    const placa = localStorage.getItem("placaCarro");
     if (localVagaVeiculo !== null && localVagaVeiculo !== undefined && localVagaVeiculo !== "") {
       startVagaVeiculo(localVagaVeiculo)
-    } else {
+    } else if (placa !== null && placa !== undefined && placa !== ""){
+      startPlaca(placa);
+    }
+    else {
+      console.log("entrou")
       startNotificao();
     }
   }, []);
@@ -308,6 +378,8 @@ const ListarNotificacoes = () => {
     if (idrequisicao !== "" && passar !== "") {
         requisicao.get(`/notificacao/?query=${passar}`)
         .then((response) => {
+          console.log(response.data)
+          if (response.data.msg.resultado) {
           const arraySemNulos = response?.data.data.filter(valor => valor !== null);
           const newData = arraySemNulos.map((item) => ({
               data: ArrumaHora(item.data),
@@ -323,8 +395,15 @@ const ListarNotificacoes = () => {
               pago: item.pago,
             }));
             setData(newData);
-        })
-        .catch((error) => {
+        } else {
+          setEstado(true);
+          setMensagem(response.data.msg.msg);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("")
+          }, 5000);
+        }
+        }).catch((error) => {
             console.log(error);
         });
     }
@@ -448,6 +527,9 @@ const ListarNotificacoes = () => {
           ) : null}
         </div>
       ))}
+        <div className="alert alert-danger mt-4" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+            {mensagem}
+        </div>
     </div>
   );
 };

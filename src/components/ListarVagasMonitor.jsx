@@ -166,6 +166,12 @@ const ListarVagasMonitor = () => {
         });
         const setor = 'A'
         getVagas(setor);
+        localStorage.removeItem('idVagaVeiculo');
+        localStorage.removeItem('placa');
+        localStorage.removeItem('vaga');
+        localStorage.removeItem('foto6');
+        localStorage.removeItem('foto7');
+        localStorage.removeItem('placaCarro');
     }, [])
 
     const estaciona = (numero, id_vaga, tempo, placa, notificacoes) => {
