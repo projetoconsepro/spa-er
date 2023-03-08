@@ -306,18 +306,10 @@ const Notificacao = () => {
                                         <p>Veículo selecionado: {placa}</p>
                                         <p><small>Vaga selecionada: {vaga}</small></p>
                                     </div>
-                                    <div className="h6 mt-3" onChange={getTipoNot}>
-                                        <p className='text-start'>Tipo de notificação:</p>
-                                       <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
-                                    {tiposNotificacao.map((link, index) => (
-                                            <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
-                                        ))}
-                                </select>
-                                    </div>
-                                    <div className="h6 mt-5">
+                                    <div className="h6 mt-3">
                                         <button type="submit" className="btn4 botao" onClick={renderCamera}>Tirar fotos do veículo <AiFillCamera /></button>
                                     </div>
-                                    <div className='row pb-5'>
+                                    <div className='row pb-3'>
                                         {imagens.map((imagem, key) => (
                                             <div key={key} className="col">
                                                 {imagem !== null ?
@@ -328,6 +320,15 @@ const Notificacao = () => {
 
                                     </div>
                                     {imagensSalvas ? 
+                                    <div>
+                                        <div className="h6" onChange={getTipoNot}>
+                                            <p className='text-start'>Tipo de notificação:</p>
+                                            <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
+                                            {tiposNotificacao.map((link, index) => (
+                                            <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
+                                            ))}
+                                            </select>
+                                        </div>
                                     <div className='text-start bg-gray-200 text-dark rounded'>
                                     {infoBanco ?
                                         <div class="row justify-content-center">
@@ -384,6 +385,7 @@ const Notificacao = () => {
                                     </div>
                                         }
 
+                                    </div>
                                     </div>
                                     : null}
                                     <div className="mt-4 mb-5 gap-2 d-md-block">

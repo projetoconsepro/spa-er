@@ -4217,6 +4217,19 @@ textarea.form-control-lg {
     text-transform: uppercase !important;
 }
 
+#inputvazio3{
+    font-family: "FE" !important;
+    outline: 0;
+    border: 0;
+    background-color: unset;
+    width: 30rem   !important;
+    max-width: 100% !important;
+    text-align: center;
+    justify-content: left;
+    align-items: left;
+    text-transform: uppercase !important;
+}
+
 #inputvazio2 {
     font-family: "FE" !important;
     outline: 0;
@@ -4236,6 +4249,10 @@ textarea.form-control-lg {
         margin-left: -20% !important;
         max-width: 150% !important;
     }
+    #inputvazio3{
+        margin-left: -35% !important;
+        max-width: 170% !important;
+    }
 }
 
 @media (max-width: 375px)
@@ -4243,6 +4260,10 @@ textarea.form-control-lg {
     #inputvazio{
         margin-left: -40% !important;
         max-width: 180% !important;
+    }
+    #inputvazio3{
+        margin-left: -35% !important;
+        max-width: 170% !important;
     }
 }
 
@@ -4252,6 +4273,12 @@ textarea.form-control-lg {
         font-size: 20px !important;
         margin-left: -50% !important;
         max-width: 200% !important;
+    }
+    #inputvazio3{
+        font-size: 20px !important;
+        margin-left: -50% !important;
+        max-width: 200% !important;
+        margin-bottom: 1.5rem;
     }
 }
 
@@ -4835,6 +4862,27 @@ textarea.form-control-lg {
     border-radius: 0.5rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+
+.btn6 {
+    display: inline-block;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #ffffff !important;
+    width: 50%;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 0.0625rem solid transparent;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+
 
 #modalTexto{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -7506,6 +7554,60 @@ textarea.form-control-lg {
 #infoVeiculos{
     width: 75% !important;
 }
+.card-body4 {
+    height: 24rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+
+@media (max-width: 460px) {
+    #sumirCarro{
+        display: none;
+    }
+    .card-body4 {
+        height: 25rem;
+        flex: 1 1 auto;
+        padding: 1.25rem 1.5rem;
+    }
+}
+
+@media (max-width: 395px) {
+    #sumirCarro{
+        display: none;
+    }
+}
+
+@media (max-width: 420px) {
+    #sumirCarro{
+        display: none;
+    }
+    #estacionadocarroo h6{
+        font-size: 0.9rem !important;
+    }
+    .card-body4 {
+        height: 23rem;
+        flex: 1 1 auto;
+        padding: 1.25rem 1.5rem;
+    }
+}
+
+@media (max-width: 360px){
+    #sumirCarro{
+        display: none;
+    }
+    #estacionadocarroo h6{
+        font-size: 0.8rem !important;
+    }
+}
+
+@media (max-width: 290px){
+    #sumirCarro{
+        display: none;
+    }
+    #estacionadocarroo h6{
+        font-size: 0.5rem !important;
+    }
+}
 
 .card-body {
     height: 8rem;
@@ -7525,6 +7627,7 @@ textarea.form-control-lg {
 }
 
 #vamove{
+    font-size: 1px;
     border-bottom: 1px solid #b1b1b1;  
 }
 

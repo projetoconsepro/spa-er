@@ -9,6 +9,7 @@ import Error from '../../components/Error';
 import Notificacao from '../../components/Notificacao';
 import Camera from '../../components/Camera';
 import ListarNotificacoes from '../../components/ListarNotificacoes';
+import BuscarVeiculo from '../../components/BuscarVeiculo';
 
 const Veiculos = () => {
     const componente = localStorage.getItem("componente");
@@ -35,6 +36,9 @@ const Veiculos = () => {
         }
         else if ( componente === "ListarNotificacoes"){
             return <ListarNotificacoes />
+        }
+        else if ( componente === "BuscarVeiculo"){
+            return <BuscarVeiculo />
         }
         else {
             return <Error />
