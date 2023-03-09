@@ -7,7 +7,7 @@ import { BiErrorCircle } from "react-icons/bi";
 import Swal  from "sweetalert2";
 
 
-const ListarNotificacoes = () => {
+const Irregularidades = () => {
   const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);
   const [estado, setEstado ] = useState(false);
@@ -23,7 +23,7 @@ const ListarNotificacoes = () => {
     headers: {
       token: token,
       id_usuario: user2.id_usuario,
-      perfil_usuario: "monitor",
+      perfil_usuario: "cliente",
     },
   });
 
@@ -68,48 +68,6 @@ const ListarNotificacoes = () => {
     const data5 = data4 + " " + (data6[0]-3) + ":" + data6[1];
     return data5;
     }
-
-    const startVagaVeiculo = async (localVagaVeiculo) => {
-      const idrequisicao= `{where:{vaga_veiculo='${localVagaVeiculo}'}}`
-      const passar = btoa(idrequisicao)
-      
-      await requisicao
-        .get(`/notificacao/?query=${passar}`)
-        .then((response) => {
-          if (response.data.msg.resultado) {
-          const newData = response?.data.data.map((item) => ({
-            data: ArrumaHora(item.data),
-            id_notificacao: item.id_notificacao,
-            id_vaga_veiculo: item.id_vaga_veiculo,
-            tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
-            vaga: item.vaga,
-            modelo: item.veiculo.modelo.nome,
-            valor: item.valor,
-            placa: item.veiculo.placa,
-            estado: false,
-            pago: item.pago,
-          }));
-          setData(newData);
-        } else {
-          setEstado(true);
-          setMensagem(response.data.msg.msg);
-          setTimeout(() => {
-            setEstado(false);
-            setMensagem("")
-          }, 5000);
-        }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-        setTimeout(() => {
-          localStorage.removeItem("VagaVeiculoId");
-        }, 2000);
-      };
-
-
 
     const startNotificao = async () => {
       const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
@@ -187,11 +145,8 @@ const ListarNotificacoes = () => {
     } 
 
   useEffect(() => {
-    const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
     const placa = localStorage.getItem("placaCarro");
-    if (localVagaVeiculo !== null && localVagaVeiculo !== undefined && localVagaVeiculo !== "") {
-      startVagaVeiculo(localVagaVeiculo)
-    } else if (placa !== null && placa !== undefined && placa !== ""){
+    if (placa !== null && placa !== undefined && placa !== ""){
       startPlaca(placa);
     }
     else {
@@ -260,6 +215,7 @@ const ListarNotificacoes = () => {
         })
         
         if (color) {
+          setFiltro(`Filtrado pelo ${input}: ${color}`);
          teste(color);
         }
       }else {
@@ -409,7 +365,7 @@ const ListarNotificacoes = () => {
 
   return (
     <div className="col-12 px-3">
-      <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
+      <p className="text-start fs-2 fw-bold">Notificações:</p>
       <div onChange={() => {tirarOpcao()}}> 
       <select className="form-select form-select-sm mb-3" aria-label=".form-select-lg example" id="filtroSelect">
         <option disabled selected id="filtro">Filtro</option>
@@ -482,12 +438,6 @@ const ListarNotificacoes = () => {
                   className="h6 align-items-start text-start px-4"
                   id="estacionadocarroo"
                 >
-                  <h6> <BsFillPersonFill />‎ Monitor: {link.monitor}</h6>
-                </div>
-                <div
-                  className="h6 align-items-start text-start px-4"
-                  id="estacionadocarroo"
-                >
                   <h6> <FaCarAlt />‎ Modelo: {link.modelo}</h6>
                 </div>
                 <div
@@ -511,11 +461,8 @@ const ListarNotificacoes = () => {
                   </select>
                   <div className="pt-3 gap-6 d-md-block">
                     <div className="row">
-                      <div className="col-10">
-                      <button type="submit" className="btn5 botao align-itens-center fs-6" onClick={()=>{regularizar(index)}}>Regularizar</button>
-                      </div>
-                      <div className="col-2 pt-2">
-                      <span className=""> <AiFillPrinter size={25}/> </span>
+                      <div className="col-12">
+                      <button type="submit" className="btn4 botao align-itens-center fs-6" onClick={()=>{regularizar(index)}}>Regularizar</button>
                       </div>
                       </div> 
                       </div>
@@ -533,4 +480,4 @@ const ListarNotificacoes = () => {
   );
 };
 
-export default ListarNotificacoes;
+export default Irregularidades;
