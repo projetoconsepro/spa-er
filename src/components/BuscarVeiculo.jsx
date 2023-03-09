@@ -232,7 +232,11 @@ const BuscarVeiculo = () => {
                                         </div>
                                     </div>
                                     <div className=" mb-5 gap-2 d-md-block justify-content-between w-100">
-                                        <button type="submit" className="btn4 mb-2 bg-danger botao" onClick={()=>{notificacoes()}}>Notificações</button>
+                                    {link.numero_notificacoes_pendentes === 0  ?
+                                            null
+                                            :
+                                            <button type="submit" className="btn4 mb-2 bg-danger botao" onClick={()=>{notificacoes()}}>Notificações</button>
+                                            }
                                         <button type="submit" className="btn4 bg-gray-400 botao ">Histórico</button>
                                     </div>
                                 </div>
