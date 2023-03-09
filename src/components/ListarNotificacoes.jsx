@@ -523,6 +523,7 @@ const ListarNotificacoes = () => {
                       </div>
                   </div>
                 )}
+                
             </div>
           ) : null}
         </div>
