@@ -10,6 +10,8 @@ import Notificacao from '../../components/Notificacao';
 import Camera from '../../components/Camera';
 import ListarNotificacoes from '../../components/ListarNotificacoes';
 import BuscarVeiculo from '../../components/BuscarVeiculo';
+import Irregularidades from '../../components/Irregularidades';
+import HistoricoVeiculo from '../../components/HistoricoVeiculo';
 
 const Veiculos = () => {
     const componente = localStorage.getItem("componente");
@@ -39,6 +41,12 @@ const Veiculos = () => {
         }
         else if ( componente === "BuscarVeiculo"){
             return <BuscarVeiculo />
+        }
+        else if ( componente === "Irregularidades"){
+            return <Irregularidades />
+        }
+        else if ( componente === "HistoricoVeiculo"){
+            return <HistoricoVeiculo />
         }
         else {
             return <Error />

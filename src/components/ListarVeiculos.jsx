@@ -299,9 +299,6 @@ const ListarVeiculos = () => {
                 </div>
             </div>
 
-
-
-
             {resposta.map((link, index) => (
                 <div className="card border-0 shadow mt-5" key={index} >
                     <div className={link.div} onClick={()=>{handleClick(index)}}>
@@ -325,7 +322,7 @@ const ListarVeiculos = () => {
                                     <h6><AiOutlineInfoCircle/>‎ {link.numero_notificacoes_pendentes}</h6>
                                 </div>
                                 }
-                                <div className="h6 d-flex align-items-center fs-6 opacity-75 text-start">
+                                <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
                                 <h6 className="fs-6"><TbHandClick /> <small>{link.textoestacionado}</small></h6>
                                 </div>
                             </div>

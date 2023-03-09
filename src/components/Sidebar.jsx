@@ -2,12 +2,16 @@ import { Link } from "react-router-dom";
 import { 
     FaCarAlt,
     FaParking,
+    FaClipboardList,
+    FaMapMarkerAlt
  } from "react-icons/fa";
 import { BsConeStriped,
         BsCashCoin } from "react-icons/bs";
-import { RiSettings5Fill } from "react-icons/ri";
+import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
 import { useContext } from "react";
 import { AuthContext } from "../pages/contexts/auth";
+import { BiSearchAlt } from "react-icons/bi";
+import { AiOutlineFileSearch } from "react-icons/ai";
 
 const Sidebar = () => {
         const { logout } = useContext(AuthContext);
@@ -26,11 +30,7 @@ const Sidebar = () => {
         className: "nav-link d-flex align-items-center",
         }
 
-    const links = [ 
-        {
-            
-        }
-    ]
+    const links = [{}]
     
     if(teste.perfil[0] === "cliente"){
         links.push({
@@ -53,7 +53,7 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <FaParking />,
+            icon: <FaMapMarkerAlt />,
             name: "‎ Vagas livres",
             componente: "VagasLivres",
         })
@@ -75,8 +75,13 @@ const Sidebar = () => {
             name: "‎ Cadastrar novo veículo",
             componente: "CadastrarVeiculo",
         })
-
-    }
+        links.push({
+            className: styles.className,
+            icon: <AiOutlineFileSearch />,
+            name: "‎ Histórico",
+            componente: "HistoricoVeiculo",
+        })
+        }
     else if (teste.perfil[0] === "admin"){
         links.push({
             className: styles.className,
@@ -87,47 +92,43 @@ const Sidebar = () => {
     else if (teste.perfil[0] === "monitor"){
         links.push({
             className: styles.className,
-            name: "Monitor",
-            to: "/monitor",
-            componente: "NADA"
+            name: "‎ Registrar estacionamento",
+            icon: <FaParking />,
+            componente: "RegistrarVagaMonitor"
         })
         links.push({
             className: styles.className,
-            name: "Registrar estacionamento",
-            to: "/registrar",
+            name: "‎ Consultar vaga",
+            componente: "ListarVagasMonitor",
+            icon: <FaParking />,
         })
         links.push({
             className: styles.className,
-            name: "Consultar vaga",
-            to: "/consultarvaga",
+            name: "‎ Vaga livre",
+            icon: <FaMapMarkerAlt />,
         })
         links.push({
             className: styles.className,
-            name: "Vaga livre",
-            to: "/vagalivre",
-        })
-        links.push({
-            className: styles.className,
-            name: "Listar Vagas",
-            to: "/listarvagas",
+            name: "‎ Listar Vagas",
+            icon: <FaCarAlt />,
             componente: "ListarVagasMonitor"
         })
         links.push({
             className: styles.className,
-            name: "Notificação",
-            to: "/notificacao",
+            name: "‎ Notificação",
+            icon: <RiAlertFill />,
             componente: "Notificacao"
         })
         links.push({
             className: styles.className,
-            name: "Listar Notificações",
-            to: "/listarnotificacoes",
+            name: "‎ Listar Notificações",
+            icon: <BsConeStriped />,
             componente: "ListarNotificacoes"
         })
         links.push({
             className: styles.className,
-            name: "Buscar veículo",
-            to: "/buscarveiculo",
+            name: "‎ Buscar veículo",
+            icon: <BiSearchAlt />,
             componente: "BuscarVeiculo"
         })
     }
