@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import TailSpin from "react-loading-icons/dist/esm/components/tail-spin";
 import Swal from "sweetalert2";
 
 
@@ -7,19 +8,21 @@ const HistoricoVeiculo = () => {
   const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);
   const [estado, setEstado ] = useState(false);
+  const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
+  const [plaquinha, setPlaquinha] = useState("");
 
   const requisicao = axios.create({
     baseURL: process.env.REACT_APP_HOST,
     headers: {
       token: token,
       id_usuario: user2.id_usuario,
-      perfil_usuario: "cliente",
+      perfil_usuario: `${user2.perfil[0]}`,
     },
   });
 
@@ -28,7 +31,7 @@ const HistoricoVeiculo = () => {
     const data3 = data2[0].split("-");
     const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
     const data6 = data2[1].split(":");
-    const data5 = data4 + " " + (data6[0]-3) + ":" + data6[1];
+    const data5 = data4 + " - " + (data6[0]-3) + ":" + data6[1];
     return data5;
     }
 
@@ -49,10 +52,6 @@ const HistoricoVeiculo = () => {
         text = "Selecione a data desejada";
         type = "date";
         input = "data";
-    } else if (select === "selectPlaca") {
-        text = "Digite a placa desejada";
-        type = "text";
-        input = "placa";
     } else if (select === "selectVaga") {
         text = "Digite a vaga desejada";
         type = "number";
@@ -74,8 +73,8 @@ const HistoricoVeiculo = () => {
         const inputOptions = new Promise((resolve) => {
           setTimeout(() => {
             resolve({
-              'Pago': 'Pago',
-              'Pendente': 'Pendente'
+              'S': 'Com irregularidades',
+              'N': 'Sem irregularidades'
             })
           }, 1000)
         })
@@ -92,7 +91,12 @@ const HistoricoVeiculo = () => {
         })
         
         if (color) {
-          setFiltro(`Filtrado pelo ${input}: ${color}`);
+          if ( color === "S") {
+          setFiltro(`Filtrado por movimentos: Com irregularidades`);
+          }
+          else {
+            setFiltro(`Filtrado por movimentos: Sem irregularidades`);
+          }
          respostaPopup(color);
         }
       }else {
@@ -153,7 +157,49 @@ const HistoricoVeiculo = () => {
     }
 }
 
+const chamarPopup = (index) => {
+  if(data[index].notificacao === "S") {
+  let tipo = "Sim";
+  Swal.fire({
+    title: data[index].placa,
+    html: `Data: ${data[index].data} </br> Horário chegada: ${data[index].chegada} </br> Horário saída: ${data[index].saida} </br> 
+    Vaga: ${data[index].vaga} </br> Houve irregularidades: ${tipo} </br>`,
+    showCancelButton: true,
+    confirmButtonText: 'Notificações',
+    confirmButtonColor: '#3a58c8',
+    cancelButtonText: 'Voltar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.setItem("componente", "ListarNotificacoes");
+      localStorage.setItem("VagaVeiculoId", data[index].id_vaga_veiculo);
+      window.location.reload();
+    } else if (result.isDenied) {
+      
+    }
+  })
+} else{
+  let tipo = "Não";
+  Swal.fire({
+    title: data[index].placa,
+    html: `Data: ${data[index].data} </br></br> Horário chegada: ${data[index].chegada} </br></br> Horário saída: ${data[index].saida} </br></br> 
+    Vaga: ${data[index].vaga} </br></br> Houve irregularidades: ${tipo} </br>`,
+    showCancelButton: false,
+    confirmButtonText: 'Voltar',
+    confirmButtonColor: '#3a58c8',
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+    } else if (result.isDenied) {
+      
+    }
+  })
+}
+}
+
+
 const respostaPopup = (resposta) => {
+   const plaquinha = localStorage.getItem("placaCarro");
+    setEstado2(true);
     for (let i = 0; i < data.length; i++) {
         delete data[i];
     }
@@ -161,43 +207,48 @@ const respostaPopup = (resposta) => {
     let idrequisicao = "";
     let passar = "";
     if (select === "selectData") {
-       idrequisicao= `{where:{hora=${resposta}}}`
-        passar = btoa(idrequisicao)
-    }
-    else if(select === "selectPlaca") {
-        idrequisicao= `{where:{placa='${resposta}'}}`
+       idrequisicao= `{where:{placa='${plaquinha}', hora='%${resposta}%'}}`
         passar = btoa(idrequisicao)
     }
     else if(select === "selectVaga") {
-        idrequisicao= `{where:{vaga='${resposta}'}}`
+        idrequisicao= `{where:{placa='${plaquinha}', vaga='${resposta}'}}`
         passar = btoa(idrequisicao)
     }
     else if(select === "selectStatus"){
-        idrequisicao= `{where:{status='${resposta}'}}`
+        idrequisicao= `{where:{placa='${plaquinha}', tipo='${resposta}'}}`
+        console.log(resposta)
         passar = btoa(idrequisicao)
     }
 
     if (idrequisicao !== "" && passar !== "") {
-        requisicao.get(`/notificacao/?query=${passar}`)
+        requisicao.get(`/veiculo/historico/?query=${passar}`)
         .then((response) => {
           console.log(response.data)
           if (response.data.msg.resultado) {
+            setEstado2(false);
+            setEstado(false);
+            setMensagem("")
           const arraySemNulos = response?.data.data.filter(valor => valor !== null);
           const newData = arraySemNulos.map((item) => ({
+              vaga: item.numerovaga,
+              chegada: item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+              horafinal: item.horafinal[0] + ":" + item.horafinal[1] + ":" + item.horafinal[2],
+              saida: item.saida,
               data: ArrumaHora(item.data),
-              id_notificacao: item.id_notificacao,
-              tipo_notificacao: item.tipo_notificacao.nome,
-              monitor: item.monitor.nome,
-              id_vaga_veiculo: item.id_vaga_veiculo,
-              vaga: item.vaga,
-              modelo: item.veiculo.modelo.nome,
-              valor: item.valor,
-              placa: item.veiculo.placa,
               estado: false,
               pago: item.pago,
+              placa: item.placa,
+              notificacao: item.notificacao,
+              id_vaga_veiculo: item.id_vaga_veiculo,
             }));
             setData(newData);
         } else {
+          setEstado2(false);
+          for (let i = 0; i < data.length; i++) {
+            delete data[i];
+          }
+          const resposta3 = data.filter((el) => el !== null);
+          setData(resposta3);
           setEstado(true);
           setMensagem(response.data.msg.msg);
           setTimeout(() => {
@@ -211,48 +262,78 @@ const respostaPopup = (resposta) => {
     }
 }
 
+ useEffect(() => {
+  const plaquinha = localStorage.getItem("placaCarro");
+  setEstado2(true);
+  let idrequisicao= `{where:{placa='${plaquinha}'}}`
+  let passar = btoa(idrequisicao)
+
+  if (idrequisicao !== "" && passar !== "") {
+    requisicao.get(`/veiculo/historico/?query=${passar}`)
+    .then((response) => {
+      console.log(response)
+      if (response.data.msg.resultado) {
+      setEstado2(false);
+      setEstado(false);
+      setMensagem("");
+      const arraySemNulos = response?.data.data.filter(valor => valor !== null);
+      const newData = arraySemNulos.map((item) => ({
+          vaga: item.numerovaga,
+          chegada: item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+          horafinal: item.horafinal[0] + ":" + item.horafinal[1] + ":" + item.horafinal[2],
+          saida: item.saida,
+          data: ArrumaHora(item.data),
+          estado: false,
+          pago: item.pago,
+          placa: item.placa,
+          notificacao: item.notificacao,
+          id_vaga_veiculo: item.id_vaga_veiculo,
+        }));
+        setData(newData);
+    } else {
+      setEstado2(false);
+      setEstado(true);
+      setMensagem(response.data.msg.msg);
+      setTimeout(() => {
+        setEstado(false);
+        setMensagem("")
+      }, 5000);
+    }
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
+}, []);
+          
+
 
   return (
     <div className="dashboard-container">
-      <p className="mx-3 text-start fs-4 fw-bold">Notificações:</p>
+      <p className="mx-3 text-start fs-4 fw-bold">Histórico:</p>
       <div onChange={() => {tirarOpcao()}}> 
       <select className="mx-3 form-select form-select-sm mb-3" aria-label=".form-select-lg example" id="filtroSelect">
         <option disabled selected id="filtro">Filtro</option>
         <option value="selectData">Data</option>
-        <option value="selectPlaca">Placa</option>
         <option value="selectVaga">Vaga</option>
         <option value="selectStatus">Status</option>
         </select>
         <h6 className="text-start mx-3"><small>{filtro}</small></h6>
-    </div>
-    <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-            {mensagem}
     </div>
       <div className="row">
         <div className="col-12 col-xl-8">
           <div className="row">
             <div className="col-12 mb-4">
               <div className="card border-0 shadow">
-                <div className="card-header">
-                  <div className="row align-items-center">
-                    <div className="col">
-                      <h2 className="fs-5 fw-bold mb-0">IKW7067</h2>
-                    </div>
-                    <div className="col text-end"></div>
-                  </div>
-                </div>
                 <div className="table-responsive">
                   <table className="table align-items-center table-flush">
                     <thead className="thead-light">
                       <tr>
                         <th className="border-bottom" scope="col">
-                          Data
+                          Placa
                         </th>
                         <th className="border-bottom" scope="col">
                           Chegada
-                        </th>
-                        <th className="border-bottom" scope="col">
-                          Saida
                         </th>
                         <th className="border-bottom" scope="col">
                           Vaga
@@ -260,21 +341,23 @@ const respostaPopup = (resposta) => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr >
-                      <td scope="row">17/02/2023</td>
-                        <td >15:30</td>
-                        <td>16:30</td>
-                        <td>42</td>
+                    {data.map((item, index) => (
+                      <tr style={{backgroundColor: item.notificacao === 'S' ? "#F8D7DA" : "#FFF" }} onClick={() => {chamarPopup(index)}}>
+                        <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.placa}</td>
+                        <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.data}</td>
+                        <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.vaga}</td>
                       </tr>
-                      <tr style={{ backgroundColor: "#F8D7DA" }}>
-                        <td scope="row" style={{ color: "#842029" }}>17/02/2023</td>
-                        <td style={{ color: "#842029" }}>15:30</td>
-                        <td style={{ color: "#842029" }}>16:30</td>
-                        <td style={{ color: "#842029" }}>42</td>
-                      </tr>
+                   ))}
                     </tbody>
                   </table>
                 </div>
+                <div className="mt-3 mb-3" style={{ display: estado2 ? 'block' : 'none'}}>
+                                    <p><small>Carregando...</small></p>
+                                <TailSpin stroke="#3a58c8"/>
+                </div>
+                <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                      {mensagem}
+                  </div>
               </div>
             </div>
           </div>

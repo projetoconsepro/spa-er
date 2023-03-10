@@ -35,6 +35,15 @@ const BuscarVeiculo = () => {
         }
     })
 
+    const goHistorico = () => {
+        const tirarTraco = textoPlaca.split("-").join("");
+        const upperCase = tirarTraco.toUpperCase();
+        localStorage.setItem('placaCarro', upperCase)
+        localStorage.setItem('componente', 'HistoricoVeiculo')
+        window.location.reload();
+    }
+
+
     const handlePlaca = () => {
         const clicado = document.getElementById("flexSwitchCheckDefault").checked
             if(clicado === true){
@@ -237,7 +246,7 @@ const BuscarVeiculo = () => {
                                             :
                                             <button type="submit" className="btn4 mb-2 bg-danger botao" onClick={()=>{notificacoes()}}>Notificações</button>
                                             }
-                                        <button type="submit" className="btn4 bg-gray-400 botao ">Histórico</button>
+                                        <button type="submit" className="btn4 bg-gray-400 botao" onClick={() => {goHistorico()}}>Histórico</button>
                                     </div>
                                 </div>
                             </div>
