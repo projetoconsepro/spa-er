@@ -48,7 +48,7 @@ function Camera() {
       }
     }
     localStorage.setItem("componente", "Notificacao");
-    window.location.reload();
+    //era pra ser window.location.reload()
   }
   }
 

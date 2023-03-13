@@ -59,7 +59,7 @@ const ListarVeiculos = () => {
             response => {
                 if(response.data.msg.resultado === false){
                     localStorage.setItem("componente", "CadastrarVeiculo")
-                    window.location.reload();
+                    //era pra ser window.location.reload()
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
                     console.log(response.data.data[i])

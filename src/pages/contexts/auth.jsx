@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
             setUser(recoveredUser);
             navigate("/home")
         }
+        
         setLoading(false);
     }, []);
 

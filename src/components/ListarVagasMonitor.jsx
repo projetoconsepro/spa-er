@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import Swal from "sweetalert2";
+import HomePage from "../pages/HomePage";
 import Cronometro from "./Cronometro";
 import ListarNotificacoes from "./ListarNotificacoes";
 
@@ -195,7 +196,7 @@ const ListarVagasMonitor = () => {
                                 if (response.data.msg.resultado) {
                                     Swal.fire('Vaga liberada', '', 'success')
                                     setTimeout(() => {
-                                        window.location.reload();
+                                        //era pra ser window.location.reload()
                                     }, 1000);
                                 } else {
                                     Swal.fire(`${response.data.msg.msg}`, '', 'error')
@@ -209,7 +210,7 @@ const ListarVagasMonitor = () => {
                     else if (result.isDenied) {
                         localStorage.setItem('VagaVeiculoId', id_vaga);
                         localStorage.setItem('componente', 'ListarNotificacoes');
-                        window.location.reload();
+                        //era pra ser window.location.reload()
                 }
                 });
             }
@@ -230,7 +231,7 @@ const ListarVagasMonitor = () => {
                             if (response.data.msg.resultado) {
                                 Swal.fire('Vaga liberada', '', 'success')
                                 setTimeout(() => {
-                                    window.location.reload();
+                                    //era pra ser window.location.reload()
                                 }, 1000);
                             } else {
                                 Swal.fire(`${response.data.msg.msg}`, '', 'error')
@@ -247,7 +248,7 @@ const ListarVagasMonitor = () => {
                     localStorage.setItem('placa', placa);
                     localStorage.setItem('idVagaVeiculo', id_vaga);
                     localStorage.setItem('componente', 'Notificacao');
-                    window.location.reload();
+                    //era pra ser window.location.reload()
                 }
                 
 
@@ -257,7 +258,7 @@ const ListarVagasMonitor = () => {
             if ( placa === ''){
                 localStorage.setItem('vaga', numero);
                 localStorage.setItem('componente', 'RegistrarVagaMonitor');
-                window.location.reload(); 
+                //era pra ser window.location.reload()
             }
             else {
                 Swal.fire({
@@ -277,7 +278,7 @@ const ListarVagasMonitor = () => {
                                 if (response.data.msg.resultado) {
                                     Swal.fire('Vaga liberada', '', 'success')
                                     setTimeout(() => {
-                                        window.location.reload();
+                                        //era pra ser window.location.reload()
                                     }, 1000);
                                 } else {
                                     Swal.fire(`${response.data.msg.msg}`, '', 'error')
@@ -294,7 +295,7 @@ const ListarVagasMonitor = () => {
                         localStorage.setItem('placa', placa);
                         localStorage.setItem('popup', true);
                         localStorage.setItem('componente', 'RegistrarVagaMonitor');
-                        window.location.reload();
+                        //era pra ser window.location.reload()
                         
                     }
     
@@ -304,6 +305,7 @@ const ListarVagasMonitor = () => {
     }
 
     return (
+
         <div className="dashboard-container pt-3">
             <div className="row">
                 <div className="col-12 col-xl-8">

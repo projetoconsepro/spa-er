@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ListarVagasMonitor from '../../components/ListarVagasMonitor';
 import ListarVeiculos from '../../components/ListarVeiculos';
@@ -13,44 +13,41 @@ import BuscarVeiculo from '../../components/BuscarVeiculo';
 import Irregularidades from '../../components/Irregularidades';
 import HistoricoVeiculo from '../../components/HistoricoVeiculo';
 
-const Veiculos = () => {
-    const componente = localStorage.getItem("componente");
-        if(componente === "MeusVeiculos"){
+export default function Veiculos({Componente}) {
+        if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
         }
-        else if (componente === "RegistrarEstacionamento"){
+        else if (Componente === "RegistrarEstacionamento"){
             return <RegistrarVagaCliente />
         }
-        else if(componente === "CadastrarVeiculo"){
+        else if(Componente === "CadastrarVeiculo"){
             return <RegistrarVeiculo />
         }
-        else if(componente === "RegistrarVagaMonitor"){
+        else if(Componente === "RegistrarVagaMonitor"){
             return <RegistrarVagaMonitor />
         }
-        else if (componente === "ListarVagasMonitor"){
+        else if (Componente === "ListarVagasMonitor"){
             return <ListarVagasMonitor />
         }
-        else if ( componente === "Notificacao"){
+        else if ( Componente === "Notificacao"){
             return <Notificacao />
         }
-        else if ( componente === "Camera"){
+        else if ( Componente === "Camera"){
             return <Camera />
         }
-        else if ( componente === "ListarNotificacoes"){
+        else if ( Componente === "ListarNotificacoes"){
             return <ListarNotificacoes />
         }
-        else if ( componente === "BuscarVeiculo"){
+        else if ( Componente === "BuscarVeiculo"){
             return <BuscarVeiculo />
         }
-        else if ( componente === "Irregularidades"){
+        else if ( Componente === "Irregularidades"){
             return <Irregularidades />
         }
-        else if ( componente === "HistoricoVeiculo"){
+        else if ( Componente === "HistoricoVeiculo"){
             return <HistoricoVeiculo />
         }
         else {
             return <Error />
         }
     }
-
-export default Veiculos;

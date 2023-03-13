@@ -172,7 +172,7 @@ const chamarPopup = (index) => {
     if (result.isConfirmed) {
       localStorage.setItem("componente", "ListarNotificacoes");
       localStorage.setItem("VagaVeiculoId", data[index].id_vaga_veiculo);
-      window.location.reload();
+      //era pra ser window.location.reload()
     } else if (result.isDenied) {
       
     }
@@ -206,6 +206,7 @@ const respostaPopup = (resposta) => {
     const select = document.getElementById("filtroSelect").value;
     let idrequisicao = "";
     let passar = "";
+    if (user2.perfil[0] === "monitor") {
     if (select === "selectData") {
        idrequisicao= `{where:{placa='${plaquinha}', hora='%${resposta}%'}}`
         passar = btoa(idrequisicao)
@@ -219,6 +220,21 @@ const respostaPopup = (resposta) => {
         console.log(resposta)
         passar = btoa(idrequisicao)
     }
+  } else {
+    if (select === "selectData") {
+        idrequisicao= `{where:{hora=${resposta}}}`
+         passar = btoa(idrequisicao)
+     }
+     else if(select === "selectVaga") {
+         idrequisicao= `{where:{vaga='${resposta}'}}`
+         passar = btoa(idrequisicao)
+     }
+     else if(select === "selectStatus"){
+         idrequisicao= `{where:{tipo='${resposta}'}}`
+         console.log(resposta)
+         passar = btoa(idrequisicao)
+     }
+  }
 
     if (idrequisicao !== "" && passar !== "") {
         requisicao.get(`/veiculo/historico/?query=${passar}`)
@@ -263,46 +279,56 @@ const respostaPopup = (resposta) => {
 }
 
  useEffect(() => {
+  setEstado2(true);
+  let idrequisicao = "";
+  let passar = "";
+  if (user2.perfil[0] === "monitor") {
   const plaquinha = localStorage.getItem("placaCarro");
   setEstado2(true);
-  let idrequisicao= `{where:{placa='${plaquinha}'}}`
-  let passar = btoa(idrequisicao)
-
-  if (idrequisicao !== "" && passar !== "") {
-    requisicao.get(`/veiculo/historico/?query=${passar}`)
-    .then((response) => {
-      console.log(response)
-      if (response.data.msg.resultado) {
-      setEstado2(false);
-      setEstado(false);
-      setMensagem("");
-      const arraySemNulos = response?.data.data.filter(valor => valor !== null);
-      const newData = arraySemNulos.map((item) => ({
-          vaga: item.numerovaga,
-          chegada: item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
-          horafinal: item.horafinal[0] + ":" + item.horafinal[1] + ":" + item.horafinal[2],
-          saida: item.saida,
-          data: ArrumaHora(item.data),
-          estado: false,
-          pago: item.pago,
-          placa: item.placa,
-          notificacao: item.notificacao,
-          id_vaga_veiculo: item.id_vaga_veiculo,
-        }));
-        setData(newData);
-    } else {
-      setEstado2(false);
-      setEstado(true);
-      setMensagem(response.data.msg.msg);
-      setTimeout(() => {
-        setEstado(false);
-        setMensagem("")
-      }, 5000);
-    }
-    }).catch((error) => {
-        console.log(error);
-    });
+  idrequisicao= `{where:{placa='${plaquinha}'}}`
+  passar = btoa(idrequisicao)
+} else if (user2.perfil[0] === "cliente") {
+  idrequisicao = `{where:{usuario='${user2.id_usuario}'}}`
+  console.log(resposta)
+  passar = btoa(idrequisicao)
 }
+if (idrequisicao !== "" && passar !== "") {
+  requisicao.get(`/veiculo/historico/?query=${passar}`)
+  .then((response) => {
+    console.log(response)
+    if (response.data.msg.resultado) {
+    setEstado2(false);
+    setEstado2(false);
+    setEstado(false);
+    setMensagem("");
+    const arraySemNulos = response?.data.data.filter(valor => valor !== null);
+    const newData = arraySemNulos.map((item) => ({
+        vaga: item.numerovaga,
+        chegada: item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+        horafinal: item.horafinal[0] + ":" + item.horafinal[1] + ":" + item.horafinal[2],
+        saida: item.saida,
+        data: ArrumaHora(item.data),
+        estado: false,
+        pago: item.pago,
+        placa: item.placa,
+        notificacao: item.notificacao,
+        id_vaga_veiculo: item.id_vaga_veiculo,
+      }));
+      setData(newData);
+  } else {
+    setEstado2(false);
+    setEstado(true);
+    setMensagem(response.data.msg.msg);
+    setTimeout(() => {
+      setEstado(false);
+      setMensagem("")
+    }, 5000);
+  }
+  }).catch((error) => {
+      console.log(error);
+  });
+}
+
 
 }, []);
           
