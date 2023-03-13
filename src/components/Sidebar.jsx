@@ -5,21 +5,25 @@ import {
     FaClipboardList,
     FaMapMarkerAlt
  } from "react-icons/fa";
-import { BsConeStriped,
-        BsCashCoin } from "react-icons/bs";
+import { BsConeStriped, BsCashCoin } from "react-icons/bs";
 import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../pages/contexts/auth";
 import { BiSearchAlt } from "react-icons/bi";
 import { AiOutlineFileSearch } from "react-icons/ai";
+import HomePage from "../pages/HomePage";
 
 const Sidebar = () => {
         const { logout } = useContext(AuthContext);
         const nome = localStorage.getItem("user");
         const teste = JSON.parse(nome);
+        const [mostrarSidebar, setMostrarSidebar] = useState(true);
         const componentefunc = (componente) =>{
             localStorage.setItem("componente", componente)
-            window.location.reload();
+            setMostrarSidebar(false)
+            setTimeout(() => {
+                setMostrarSidebar(true)
+            }, 1);
         }
 
         const handleLogout = () => {
@@ -133,7 +137,6 @@ const Sidebar = () => {
         })
     }
 
-    
     return(
     <div className="header-container">
          <nav className="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none bg-blue-50">
@@ -144,7 +147,7 @@ const Sidebar = () => {
                     </button>
                 </div>
             </nav>
-            <nav id="sidebarMenu" className="sidebar d-lg-block bg-blue-50 text-white collapse" data-simplebar>
+            {mostrarSidebar ? <nav id="sidebarMenu" className="sidebar d-lg-block bg-blue-50 text-white collapse" data-simplebar> 
                 <div className="sidebar-inner px-3 pt-4">
                 <div className="d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
                     <div className="collapse-close d-md-none">
@@ -162,7 +165,7 @@ const Sidebar = () => {
                     </li>
                 </ul>
             </div>
-            </nav>
+            </nav> : null}
             <nav className="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
                 <div className="container-fluid px-0">
                 <div className="d-flex justify-content-between w-100" id="navbarSupportedContent">

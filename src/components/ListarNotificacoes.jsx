@@ -70,6 +70,8 @@ const ListarNotificacoes = () => {
     }
 
     const startVagaVeiculo = async (localVagaVeiculo) => {
+      console.log('Amenm')
+      console.log(localVagaVeiculo)
       const idrequisicao= `{where:{vaga_veiculo='${localVagaVeiculo}'}}`
       const passar = btoa(idrequisicao)
       

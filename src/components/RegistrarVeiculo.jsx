@@ -57,7 +57,7 @@ const RegistrarVeiculo = () => {
             }
             else {
             localStorage.setItem("componente", "MeusVeiculos")
-            window.location.reload();
+            //era pra ser window.location.reload()
             }
         }
     ).catch(function (error) {
@@ -67,7 +67,7 @@ const RegistrarVeiculo = () => {
 
     const HangleBack = () => {
         localStorage.setItem('componente', 'MeusVeiculos')
-        window.location.reload();
+        //era pra ser window.location.reload()
     }
 
     useEffect(() => {

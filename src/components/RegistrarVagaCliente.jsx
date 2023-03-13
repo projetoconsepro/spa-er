@@ -38,7 +38,7 @@ const RegistrarVagaCliente = () => {
                 setResposta(response?.data?.data);
                 if (response.data.msg.resultado === false) {
                     localStorage.setItem("componente", "MeusVeiculos")
-                    window.location.reload();
+                    //era pra ser window.location.reload()
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
                     resposta2[i] = {};
@@ -135,7 +135,7 @@ const RegistrarVagaCliente = () => {
                     console.log(response)
                     if (response.data.msg.resultado === true) {
                         localStorage.setItem("componente", "MeusVeiculos")
-                        window.location.reload();
+                        //era pra ser window.location.reload()
                     }
                     else {
                         setMensagem(response.data.msg.msg);

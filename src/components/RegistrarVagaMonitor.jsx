@@ -75,7 +75,7 @@ const RegistrarVagaMonitor = () => {
             if (placaVeiculo !== "") {
                 localStorage.setItem('componente', 'Notificacao')
                 localStorage.setItem('placa',`${placaVeiculo}`)
-                window.location.reload();
+                //era pra ser window.location.reload()
                 }
                 else{
                     setEstado(true);
@@ -93,7 +93,7 @@ const RegistrarVagaMonitor = () => {
         localStorage.removeItem('popup');
         localStorage.removeItem('id_vagaveiculo');
         localStorage.setItem('componente', 'ListarVagasMonitor')
-        window.location.reload();
+        //era pra ser window.location.reload()
     }
         
 
@@ -130,7 +130,7 @@ const RegistrarVagaMonitor = () => {
                     localStorage.removeItem('popup');
                     localStorage.removeItem('id_vagaveiculo');
                     localStorage.setItem('componente', 'ListarVagasMonitor')
-                    window.location.reload();
+                    //era pra ser window.location.reload()
                 }
                 else {
                     Swal.fire({
@@ -161,7 +161,7 @@ const RegistrarVagaMonitor = () => {
               if(response.data.msg.resultado === true){
                 localStorage.removeItem('vaga');
                 localStorage.setItem('componente', 'ListarVagasMonitor')
-                window.location.reload();
+                //era pra ser window.location.reload()
               }
               else {
                 setEstado(true);
