@@ -23,7 +23,7 @@ const Sidebar = () => {
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
-            }, 1000);
+            }, 1);
         }
 
         const handleLogout = () => {

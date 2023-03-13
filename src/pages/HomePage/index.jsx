@@ -27,7 +27,7 @@ const HomePage =  () => {
 
         setTimeout(() => {
             setCont(cont + 1)
-        }, 1000);
+        }, 500);
         setData(localStorage.getItem("componente"));
     }, [cont])
 
