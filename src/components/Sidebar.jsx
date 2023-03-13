@@ -23,7 +23,7 @@ const Sidebar = () => {
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
-            }, 1);
+            }, 1000);
         }
 
         const handleLogout = () => {
@@ -97,8 +97,7 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             name: "‎ Registrar estacionamento",
-            icon: <FaParking />,
-            componente: "RegistrarVagaMonitor"
+            icon: <FaParking />
         })
         links.push({
             className: styles.className,
