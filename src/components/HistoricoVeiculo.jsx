@@ -48,7 +48,12 @@ const HistoricoVeiculo = () => {
     let type = "";
     let input = "";
 
-    if (select === "selectData") {
+    if(select === "selectPlaca") {
+        text = "Digite a placa desejada";
+        type = "text";
+        input = "placa";
+    }
+    else if (select === "selectData") {
         text = "Selecione a data desejada";
         type = "date";
         input = "data";
@@ -233,6 +238,9 @@ const respostaPopup = (resposta) => {
          idrequisicao= `{where:{tipo='${resposta}'}}`
          console.log(resposta)
          passar = btoa(idrequisicao)
+     }else if (select === "selectPlaca") {
+        idrequisicao= `{where:{placa='${resposta}'}}`
+         passar = btoa(idrequisicao)
      }
   }
 
@@ -340,6 +348,7 @@ if (idrequisicao !== "" && passar !== "") {
       <div onChange={() => {tirarOpcao()}}> 
       <select className="mx-3 form-select form-select-sm mb-3" aria-label=".form-select-lg example" id="filtroSelect">
         <option disabled selected id="filtro">Filtro</option>
+        {user2.perfil[0] === "cliente" ? <option value="selectPlaca">Placa</option> : null}
         <option value="selectData">Data</option>
         <option value="selectVaga">Vaga</option>
         <option value="selectStatus">Status</option>
