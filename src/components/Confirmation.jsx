@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-
-import "../LoginPage/styles.css"
 import {  useNavigate } from 'react-router-dom';
 
 const Confirmation = () => {
@@ -30,7 +28,7 @@ const Confirmation = () => {
                 else{
                     localStorage.setItem('codigoConfirm', codigo);
                     localStorage.removeItem('email')
-                    localStorage.setItem('componente', "ResetPassword");
+                    localStorage.setItem('componente', "NewPassword");
                 }
             }
         ).catch(function (error) {

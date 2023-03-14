@@ -11,7 +11,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../pages/contexts/auth";
 import { BiSearchAlt } from "react-icons/bi";
 import { AiOutlineFileSearch } from "react-icons/ai";
-import HomePage from "../pages/HomePage";
+import HomePage from "../pages/HomePage/HomePage";
 
 const Sidebar = () => {
         const { logout } = useContext(AuthContext);
@@ -27,7 +27,10 @@ const Sidebar = () => {
         }
 
         const handleLogout = () => {
-            logout();
+            localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil")
+            localStorage.removeItem("perfil2")
         }
         
         const styles = {
@@ -97,8 +100,14 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             name: "‎ Consultar vaga",
-            componente: "ListarVagasMonitor",
+            componente: "ConsultarVaga",
             icon: <FaParking />,
+        })
+        links.push({
+            className: styles.className,
+            name: "‎ Notificacão",
+            componente: "Notificacao",
+            icon: <RiAlertFill />,
         })
         links.push({
             className: styles.className,
@@ -181,7 +190,7 @@ const Sidebar = () => {
                                 Suporte
                             </a>
                             <div role="separator" className="dropdown-divider my-1"></div>
-                            <a className="dropdown-item d-flex align-items-center" onClick={handleLogout}>
+                            <a className="dropdown-item d-flex align-items-center" onClick={() => {handleLogout()}}>
                                 <svg className="dropdown-icon text-danger me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                                 </svg>

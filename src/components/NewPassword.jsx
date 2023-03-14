@@ -4,8 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import sha256 from 'crypto-js/sha256';
 
-import "../LoginPage/styles.css"
-
 const NewPassword = () => {
     const [inputSenha, setInputSenha] = useState("form-control");
     const [inputSenha2, setInputSenha2] = useState("form-control");
@@ -18,8 +16,7 @@ const NewPassword = () => {
     const [estado, setEstado] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         if (senha === senha2 && senha.length >= 8) {
             const password = sha256(senha).toString();
             const veiculo = axios.create({
@@ -41,14 +38,13 @@ const NewPassword = () => {
                     }
                     else{
                         localStorage.removeItem('codigoConfirm');
-                        localStorage.setItem('componente', 'NewPassword')
+                        localStorage.setItem('componente', 'LoginPage')
                     }
                 }
             ).catch(function (error) {
                 console.log(error);
             });
-        }
-        else {
+        } else {
             setInputSenha("form-control is-invalid");
             setInputSenha2("form-control is-invalid");
             setClassolho("olho is-invalid");

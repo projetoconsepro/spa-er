@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../contexts/auth";
+import { AuthContext } from "../pages/contexts/auth";
 import Swal from 'sweetalert2'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import emailValidator from 'email-validator';
 import { IMaskInput } from 'react-imask';
-import '../LoginPage/styles.css';
 import { TailSpin } from 'react-loading-icons'
 
 
@@ -43,9 +42,8 @@ const RegisterPage = () => {
         return string ? string.replace(/\D/g, '') : string;
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async () => {
         const checkValidate = document.getElementById("flexCheckDefault").checked;
-        e.preventDefault();
         if (nome === "" || cpf === "" || telefone === "" || senha === "" || senha2 === "") {
             if (nome === "") {
                 setInputNome("form-control is-invalid")
@@ -360,7 +358,7 @@ const RegisterPage = () => {
                                     <button type="submit" className="btn2 botao" onClick={() => {voltarLogin()}}><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
                                     </svg></span>Voltar</button>
-                                    <button type="submit" onClick={handleSubmit} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                    <button type="submit" onClick={() => {handleSubmit()}} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
 

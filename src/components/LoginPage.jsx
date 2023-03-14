@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { AuthContext } from "../contexts/auth";
+import { AuthContext } from "../pages/contexts/auth";
 
-import "./styles.css"
 
 const LoginPage = () => {
 
@@ -46,7 +45,6 @@ const LoginPage = () => {
         else {
             e.preventDefault();
             const resposta = await login(email, password);
-            localStorage.setItem("componente", "HomePage");
             console.log(resposta);
             if (resposta.auth === false) {
                 setEstado(true)
@@ -65,7 +63,6 @@ const LoginPage = () => {
     }
 
     const registrado = () => {
-        console.log('aaaaaaa')
         localStorage.setItem("registrou", "false");
         localStorage.setItem("componente", "RegisterPage");
     }

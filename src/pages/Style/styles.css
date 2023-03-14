@@ -23176,7 +23176,6 @@ textarea.form-control-lg {
 
 .content {
     overflow: hidden;
-    padding: 0 1rem 0 1rem;
     transition: all 0.3s;
 }
 
@@ -23271,6 +23270,21 @@ label {
     font-family: "Font Awesome 5 Free";
     font-size: 1rem;
     font-weight: 900;
+}
+
+#dropdown-basic{
+    background-color: #3A58C8!important;
+    color: #fff;
+    font-size: 23px;
+}
+#dropdown-select{
+    background-color: #3A58C8!important;
+    width: 100%;
+}
+#dropdown-item{
+    color: rgb(255, 255, 255) !important;
+    font-size: 19px;
+    text-align: center;
 }
 
 .accordion-button:hover {

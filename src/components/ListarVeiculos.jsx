@@ -7,7 +7,7 @@ import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { TbHandClick, TbClick } from "react-icons/tb";
-import '../pages/LoginPage/styles.css';
+import '../pages/Style/styles.css';
 import Swal from "sweetalert2";
 import Cronometro from './Cronometro';
 

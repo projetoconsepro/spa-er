@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { React, useState, useEffect } from 'react'
-import '../pages/LoginPage/styles.css'
 import Swal from 'sweetalert2'
+import '../pages/Style/styles.css';
 
 const RegistrarVagaMonitor = () => {
     const [mensagem, setMensagem] = useState("");

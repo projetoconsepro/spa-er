@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
         const teste = JSON.parse(recoveredUser);
         if(teste){
             setUser(recoveredUser);
-            navigate("/home")
         }
         
         setLoading(false);
@@ -62,7 +61,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
-        navigate('/home')
         }
         else if(response.data.msg.resultado === true && response.data.dados.usuario.perfil.length > 1){
         const loggedUser = response.data.dados.usuario;
@@ -70,7 +68,8 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
-        navigate('/double')
+        localStorage.setItem("perfil2", true);
+        localStorage.setItem('componente', 'EscolherPerfil');
         }
         }
         else {
@@ -88,16 +87,10 @@ export const AuthProvider = ({ children }) => {
     }
 
     const logout = () => {
-        console.log("logout");
-        localStorage.removeItem("user")
-        localStorage.removeItem("token")
-        localStorage.removeItem("perfil")
-        localStorage.removeItem("perfil2")
-        localStorage.removeItem("componente")
         api.defaults.headers.Authorization = null;
         setUser(null);
-        navigate("/")
     }
+
 
     return(
     <AuthContext.Provider value={{ authenticated: 
