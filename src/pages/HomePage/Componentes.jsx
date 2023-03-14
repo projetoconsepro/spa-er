@@ -12,6 +12,11 @@ import ListarNotificacoes from '../../components/ListarNotificacoes';
 import BuscarVeiculo from '../../components/BuscarVeiculo';
 import Irregularidades from '../../components/Irregularidades';
 import HistoricoVeiculo from '../../components/HistoricoVeiculo';
+import RegisterPage from '../RegisterPage';
+import ResetPassword from '../ResetPassword';
+import Confirmation from '../ResetPassword/confirmation';
+import NewPassword from '../ResetPassword/newPassword';
+import LoginPage from '../LoginPage';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){

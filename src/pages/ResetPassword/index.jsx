@@ -98,7 +98,7 @@ const ResetPassword = () => {
                         }, 4000);
                     }
                     else{
-                        navigate('/confirmacao')
+                        localStorage.setItem('componente', 'Confirmation')
                     }
                 }
             ).catch(function (error) {
@@ -111,6 +111,11 @@ const ResetPassword = () => {
     }
     }
   };
+
+  const voltarPagina = () => {
+    localStorage.setItem('componente', 'LoginPage')
+  }
+
   return (
     <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
       <div className="container">
@@ -184,7 +189,7 @@ const ResetPassword = () => {
                 </div>
               </div>
               <div className="mt-5 mb-6 gap-2 d-md-block">
-                <a href="/"><button type="submit" className="btn2 botao">Voltar</button></a>
+                <button type="submit" className="btn2 botao" onClick={() => {voltarPagina()}}>Voltar</button>
                 <button onClick={handleSubmit} className="btn3 botao">
                   {sucesso ? "Gerar código " : "Avançar "}
                   <span className="align-self-end">
