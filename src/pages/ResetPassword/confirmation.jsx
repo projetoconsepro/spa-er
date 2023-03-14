@@ -30,7 +30,7 @@ const Confirmation = () => {
                 else{
                     localStorage.setItem('codigoConfirm', codigo);
                     localStorage.removeItem('email')
-                    navigate('/novasenha')
+                    localStorage.setItem('componente', "ResetPassword");
                 }
             }
         ).catch(function (error) {
@@ -77,7 +77,7 @@ const Confirmation = () => {
                             </div>
                             <p className="text-start" style={{cursor: "pointer"}} onClick={reenviarCodigo}><small>Reenviar código</small></p>
                             <div className="mt-5 mb-5 gap-2 d-md-block">
-                                    <button type="submit" onClick={handleSubmit} className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
+                                    <button type="submit" onClick={() => {handleSubmit()}} className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
                                 </div>

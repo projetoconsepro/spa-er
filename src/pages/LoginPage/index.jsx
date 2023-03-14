@@ -46,6 +46,7 @@ const LoginPage = () => {
         else {
             e.preventDefault();
             const resposta = await login(email, password);
+            localStorage.setItem("componente", "HomePage");
             console.log(resposta);
             if (resposta.auth === false) {
                 setEstado(true)
@@ -64,7 +65,17 @@ const LoginPage = () => {
     }
 
     const registrado = () => {
+        console.log('aaaaaaa')
         localStorage.setItem("registrou", "false");
+        localStorage.setItem("componente", "RegisterPage");
+    }
+
+    const voltar = () => {
+        localStorage.setItem("componente", "RegisterPage");
+    }
+
+    const recuperar = () => {
+        localStorage.setItem("componente", "ResetPassword");
     }
     
     return (
@@ -96,7 +107,7 @@ const LoginPage = () => {
                                         </svg>}
                                     </button>
                                 </div>
-                                <p className="esqueciSenha"><a href="/recuperar"><small>Esqueci minha senha</small></a></p>
+                                <p className="esqueciSenha"><small onClick={() => {recuperar()}}>Esqueci minha senha</small></p>
                             </div>
                             <div>
                                 <div className="form-check">
@@ -109,7 +120,7 @@ const LoginPage = () => {
 
                             <div className="mt-5 mb-4 text-center">
                                 <button type="submit" className="btn botao" onClick={handleSubmit}>Acessar  <span className='align-self-end'>➜</span></button>
-                                <p className='text-muted' onClick={registrado}> <small>Ainda não possui uma conta?</small> <a href='/register'><small>Clique aqui!</small></a></p>
+                                <p className='text-muted'> <small>Ainda não possui uma conta?</small> <small className="color-primary" onClick={() => {registrado()}}><u>Clique aqui!</u></small></p>
                             </div>
                             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}

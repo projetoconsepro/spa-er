@@ -12,6 +12,7 @@ import NewPassword from "./pages/ResetPassword/newPassword";
 import RegistrarVagaMonitor from "./components/RegistrarVagaMonitor";
 import Error from "./components/Error";
 import Camera from "./components/Camera";
+import BackPage from "./pages/BackPage";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -32,7 +33,7 @@ const AppRoutes = () => {
         <Router>
             <AuthProvider>
             <Routes>
-                <Route exact path="/" element={<LoginPage />} />
+                <Route exact path="/" element={<BackPage />} />
                 <Route exact path="/home" element={<HomePage />}/>
                 <Route exact path="/loading" element={<Loading />}/>
                 <Route exact path="/double" element={<DoublePerfil />}/>

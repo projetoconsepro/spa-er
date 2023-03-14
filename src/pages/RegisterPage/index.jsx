@@ -36,6 +36,7 @@ const RegisterPage = () => {
 
     const registrado = () => {
         localStorage.setItem("registrou", "true");
+        localStorage.setItem("componente", "LoginPage");
     }
 
     function extrairNumeros(string) {
@@ -157,7 +158,7 @@ const RegisterPage = () => {
                     }, 4000);
                 }
             else{
-                const cell =extrairNumeros(telefone)
+                const cell = extrairNumeros(telefone)
 
                 setEstado2(true)
                 const cadastro = await register(nome, mail, cpff, cell, senha)
@@ -170,7 +171,7 @@ const RegisterPage = () => {
                 setTimeout(() => {
                     setSucesso(false)
                     setEstado2(false)
-                    navigate("/")
+                    localStorage.setItem("componente", "LoginPage")
                 }, 3000);
                 }
             else {
@@ -207,6 +208,10 @@ const RegisterPage = () => {
                 width: 800,
             })
         )
+    }
+
+    const voltarLogin = () => {
+        localStorage.setItem("componente", "LoginPage")
     }
 
     return (
@@ -352,9 +357,9 @@ const RegisterPage = () => {
                                     </div>
                                 </div>
                                 <div className="mt-5 mb-5 gap-2 d-md-block">
-                                    <button type="submit" className="btn2 botao"><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                                    <button type="submit" className="btn2 botao" onClick={() => {voltarLogin()}}><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
-                                    </svg></span> <a href="/">Voltar</a></button>
+                                    </svg></span>Voltar</button>
                                     <button type="submit" onClick={handleSubmit} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
@@ -363,7 +368,7 @@ const RegisterPage = () => {
                                     <p><small>Carregando...</small></p>
                                 <TailSpin stroke="#3a58c8"/>
                             </div>
-                                    <p className='text-muted' onClick={registrado}> <small>Já possui uma conta?</small> <a href='/'><small className="color-primary"><u>Clique aqui!</u></small></a></p>
+                                    <p className='text-muted'> <small>Já possui uma conta? </small><small className="color-primary" onClick={() => {registrado()}}><u>Clique aqui!</u></small></p>
                                 </div>
                             </form>
                             <div class="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>

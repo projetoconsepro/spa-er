@@ -29,8 +29,16 @@ const HomePage =  () => {
             setCont(cont + 1)
         }, 500);
         setData(localStorage.getItem("componente"));
-    }, [cont])
 
+        if(localStorage.getItem("componente") === null){
+            if(teste2.perfil === "cliente"){
+                setData("MeusVeiculos")
+            }
+            else if(teste2.perfil === "monitor"){
+                setData("ListarVagasMonitor")
+            }
+        }
+    }, [cont])
 
     return (
         <>
