@@ -96,11 +96,6 @@ const Sidebar = () => {
     else if (teste.perfil[0] === "monitor"){
         links.push({
             className: styles.className,
-            name: "‎ Registrar estacionamento",
-            icon: <FaParking />
-        })
-        links.push({
-            className: styles.className,
             name: "‎ Consultar vaga",
             componente: "ListarVagasMonitor",
             icon: <FaParking />,
@@ -115,12 +110,6 @@ const Sidebar = () => {
             name: "‎ Listar Vagas",
             icon: <FaCarAlt />,
             componente: "ListarVagasMonitor"
-        })
-        links.push({
-            className: styles.className,
-            name: "‎ Notificação",
-            icon: <RiAlertFill />,
-            componente: "Notificacao"
         })
         links.push({
             className: styles.className,
