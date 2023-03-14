@@ -2,9 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import Swal from "sweetalert2";
-import HomePage from "../pages/HomePage";
 import Cronometro from "./Cronometro";
-import ListarNotificacoes from "./ListarNotificacoes";
 
 const ListarVagasMonitor = () => {
     const token = localStorage.getItem('token');
@@ -196,7 +194,7 @@ const ListarVagasMonitor = () => {
                                 if (response.data.msg.resultado) {
                                     Swal.fire('Vaga liberada', '', 'success')
                                     setTimeout(() => {
-                                        //era pra ser window.location.reload()
+                                        getVagas(setor);
                                     }, 1000);
                                 } else {
                                     Swal.fire(`${response.data.msg.msg}`, '', 'error')
@@ -231,7 +229,7 @@ const ListarVagasMonitor = () => {
                             if (response.data.msg.resultado) {
                                 Swal.fire('Vaga liberada', '', 'success')
                                 setTimeout(() => {
-                                    //era pra ser window.location.reload()
+                                    getVagas(setor);
                                 }, 1000);
                             } else {
                                 Swal.fire(`${response.data.msg.msg}`, '', 'error')
@@ -258,7 +256,6 @@ const ListarVagasMonitor = () => {
             if ( placa === ''){
                 localStorage.setItem('vaga', numero);
                 localStorage.setItem('componente', 'RegistrarVagaMonitor');
-                //era pra ser window.location.reload()
             }
             else {
                 Swal.fire({
@@ -277,9 +274,7 @@ const ListarVagasMonitor = () => {
                             response => {
                                 if (response.data.msg.resultado) {
                                     Swal.fire('Vaga liberada', '', 'success')
-                                    setTimeout(() => {
-                                        //era pra ser window.location.reload()
-                                    }, 1000);
+                                    getVagas(setor);
                                 } else {
                                     Swal.fire(`${response.data.msg.msg}`, '', 'error')
                                 }

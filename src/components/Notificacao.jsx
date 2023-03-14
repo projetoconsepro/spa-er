@@ -12,7 +12,7 @@ const Notificacao = () => {
     const [estado, setEstado] = useState(false);
     const [vaga, setVaga] = useState([]);
     const [vagaVeiculo, setVagaVeiculo] = useState("");
-    const [dados, setDados] = useState(true);
+    const [dados, setDados] = useState(false);
     const [seminfo, setSemInfo] = useState(false);
     const [infoBanco, setInfoBanco] = useState(false);
     const [imagensSalvas, setImagenSalvas] = useState(false);
@@ -211,11 +211,28 @@ const Notificacao = () => {
     setCor(newData);
 }
 
+
+    const SetdadosTrue = () => {
+        setDados(true);
+        localStorage.setItem("placa" , placa);
+        localStorage.setItem("vaga" , vaga);
+    }
+
     useEffect(() => {
+        getCor();
+        if (localStorage.getItem("placa") !== null && localStorage.getItem("placa") !== undefined && localStorage.getItem("placa") !== "" || localStorage.getItem("vaga") !== null) {
+        
         const getVaga = localStorage.getItem("vaga");
         const getPlaca = localStorage.getItem("placa");
         const getVagaVeiculo = localStorage.getItem("id_vagaveiculo");
-        getCor();
+        setDados(true);
+
+        if (getVaga !== null && getPlaca !== null) {
+            setVagaVeiculo(getVagaVeiculo)
+            setSemInfo(true);
+            setPlaca(getPlaca);
+            setVaga(getVaga);
+        }
         
         requisicao.get(`/veiculo/${getPlaca}`).then(
             response => {
@@ -233,6 +250,10 @@ const Notificacao = () => {
         ).catch(function (error){
             console.log(error);
         });
+    }
+    else {
+        setDados(false);
+    }
 
 
         requisicao.get('/notificacao/tipos').then(
@@ -271,13 +292,6 @@ const Notificacao = () => {
         ).catch(function (error){
             console.log(error);
         });
-
-        if (getVaga !== null && getPlaca !== null) {
-            setVagaVeiculo(getVagaVeiculo)
-            setSemInfo(true);
-            setPlaca(getPlaca);
-            setVaga(getVaga);
-        }
         if (cont === 0) {
             pegarFotos();
         }
@@ -420,11 +434,11 @@ const Notificacao = () => {
                                             <div className="form-group mb-4">
                                                 <label htmlFor="email" id="labelLogin">Vaga:</label>
                                                 <div className="input-group">
-                                                    <input className="form-control" name="vaga" value={placa} onChange={(e) => setPlaca(e.target.value)} id="fonteInputPlaca" placeholder="Digite a vaga que o veículo está" />
+                                                    <input className="form-control" name="vaga" value={vaga} onChange={(e) => setVaga(e.target.value)} id="fonteInputPlaca" placeholder="Digite a vaga que o veículo está" />
                                                 </div>
                                             </div>
                                             <div className="h6 mt-3">
-                                                <button type="submit" className="btn4 botao" onClick={() => { setDados(true) }}>Buscar dados</button>
+                                                <button type="submit" className="btn4 botao" onClick={() => { SetdadosTrue() }}>Buscar dados</button>
                                             </div>
                                         </div>
                                     }

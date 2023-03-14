@@ -12,11 +12,12 @@ import ListarNotificacoes from '../../components/ListarNotificacoes';
 import BuscarVeiculo from '../../components/BuscarVeiculo';
 import Irregularidades from '../../components/Irregularidades';
 import HistoricoVeiculo from '../../components/HistoricoVeiculo';
-import RegisterPage from '../RegisterPage';
-import ResetPassword from '../ResetPassword';
-import Confirmation from '../ResetPassword/confirmation';
-import NewPassword from '../ResetPassword/newPassword';
-import LoginPage from '../LoginPage';
+import RegisterPage from '../../components/Register';
+import ResetPassword from '../../components/ResetPassword';
+import Confirmation from '../../components/Confirmation';
+import NewPassword from '../../components/NewPassword';
+import LoginPage from '../../components/LoginPage';
+import DoublePerfil from '../../components/doublePerfil';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -49,8 +50,26 @@ export default function Veiculos({Componente}) {
         else if ( Componente === "Irregularidades"){
             return <Irregularidades />
         }
+        else if ( Componente === "ResetPassword"){
+            return <ResetPassword />
+        }
+        else if ( Componente === "Confirmation"){
+            return <Confirmation />
+        }
+        else if ( Componente === "NewPassword"){
+            return <NewPassword />
+        }
         else if ( Componente === "HistoricoVeiculo"){
             return <HistoricoVeiculo />
+        }
+        else if ( Componente === "RegisterPage"){
+            return <RegisterPage />
+        }
+        else if(Componente === "LoginPage"){
+            return <LoginPage />
+        }
+        else if ( Componente === "EscolherPerfil"){
+            return <DoublePerfil />
         }
         else {
             return <Error />

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { React, useState, useEffect } from 'react'
-import '../pages/LoginPage/styles.css'
+import '../pages/Style/styles.css';
 
 const RegistrarVagaCliente = () => {
     const [mensagem, setMensagem] = useState("");
