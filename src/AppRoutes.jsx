@@ -34,7 +34,6 @@ const AppRoutes = () => {
             <AuthProvider>
             <Routes>
                 <Route exact path="/" element={<BackPage />} />
-                <Route exact path="/home" element={<HomePage />}/>
                 <Route exact path="/loading" element={<Loading />}/>
                 <Route exact path="/double" element={<DoublePerfil />}/>
                 <Route exact path="/register" element={<RegisterPage />}/>

@@ -30,13 +30,13 @@ const HomePage =  () => {
         }, 500);
         setData(localStorage.getItem("componente"));
 
-        if(localStorage.getItem("componente") === null){
-            if(teste2.perfil === "cliente"){
-                setData("MeusVeiculos")
-            }
-            else if(teste2.perfil === "monitor"){
-                setData("ListarVagasMonitor")
-            }
+        if(teste2.perfil[0] === "cliente"){
+            console.log('aaaa')
+            setData("MeusVeiculos")
+        }
+        else if(teste2.perfil[0] === "monitor"){
+            console.log('bbb')
+            setData("ListarVagasMonitor")
         }
     }, [cont])
 
