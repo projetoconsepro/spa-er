@@ -44,13 +44,10 @@ const LoginPage = () => {
             }, 4000);
         }
         else {
+            e.preventDefault();
             const resposta = await login(email, password);
-            if(resposta.auth === true){
-                e.preventDefault();
-                const resposta = await login(email, password);
-                localStorage.setItem("componente", "HomePage");
-                console.log(resposta);
-            }
+            localStorage.setItem("componente", "HomePage");
+            console.log(resposta);
             if (resposta.auth === false) {
                 setEstado(true)
                 setMensagem(resposta.message)

@@ -31,7 +31,7 @@ function red(id) {
     }else if (analiseFeita.perfil[0] === 'monitor'){
     localStorage.setItem('componente', 'ListarVagasMonitor');
     }
-    localStorage.setItem("componente", "HomePage")
+    navigate('/home')
 }
         return (
           <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
