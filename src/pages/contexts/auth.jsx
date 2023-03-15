@@ -24,7 +24,6 @@ export const AuthProvider = ({ children }) => {
     const register = async (nome, email, cpf, telefone , senha) => {
     const password = sha256(senha).toString();
     const response = await registrar(nome, email, cpf, telefone , password);
-    console.log("register", response.data.message);
         try{
         if(response.data.msg.resultado === true){
         return {
@@ -56,6 +55,9 @@ export const AuthProvider = ({ children }) => {
         }else if (loggedUser.perfil[0] === 'monitor'){
             localStorage.setItem('componente', 'ListarVagasMonitor');
         }
+        else if (loggedUser.perfil[0] === 'parceiro'){
+            localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
+        }
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
@@ -69,6 +71,10 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("perfil2", true);
         localStorage.setItem('componente', 'EscolherPerfil');
         }
+        return {
+            auth: response.data.msg.resultado,
+            message: response.data.msg.msg
+        };
         }
         else {
         return {

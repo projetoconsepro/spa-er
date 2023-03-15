@@ -91,7 +91,6 @@ const BuscarVeiculo = () => {
             const upperCase = tirarTraco.toUpperCase();
             requisicao.get(`/veiculo/${upperCase}`)
             .then((response) => {
-                console.log(response)
                 if (response.data.msg.resultado === false) {
                     setDiv(false)
                     setEstado(true)
@@ -149,7 +148,7 @@ const BuscarVeiculo = () => {
                             </div>
                             <div className="row">
                                 <div className="col-9 px-3 mt-4 pt-1">
-                                    <h5 for="flexSwitchCheckDefault align-self-start" id="h5Placa">Placa estrangeira</h5>
+                                    <h5 id="h5Placa">Placa estrangeira</h5>
                                 </div>
                                 <div className="col-3 px-3">
                                     <div className="form-check form-switch gap-2 d-md-block">

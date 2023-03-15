@@ -116,7 +116,6 @@ const RegistrarVagaCliente = () => {
         const tempo1 = document.getElementById("tempos").value;
         const placa2 = document.getElementById("placaa").value;
         const placa3 =  resposta2[placa2].placa
-        console.log(placa3)
         
         if (vaga.length === 0) {
             vaga[0]= 0;
@@ -139,7 +138,6 @@ const RegistrarVagaCliente = () => {
                 pagamento: "credito"
             }).then(
                 response => {
-                    console.log(response)
                     if (response.data.msg.resultado === true) {
                         localStorage.setItem("componente", "MeusVeiculos")
                         //era pra ser window.location.reload()
@@ -170,7 +168,7 @@ const RegistrarVagaCliente = () => {
                             </div>
                             <div className="h6 mt-3 ">
                                 <p className='text-start'>Escolha seu veículo:</p>
-                                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="placaa">
+                                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="placaa">
                                     {resposta2.map((link, index) => (
                                             <option value={index} key={index}>{link.placa}</option>
                                         ))}
@@ -179,9 +177,9 @@ const RegistrarVagaCliente = () => {
 
                             <div className="h6 mt-3" onChange={atualizafunc}>
                                 <p className='text-start'>Determine um tempo:</p>
-                                <select class="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                                <select className="form-select form-select-lg mb-1"  defaultValue="01:00:00" aria-label=".form-select-lg example" id="tempos">
                                     <option value="00:30:00">30 Minutos</option>
-                                    <option value="01:00:00" selected>60 Minutos</option>
+                                    <option value="01:00:00">60 Minutos</option>
                                     <option value="02:00:00">120 Minutos</option>
                                 </select>
                                 <p id="tempoCusto" className="text-end">Esse tempo ira custar: R$ {valorcobranca2},00 </p>

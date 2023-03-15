@@ -17,7 +17,8 @@ import ResetPassword from '../../components/ResetPassword';
 import Confirmation from '../../components/Confirmation';
 import NewPassword from '../../components/NewPassword';
 import LoginPage from '../../components/LoginPage';
-import DoublePerfil from '../../components/doublePerfil';
+import DoublePerfil from '../../components/DoublePerfil';
+import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -58,6 +59,8 @@ export default function Veiculos({Componente}) {
         }
         else if ( Componente === "NewPassword"){
             return <NewPassword />
+        }else if ( Componente === "RegistrarEstacionamentoParceiro"){
+            return <RegistrarEstacionamentoParceiro />
         }
         else if ( Componente === "HistoricoVeiculo"){
             return <HistoricoVeiculo />
