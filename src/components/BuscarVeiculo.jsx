@@ -25,16 +25,6 @@ const BuscarVeiculo = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
-
-    const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "monitor"
-        }
-    })
-
     const goHistorico = () => {
         const tirarTraco = textoPlaca.split("-").join("");
         const upperCase = tirarTraco.toUpperCase();
@@ -89,6 +79,14 @@ const BuscarVeiculo = () => {
     
         },[textoPlaca])
         const hangleRequisicao = () => {
+            const requisicao = axios.create({
+                baseURL: process.env.REACT_APP_HOST,
+                headers: {
+                    'token': token,
+                    'id_usuario': user2.id_usuario,
+                    'perfil_usuario': "monitor"
+                }
+            })
             const tirarTraco = textoPlaca.split("-").join("");
             const upperCase = tirarTraco.toUpperCase();
             requisicao.get(`/veiculo/${upperCase}`)

@@ -17,16 +17,15 @@ const ListarVagasMonitor = () => {
     const [salvaSetor, setSalvaSetor] = useState('');
     const [tolerancia, setTolerancia] = useState(10);
 
-    const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "monitor"
-        }
-    })
-
     const getVagas = async (setor) => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        })
         const setor2 = document.getElementById('setoresSelect').value;
         if (setor2 !== undefined && setor2 !== null && setor2 !== '') {
             setor = setor2;
@@ -138,6 +137,14 @@ const ListarVagasMonitor = () => {
     }
 
     useEffect(() => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        })
         localStorage.removeItem('idVagaVeiculo');
         requisicao.get('/setores'
         ).then(
@@ -174,6 +181,14 @@ const ListarVagasMonitor = () => {
     }, [])
 
     const estaciona = (numero, id_vaga, tempo, placa, notificacoes) => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        })
         if (tempo === '00:00:00') {
             if ( notificacoes !== 0) {
 

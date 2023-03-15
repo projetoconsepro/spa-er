@@ -47,10 +47,15 @@ const HomePage =  () => {
 
     return (
         <>
-        {teste2 === null || data === "EscolherPerfil"? null : <Sidebar />}
+        {teste2 === null || data === "EscolherPerfil" ? null : <Sidebar />}
+        {teste2 !== null && data !== "EscolherPerfil" ?
             <main className="content">
-                {data === '' ? null : <Componentes Componente={data} />}
+                    {data === '' ? null : <Componentes Componente={data} />}
+            </main> : 
+            <main className="main">
+                {data === '' ? null  : <Componentes Componente={data} />}
             </main>
+            }
         </>
     )
 }

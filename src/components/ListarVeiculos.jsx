@@ -27,15 +27,6 @@ const ListarVeiculos = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
-    const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "cliente"
-        }
-    })
-
     const parametros = axios.create({
         baseURL: process.env.REACT_APP_HOST,
     })
@@ -55,6 +46,14 @@ const ListarVeiculos = () => {
     }
 
     const atualizacomp = async () => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "cliente"
+            }
+        })
         await requisicao.get('/veiculo').then(
             response => {
                 if(response.data.msg.resultado === false){
@@ -189,7 +188,14 @@ const ListarVeiculos = () => {
     }
 
     const hangleplaca = async (placa, index) => {
-
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "cliente"
+            }
+        })
         const tempo1 = document.getElementById("tempos").value;
 
         const resposta = await mexerValores();
@@ -232,7 +238,14 @@ const ListarVeiculos = () => {
             }
 }
  const AddTempo = async (placa , index , id_vaga_veiculo, vaga) => {
-
+    const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+            'token': token,
+            'id_usuario': user2.id_usuario,
+            'perfil_usuario': "cliente"
+        }
+    })
     const vagaa = [];
 
     vagaa[0] = vaga;

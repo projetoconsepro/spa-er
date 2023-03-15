@@ -7,7 +7,6 @@ import emailValidator from 'email-validator';
 import { IMaskInput } from 'react-imask';
 import { TailSpin } from 'react-loading-icons'
 
-
 const RegisterPage = () => {
     const { register } = useContext(AuthContext);
     const [nome, setNome] = useState("");
@@ -42,8 +41,9 @@ const RegisterPage = () => {
         return string ? string.replace(/\D/g, '') : string;
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
         const checkValidate = document.getElementById("flexCheckDefault").checked;
+        e.preventDefault();
         if (nome === "" || cpf === "" || telefone === "" || senha === "" || senha2 === "") {
             if (nome === "") {
                 setInputNome("form-control is-invalid")
@@ -253,7 +253,7 @@ const RegisterPage = () => {
                                     <div className="form-group mb-4">
                                         <label id="labelLogin">Senha:</label>
                                         <div className="input-group">
-                                            <input className={inputSenha} type={passwordType} name="password" id="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Digite sua senha" />
+                                            <input className={inputSenha} type={passwordType} name="password" id="password2" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Digite sua senha" />
                                             <button onClick={togglePassword} type="button" className={classolho}>
                                                 {passwordType === "password" ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
                                                     <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z" />
@@ -358,7 +358,7 @@ const RegisterPage = () => {
                                     <button type="submit" className="btn2 botao" onClick={() => {voltarLogin()}}><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
                                     </svg></span>Voltar</button>
-                                    <button type="submit" onClick={() => {handleSubmit()}} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                    <button type="submit" onClick={handleSubmit} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
 

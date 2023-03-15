@@ -30,16 +30,16 @@ const Notificacao = () => {
     let [cont, setCont] = useState(0);
     const [outro, setOutro] = useState (true);
 
-    const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "monitor"
-        }
-    });
 
     const submit = async () => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        });
         if (infoBanco === false) {
                 const getmodelo = document.getElementById("selectModelos").value;
                 const getfabricante = document.getElementById("selectFabricantes").value;
@@ -189,6 +189,14 @@ const Notificacao = () => {
     }
 
     const getModelos = () => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        });
         const fabricante = document.getElementById('selectFabricantes').value;
         console.log(fabricante)
         requisicao.get(`/veiculo/modelos/${fabricante}`).then(
@@ -219,6 +227,14 @@ const Notificacao = () => {
     }
 
     useEffect(() => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        });
         getCor();
         if (localStorage.getItem("placa") !== null && localStorage.getItem("placa") !== undefined && localStorage.getItem("placa") !== "" || localStorage.getItem("vaga") !== null) {
         
