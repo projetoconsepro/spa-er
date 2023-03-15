@@ -222,7 +222,6 @@ const respostaPopup = (resposta) => {
     }
     else if(select === "selectStatus"){
         idrequisicao= `{where:{placa='${plaquinha}', tipo='${resposta}'}}`
-        console.log(resposta)
         passar = btoa(idrequisicao)
     }
   } else {
@@ -236,7 +235,6 @@ const respostaPopup = (resposta) => {
      }
      else if(select === "selectStatus"){
          idrequisicao= `{where:{tipo='${resposta}'}}`
-         console.log(resposta)
          passar = btoa(idrequisicao)
      }else if (select === "selectPlaca") {
         idrequisicao= `{where:{placa='${resposta}'}}`
@@ -247,7 +245,6 @@ const respostaPopup = (resposta) => {
     if (idrequisicao !== "" && passar !== "") {
         requisicao.get(`/veiculo/historico/?query=${passar}`)
         .then((response) => {
-          console.log(response.data)
           if (response.data.msg.resultado) {
             setEstado2(false);
             setEstado(false);
@@ -306,13 +303,11 @@ const respostaPopup = (resposta) => {
   passar = btoa(idrequisicao)
 } else if (user2.perfil[0] === "cliente") {
   idrequisicao = `{where:{usuario='${user2.id_usuario}'}}`
-  console.log(resposta)
   passar = btoa(idrequisicao)
 }
 if (idrequisicao !== "" && passar !== "") {
   requisicao.get(`/veiculo/historico/?query=${passar}`)
   .then((response) => {
-    console.log(response)
     if (response.data.msg.resultado) {
     setEstado2(false);
     setEstado2(false);
@@ -355,8 +350,8 @@ if (idrequisicao !== "" && passar !== "") {
     <div className="dashboard-container">
       <p className="mx-3 text-start fs-4 fw-bold">Histórico:</p>
       <div onChange={() => {tirarOpcao()}}> 
-      <select className="mx-3 form-select form-select-sm mb-3" aria-label=".form-select-lg example" id="filtroSelect">
-        <option disabled selected id="filtro">Filtro</option>
+      <select className="mx-3 form-select form-select-sm mb-3" defaultValue="1" aria-label=".form-select-lg example" id="filtroSelect">
+        <option disabled  value='1' id="filtro">Filtro</option>
         {perfil === "cliente" ? <option value="selectPlaca">Placa</option> : null}
         <option value="selectData">Data</option>
         <option value="selectVaga">Vaga</option>
@@ -386,7 +381,7 @@ if (idrequisicao !== "" && passar !== "") {
                     </thead>
                     <tbody>
                     {data.map((item, index) => (
-                      <tr style={{backgroundColor: item.notificacao === 'S' ? "#F8D7DA" : "#FFF" }} onClick={() => {chamarPopup(index)}}>
+                      <tr key={index} style={{backgroundColor: item.notificacao === 'S' ? "#F8D7DA" : "#FFF" }} onClick={() => {chamarPopup(index)}}>
                         <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.placa}</td>
                         <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.data}</td>
                         <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.vaga}</td>

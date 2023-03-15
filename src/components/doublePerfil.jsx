@@ -26,6 +26,8 @@ function red(id) {
     localStorage.setItem('componente', 'MeusVeiculos');
     }else if (analiseFeita.perfil[0] === 'monitor'){
     localStorage.setItem('componente', 'ListarVagasMonitor');
+    } else if (analiseFeita.perfil[0] === 'parceiro'){
+    localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
     }
 }
         return (
@@ -45,7 +47,7 @@ function red(id) {
   </button>
   <ul className="dropdown-menu dropdown-menu-lg-end" id="dropdown-select">
     {perfil.map((item, index) => (
-      <li><button className="dropdown-item" type="button" id="dropdown-item" onClick={()=> { red(index)}}>{item}</button></li>
+      <li key={index} className="dropdown-item" type="button" id="dropdown-item" onClick={()=> { red(index)}}>{item}</li>
     ))}
       </ul>
         </div>

@@ -45,7 +45,6 @@ const LoginPage = () => {
         else {
             e.preventDefault();
             const resposta = await login(email, password);
-            console.log(resposta);
             if (resposta.auth === false) {
                 setEstado(true)
                 setMensagem(resposta.message)
@@ -84,13 +83,13 @@ const LoginPage = () => {
                                 <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
                             </div>
                             <div className="form-group mb-4">
-                                <label htmlFor="email" id="labelLogin">Login:</label>
+                                <label id="labelLogin">Login:</label>
                                 <div className="input-group">
                                     <input className={inputLogin} name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Digite seu login CPF/CNPJ ou Email" />
                                 </div>
                             </div>
                             <div className="form-group mb-4">
-                                <label htmlFor="password" id="labelLogin">Senha:</label>
+                                <label id="labelLogin">Senha:</label>
                                 <div className="input-group" >
                                     <input className={inputSenha} type={passwordType} name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Digite sua senha" />
                                     <button onClick={togglePassword} type="button" className={classolho}>
@@ -108,7 +107,7 @@ const LoginPage = () => {
                             <div>
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
-                                    <span className="form-check-label" for="flexCheckDefault">
+                                    <span className="form-check-label">
                                         <small>Lembrar dados</small>
                                     </span>
                                 </div>

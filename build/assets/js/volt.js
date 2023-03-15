@@ -310,13 +310,6 @@ const d = document;
         buttonsStyling: false
         });
         
-        // SweetAlert 2
-        document.getElementById('basicAlert').addEventListener('click', function () {
-        swalWithBootstrapButtons.fire(
-            'Basic alert',
-            'You clicked the button!'
-        )
-        });
         
         document.getElementById('infoAlert').addEventListener('click', function () {
         swalWithBootstrapButtons.fire(

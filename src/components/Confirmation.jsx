@@ -17,7 +17,6 @@ const Confirmation = () => {
         veiculo.get(`/verificar?codigo=${codigo}`).then(
             response => {
                 const resposta = response.data.msg.resultado;
-                console.log(resposta);
                 if (resposta === false){
                     setMensagem(response.data.msg.msg);
                     setEstado(true);
@@ -68,7 +67,7 @@ const Confirmation = () => {
                             </div>
                             <p className="pt-2 pb-3 fs-5"><strong>Digite o código de verificação enviado ao seu Email</strong></p>
                             <div className="form-group mb-4">
-                                <label htmlFor="email" id="labelLogin">Código de verificação:</label>
+                                <label id="labelLogin">Código de verificação:</label>
                                 <div className="input-group">
                                     <input className={inputLogin} name="email" id="email" value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="Digite o codigo enviado ao seu email" />
                                 </div>
@@ -76,7 +75,7 @@ const Confirmation = () => {
                             <p className="text-start" style={{cursor: "pointer"}} onClick={reenviarCodigo}><small>Reenviar código</small></p>
                             <div className="mt-5 mb-5 gap-2 d-md-block">
                                     <button type="submit" onClick={() => {handleSubmit()}} className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                        <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
                                 </div>
                                 <div className="alert alert-danger" role="alert" style={{ display: estado ? "block" : "none" }}>

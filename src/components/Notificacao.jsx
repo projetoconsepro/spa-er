@@ -43,11 +43,8 @@ const Notificacao = () => {
         if (infoBanco === false) {
                 const getmodelo = document.getElementById("selectModelos").value;
                 const getfabricante = document.getElementById("selectFabricantes").value;
-                console.log(getmodelo)
-                console.log(getfabricante)
             if (outro === true){
                 const getcor = document.getElementById("selectCores").value;
-                console.log(getcor)
         requisicao.post(`/veiculo/${placa}`, {
             "placa": placa,
              "modelo": {
@@ -59,14 +56,12 @@ const Notificacao = () => {
             "cor": getcor,
     }).then(
             response => {
-                console.log(response)
             }
         ).catch(function (error) {
             console.log(error);
         });
     }
     else{
-        console.log(cor2)
         requisicao.post(`/veiculo/${placa}`, {
             "placa": placa,
              "modelo": {
@@ -112,7 +107,6 @@ const Notificacao = () => {
             console.log(error);
         });
     } else{
-        console.log(vaga)
         requisicao.post('/notificacao', {
             "placa": placa,
             "vaga": vaga,
@@ -184,7 +178,6 @@ const Notificacao = () => {
 
     const getTipoNot= () => {
         const tipoNotificacao = document.getElementById('tiposNot').value;
-        console.log(tipoNotificacao)
         setTipoNot(tipoNotificacao);
     }
 
@@ -198,7 +191,6 @@ const Notificacao = () => {
             }
         });
         const fabricante = document.getElementById('selectFabricantes').value;
-        console.log(fabricante)
         requisicao.get(`/veiculo/modelos/${fabricante}`).then(
             response => {
                 const newData = response?.data?.data?.modelos.map(item => ({
@@ -252,7 +244,6 @@ const Notificacao = () => {
         
         requisicao.get(`/veiculo/${getPlaca}`).then(
             response => {
-                console.log(response.data.data.resposta.cor)
                 if(response.data.msg.resultado === true){
                     setInfoBanco(true);
                     setCorVeiculo(response.data.data.resposta.cor)
@@ -286,7 +277,6 @@ const Notificacao = () => {
         
         requisicao.get('/veiculo/fabricantes').then(
             response => {
-                console.log(response?.data?.data.fabricantes)
                 const newData = response?.data?.data?.fabricantes.map(item => ({
                     nome: item.nome,
                     id_fabricante_veiculo: item.id_fabricante_veiculo
@@ -353,7 +343,7 @@ const Notificacao = () => {
                                     <div>
                                         <div className="h6" onChange={getTipoNot}>
                                             <p className='text-start'>Tipo de notificação:</p>
-                                            <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
+                                            <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
                                             {tiposNotificacao.map((link, index) => (
                                             <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
                                             ))}
@@ -361,7 +351,7 @@ const Notificacao = () => {
                                         </div>
                                     <div className='text-start bg-gray-200 text-dark rounded'>
                                     {infoBanco ?
-                                        <div class="row justify-content-center">
+                                        <div className="row justify-content-center">
                                             <div className="col-7">
                                                 <h6 className='mx-3 pt-2'><small>Modelo: {modeloVeiculo}</small></h6>
                                                 <h6 className='mx-3'><small>Cor: {corVeiculo}</small></h6>
@@ -375,11 +365,11 @@ const Notificacao = () => {
                                             </div>
                                         </div>
                                         : 
-                                        <div class="row justify-content-center">
+                                        <div className="row justify-content-center">
                                         <div className="col-8">
                                             <div onChange={()=>{getModelos()}}>
                                             <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
-                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectFabricantes">
+                                            <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectFabricantes">
                                         {fabricante.map((link, index) => (
                                             <option value={link.id_fabricante_veiculo} key={index}>{link.nome}</option>
                                         ))}
@@ -387,7 +377,7 @@ const Notificacao = () => {
                                             </div>
                                             <div>
                                             <h6 className='mx-4'><small>Modelo:</small></h6>
-                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectModelos">
+                                            <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectModelos">
                                         {modelo.map((link, index) => (
                                             <option value={link.id_modelo} key={index}>{link.nome}</option>
                                         ))}
@@ -396,7 +386,7 @@ const Notificacao = () => {
                                             {outro ?
                                             <div  onChange={()=>{attcor()}}>
                                             <h6 className='mx-4'><small>Cor:</small></h6>
-                                            <select class="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectCores">
+                                            <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectCores">
                                             {cor.map((link, index) => (
                                                 <option value={link.cor} key={index}>{link.cor}</option>
                                             ))}
@@ -442,13 +432,13 @@ const Notificacao = () => {
                                         :
                                         <div>
                                             <div className="form-group mb-4">
-                                                <label htmlFor="email" id="labelLogin">Placa do veiculo:</label>
+                                                <label id="labelLogin">Placa do veiculo:</label>
                                                 <div className="input-group">
                                                     <input className="form-control" name="placa" value={placa} onChange={(e) => setPlaca(e.target.value)} id="fonteInputPlaca" placeholder="Digite a placa do veículo" />
                                                 </div>
                                             </div>
                                             <div className="form-group mb-4">
-                                                <label htmlFor="email" id="labelLogin">Vaga:</label>
+                                                <label id="labelLogin">Vaga:</label>
                                                 <div className="input-group">
                                                     <input className="form-control" name="vaga" value={vaga} onChange={(e) => setVaga(e.target.value)} id="fonteInputPlaca" placeholder="Digite a vaga que o veículo está" />
                                                 </div>

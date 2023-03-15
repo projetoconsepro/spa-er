@@ -71,7 +71,6 @@ const ResetPassword = () => {
     veiculo.get(`/verificar?email=${metodo}`).then(
         response => {
             const resposta = response.data.msg.resultado;
-            console.log(resposta);
             if (resposta === false){
                 setMensagem(response.data.msg.msg);
                 setEstado(true);
@@ -87,7 +86,6 @@ const ResetPassword = () => {
             veiculo.get(`/codigo-recuperacao-senha?email=${metodo}`).then(
                 response => {
                     const resposta = response.data.msg.resultado;
-                    console.log(resposta);
                     if (resposta === false){
                         setMensagem(response.data.msg.msg);
                         setEstado(true);
@@ -144,7 +142,7 @@ const ResetPassword = () => {
                     type="checkbox"
                     id="flexCheckDefault1"
                   />
-                  <span className="form-check-label" for="flexCheckDefault">
+                  <span className="form-check-label">
                     <small>Receber código por Email</small>
                   </span>
                 </div>
@@ -155,7 +153,7 @@ const ResetPassword = () => {
                     type="checkbox"
                     id="flexCheckDefault2"
                   />
-                  <span className="form-check-label" for="flexCheckDefault">
+                  <span className="form-check-label" >
                     <small>Receber código por WhatsApp</small>
                   </span>
                 </div>
@@ -166,13 +164,13 @@ const ResetPassword = () => {
                     value={checkValidate3}
                     id="flexCheckDefault3"
                   />
-                  <span className="form-check-label" for="flexCheckDefault">
+                  <span className="form-check-label">
                     <small>Receber código por SMS</small>
                   </span>
                 </div>
               </div>
               <div className="form-group mb-4 pt-5" style={{ display: sucesso ? 'block' : 'none' }}>
-                <label htmlFor="metodo" id="labelLogin">
+                <label id="labelLogin">
                   Email ou Telefone:
                 </label>
                 <div className="input-group">
@@ -200,7 +198,6 @@ const ResetPassword = () => {
                       viewBox="0 0 16 16"
                     >
                       <path
-                        fill-rule="evenodd"
                         d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
                       />
                     </svg>

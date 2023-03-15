@@ -61,7 +61,6 @@ const ListarVeiculos = () => {
                     //era pra ser window.location.reload()
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
-                    console.log(response.data.data[i])
                     resposta[i] = {};
                     resposta[i].div = "card-body";
                     notificacao[i] = {"estado": true};
@@ -119,7 +118,6 @@ const ListarVeiculos = () => {
                         const hora = data.getHours() + tempo[0];
                         const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
                         resposta[i].Countdown = formatada;
-                        console.log(formatada)
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
                         resposta[i].numero_notificacoes_pendentes = "Sem notificações";
                         notificacao[i] = {"estado": true};
@@ -350,9 +348,9 @@ const ListarVeiculos = () => {
                     <div className="mb-1">
                         {mostrardiv[index].estado ? 
                          <div className="h6 mt-3 mx-5" onChange={atualizafunc}>
-                            <select className="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                            <select className="form-select form-select-lg mb-1" defaultValue="01:00:00" aria-label=".form-select-lg example" id="tempos">
                                  <option value="00:30:00">30 Minutos</option>
-                                 <option value="01:00:00" selected>60 Minutos</option>
+                                 <option value="01:00:00">60 Minutos</option>
                                  <option value="02:00:00">120 Minutos</option>
                             </select>
                                  <p id="tempoCusto" className="text-end">Esse tempo irá custar: R$ {valorcobranca2},00 </p>
@@ -373,9 +371,9 @@ const ListarVeiculos = () => {
                              </div>
                                 : 
                                 <div className="h6 mx-5" onChange={atualizafunc}>
-                                <select className="form-select form-select-lg mb-1" aria-label=".form-select-lg example" id="tempos">
+                                <select className="form-select form-select-lg mb-1" defaultValue="01:00:00" aria-label=".form-select-lg example" id="tempos">
                                  <option value="00:30:00">30 Minutos</option>
-                                 <option value="01:00:00" selected>60 Minutos</option>
+                                 <option value="01:00:00">60 Minutos</option>
                                  <option value="02:00:00">120 Minutos</option>
                                  </select>
                                  <p id="tempoCusto" className="text-end">Esse tempo irá custar: R$ {valorcobranca2},00 </p>

@@ -97,7 +97,6 @@ const RegisterPage = () => {
             setEstado(true)
             setInputTelefone("form-control is-invalid")
             setMensagem("O telefone deve conter 11 caracteres!")
-            console.log(telefone)
             setTimeout(() => {
                 setInputTelefone("form-control")
                 setEstado(false)
@@ -160,10 +159,8 @@ const RegisterPage = () => {
 
                 setEstado2(true)
                 const cadastro = await register(nome, mail, cpff, cell, senha)
-                console.log(cadastro)
                 if (cadastro.auth) {
                 setMensagem2("Cadastro realizado com sucesso! Você será redirecionado a página de login")
-                console.log(nome, mail, cpff, telefone, senha)
                 setSucesso(true)
                 setEstado2(false)
                 setTimeout(() => {
@@ -255,10 +252,10 @@ const RegisterPage = () => {
                                         <div className="input-group">
                                             <input className={inputSenha} type={passwordType} name="password" id="password2" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Digite sua senha" />
                                             <button onClick={togglePassword} type="button" className={classolho}>
-                                                {passwordType === "password" ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                                                {passwordType === "password" ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-slash-fill" viewBox="0 0 16 16">
                                                     <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z" />
                                                     <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z" />
-                                                </svg> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                                </svg> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-fill" viewBox="0 0 16 16">
                                                     <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
                                                     <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
                                                 </svg>}
@@ -274,9 +271,9 @@ const RegisterPage = () => {
                                     <div>
                                         <div className="form-check">
                                             <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
-                                            <span className="form-check-label" for="flexCheckDefault">
+                                            <span className="form-check-label">
                                                 <small>Aceito os <a data-bs-toggle="modal" data-bs-target="#exampleModal"><u className="color-primary">termos de uso</u></a> e <a data-bs-toggle="modal" data-bs-target="#exampleModal"><u className="color-primary">política de privacidade.</u></a></small>
-                                                <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div className="modal-dialog">
                                                         <div className="modal-content">
                                                             <div className="modal-header">
@@ -355,11 +352,11 @@ const RegisterPage = () => {
                                     </div>
                                 </div>
                                 <div className="mt-5 mb-5 gap-2 d-md-block">
-                                    <button type="submit" className="btn2 botao" onClick={() => {voltarLogin()}}><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                                    <button type="submit" className="btn2 botao" onClick={() => {voltarLogin()}}><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
+                                        <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
                                     </svg></span>Voltar</button>
-                                    <button type="submit" onClick={handleSubmit} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                    <button type="submit" onClick={handleSubmit} className="btn botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
+                                        <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
 
                                     <div className="mt-3" style={{ display: estado2 ? 'block' : 'none'}}>
@@ -369,10 +366,10 @@ const RegisterPage = () => {
                                     <p className='text-muted'> <small>Já possui uma conta? </small><small className="color-primary" onClick={() => {registrado()}}><u>Clique aqui!</u></small></p>
                                 </div>
                             </form>
-                            <div class="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                            <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
                             </div>
-                            <div class="alert alert-success" role="alert" style={{ display: sucesso ? 'block' : 'none' }}>
+                            <div className="alert alert-success" role="alert" style={{ display: sucesso ? 'block' : 'none' }}>
                                 {mensagem2}
                             </div>
                         </div>

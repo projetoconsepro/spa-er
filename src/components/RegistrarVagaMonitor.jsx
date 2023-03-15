@@ -156,7 +156,6 @@ const RegistrarVagaMonitor = () => {
         pagamento: valor
         }).then(
             response => {
-                console.log(response.data.msg)
               if(response.data.msg.resultado === true){
                 localStorage.removeItem('vaga');
                 localStorage.setItem('componente', 'ListarVagasMonitor')
@@ -215,14 +214,14 @@ const RegistrarVagaMonitor = () => {
                             <div className="h6 mt-3 " onChange={atualizafunc}>
                                 <p className='text-start'>Determine um tempo:</p>
                                     {visible ? 
-                                    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tempos">
+                                    <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tempos">
                                     <option value="00:30:00">30</option>
                                     <option value="01:00:00">60</option>
                                     <option value="02:00:00">120</option>
                                     </select>
                                     :
-                                    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tempos">
-                                    <option value="00:10:00" selected>Tolerância</option>
+                                    <select className="form-select form-select-lg mb-3" defaultValue="00:10:00" aria-label=".form-select-lg example" id="tempos">
+                                    <option value="00:10:00">Tolerância</option>
                                     <option value="00:30:00">30</option>
                                     <option value="01:00:00">60</option>
                                     <option value="02:00:00">120</option>
@@ -234,7 +233,7 @@ const RegistrarVagaMonitor = () => {
 
                             <div className="h6 mt-3 " style={{ display : mostrapag ? 'block' : 'none' }} onChange={atualizafunc}>
                                 <p className='text-start'>Forma de pagamento:</p>
-                                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="pagamentos">
+                                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="pagamentos">
                                 <option value="dinheiro">Dinheiro</option>
                                 <option value="pix">PIX</option>
                                 </select>

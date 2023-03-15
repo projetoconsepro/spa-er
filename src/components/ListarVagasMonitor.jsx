@@ -158,7 +158,6 @@ const ListarVagasMonitor = () => {
             console.log(error);
         }
         );
-
         requisicao.get('setores/tolerancia').then(
             response => {
                 const timestamp = response.data.data.tolerancia;
@@ -166,10 +165,12 @@ const ListarVagasMonitor = () => {
                 const minutes = data.getMinutes();
                 const teste = parseInt(minutes)
                 setTolerancia(teste);
+
             }
         ).catch(function (error) {
             console.log(error);
         });
+
         const setor = 'A'
         getVagas(setor);
         localStorage.removeItem('idVagaVeiculo');
@@ -322,7 +323,7 @@ const ListarVagasMonitor = () => {
                     <div className="row">
                         <div className="col-12 mb-4">
                             <div className="d-flex justify-content-between mx-2">
-                                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="setoresSelect"
+                                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="setoresSelect"
                                     onChange={() => { getVagas('A') }}>
                                     {resposta2.map((link, index) => (
                                         <option value={link.setores} key={index}>Setor: {link.setores}</option>

@@ -40,8 +40,6 @@ const RegistrarVeiculo = () => {
         }
     })
 
-    console.log(uppercase)
-
     veiculo.post('/veiculo',{
         placa: uppercase,
         id_usuario: user2.id_usuario
@@ -80,7 +78,6 @@ const RegistrarVeiculo = () => {
             setPlaca("placa3")
             if (cont === 0) {
                 const fim = textoPlaca.substring(3, textoPlaca.length);
-                console.log(fim)
                 const texto = textoPlaca.substring(0, 3);
                 const traco = "-"
                 setTextoPlaca(texto +traco+ fim)
@@ -88,7 +85,6 @@ const RegistrarVeiculo = () => {
                 }
                 else {
                 const fim = textoPlaca.substring(4, textoPlaca.length);
-                console.log(fim)
                 const texto = textoPlaca.substring(0, 3);
                 const traco = "-"
                 setTextoPlaca(texto +traco+ fim)
@@ -115,7 +111,7 @@ const RegistrarVeiculo = () => {
                             </div>
                             <div className="row">
                                 <div className="col-9 px-3 mt-4 pt-1">
-                                    <h5 for="flexSwitchCheckDefault align-self-start" id="h5Placa">Placa estrangeira</h5>
+                                    <h5 id="h5Placa">Placa estrangeira</h5>
                                 </div>
                                 <div className="col-3 px-3">
                                     <div className="form-check form-switch gap-2 d-md-block">

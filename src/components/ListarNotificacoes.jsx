@@ -33,13 +33,9 @@ const ListarNotificacoes = () => {
       },
     });
     const idVagaVeiculo = data[index].id_vaga_veiculo;
-    console.log(data[index])
-    console.log(data[index].id_vaga_veiculo)
-    console.log(idVagaVeiculo)
     requisicao.put('/notificacao/',{
         "id_vaga_veiculo": idVagaVeiculo,
     }).then((response) => {
-      console.log(response.data)
       if(response.data.msg.resultado){
         Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
         data[index].pago = 'S';
@@ -77,8 +73,6 @@ const ListarNotificacoes = () => {
           perfil_usuario: "monitor",
         },
       });
-      console.log('Amenm')
-      console.log(localVagaVeiculo)
       const idrequisicao= `{where:{vaga_veiculo='${localVagaVeiculo}'}}`
       const passar = btoa(idrequisicao)
       
@@ -131,7 +125,6 @@ const ListarNotificacoes = () => {
       });
       const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
     const passar = btoa(idrequisicao)
-    console.log(passar)
     
     await requisicao
       .get(`/notificacao/?query=${passar}`)
@@ -220,7 +213,6 @@ const ListarNotificacoes = () => {
       startPlaca(placa);
     }
     else {
-      console.log("entrou")
       startNotificao();
     }
   }, []);
@@ -409,7 +401,6 @@ const ListarNotificacoes = () => {
     if (idrequisicao !== "" && passar !== "") {
         requisicao.get(`/notificacao/?query=${passar}`)
         .then((response) => {
-          console.log(response.data)
           if (response.data.msg.resultado) {
           const arraySemNulos = response?.data.data.filter(valor => valor !== null);
           const newData = arraySemNulos.map((item) => ({
@@ -444,8 +435,8 @@ const ListarNotificacoes = () => {
     <div className="col-12 px-3">
       <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
       <div onChange={() => {tirarOpcao()}}> 
-      <select className="form-select form-select-sm mb-3" aria-label=".form-select-lg example" id="filtroSelect">
-        <option disabled selected id="filtro">Filtro</option>
+      <select className="form-select form-select-sm mb-3" defaultValue="1" aria-label=".form-select-lg example" id="filtroSelect">
+        <option disabled value="1" id="filtro">Filtro</option>
         <option value="selectData">Data</option>
         <option value="selectPlaca">Placa</option>
         <option value="selectVaga">Vaga</option>
@@ -536,9 +527,10 @@ const ListarNotificacoes = () => {
                     className="form-select form-select-lg mb-1"
                     aria-label=".form-select-lg example"
                     id="pagamentos"
+                    defaultValue="01:00:00"
                   >
                     <option value="00:30:00">PIX</option>
-                    <option value="01:00:00" selected>
+                    <option value="01:00:00">
                       Dinheiro
                     </option>
                   </select>

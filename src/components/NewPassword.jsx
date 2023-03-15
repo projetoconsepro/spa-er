@@ -76,7 +76,7 @@ const NewPassword = () => {
                             </div>
                             <p className="pt-2 pb-3 fs-5"><strong>Digite sua nova senha:</strong></p>
                             <div className="form-group mb-4">
-                                        <label htmlFor="password" id="labelLogin">Senha:</label>
+                                        <label id="labelLogin">Senha:</label>
                                         <div className="input-group">
                                             <input className={inputSenha} type={passwordType} name="password" id="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Digite sua senha" />
                                             <button onClick={togglePassword} type="button" className={classolho}>
@@ -91,14 +91,14 @@ const NewPassword = () => {
                                         </div>
                                     </div>
                                     <div className="form-group mb-4">
-                                        <label htmlFor="password" id="labelLogin">Confirme sua senha:</label>
+                                        <label id="labelLogin">Confirme sua senha:</label>
                                         <div className="input-group">
                                             <input className={inputSenha2} type="password" name="password" id="password" value={senha2} onChange={(e) => setSenha2(e.target.value)} placeholder="Digite sua senha novamente" />
                                         </div>
                                     </div>
                             <div className="mt-5 mb-5 gap-2 d-md-block">
                                     <button type="submit" onClick={() => {handleSubmit()}} className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                        <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                                     </svg></span></button>
                                 </div>
                                 <div
