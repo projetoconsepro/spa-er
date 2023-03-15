@@ -20,15 +20,6 @@ const RegistrarVagaMonitor = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
-    const estacionamento = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "monitor"
-        }
-    })
-
     const parametros = axios.create({
         baseURL: process.env.REACT_APP_HOST,
     })
@@ -98,6 +89,14 @@ const RegistrarVagaMonitor = () => {
         
 
     const handleSubmit = async  () => {
+        const estacionamento = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        })
         const placaString = placaVeiculo.toString()
         const placaMaiuscula = placaString.toUpperCase();
         const vagaa = [];

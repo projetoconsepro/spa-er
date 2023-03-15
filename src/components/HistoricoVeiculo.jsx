@@ -16,15 +16,7 @@ const HistoricoVeiculo = () => {
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
   const [plaquinha, setPlaquinha] = useState("");
-
-  const requisicao = axios.create({
-    baseURL: process.env.REACT_APP_HOST,
-    headers: {
-      token: token,
-      id_usuario: user2.id_usuario,
-      perfil_usuario: `${user2.perfil[0]}`,
-    },
-  });
+  const [perfil, setPerfil] = useState("");
 
   function ArrumaHora(data) {
     const data2 = data.split("T");
@@ -203,6 +195,14 @@ const chamarPopup = (index) => {
 
 
 const respostaPopup = (resposta) => {
+  const requisicao = axios.create({
+    baseURL: process.env.REACT_APP_HOST,
+    headers: {
+      token: token,
+      id_usuario: user2.id_usuario,
+      perfil_usuario: `${user2.perfil[0]}`,
+    },
+  });
    const plaquinha = localStorage.getItem("placaCarro");
     setEstado2(true);
     for (let i = 0; i < data.length; i++) {
@@ -287,6 +287,15 @@ const respostaPopup = (resposta) => {
 }
 
  useEffect(() => {
+  const requisicao = axios.create({
+    baseURL: process.env.REACT_APP_HOST,
+    headers: {
+      token: token,
+      id_usuario: user2.id_usuario,
+      perfil_usuario: `${user2.perfil[0]}`,
+    },
+  });
+  setPerfil(user2.perfil[0]);
   setEstado2(true);
   let idrequisicao = "";
   let passar = "";
@@ -348,7 +357,7 @@ if (idrequisicao !== "" && passar !== "") {
       <div onChange={() => {tirarOpcao()}}> 
       <select className="mx-3 form-select form-select-sm mb-3" aria-label=".form-select-lg example" id="filtroSelect">
         <option disabled selected id="filtro">Filtro</option>
-        {user2.perfil[0] === "cliente" ? <option value="selectPlaca">Placa</option> : null}
+        {perfil === "cliente" ? <option value="selectPlaca">Placa</option> : null}
         <option value="selectData">Data</option>
         <option value="selectVaga">Vaga</option>
         <option value="selectStatus">Status</option>

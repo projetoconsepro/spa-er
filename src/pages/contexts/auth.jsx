@@ -27,8 +27,6 @@ export const AuthProvider = ({ children }) => {
     console.log("register", response.data.message);
         try{
         if(response.data.msg.resultado === true){
-        const registrou = localStorage.setItem("registrou", true)
-        console.log(registrou)
         return {
             auth: response.data.msg.resultado,
             message: response.data.msg.msg

@@ -18,21 +18,20 @@ const ListarNotificacoes = () => {
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
 
-  const requisicao = axios.create({
-    baseURL: process.env.REACT_APP_HOST,
-    headers: {
-      token: token,
-      id_usuario: user2.id_usuario,
-      perfil_usuario: "monitor",
-    },
-  });
-
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
 
   const regularizar = (index) => {
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: "monitor",
+      },
+    });
     const idVagaVeiculo = data[index].id_vaga_veiculo;
     console.log(data[index])
     console.log(data[index].id_vaga_veiculo)
@@ -70,6 +69,14 @@ const ListarNotificacoes = () => {
     }
 
     const startVagaVeiculo = async (localVagaVeiculo) => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: "monitor",
+        },
+      });
       console.log('Amenm')
       console.log(localVagaVeiculo)
       const idrequisicao= `{where:{vaga_veiculo='${localVagaVeiculo}'}}`
@@ -114,6 +121,14 @@ const ListarNotificacoes = () => {
 
 
     const startNotificao = async () => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: "monitor",
+        },
+      });
       const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
     const passar = btoa(idrequisicao)
     console.log(passar)
@@ -151,6 +166,14 @@ const ListarNotificacoes = () => {
     };
 
     const startPlaca = async (placa) => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: "monitor",
+        },
+      });
       const idrequisicao= `{where:{placa='${placa}'}}`
       const passar = btoa(idrequisicao)
       await requisicao
@@ -348,6 +371,14 @@ const ListarNotificacoes = () => {
 }
 
     const teste = (resposta) => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: "monitor",
+        },
+      });
     for (let i = 0; i < data.length; i++) {
         delete data[i];
     }

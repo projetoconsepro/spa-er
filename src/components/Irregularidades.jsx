@@ -18,21 +18,20 @@ const Irregularidades = () => {
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
 
-  const requisicao = axios.create({
-    baseURL: process.env.REACT_APP_HOST,
-    headers: {
-      token: token,
-      id_usuario: user2.id_usuario,
-      perfil_usuario: "cliente",
-    },
-  });
-
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
 
   const regularizar = (index) => {
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: "cliente",
+      },
+    });
     const idVagaVeiculo = data[index].id_vaga_veiculo;
     console.log(data[index])
     console.log(data[index].id_vaga_veiculo)
@@ -70,6 +69,14 @@ const Irregularidades = () => {
     }
 
     const startNotificao = async () => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: "cliente",
+        },
+      });
       const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
     const passar = btoa(idrequisicao)
     console.log(passar)
@@ -107,6 +114,14 @@ const Irregularidades = () => {
     };
 
     const startPlaca = async (placa) => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: "cliente",
+        },
+      });
       const idrequisicao= `{where:{placa='${placa}'}}`
       const passar = btoa(idrequisicao)
       await requisicao
@@ -302,6 +317,14 @@ const Irregularidades = () => {
 }
 
     const teste = (resposta) => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: "cliente",
+        },
+      });
     for (let i = 0; i < data.length; i++) {
         delete data[i];
     }

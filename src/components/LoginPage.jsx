@@ -63,7 +63,6 @@ const LoginPage = () => {
     }
 
     const registrado = () => {
-        localStorage.setItem("registrou", "false");
         localStorage.setItem("componente", "RegisterPage");
     }
 

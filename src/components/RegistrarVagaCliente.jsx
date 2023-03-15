@@ -18,21 +18,20 @@ const RegistrarVagaCliente = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-
-    const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "cliente"
-        }
-    })
    
     const parametros = axios.create({
         baseURL: process.env.REACT_APP_HOST,
     })
 
     useEffect(() => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "cliente"
+            }
+        })
         requisicao.get('/veiculo').then(
             response => {
                 setResposta(response?.data?.data);
@@ -106,6 +105,14 @@ const RegistrarVagaCliente = () => {
 
 
     const handleSubmit = async  () => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "cliente"
+            }
+        })
         const tempo1 = document.getElementById("tempos").value;
         const placa2 = document.getElementById("placaa").value;
         const placa3 =  resposta2[placa2].placa
