@@ -1,11 +1,11 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../pages/contexts/auth";
 import Swal from 'sweetalert2'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import emailValidator from 'email-validator';
-import { IMaskInput } from 'react-imask';
-import { TailSpin } from 'react-loading-icons'
+import InputMask from "react-input-mask";
+import CarroLoading from "./Carregamento"
 
 const RegisterPage = () => {
     const { register } = useContext(AuthContext);
@@ -209,6 +209,8 @@ const RegisterPage = () => {
         localStorage.setItem("componente", "LoginPage")
     }
 
+    const telefoneRef = useRef(null)
+
     return (
         <section className="vh-lg-150 bg-soft mt-5 mt-lg-5 d-flex align-items-center">
             <div className="container">
@@ -243,7 +245,7 @@ const RegisterPage = () => {
                                 <div className="form-group mb-4">
                                     <label id="labelLogin">Telefone:</label>
                                     <div className="input-group">
-                                        <IMaskInput mask={'(00) 00000-0000'} className={inputTelefone} name="telefone" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
+                                        <InputMask mask={'(99) 99999-9999'} ref={telefoneRef} className={inputTelefone} name="telefone" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
                                     </div>
                                 </div>
                                 <div className="form-group">
@@ -360,8 +362,7 @@ const RegisterPage = () => {
                                     </svg></span></button>
 
                                     <div className="mt-3" style={{ display: estado2 ? 'block' : 'none'}}>
-                                    <p><small>Carregando...</small></p>
-                                <TailSpin stroke="#3a58c8"/>
+                                    <CarroLoading />
                             </div>
                                     <p className='text-muted'> <small>Já possui uma conta? </small><small className="color-primary" onClick={() => {registrado()}}><u>Clique aqui!</u></small></p>
                                 </div>

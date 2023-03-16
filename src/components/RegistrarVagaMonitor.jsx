@@ -64,8 +64,10 @@ const RegistrarVagaMonitor = () => {
         }
         else{
             if (placaVeiculo !== "") {
+                const placaString = placaVeiculo.toString()
+                const placaMaiuscula = placaString.toUpperCase();
+                localStorage.setItem('placa',`${placaMaiuscula}`)
                 localStorage.setItem('componente', 'Notificacao')
-                localStorage.setItem('placa',`${placaVeiculo}`)
                 //era pra ser window.location.reload()
                 }
                 else{
@@ -97,6 +99,36 @@ const RegistrarVagaMonitor = () => {
                 'perfil_usuario': "monitor"
             }
         })
+        function validarPlaca(placa) {
+            const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
+            const regexPlacaNova = /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+          
+            if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+
+          const clicado = document.getElementById("flexSwitchCheckDefault").checked
+          let estadoIf = false;
+    
+            if (clicado !== true) {
+            setPlacaVeiculo(placaVeiculo.toUpperCase());
+            if(validarPlaca(placaVeiculo) === false ) {
+                setMensagem("Placa inválida")
+                setEstado(true)
+                setTimeout(() => {
+                    setEstado(false)
+                    setMensagem("")
+                }, 5000);
+            } else {
+                estadoIf = true
+            }
+        } else {
+            estadoIf = true
+        }
+        if (estadoIf === true) {
         const placaString = placaVeiculo.toString()
         const placaMaiuscula = placaString.toUpperCase();
         const vagaa = [];
@@ -177,6 +209,7 @@ const RegistrarVagaMonitor = () => {
     )
     }
 }
+}
 
     useEffect(() => {
         param();
@@ -205,10 +238,21 @@ const RegistrarVagaMonitor = () => {
                                 <small>Registrar estacionamento</small>
                                 <p id="tempoCusto" className=" pt-2"> Vaga selecionada: {vaga}</p>
                             </div>
+                            <div className="row">
+                                <div className="col-9 px-3 mt-4 pt-2">
+                                    <h6>Placa estrangeira / Outro</h6>
+                                </div>
+                                <div className="col-3 px-3">
+                                    <div className="form-check form-switch gap-2 d-md-block">
+                                        <input className="form-check-input align-self-end" type="checkbox" 
+                                        role="switch" id="flexSwitchCheckDefault"/>
+                                    </div>
+                                </div>
+                            </div>
                             <div className="form-group mb-4 mt-4">
                                 <p className='text-start'>Placa:</p>
                                 <div className="input-group">
-                                    <input className={InputPlaca} value={placaVeiculo} onChange={(e) => setPlacaVeiculo([e.target.value])} maxLength="7" placeholder="Exemplo: IKW8K88" id="fonteInputPlaca"/>
+                                    <input className={InputPlaca} value={placaVeiculo} onChange={(e) => setPlacaVeiculo([e.target.value])} maxLength="10" placeholder="Exemplo: IKW8K88" id="fonteInputPlaca"/>
                                 </div>
                             </div>
                             <div className="h6 mt-3 " onChange={atualizafunc}>

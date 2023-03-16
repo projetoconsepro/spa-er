@@ -55,8 +55,9 @@ const ListarVagasMonitor = () => {
                                 resposta[i].variaDisplay = "escondido";
                             }
                             else {
+                                resposta[i].numero_notificaoes = response.data.data[i].numero_notificacoes_pendentes;
                                 resposta[i].variaDisplay = "aparece";
-                                if (response.data.data[i].numero_notificacoes_pendentess !== 0) {
+                                if (response.data.data[i].numero_notificacoes_pendentes !== 0) {
                                     resposta[i].display = 'testeNot';
                                     resposta[i].numero_notificacoes_pendentes = response.data.data[i].numero_notificacoes_pendentess;
                                 }
@@ -71,6 +72,10 @@ const ListarVagasMonitor = () => {
                                 resposta[i].tempo = (response.data.data[i].tempo);
 
                                 const horasplit = resposta[i].temporestante.split(':');
+
+                                if (response.data.data[i].numero_notificacoes_pendentess !== 0) {
+                                    resposta[i].temporestante = '00:00:00';
+                                }
 
 
                                 if (resposta[i].temporestante === '00:00:00') {
@@ -134,6 +139,16 @@ const ListarVagasMonitor = () => {
         ).catch(function (error) {
             console.log(error);
         });
+
+        Atualizar();
+        
+    }
+
+    
+    const Atualizar = () => {
+        setTimeout(() => {
+        getVagas(setor);
+        }, 60000);
     }
 
     useEffect(() => {
@@ -192,7 +207,6 @@ const ListarVagasMonitor = () => {
         })
         if (tempo === '00:00:00') {
             if ( notificacoes !== 0) {
-
                 Swal.fire({
                     title: 'Deseja liberar esta vaga?',
                     showCancelButton: true,
@@ -350,7 +364,7 @@ const ListarVagasMonitor = () => {
                                             {resposta.map((vaga, index) => (
                                                 <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes) }}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
-                                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificacoes_pendentes}</small></td>
+                                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificaoes}</small></td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.chegada}</td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}><h6 id={vaga.variaDisplay} style={{ backgroundColor: vaga.corline, color: vaga.cor }}><Cronometro time={vaga.temporestante} /></h6></td>
                                                 </tr>

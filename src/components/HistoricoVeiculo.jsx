@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import TailSpin from "react-loading-icons/dist/esm/components/tail-spin";
 import Swal from "sweetalert2";
+import CarroLoading from "./Carregamento";
 
 
 const HistoricoVeiculo = () => {
@@ -391,8 +391,7 @@ if (idrequisicao !== "" && passar !== "") {
                   </table>
                 </div>
                 <div className="mt-3 mb-3" style={{ display: estado2 ? 'block' : 'none'}}>
-                                    <p><small>Carregando...</small></p>
-                                <TailSpin stroke="#3a58c8"/>
+                <CarroLoading  />       
                 </div>
                 <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                       {mensagem}

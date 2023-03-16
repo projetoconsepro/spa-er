@@ -213,9 +213,11 @@ const Notificacao = () => {
 
 
     const SetdadosTrue = () => {
+        const placaString = placa.toString()
+        const placaMaiuscula = placaString.toUpperCase();
+        setPlaca(placaMaiuscula);
+        setVaga(vaga);
         setDados(true);
-        localStorage.setItem("placa" , placa);
-        localStorage.setItem("vaga" , vaga);
     }
 
     useEffect(() => {
