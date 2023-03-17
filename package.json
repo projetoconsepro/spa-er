@@ -24,13 +24,13 @@
     "react-imask": "^6.4.3",
     "react-input-mask": "^3.0.0-alpha.2",
     "react-loading-icons": "^1.1.0",
-    "react-lottie": "^1.2.3",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.6.2",
     "react-scripts": "5.0.1",
     "sweetalert2": "^11.7.0",
     "sweetalert2-react-content": "^5.0.7",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "webrtc-adapter": "^8.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

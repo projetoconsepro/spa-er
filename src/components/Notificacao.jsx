@@ -248,9 +248,9 @@ const Notificacao = () => {
             response => {
                 if(response.data.msg.resultado === true){
                     setInfoBanco(true);
-                    setCorVeiculo(response.data.data.resposta.cor)
-                    setModeloVeiculo(response.data.data.resposta.nome)
-                    setFabricanteVeiculo(response.data.data.resposta.fabricante)
+                    setCorVeiculo(response.data.data[0].cor)
+                    setModeloVeiculo(response.data.data[0].modelo.modelo)
+                    setFabricanteVeiculo(response.data.data[0].modelo.fabricante.fabricante)
                 }
                 else{
                     setInfoBanco(false);

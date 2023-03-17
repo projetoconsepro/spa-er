@@ -46,6 +46,7 @@ const ListarVagasMonitor = () => {
                             resposta[i] = {};
                             resposta[i].numero = response.data.data[i].numero;
                             resposta[i].corvaga = response.data.data[i].cor;
+                            resposta[i].tipo = response.data.data[i].tipo;
                             if (response.data.data[i].estacionado === 'N') {
                                 resposta[i].chegada = "";
                                 resposta[i].placa = '';
@@ -194,9 +195,10 @@ const ListarVagasMonitor = () => {
         localStorage.removeItem('foto6');
         localStorage.removeItem('foto7');
         localStorage.removeItem('placaCarro');
+        localStorage.removeItem('tipoVaga');
     }, [])
 
-    const estaciona = (numero, id_vaga, tempo, placa, notificacoes) => {
+    const estaciona = (numero, id_vaga, tempo, placa, notificacoes, tipo) => { 
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -285,6 +287,7 @@ const ListarVagasMonitor = () => {
         } else {
             if ( placa === ''){
                 localStorage.setItem('vaga', numero);
+                localStorage.setItem('tipoVaga', tipo);
                 localStorage.setItem('componente', 'RegistrarVagaMonitor');
             }
             else {
@@ -362,7 +365,7 @@ const ListarVagasMonitor = () => {
                                         </thead>
                                         <tbody>
                                             {resposta.map((vaga, index) => (
-                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes) }}>
+                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes, vaga.tipo) }}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificaoes}</small></td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.chegada}</td>
