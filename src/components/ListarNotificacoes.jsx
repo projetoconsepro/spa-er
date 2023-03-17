@@ -202,7 +202,7 @@ const ListarNotificacoes = () => {
       setTimeout(() => {
         localStorage.removeItem("placaCarro");
       }, 2000);
-    } 
+  };
 
   useEffect(() => {
     const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
@@ -300,6 +300,7 @@ const ListarNotificacoes = () => {
             }
             else {
                 teste(resposta);
+                resposta = resposta.toUpperCase();
                 setFiltro(`Filtrado pela ${input}: ${resposta}`);
             }
         },
@@ -374,6 +375,15 @@ const ListarNotificacoes = () => {
     for (let i = 0; i < data.length; i++) {
         delete data[i];
     }
+    resposta = resposta.toUpperCase();
+    if (resposta.includes("'")  || resposta.includes('"')){
+      setEstado(true);
+      setMensagem("Caracteres inválidos"); 
+      setTimeout(() => {
+        setEstado(false);
+        setMensagem("")
+      }, 5000);
+    }else{
     const select = document.getElementById("filtroSelect").value;
     let idrequisicao = "";
     let passar = "";
@@ -429,6 +439,7 @@ const ListarNotificacoes = () => {
             console.log(error);
         });
     }
+  }
 }
 
   return (

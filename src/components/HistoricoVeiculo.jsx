@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import TailSpin from "react-loading-icons/dist/esm/components/tail-spin";
 import Swal from "sweetalert2";
+import CarroLoading from "./Carregamento";
 
 
 const HistoricoVeiculo = () => {
@@ -159,8 +159,8 @@ const chamarPopup = (index) => {
   let tipo = "Sim";
   Swal.fire({
     title: data[index].placa,
-    html: `Data: ${data[index].data} </br> Horário chegada: ${data[index].chegada} </br> Horário saída: ${data[index].saida} </br> 
-    Vaga: ${data[index].vaga} </br> Houve irregularidades: ${tipo} </br>`,
+    html: `Data: ${data[index].data} </br></br> Horário chegada: ${data[index].chegada} </br></br> Horário saída: ${data[index].saida} </br></br>
+    Vaga: ${data[index].vaga} </br></br> Houve irregularidades: ${tipo} </br></br> Endereço: ${data[index].local} </br>`,
     showCancelButton: true,
     confirmButtonText: 'Notificações',
     confirmButtonColor: '#3a58c8',
@@ -179,7 +179,7 @@ const chamarPopup = (index) => {
   Swal.fire({
     title: data[index].placa,
     html: `Data: ${data[index].data} </br></br> Horário chegada: ${data[index].chegada} </br></br> Horário saída: ${data[index].saida} </br></br> 
-    Vaga: ${data[index].vaga} </br></br> Houve irregularidades: ${tipo} </br>`,
+    Vaga: ${data[index].vaga} </br></br> Houve irregularidades: ${tipo} </br></br> Endereço: ${data[index].local} </br>`,
     showCancelButton: false,
     confirmButtonText: 'Voltar',
     confirmButtonColor: '#3a58c8',
@@ -255,6 +255,7 @@ const respostaPopup = (resposta) => {
               chegada: item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
               horafinal: item.horafinal[0] + ":" + item.horafinal[1] + ":" + item.horafinal[2],
               saida: item.saida,
+              local: item.local,
               data: ArrumaHora(item.data),
               estado: false,
               pago: item.pago,
@@ -319,6 +320,7 @@ if (idrequisicao !== "" && passar !== "") {
         chegada: item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
         horafinal: item.horafinal[0] + ":" + item.horafinal[1] + ":" + item.horafinal[2],
         saida: item.saida,
+        local: item.local,
         data: ArrumaHora(item.data),
         estado: false,
         pago: item.pago,
@@ -391,8 +393,7 @@ if (idrequisicao !== "" && passar !== "") {
                   </table>
                 </div>
                 <div className="mt-3 mb-3" style={{ display: estado2 ? 'block' : 'none'}}>
-                                    <p><small>Carregando...</small></p>
-                                <TailSpin stroke="#3a58c8"/>
+                <CarroLoading  />       
                 </div>
                 <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                       {mensagem}

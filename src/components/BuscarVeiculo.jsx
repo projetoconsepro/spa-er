@@ -38,7 +38,7 @@ const BuscarVeiculo = () => {
         const clicado = document.getElementById("flexSwitchCheckDefault").checked
             if(clicado === true){
                 setPlaca("placa2")
-                setLimite(100)
+                setLimite(10)
                 setInputVazio("inputvazio2")
             }
             else{

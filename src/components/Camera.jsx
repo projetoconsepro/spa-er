@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState} from "react";
 import { BsCameraFill } from "react-icons/bs";
 import Swal from 'sweetalert2'
+import adapter from 'webrtc-adapter';
 
 function Camera() {
   let videoRef = useRef(null);
@@ -8,24 +9,48 @@ function Camera() {
   let [ response ] = useState([])
   const [cont, setCont] = useState(0)
   const [imagens, setImagens] = useState([]);
+  const [cont2, setCont2] = useState(0)
 
-  const getVideo = () => {
-    navigator.mediaDevices
-      .getUserMedia({
-        video: true
-      })
-      .then((stream) => {
-        let video = videoRef.current;
-        video.srcObject = stream;
-        video.play();
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  const getVideo = async () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // o navegador suportae gtUserMedia()
+      console.log("o navegador suporta getUserMedia")
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+          let video = videoRef.current;
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch(function(error) {
+          console.log("Erro ao capturar áudio e vídeo: " + error.message);
+        });
+    } else {
+      // o navegador não suporta getUserMedia(), usar o adapter.js
+      console.log("o navegador não suporta getUserMedia")
+      adapter.getUserMedia({ video: true },
+        function(stream) {
+          let video = videoRef.current;
+          video.srcObject = stream;
+          video.play();
+        },
+        function(error) {
+          console.log("Erro ao captura vídeo: " + error.message);
+        }
+      );
+    }
   };
+
   useEffect(() => {
-    getVideo();
-}, [])
+
+    setTimeout(() => {
+
+    if (cont2 === 1) {
+      getVideo();
+    }
+
+    setCont2(cont2 + 1)
+  }, 500)
+  }, [cont2])
 
   const LocalStorage = () => {
     let cont2 = 0;
@@ -132,10 +157,8 @@ function Camera() {
   return (
     
     <div>
-      <video ref={videoRef} className=" w-100"></video>
-
+      <video ref={videoRef} className="w-100"></video>
       <div className="container" id="testeRolagem">
-
       <div>
         <div className="text-middle">
           <button className="btn btn-2">

@@ -46,6 +46,7 @@ const ListarVagasMonitor = () => {
                             resposta[i] = {};
                             resposta[i].numero = response.data.data[i].numero;
                             resposta[i].corvaga = response.data.data[i].cor;
+                            resposta[i].tipo = response.data.data[i].tipo;
                             if (response.data.data[i].estacionado === 'N') {
                                 resposta[i].chegada = "";
                                 resposta[i].placa = '';
@@ -55,8 +56,9 @@ const ListarVagasMonitor = () => {
                                 resposta[i].variaDisplay = "escondido";
                             }
                             else {
+                                resposta[i].numero_notificaoes = response.data.data[i].numero_notificacoes_pendentes;
                                 resposta[i].variaDisplay = "aparece";
-                                if (response.data.data[i].numero_notificacoes_pendentess !== 0) {
+                                if (response.data.data[i].numero_notificacoes_pendentes !== 0) {
                                     resposta[i].display = 'testeNot';
                                     resposta[i].numero_notificacoes_pendentes = response.data.data[i].numero_notificacoes_pendentess;
                                 }
@@ -71,6 +73,10 @@ const ListarVagasMonitor = () => {
                                 resposta[i].tempo = (response.data.data[i].tempo);
 
                                 const horasplit = resposta[i].temporestante.split(':');
+
+                                if (response.data.data[i].numero_notificacoes_pendentess !== 0) {
+                                    resposta[i].temporestante = '00:00:00';
+                                }
 
 
                                 if (resposta[i].temporestante === '00:00:00') {
@@ -134,6 +140,16 @@ const ListarVagasMonitor = () => {
         ).catch(function (error) {
             console.log(error);
         });
+
+        Atualizar();
+        
+    }
+
+    
+    const Atualizar = () => {
+        setTimeout(() => {
+        getVagas(setor);
+        }, 60000);
     }
 
     useEffect(() => {
@@ -179,9 +195,10 @@ const ListarVagasMonitor = () => {
         localStorage.removeItem('foto6');
         localStorage.removeItem('foto7');
         localStorage.removeItem('placaCarro');
+        localStorage.removeItem('tipoVaga');
     }, [])
 
-    const estaciona = (numero, id_vaga, tempo, placa, notificacoes) => {
+    const estaciona = (numero, id_vaga, tempo, placa, notificacoes, tipo) => { 
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -192,7 +209,6 @@ const ListarVagasMonitor = () => {
         })
         if (tempo === '00:00:00') {
             if ( notificacoes !== 0) {
-
                 Swal.fire({
                     title: 'Deseja liberar esta vaga?',
                     showCancelButton: true,
@@ -271,6 +287,7 @@ const ListarVagasMonitor = () => {
         } else {
             if ( placa === ''){
                 localStorage.setItem('vaga', numero);
+                localStorage.setItem('tipoVaga', tipo);
                 localStorage.setItem('componente', 'RegistrarVagaMonitor');
             }
             else {
@@ -348,9 +365,9 @@ const ListarVagasMonitor = () => {
                                         </thead>
                                         <tbody>
                                             {resposta.map((vaga, index) => (
-                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes) }}>
+                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes, vaga.tipo) }}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
-                                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificacoes_pendentes}</small></td>
+                                                    <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificaoes}</small></td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.chegada}</td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}><h6 id={vaga.variaDisplay} style={{ backgroundColor: vaga.corline, color: vaga.cor }}><Cronometro time={vaga.temporestante} /></h6></td>
                                                 </tr>

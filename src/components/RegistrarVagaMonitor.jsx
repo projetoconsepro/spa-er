@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { React, useState, useEffect } from 'react'
+import { FaUserInjured, FaWheelchair } from 'react-icons/fa';
 import Swal from 'sweetalert2'
 import '../pages/Style/styles.css';
 
@@ -15,6 +16,8 @@ const RegistrarVagaMonitor = () => {
     const [vaga, setVaga] = useState("");
     const [InputPlaca, setInputPlaca] = useState(" form-control fs-5");
     const [visible , setVisible] = useState(false);
+    const [limite, setLimite] = useState(7);
+    const [tipoVaga, setTipoVaga] = useState("");
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -64,8 +67,10 @@ const RegistrarVagaMonitor = () => {
         }
         else{
             if (placaVeiculo !== "") {
+                const placaString = placaVeiculo.toString()
+                const placaMaiuscula = placaString.toUpperCase();
+                localStorage.setItem('placa',`${placaMaiuscula}`)
                 localStorage.setItem('componente', 'Notificacao')
-                localStorage.setItem('placa',`${placaVeiculo}`)
                 //era pra ser window.location.reload()
                 }
                 else{
@@ -179,6 +184,7 @@ const RegistrarVagaMonitor = () => {
 }
 
     useEffect(() => {
+        setTipoVaga(localStorage.getItem('tipoVaga'))
         param();
         if (localStorage.getItem('popup')) {
             setPlacaVeiculo(localStorage.getItem('placa'))
@@ -194,21 +200,46 @@ const RegistrarVagaMonitor = () => {
         }  
     }, [])
 
+    const jae = () => {
+        const sim = document.getElementById("flexSwitchCheckDefault").checked
+        console.log(sim)
+        if (sim === true) {
+            setLimite(10);
+        }
+        else{
+            setLimite(7);
+        }
+    }
+
     return (
         <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
+                
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
+                    
                     <div className="col-12 d-flex align-items-center justify-content-center">
                         <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
-
+                       {tipoVaga === "cadeirante" ? <p className='text-start'><FaWheelchair size={20}/></p> : null }
+                       {tipoVaga === "idoso" ? <p className='text-start'><FaUserInjured size={20}/></p> : null }
                             <div className="h5 mt-2 align-items-center">
                                 <small>Registrar estacionamento</small>
-                                <p id="tempoCusto" className=" pt-2"> Vaga selecionada: {vaga}</p>
+                                <p id="tempoCusto" className=" pt-2"> Vaga selecionada: {vaga} </p>
+                            </div>
+                            <div className="row">
+                                <div className="col-9 px-3 mt-4 pt-2">
+                                    <h6>Placa estrangeira / Outro</h6>
+                                </div>
+                                <div className="col-3 px-3">
+                                    <div className="form-check form-switch gap-2 d-md-block">
+                                        <input className="form-check-input align-self-end" type="checkbox" 
+                                        role="switch" id="flexSwitchCheckDefault" onChange={() => {jae()}}/>
+                                    </div>
+                                </div>
                             </div>
                             <div className="form-group mb-4 mt-4">
                                 <p className='text-start'>Placa:</p>
                                 <div className="input-group">
-                                    <input className={InputPlaca} value={placaVeiculo} onChange={(e) => setPlacaVeiculo([e.target.value])} maxLength="7" placeholder="Exemplo: IKW8K88" id="fonteInputPlaca"/>
+                                    <input className={InputPlaca} value={placaVeiculo} onChange={(e) => setPlacaVeiculo([e.target.value])} maxLength={limite} placeholder="Exemplo: IKW8K88" id="fonteInputPlaca"/>
                                 </div>
                             </div>
                             <div className="h6 mt-3 " onChange={atualizafunc}>

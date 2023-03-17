@@ -16,7 +16,7 @@ const RegistrarVeiculo = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked
         if(clicado === true){
             setPlaca("placa2")
-            setLimite(100)
+            setLimite(10)
             setInputVazio("inputvazio2")
         }
         else{
@@ -27,6 +27,7 @@ const RegistrarVeiculo = () => {
     }
 
     const requisicao = () => {
+
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -40,6 +41,45 @@ const RegistrarVeiculo = () => {
         }
     })
 
+
+    function validarPlaca(placa) {
+        const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
+        const regexPlacaNova = /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+      
+        if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      let estadoIf = false;
+
+    if (placa !== "placa2"){
+        let placaFinal = ""
+        if (placa === "placa"){
+            placaFinal = textoPlaca;
+        }
+        else {
+            const split = textoPlaca.split("-")
+            placaFinal = split[0] + split[1]
+        }
+        placaFinal = placaFinal.toUpperCase()
+        if(validarPlaca(placaFinal) === false ) {
+            estadoIf = false;
+            setMensagem("Placa inválida")
+            setEstado(true)
+            setTimeout(() => {
+                setEstado(false)
+                setMensagem("")
+            }, 5000);
+        } else {
+            estadoIf = true
+        }
+    } else {
+        estadoIf = true
+    } 
+    
+    if(estadoIf){
     veiculo.post('/veiculo',{
         placa: uppercase,
         id_usuario: user2.id_usuario
@@ -62,6 +102,8 @@ const RegistrarVeiculo = () => {
         console.log(error);
     });
     }
+}
+
 
     const HangleBack = () => {
         localStorage.setItem('componente', 'MeusVeiculos')
@@ -97,7 +139,7 @@ const RegistrarVeiculo = () => {
         setTeste(textoPlaca.replace("-", ""))
     }
 
-    },[cont, textoPlaca])
+    },[textoPlaca])
 
     
     return (
