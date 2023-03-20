@@ -7626,9 +7626,26 @@ textarea.form-control-lg {
     padding: 1.25rem 1.5rem;
 }
 
-#vamove{
+#bordaBaixo{
     font-size: 1px;
     border-bottom: 1px solid #b1b1b1;  
+}
+
+#bordaBaixo2{
+    font-size: 1px;
+}
+
+@media (max-width: 360px){
+    #bordaBaixo{
+        font-size: 1px;
+        border-bottom: 1px solid #b1b1b1;  
+    }
+    #bordaBaixo h6{
+        font-size: 0.8rem !important;
+    }
+    #bordaBaixo2 h6{
+        font-size: 0.8rem !important;
+    }
 }
 
 .card-title {

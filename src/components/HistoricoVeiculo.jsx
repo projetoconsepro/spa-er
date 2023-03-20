@@ -18,13 +18,11 @@ const HistoricoVeiculo = () => {
   const [plaquinha, setPlaquinha] = useState("");
   const [perfil, setPerfil] = useState("");
 
-  function ArrumaHora(data) {
+  function ArrumaHora(data, hora ) {
     const data2 = data.split("T");
     const data3 = data2[0].split("-");
     const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    const data6 = data2[1].split(":");
-    const data5 = data4 + " - " + (data6[0]-3) + ":" + data6[1];
-    return data5;
+    return data4;
     }
 
   const tirarOpcao = async() => {
@@ -385,7 +383,7 @@ if (idrequisicao !== "" && passar !== "") {
                     {data.map((item, index) => (
                       <tr key={index} style={{backgroundColor: item.notificacao === 'S' ? "#F8D7DA" : "#FFF" }} onClick={() => {chamarPopup(index)}}>
                         <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.placa}</td>
-                        <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.data}</td>
+                        <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.data} - {item.chegada}</td>
                         <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.vaga}</td>
                       </tr>
                    ))}

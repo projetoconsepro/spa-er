@@ -275,9 +275,9 @@ const ListarNotificacoes = () => {
             }
           }
         })
-        
         if (color) {
-         teste(color);
+        setFiltro(`Filtrado pelo ${input}: ${color}`);
+        teste(color);
         }
       }else {
     Swal.fire({
@@ -479,13 +479,13 @@ const ListarNotificacoes = () => {
                 {link.estado ? (
                 <div
                   className="h6 d-flex align-items-center fs-6"
-                  id="vamove"
+                  id="bordaBaixo"
                 >
                   <h6> <FaClipboardList />‎ Motivo: {link.tipo_notificacao}</h6>
                 </div>
                 ) : 
                 <div
-                  className="h6 d-flex align-items-center fs-6"
+                  className="h6 d-flex align-items-center fs-6" id="bordaBaixo2"
                 >
                   <h6> <FaClipboardList />‎ Motivo: {link.tipo_notificacao}</h6>
                 </div>
