@@ -74,6 +74,7 @@ const ListarVagasMonitor = () => {
 
                                 const horasplit = resposta[i].temporestante.split(':');
 
+                                resposta[i].numero_notificacoes_pendentess = response.data.data[i].numero_notificacoes_pendentess
                                 if (response.data.data[i].numero_notificacoes_pendentess !== 0) {
                                     resposta[i].temporestante = '00:00:00';
                                 }
@@ -102,7 +103,7 @@ const ListarVagasMonitor = () => {
                                     resposta[i].corline = '#fff';
                                     resposta[i].cor = '#000';
                                 }
-                                if (resposta[i].numero_notificacoes_pendentes !== 0) {
+                                if (resposta[i].numero_notificacoes_pendentess !== 0) {
                                     resposta[i].corline = '#D3D3D4';
                                     resposta[i].cor = '#141619';
                                 }
@@ -198,7 +199,7 @@ const ListarVagasMonitor = () => {
         localStorage.removeItem('tipoVaga');
     }, [])
 
-    const estaciona = (numero, id_vaga, tempo, placa, notificacoes, tipo) => { 
+    const estaciona = (numero, id_vaga, tempo, placa, notificacoes, notificacoess, tipo) => { 
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -208,7 +209,7 @@ const ListarVagasMonitor = () => {
             }
         })
         if (tempo === '00:00:00') {
-            if ( notificacoes !== 0) {
+            if ( notificacoes !== 0 || notificacoess !== 0) {
                 Swal.fire({
                     title: 'Deseja liberar esta vaga?',
                     showCancelButton: true,
@@ -365,7 +366,7 @@ const ListarVagasMonitor = () => {
                                         </thead>
                                         <tbody>
                                             {resposta.map((vaga, index) => (
-                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes, vaga.tipo) }}>
+                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes , vaga.numero_notificacoes_pendentess, vaga.tipo) }}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificaoes}</small></td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.chegada}</td>

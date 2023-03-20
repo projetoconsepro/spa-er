@@ -5,12 +5,13 @@ import { useState, useEffect } from "react";
 const RegistrarEstacionamentoParceiro = () => {
   const [placa, setPlaca] = useState("placa");
   const [textoPlaca, setTextoPlaca] = useState("");
-  const [limite, setLimite] = useState(7);
+  const [limite, setLimite] = useState(8);
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [cont, setCont] = useState(0);
   const [teste, setTeste] = useState("");
+  const [success, setSuccess] = useState(false);
   const [vaga, setVaga] = useState("");
   const [tempo, setTempo] = useState("");
   const [valorCobranca, setValorCobranca] = useState(0);
@@ -41,7 +42,7 @@ const RegistrarEstacionamentoParceiro = () => {
       setInputVazio("inputvazio2");
     } else {
       setPlaca("placa");
-      setLimite(7);
+      setLimite(8);
       setInputVazio("inputvazio3");
     }
   };
@@ -71,28 +72,31 @@ const RegistrarEstacionamentoParceiro = () => {
 
 
     if (textoPlaca.length >= 7) {
-      const placaMaiuscula = textoPlaca.toUpperCase();
+      const tirarTraco = textoPlaca.split("-").join("");
+      const placaMaiuscula = tirarTraco.toUpperCase();
       const vagaa = []
       vagaa[0] = vaga;
       await requisicao.get(`/veiculo/${placaMaiuscula}`).then(
           response => {
-            console.log(response.data)
+            console.log('b', response)
             if(response.data.msg.msg === "Dados encontrados"){
               if (response.data.data[0].estacionado[0].estacionado === "S") {
                 requisicao.post('/estacionamento', {
                   placa: placaMaiuscula,
                   numero_vaga: vagaa,
                   tempo: tempo,
-                  pagamento: valorcobranca2,
+                  pagamento: "credito",
                   id_vaga_veiculo: response.data.data[0].estacionado[0].id_vaga_veiculo
                 }).then(
                   response => {
-                    console.log(response.data)
+                    console.log('a', response)
                     if(response.data.msg.resultado){
+                      setVaga("");
+                      setTextoPlaca("");
                       setMensagem("Estacionamento registrado com sucesso");
-                      setEstado(true);
+                      setSuccess(true);
                       setTimeout(() => {
-                        setEstado(false);
+                        setSuccess(false);
                         setMensagem("");
                       }, 3000);
                     }
@@ -121,9 +125,11 @@ const RegistrarEstacionamentoParceiro = () => {
                     response => {
                       if (response.data.msg.resultado) {
                         setMensagem("Estacionamento registrado com sucesso");
-                        setEstado(true);
+                        setSuccess(true);
+                        setVaga("");
+                        setTextoPlaca("");
                         setTimeout(() => {
-                          setEstado(false);
+                          setSuccess(false);
                           setMensagem("");
                         }, 3000);
                       } else {
@@ -150,9 +156,11 @@ const RegistrarEstacionamentoParceiro = () => {
                   response => {
                     if (response.data.msg.resultado) {
                       setMensagem("Estacionamento registrado com sucesso");
-                      setEstado(true);
+                      setSuccess(true);
+                      setVaga("");
+                      setTextoPlaca("");
                       setTimeout(() => {
-                        setEstado(false);
+                        setSuccess(false);
                         setMensagem("");
                       }, 3000);
                     } else {
@@ -247,7 +255,7 @@ const RegistrarEstacionamentoParceiro = () => {
         setLimite(10);
     }
     else{
-        setLimite(7);
+        setLimite(8);
     }
 }
 
@@ -263,8 +271,8 @@ const RegistrarEstacionamentoParceiro = () => {
               Registrar estacionamento
             </div>
             <div className="row">
-              <div className="col-9 px-3 mt-4 pt-1">
-                <h5 id="h5Placa">Placa estrangeira/Outra</h5>
+              <div className="col-9 px-3 mt-4 pt-2">
+                <h6 >Placa estrangeira/Outra</h6>
               </div>
               <div className="col-3 px-3">
                 <div className="form-check form-switch gap-2 d-md-block">
@@ -330,6 +338,13 @@ const RegistrarEstacionamentoParceiro = () => {
               className="alert alert-danger mt-4"
               role="alert"
               style={{ display: estado ? "block" : "none" }}
+              >
+              {mensagem}
+            </div>
+            <div
+              className="alert alert-success mt-4"
+              role="alert"
+              style={{ display: success ? "block" : "none" }}
             >
               {mensagem}
             </div>

@@ -15,7 +15,11 @@ function Camera() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       // o navegador suportae gtUserMedia()
       console.log("o navegador suporta getUserMedia")
-      navigator.mediaDevices.getUserMedia({ video: true })
+      navigator.mediaDevices.getUserMedia({ 
+        video: true,
+        facingMode: {
+          exact: "environment"
+        }})
         .then(function(stream) {
           let video = videoRef.current;
           video.srcObject = stream;

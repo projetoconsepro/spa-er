@@ -27,7 +27,6 @@ const RegistrarVeiculo = () => {
     }
 
     const requisicao = () => {
-
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -95,7 +94,6 @@ const RegistrarVeiculo = () => {
             }
             else {
             localStorage.setItem("componente", "MeusVeiculos")
-            //era pra ser window.location.reload()
             }
         }
     ).catch(function (error) {
