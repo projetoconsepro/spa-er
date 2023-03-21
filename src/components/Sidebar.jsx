@@ -1,20 +1,16 @@
-import { Link } from "react-router-dom";
 import { 
     FaCarAlt,
     FaParking,
-    FaClipboardList,
     FaMapMarkerAlt
  } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin } from "react-icons/bs";
 import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
-import { useContext, useState } from "react";
-import { AuthContext } from "../pages/contexts/auth";
+import { useState } from "react";
 import { BiSearchAlt } from "react-icons/bi";
 import { AiOutlineFileSearch } from "react-icons/ai";
-import HomePage from "../pages/HomePage/HomePage";
 
 const Sidebar = () => {
-        const { logout } = useContext(AuthContext);
+
         const nome = localStorage.getItem("user");
         const teste = JSON.parse(nome);
         const [mostrarSidebar, setMostrarSidebar] = useState(true);
@@ -45,6 +41,12 @@ const Sidebar = () => {
             icon: <FaParking />,
             name: "‎ Registrar estacionamento",
             componente: "RegistrarEstacionamentoParceiro",
+        })
+        links.push({
+            className: styles.className,
+            icon: <BsCashCoin />,
+            name: "‎ Adicionar créditos",
+            componente: "AdicionarCreditos",
         })
     }
     
@@ -106,6 +108,12 @@ const Sidebar = () => {
         })
     }
     else if (teste.perfil[0] === "monitor"){
+        links.push({
+            className: styles.className,
+            icon: <BsCashCoin />,
+            name: "‎ Adicionar créditos",
+            componente: "AdicionarCreditos",
+        })
         links.push({
             className: styles.className,
             name: "‎ Consultar vaga",

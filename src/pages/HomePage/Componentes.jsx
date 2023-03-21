@@ -1,4 +1,3 @@
-import React, { useContext } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ListarVagasMonitor from '../../components/ListarVagasMonitor';
 import ListarVeiculos from '../../components/ListarVeiculos';
@@ -19,6 +18,7 @@ import NewPassword from '../../components/NewPassword';
 import LoginPage from '../../components/LoginPage';
 import DoublePerfil from '../../components/DoublePerfil';
 import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
+import AdicionarCreditos from '../../components/AdicionarCreditos';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -73,6 +73,9 @@ export default function Veiculos({Componente}) {
         }
         else if ( Componente === "EscolherPerfil"){
             return <DoublePerfil />
+        }
+        else if(Componente === "AdicionarCreditos"){
+            return <AdicionarCreditos />
         }
         else {
             return <Error />

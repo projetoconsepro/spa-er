@@ -3833,7 +3833,6 @@ progress {
     width: 100%;
     font-size: 0.8rem !important;
     font-weight: 400;
-    line-height: 1.5;
     color: #6B7280;
     background:unset;
     border-radius: 0;
@@ -7646,6 +7645,16 @@ textarea.form-control-lg {
     #bordaBaixo2 h6{
         font-size: 0.8rem !important;
     }
+}
+
+#inputParceiro{
+    font-size: 1rem !important;
+    padding: 0;
+    margin: auto;
+}
+
+#inputParceiro::placeholder{
+    font-size: 1rem !important;
 }
 
 .card-title {
