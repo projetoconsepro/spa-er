@@ -137,7 +137,7 @@ const ListarVeiculos = () => {
             }
 
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
 
         await requisicao.get('/usuario/saldo-credito').then(
@@ -145,7 +145,7 @@ const ListarVeiculos = () => {
                 setSaldoCredito(response?.data?.data?.saldo)
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
 
         await parametros.get('/parametros').then(
@@ -153,7 +153,7 @@ const ListarVeiculos = () => {
                 setValorCobranca(response.data.data.param.estacionamento.valorHora)
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
     }
 
@@ -231,7 +231,7 @@ const ListarVeiculos = () => {
                     }
                 }
             ).catch(function (error) {
-                console.log(error);
+                localStorage.clear();
             });
             }
 }
@@ -274,7 +274,7 @@ const ListarVeiculos = () => {
                 else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Oops...',
+                        title: 'Oops..',
                         text: response.data.msg.msg,
                         footer: '<a href="">Por favor, tente novamente.</a>'
                       })
@@ -282,7 +282,7 @@ const ListarVeiculos = () => {
                 }
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
         }
     }

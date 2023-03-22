@@ -26,7 +26,7 @@ const AdicionarCreditos = () => {
               console.log(response)
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
     }
         
@@ -51,7 +51,7 @@ const AdicionarCreditos = () => {
             }
             ).then(
                 response => {
-                    console.log(response)
+                    if (response.data.msg.resultado) {
                     Swal.fire({
                         title: 'Sucesso!',
                         text: 'Créditos adicionados com sucesso!',
@@ -59,12 +59,24 @@ const AdicionarCreditos = () => {
                         confirmButtonText: 'Ok'
                     }).then((result) => {
                         if (result.isConfirmed) {
+                        }
+                    })
+                }
+                else {
+                    Swal.fire({
+                        title: 'Erro!',
+                        text: ` ${response.data.msg.msg}`,
+                        icon: 'error',
+                        confirmButtonText: 'Ok'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
                             
                         }
                     })
                 }
+            }
             ).catch(function (error) {
-                console.log(error);
+                localStorage.clear();
             });
         }
         else if (valor === 0){
@@ -93,7 +105,11 @@ const AdicionarCreditos = () => {
      }
 
     const HangleBack = () => {
-        localStorage.setItem("componente", "RegistrarEstacionamentoParceiro")
+        if (user2.perfil[0] === "parceiro") {
+        localStorage.setItem("componente", "RegistrarEstacionamentoParceiro");
+        } else {
+        localStorage.setItem("componente", "ListarVagasMonitor");
+        }
     }
 
     const atualiza = () => {
@@ -154,7 +170,7 @@ const AdicionarCreditos = () => {
                             </div>
 
                             <div className="pt-4 mb-6 gap-2 d-md-block">
-                                <button type="submit" className="btn2 botao" onClick={HangleBack}><a href="/">Cancelar</a></button>
+                                <button type="submit" className="btn2 botao" onClick={HangleBack}>Cancelar</button>
                                 <button type="submit" onClick={handleSubmit} className="btn3 botao">Confirmar</button>
                             </div>
                             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>

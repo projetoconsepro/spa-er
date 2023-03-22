@@ -98,11 +98,11 @@ const ResetPassword = () => {
                     }
                 }
             ).catch(function (error) {
-                console.log(error);
+              localStorage.clear();
             });
         }
       }).catch(function (error) {
-      console.log(error);
+        localStorage.clear();
       }); 
     }
     }

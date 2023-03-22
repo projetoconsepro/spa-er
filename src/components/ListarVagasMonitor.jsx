@@ -139,7 +139,7 @@ const ListarVagasMonitor = () => {
                 }
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
 
         Atualizar();
@@ -172,7 +172,7 @@ const ListarVagasMonitor = () => {
                 }
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         }
         );
         requisicao.get('setores/tolerancia').then(
@@ -185,7 +185,7 @@ const ListarVagasMonitor = () => {
 
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
 
         const setor = 'A'
@@ -234,7 +234,7 @@ const ListarVagasMonitor = () => {
                                 }
                             }
                         ).catch(function (error) {
-                            console.log(error);
+                            localStorage.clear();
                         }
                         );
                     }
@@ -269,7 +269,7 @@ const ListarVagasMonitor = () => {
                             }
                         }
                     ).catch(function (error) {
-                        console.log(error);
+                        localStorage.clear();
                     }
                     );
 
@@ -314,7 +314,7 @@ const ListarVagasMonitor = () => {
                                 }
                             }
                         ).catch(function (error) {
-                            console.log(error);
+                            localStorage.clear();
                         }
                         );
     

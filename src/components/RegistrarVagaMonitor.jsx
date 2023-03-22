@@ -33,7 +33,7 @@ const RegistrarVagaMonitor = () => {
                 setValorCobranca(response.data.data.param.estacionamento.valorHora)
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
 
         setVaga(localStorage.getItem('vaga'));
@@ -147,7 +147,7 @@ const RegistrarVagaMonitor = () => {
                 }
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
 
 
@@ -176,8 +176,7 @@ const RegistrarVagaMonitor = () => {
               }
             }
         ).catch(function (error) {
-            setEstado(true);
-            setMensagem(error.response.data.data.message);
+            localStorage.clear();
         }
     )
     }

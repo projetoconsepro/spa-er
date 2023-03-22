@@ -45,7 +45,7 @@ const RegistrarVagaCliente = () => {
                 }
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
 
         requisicao.get('/usuario/saldo-credito'
@@ -59,7 +59,7 @@ const RegistrarVagaCliente = () => {
                 }
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
 
         parametros.get('/parametros').then(
@@ -67,7 +67,7 @@ const RegistrarVagaCliente = () => {
                 setValorCobranca(response.data.data.param.estacionamento.valorHora)
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
     }, [])
 
@@ -152,7 +152,7 @@ const RegistrarVagaCliente = () => {
                     }
                 }
             ).catch(function (error) {
-                console.log(error);
+                localStorage.clear();
             });
         }
     }
