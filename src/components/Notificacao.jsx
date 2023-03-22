@@ -58,7 +58,7 @@ const Notificacao = () => {
             response => {
             }
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
     }
     else{
@@ -73,7 +73,7 @@ const Notificacao = () => {
             "cor": cor2,
         }).then(
         ).catch(function (error) {
-            console.log(error);
+            localStorage.clear();
         });
     }
     }
@@ -104,7 +104,7 @@ const Notificacao = () => {
                     }, 4000);
                 }
             }).catch(function (error) {
-            console.log(error);
+                localStorage.clear();
         });
     } else{
         requisicao.post('/notificacao', {
@@ -133,7 +133,7 @@ const Notificacao = () => {
                     }, 4000);
                 }
             }).catch(function (error) {
-            console.log(error);
+                localStorage.clear();
         });
     }
  } else {

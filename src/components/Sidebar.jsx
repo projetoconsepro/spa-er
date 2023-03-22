@@ -26,7 +26,6 @@ const Sidebar = () => {
             localStorage.removeItem("user")
             localStorage.removeItem("token")
             localStorage.removeItem("perfil")
-            localStorage.removeItem("perfil2")
         }
         
         const styles = {

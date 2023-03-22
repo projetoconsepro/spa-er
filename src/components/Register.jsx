@@ -33,7 +33,6 @@ const RegisterPage = () => {
     const navigate = useNavigate();
 
     const registrado = () => {
-        localStorage.setItem("registrou", "true");
         localStorage.setItem("componente", "LoginPage");
     }
 

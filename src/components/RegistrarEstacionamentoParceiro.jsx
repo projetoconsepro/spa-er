@@ -16,10 +16,10 @@ const RegistrarEstacionamentoParceiro = () => {
   const [tempo, setTempo] = useState("");
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
-
   const token = localStorage.getItem('token');
   const user = localStorage.getItem('user');
   const user2 = JSON.parse(user);
+
 
   const param = async () => {
     const requisicao = axios.create({
@@ -30,7 +30,7 @@ const RegistrarEstacionamentoParceiro = () => {
             setValorCobranca(response.data.data.param.estacionamento.valorHora)
         }
     ).catch(function (error) {
-        console.log(error);
+      localStorage.clear();
     });
 }
 
@@ -53,7 +53,7 @@ const RegistrarEstacionamentoParceiro = () => {
       headers: {
           'token': token,
           'id_usuario': user2.id_usuario,
-          'perfil_usuario': "parceiro"
+          'perfil_usuario': 'parceiro'
       }
     })
 
@@ -110,7 +110,7 @@ const RegistrarEstacionamentoParceiro = () => {
                     }
                 }
                 ).catch(function (error) {
-                    console.log(error);
+                  localStorage.clear();
                 }
               );
 
@@ -142,7 +142,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       }
                     }
                 ).catch(function (error) {
-                    console.log(error);
+                  localStorage.clear();
                 }
               );
               }
@@ -173,13 +173,13 @@ const RegistrarEstacionamentoParceiro = () => {
                     }
                   }
               ).catch(function (error) {
-                  console.log(error);
+                localStorage.clear();
               }
             );
             }
           }
       ).catch(function (error) {
-          console.log(error);
+        localStorage.clear();
       }
       );
     }else{

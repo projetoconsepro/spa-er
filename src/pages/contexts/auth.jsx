@@ -68,7 +68,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
-        localStorage.setItem("perfil2", true);
         localStorage.setItem('componente', 'EscolherPerfil');
         }
         return {
