@@ -274,7 +274,7 @@ const ListarVeiculos = () => {
                 else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Oops...',
+                        title: 'Oops..',
                         text: response.data.msg.msg,
                         footer: '<a href="">Por favor, tente novamente.</a>'
                       })
