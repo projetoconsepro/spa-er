@@ -141,7 +141,6 @@ const RegistrarVeiculo = () => {
 
     
     return (
-        <section className="vh-lg-100 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
@@ -174,7 +173,6 @@ const RegistrarVeiculo = () => {
                     </div>
                 </div>
             </div>
-        </section>
     )
 }
 

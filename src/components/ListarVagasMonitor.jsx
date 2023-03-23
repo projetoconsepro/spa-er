@@ -335,7 +335,7 @@ const ListarVagasMonitor = () => {
 
     return (
 
-        <div className="dashboard-container pt-3">
+        <div className="dashboard-container">
             <div className="row">
                 <div className="col-12 col-xl-8">
                     <div className="row">

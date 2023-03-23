@@ -158,8 +158,7 @@ const RegistrarVagaCliente = () => {
     }
 
     return (
-        <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
-            <div className="container">
+        <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
                         <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
@@ -203,7 +202,6 @@ const RegistrarVagaCliente = () => {
                     </div>
                 </div>
             </div>
-        </section>
     )
 }
 
