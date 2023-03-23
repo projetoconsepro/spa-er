@@ -7653,6 +7653,21 @@ textarea.form-control-lg {
     margin: auto;
 }
 
+#imagemPerfil{
+    width: 12%;
+    height: 12%;
+}
+
+#divEspaco{
+    padding-bottom: 4.8rem !important;
+}
+
+@media (max-width: 600px){
+    #textoSm{
+        font-size: 1.2rem !important;
+    }
+}
+
 #inputParceiro::placeholder{
     font-size: 1rem !important;
 }

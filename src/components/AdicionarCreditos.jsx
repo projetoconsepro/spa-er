@@ -122,9 +122,7 @@ const AdicionarCreditos = () => {
     }, [])
 
     return (
-        <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
-            <div className="container">
-                
+        <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     
                     <div className="col-12 d-flex align-items-center justify-content-center">
@@ -180,7 +178,6 @@ const AdicionarCreditos = () => {
                     </div>
                 </div>
             </div>
-        </section>
     )
 }
 
