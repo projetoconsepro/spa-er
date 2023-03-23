@@ -78,6 +78,7 @@ const BuscarVeiculo = () => {
         }
     
         },[textoPlaca])
+        
         const hangleRequisicao = () => {
             const requisicao = axios.create({
                 baseURL: process.env.REACT_APP_HOST,
@@ -91,7 +92,8 @@ const BuscarVeiculo = () => {
             const upperCase = tirarTraco.toUpperCase();
             requisicao.get(`/veiculo/${upperCase}`)
             .then((response) => {
-                if (response.data.msg.resultado === false) {
+                console.log(response.data)
+                if (response.data.msg.resultado === false && response.data.msg.msg !== "Dados encontrados") {
                     setDiv(false)
                     setEstado(true)
                     setMensagem(response.data.msg.msg)
