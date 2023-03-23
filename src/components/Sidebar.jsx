@@ -65,6 +65,18 @@ const Sidebar = () => {
             name: "‎ Adicionar créditos",
             componente: "AdicionarCreditos",
         })
+        links.push({
+            className: styles.className,
+            icon: "",
+            name: "",
+            componente: "VagasLivres",
+        })
+        links.push({
+            className: styles.className,
+            icon: "",
+            name: "",
+            componente: "VagasLivres",
+        })
     }
     
     if(teste.perfil[0] === "cliente"){
