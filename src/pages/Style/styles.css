@@ -49,6 +49,24 @@
     font-size: 30px;
 }
 
+@media (min-width: 600px){
+    #divEspaco{
+        margin-top: 2rem;
+    }
+}
+
+@media (min-width: 900px){
+    #divEspaco{
+        margin-top: 2.6rem;
+    }
+}
+
+@media (max-width: 500px){
+    #divEspaco{
+        padding-top: 0.2rem !important;
+    }
+}
+
 /*scroll up*/
 .scrollTop {
     position: fixed; 

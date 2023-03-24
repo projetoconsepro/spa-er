@@ -165,7 +165,7 @@ function Camera() {
       <div className="container" id="testeRolagem">
       <div>
         <div className="text-middle">
-          <button className="btn btn-2">
+          <button className="btn3 botao">
               <BsCameraFill size={20} onClick={()=>{ takePicture ('1')}} />
         </button>
         </div>
