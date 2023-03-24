@@ -92,6 +92,16 @@ const RegistrarVagaMonitor = () => {
         //era pra ser window.location.reload()
     }
         
+    function validarPlaca(placa) {
+        const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
+        const regexPlacaNova = /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+      
+        if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
 
     const handleSubmit = async  () => {
         const estacionamento = axios.create({
@@ -117,7 +127,21 @@ const RegistrarVagaMonitor = () => {
             }, 4000);
             return;
         }
-     
+        const sim = document.getElementById("flexSwitchCheckDefault").checked
+        if (!sim) {
+            if(!validarPlaca(placaMaiuscula)){
+                setInputPlaca("form-control fs-5 is-invalid");
+                setEstado(true);
+                setMensagem("Placa inválida");
+                setTimeout(() => {
+                    setInputPlaca("form-control fs-5");
+                    setEstado(false);
+                    setMensagem("");
+                }, 4000);
+                return;
+            }
+        }
+
      if (localStorage.getItem('popup')) {
         const idvaga = localStorage.getItem('id_vagaveiculo');
         estacionamento.post('/estacionamento', {
@@ -200,7 +224,6 @@ const RegistrarVagaMonitor = () => {
 
     const jae = () => {
         const sim = document.getElementById("flexSwitchCheckDefault").checked
-        console.log(sim)
         if (sim === true) {
             setLimite(10);
         }

@@ -20,7 +20,6 @@ const RegistrarEstacionamentoParceiro = () => {
   const user = localStorage.getItem('user');
   const user2 = JSON.parse(user);
 
-
   const param = async () => {
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
@@ -32,6 +31,17 @@ const RegistrarEstacionamentoParceiro = () => {
     ).catch(function (error) {
       localStorage.clear();
     });
+}
+
+function validarPlaca(placa) {
+  const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
+  const regexPlacaNova = /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+
+  if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
   const handlePlaca = () => {
@@ -48,6 +58,8 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   const handleRegistrar = async () => {
+    const tirarTraco = textoPlaca.split("-").join("");
+    const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -61,19 +73,29 @@ const RegistrarEstacionamentoParceiro = () => {
       setVaga(0);
     }
 
-    if (textoPlaca === "" || textoPlaca.length < 7) {
+    if (placaMaiuscula === "" || placaMaiuscula.length < 7) {
       setMensagem("Preencha o campo placa");
       setEstado(true);
       setTimeout(() => {
         setEstado(false);
         setMensagem("");
       }, 3000);
-    } 
+    }
 
+    const sim = document.getElementById("flexSwitchCheckDefault").checked
+        if (!sim) {
+            if(!validarPlaca(placaMaiuscula)){
+                setEstado(true);
+                setMensagem("Placa inválida");
+                setTimeout(() => {
+                    setEstado(false);
+                    setMensagem("");
+                }, 4000);
+                return;
+            }
+        }
 
     if (textoPlaca.length >= 7) {
-      const tirarTraco = textoPlaca.split("-").join("");
-      const placaMaiuscula = tirarTraco.toUpperCase();
       const vagaa = []
       vagaa[0] = vaga;
       await requisicao.get(`/veiculo/${placaMaiuscula}`).then(
