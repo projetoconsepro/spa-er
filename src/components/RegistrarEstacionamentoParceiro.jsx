@@ -123,6 +123,7 @@ const RegistrarEstacionamentoParceiro = () => {
                   pagamento: "dinheiro"
                 }).then(
                     response => {
+                      console.log(response)
                       if (response.data.msg.resultado) {
                         setMensagem("Estacionamento registrado com sucesso");
                         setSuccess(true);
@@ -154,6 +155,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 pagamento: "dinheiro"
               }).then(
                   response => {
+                    console.log(response)
                     if (response.data.msg.resultado) {
                       setMensagem("Estacionamento registrado com sucesso");
                       setSuccess(true);

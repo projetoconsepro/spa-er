@@ -26,7 +26,7 @@ const AdicionarCreditos = () => {
               console.log(response)
             }
         ).catch(function (error) {
-            localStorage.clear();
+            console.log(error)
         });
     }
         
@@ -76,7 +76,7 @@ const AdicionarCreditos = () => {
                 }
             }
             ).catch(function (error) {
-                localStorage.clear();
+                console.log(error)
             });
         }
         else if (valor === 0){
