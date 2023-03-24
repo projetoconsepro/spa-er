@@ -182,10 +182,10 @@ const Sidebar = () => {
 
     return(
     <div className="header-container mb-4">
-         <nav className="navbar navbar-dark fixed-top navbar-theme-primary px-4 col-12 d-lg-none bg-blue-50" id="nav" onClick={()=>{setAriaExpanded(true)}}>
+         <nav className="navbar navbar-dark fixed-top navbar-theme-primary px-4 col-12 d-lg-none bg-blue-50" id="nav">
                 <div className="d-flex align-items-center w-100 justify-content-between">
                 <img src="../../assets/img/logoconseproof3.png" alt="Rich Logo" className="w-25" />
-                    <button className="navbar-toggler d-lg-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded={ariaExpanded} aria-label="Toggle navigation">
+                    <button className="navbar-toggler d-lg-none collapsed" onClick={()=>{setAriaExpanded(true)}} type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded={ariaExpanded} aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
                 </div>

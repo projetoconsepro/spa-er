@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
+import ScrollTopArrow from "./ScrollTopArrow";
 
 const ListarVagasMonitor = () => {
     const token = localStorage.getItem('token');
@@ -16,6 +17,8 @@ const ListarVagasMonitor = () => {
     const [mensagem, setMensagem] = useState("");
     const [salvaSetor, setSalvaSetor] = useState('');
     const [tolerancia, setTolerancia] = useState(10);
+    const [contador, setContador] = useState(0);
+    
 
     const getVagas = async (setor) => {
         const requisicao = axios.create({
@@ -142,16 +145,21 @@ const ListarVagasMonitor = () => {
             localStorage.clear();
         });
 
-        Atualizar();
         
     }
 
     
-    const Atualizar = () => {
-        setTimeout(() => {
+   useEffect(() => {
+    if (contador === 60) {
+        setContador(0);
         getVagas(setor);
-        }, 60000);
     }
+    setTimeout(() => {
+        setContador(contador + 1);
+    }, 1000);
+}, [contador]);
+        
+    
 
     useEffect(() => {
         const requisicao = axios.create({
@@ -340,19 +348,33 @@ const ListarVagasMonitor = () => {
                 <div className="col-12 col-xl-8">
                     <div className="row">
                         <div className="col-12 mb-4">
-                            <div className="d-flex justify-content-between mx-2">
-                                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="setoresSelect"
+                            <div className="row mx-2">
+                                <div className="col-5 align-middle">
+                                <select className="form-select form-select-lg mb-3 mt-2" aria-label=".form-select-lg example" id="setoresSelect"
                                     onChange={() => { getVagas('A') }}>
                                     {resposta2.map((link, index) => (
                                         <option value={link.setores} key={index}>Setor: {link.setores}</option>
                                     ))}
                                 </select>
-
-                                <p>Atualizado em: {tempoAtual}</p>
-
-                                <div onClick={() => { getVagas() }}><FiRefreshCw size={20} /> </div>
-
+                                </div>
+                                <div className="col-7 px-5" >
+                                    <div id="vagaNormalBolinha">
+                                    <ul>
+                                        <li className="text-start" id="vagaNormalBolinha">Normal</li>
+                                    </ul>
+                                    </div>
+                                    <div id="vagaIdosoBolinha">
+                                    <ul>
+                                        <li className="text-start" id="vagaIdosoBolinha">Idoso</li>
+                                    </ul >
+                                    </div>
+                                    <div id="vagaDeficienteBolinha">
+                                    <ul>
+                                        <li className="text-start" id="vagaDeficienteBolinha">Cadeirante</li>
+                                    </ul>
+                                    </div>
                             </div>
+                        </div>
                             <div className="card border-0 shadow">
                                 <div className="table-responsive">
                                     <table className="table align-items-center table-flush">
@@ -384,6 +406,7 @@ const ListarVagasMonitor = () => {
                     </div>
                 </div>
             </div>
+            <ScrollTopArrow />
         </div>
     );
 }

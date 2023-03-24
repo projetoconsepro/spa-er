@@ -9,6 +9,99 @@
     margin-left: 10px;
 }
 
+
+#vagaNormalBolinha ul{
+    list-style-type: disc;
+}
+
+#vagaNormalBolinha li{
+    line-height: 0.3;
+}
+
+#vagaNormalBolinha li::marker{
+    color: #0000FF;
+    font-size: 30px;
+}
+
+#vagaIdosoBolinha ul{
+    list-style-type: disc;
+}
+
+#vagaIdosoBolinha li{
+    line-height: 0.3;
+}
+
+#vagaIdosoBolinha li::marker{
+    color: #D2691E;
+    font-size: 30px;
+}
+
+#vagaDeficienteBolinha ul{
+    list-style-type: disc;
+}
+
+#vagaDeficienteBolinha li{
+    line-height: 0.3;
+}
+
+#vagaDeficienteBolinha li::marker{
+    color: #808000;
+    font-size: 30px;
+}
+
+/*scroll up*/
+.scrollTop {
+    position: fixed; 
+    width: 100%;
+    bottom: 20px;
+    align-items: center;
+    height: 20px;
+    justify-content: center;
+    z-index: 1000;
+    cursor: pointer;
+    animation: fadeIn 0.3s;
+    transition: opacity 0.4s;
+    opacity: 0.5;
+    margin-left: 35%;
+  }
+  .scrollTop path {
+    fill: #0000FF;
+  }
+
+  @media (min-width: 768px) {
+    .scrollTop {
+        background-color: #0000FF;
+        position: fixed; 
+        width: 100%;
+        bottom: 20px;
+        align-items: center;
+        height: 20px;
+        justify-content: center;
+        z-index: 1000;
+        cursor: pointer;
+        animation: fadeIn 0.3s;
+        transition: opacity 0.4s;
+        opacity: 0.5;
+        margin-left: 30%;
+      }
+  }
+  
+  .scrollTop:hover{
+    opacity: 1;
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
+  /*scroll up*/
+
+
+
 .datepicker {
     display: none;
 }
@@ -6562,7 +6655,7 @@ textarea.form-control-lg {
 }
 
 #setoresSelect{
-    width: 35% !important;
+    width: 100% !important;
 }
 
 .swal2-title{

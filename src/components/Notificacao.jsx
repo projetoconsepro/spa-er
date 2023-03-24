@@ -217,6 +217,8 @@ const Notificacao = () => {
         const placaMaiuscula = placaString.toUpperCase();
         setPlaca(placaMaiuscula);
         setVaga(vaga);
+        localStorage.setItem("vaga" , vaga);
+        localStorage.setItem("placa", placaMaiuscula);
         setDados(true);
     }
 

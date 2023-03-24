@@ -7,6 +7,7 @@ import { BiErrorCircle } from "react-icons/bi";
 import Swal  from "sweetalert2";
 
 
+
 const ListarNotificacoes = () => {
   const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);

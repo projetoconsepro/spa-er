@@ -19,7 +19,6 @@ import LoginPage from '../../components/LoginPage';
 import DoublePerfil from '../../components/DoublePerfil';
 import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
 import AdicionarCreditos from '../../components/AdicionarCreditos';
-
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
