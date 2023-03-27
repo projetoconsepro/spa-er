@@ -17,6 +17,7 @@ const Sidebar = () => {
         const [mostrarSidebar, setMostrarSidebar] = useState(true);
         const [ariaExpanded, setAriaExpanded] = useState(false);
         const componentefunc = (componente) =>{
+            setAriaExpanded(false)
             localStorage.setItem("componente", componente)
             setMostrarSidebar(false)
             setTimeout(() => {
