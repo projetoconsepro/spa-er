@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../pages/contexts/auth";
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-const DoublePerfil = () => {
+const DoisPerfis = () => {
     const { authenticated, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const analisePerfil = localStorage.getItem('user');
@@ -58,4 +58,4 @@ function red(id) {
       </section>
           );
 }
-export default DoublePerfil;
+export default DoisPerfis;

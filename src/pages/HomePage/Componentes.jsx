@@ -16,7 +16,7 @@ import ResetPassword from '../../components/ResetPassword';
 import Confirmation from '../../components/Confirmation';
 import NewPassword from '../../components/NewPassword';
 import LoginPage from '../../components/LoginPage';
-import DoublePerfil from '../../components/DoublePerfil';
+import DoisPerfis from '../../components/DoisPerfis';
 import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
 import AdicionarCreditos from '../../components/AdicionarCreditos';
 export default function Veiculos({Componente}) {
@@ -71,7 +71,7 @@ export default function Veiculos({Componente}) {
             return <LoginPage />
         }
         else if ( Componente === "EscolherPerfil"){
-            return <DoublePerfil />
+            return <DoisPerfis />
         }
         else if(Componente === "AdicionarCreditos"){
             return <AdicionarCreditos />
