@@ -88,7 +88,6 @@
 
   @media (min-width: 768px) {
     .scrollTop {
-        background-color: #0000FF;
         position: fixed; 
         width: 100%;
         bottom: 20px;
