@@ -140,6 +140,12 @@ const Sidebar = () => {
     else if (teste.perfil[0] === "monitor"){
         links.push({
             className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Registrar estacionamento",
+            componente: "RegistrarEstacionamentoParceiro",
+        })
+        links.push({
+            className: styles.className,
             icon: <BsCashCoin />,
             name: "‎ Adicionar créditos",
             componente: "AdicionarCreditos",
