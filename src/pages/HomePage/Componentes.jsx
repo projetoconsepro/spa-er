@@ -19,6 +19,7 @@ import LoginPage from '../../components/LoginPage';
 import DoisPerfis from '../../components/DoisPerfis';
 import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
 import AdicionarCreditos from '../../components/AdicionarCreditos';
+import AbrirCaixa from '../../components/AbrirCaixa';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -75,6 +76,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "AdicionarCreditos"){
             return <AdicionarCreditos />
+        }
+        else if(Componente === "AbrirCaixa"){
+            return <AbrirCaixa />
         }
         else {
             return <Error />
