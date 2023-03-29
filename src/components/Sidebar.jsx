@@ -17,6 +17,7 @@ const Sidebar = () => {
         const [mostrarSidebar, setMostrarSidebar] = useState(true);
         const [ariaExpanded, setAriaExpanded] = useState(false);
         const componentefunc = (componente) =>{
+            setAriaExpanded(false)
             localStorage.setItem("componente", componente)
             setMostrarSidebar(false)
             setTimeout(() => {
@@ -137,6 +138,12 @@ const Sidebar = () => {
         })
     }
     else if (teste.perfil[0] === "monitor"){
+        links.push({
+            className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Registrar estacionamento",
+            componente: "RegistrarEstacionamentoParceiro",
+        })
         links.push({
             className: styles.className,
             icon: <BsCashCoin />,

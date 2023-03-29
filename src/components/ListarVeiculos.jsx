@@ -137,7 +137,7 @@ const ListarVeiculos = () => {
             }
 
         ).catch(function (error) {
-            localStorage.clear();
+            console.log(error)
         });
 
         await requisicao.get('/usuario/saldo-credito').then(
@@ -145,7 +145,7 @@ const ListarVeiculos = () => {
                 setSaldoCredito(response?.data?.data?.saldo)
             }
         ).catch(function (error) {
-            localStorage.clear();
+            console.log(error)
         });
 
         await parametros.get('/parametros').then(
@@ -153,7 +153,7 @@ const ListarVeiculos = () => {
                 setValorCobranca(response.data.data.param.estacionamento.valorHora)
             }
         ).catch(function (error) {
-            localStorage.clear();
+            console.log(error)
         });
     }
 
@@ -231,7 +231,7 @@ const ListarVeiculos = () => {
                     }
                 }
             ).catch(function (error) {
-                localStorage.clear();
+                console.log(error)
             });
             }
 }
@@ -282,7 +282,7 @@ const ListarVeiculos = () => {
                 }
             }
         ).catch(function (error) {
-            localStorage.clear();
+            console.log(error)
         });
         }
     }

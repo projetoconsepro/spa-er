@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import { FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
 import ScrollTopArrow from "./ScrollTopArrow";
@@ -10,6 +11,7 @@ const ListarVagasMonitor = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const [resposta, setResposta] = useState([]);
+    const [vaga, setVaga] = useState("");
     const [resposta2, setResposta2] = useState([]);
     const [setor, setSetor] = useState('');
     const [tempoAtual, setTempoAtual] = useState('');
@@ -18,7 +20,6 @@ const ListarVagasMonitor = () => {
     const [salvaSetor, setSalvaSetor] = useState('');
     const [tolerancia, setTolerancia] = useState(10);
     const [contador, setContador] = useState(0);
-    
 
     const getVagas = async (setor) => {
         const requisicao = axios.create({
@@ -40,6 +41,7 @@ const ListarVagasMonitor = () => {
         await requisicao.get(`/vagas?setor=${setor}`
         ).then(
             response => {
+                console.log(response)
                 if (response.data.msg.resultado !== false) {
                     setEstado(false);
                     setMensagem("");
@@ -50,6 +52,8 @@ const ListarVagasMonitor = () => {
                             resposta[i].numero = response.data.data[i].numero;
                             resposta[i].corvaga = response.data.data[i].cor;
                             resposta[i].tipo = response.data.data[i].tipo;
+                            resposta[i].id_vaga = response.data.data[i].id_vaga;
+
                             if (response.data.data[i].estacionado === 'N') {
                                 resposta[i].chegada = "";
                                 resposta[i].placa = '';
@@ -159,6 +163,24 @@ const ListarVagasMonitor = () => {
     }, 1000);
 }, [contador]);
         
+    useEffect(() => {
+        console.log("foi")
+        setTimeout(() => {
+        if(localStorage.getItem("numero_vaga")){
+            setVaga(localStorage.getItem("numero_vaga"));
+            setTimeout(() => {
+                localStorage.removeItem("numero_vaga");
+            }, 1000);
+        }
+        }, 1000);
+  const cardToScroll = document.querySelector(`.card-list[data-vaga="${vaga}"]`);
+  if (cardToScroll) {
+    setTimeout(() => {
+        cardToScroll.scrollIntoView({behavior: 'smooth', block: 'center'});
+        console.log(vaga)
+      }, 100);
+}
+}, [vaga]);
     
 
     useEffect(() => {
@@ -207,7 +229,8 @@ const ListarVagasMonitor = () => {
         localStorage.removeItem('tipoVaga');
     }, [])
 
-    const estaciona = (numero, id_vaga, tempo, placa, notificacoes, notificacoess, tipo) => { 
+    const estaciona = (numero, id_vaga, tempo, placa, notificacoes, notificacoess, tipo) => {
+        localStorage.setItem("numero_vaga", numero)
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -357,23 +380,15 @@ const ListarVagasMonitor = () => {
                                     ))}
                                 </select>
                                 </div>
-                                <div className="col-7 px-5" >
-                                    <div id="vagaNormalBolinha">
-                                    <ul>
-                                        <li className="text-start" id="vagaNormalBolinha">Normal</li>
-                                    </ul>
-                                    </div>
-                                    <div id="vagaIdosoBolinha">
-                                    <ul>
-                                        <li className="text-start" id="vagaIdosoBolinha">Idoso</li>
-                                    </ul >
-                                    </div>
-                                    <div id="vagaDeficienteBolinha">
-                                    <ul>
-                                        <li className="text-start" id="vagaDeficienteBolinha">Cadeirante</li>
-                                    </ul>
-                                    </div>
-                            </div>
+                                <div className="col-7 px-5">
+                        <input
+                        className="form-control"
+                        type="number"
+                        value={vaga}
+                        onChange={(e) => setVaga(e.target.value)}
+                        placeholder="Número da vaga"
+                        />
+                    </div>
                         </div>
                             <div className="card border-0 shadow">
                                 <div className="table-responsive">
@@ -388,7 +403,7 @@ const ListarVagasMonitor = () => {
                                         </thead>
                                         <tbody>
                                             {resposta.map((vaga, index) => (
-                                                <tr key={index} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes , vaga.numero_notificacoes_pendentess, vaga.tipo) }}>
+                                                <tr key={index} className="card-list" data-vaga={vaga.numero} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes , vaga.numero_notificacoes_pendentess, vaga.tipo) }}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificaoes}</small></td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.chegada}</td>
@@ -399,7 +414,7 @@ const ListarVagasMonitor = () => {
                                     </table>
                                 </div>
                             </div>
-                            <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                            <div className="alert alert-danger" id="sim" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
                             </div>
                         </div>
