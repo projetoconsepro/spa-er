@@ -45,6 +45,15 @@ const Notificacao = () => {
                 const getfabricante = document.getElementById("selectFabricantes").value;
             if (outro === true){
                 const getcor = document.getElementById("selectCores").value;
+                if (getmodelo === "" || getfabricante === "" || getcor === "") {
+                    setMensagem("Necessário selecionar modelo, fabricante e cor")
+                    setEstado(true)
+                    setTimeout(() => {
+                        setEstado(false);
+                        setMensagem("");
+                    }, 4000);
+                    return;
+                }
         requisicao.post(`/veiculo/${placa}`, {
             "placa": placa,
              "modelo": {
@@ -62,6 +71,15 @@ const Notificacao = () => {
         });
     }
     else{
+        if (getmodelo === "" || getfabricante === ""){
+            setMensagem("Necessário selecionar modelo e fabricante")
+            setEstado(true)
+            setTimeout(() => {
+                setEstado(false);
+                setMensagem("");
+            }, 4000);
+            return;
+        }
         requisicao.post(`/veiculo/${placa}`, {
             "placa": placa,
              "modelo": {
@@ -374,6 +392,7 @@ const Notificacao = () => {
                                             <div onChange={()=>{getModelos()}}>
                                             <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
                                             <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectFabricantes">
+                                            <option value="">Selecione uma cor</option>
                                         {fabricante.map((link, index) => (
                                             <option value={link.id_fabricante_veiculo} key={index}>{link.nome}</option>
                                         ))}
@@ -382,6 +401,7 @@ const Notificacao = () => {
                                             <div>
                                             <h6 className='mx-4'><small>Modelo:</small></h6>
                                             <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectModelos">
+                                            <option value="">Selecione um modelo</option>
                                         {modelo.map((link, index) => (
                                             <option value={link.id_modelo} key={index}>{link.nome}</option>
                                         ))}
@@ -391,6 +411,7 @@ const Notificacao = () => {
                                             <div  onChange={()=>{attcor()}}>
                                             <h6 className='mx-4'><small>Cor:</small></h6>
                                             <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectCores">
+                                            <option value="">Selecione uma cor</option>
                                             {cor.map((link, index) => (
                                                 <option value={link.cor} key={index}>{link.cor}</option>
                                             ))}

@@ -10,7 +10,7 @@
 }
 
 #inputAbrirCaixa{
-margin-left: 40%;
+margin-left: 20%;
 margin-right: 5%;
 font-size: 1rem !important;
 }
@@ -22,7 +22,7 @@ opacity: 0.6;
 
 @media (max-width: 365px){
     #inputAbrirCaixa{
-        margin-left: 35%;
+        margin-left: 10%;
         font-size: 1rem !important;
     }
 }
@@ -5062,6 +5062,25 @@ textarea.form-control-lg {
     border-radius: 0.5rem;
 }
 
+.btn8 {
+    display: inline-block;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #374151;
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: rgb(129, 129, 129) !important;
+    border: 0.0625rem solid transparent;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+}
+
 #modalTexto{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     text-align: justify;
@@ -6710,6 +6729,10 @@ textarea.form-control-lg {
     width: 100% !important;
 }
 
+#setoresSelect2{
+    width: 100% !important;
+}
+
 .swal2-title{
     font-size: 1.5rem;
     font-weight: 600;
@@ -7705,7 +7728,7 @@ textarea.form-control-lg {
 }
 
 .card-body5{
-    height: 10rem;
+    height: 13rem;
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
 }

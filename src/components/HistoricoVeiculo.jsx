@@ -259,6 +259,7 @@ const respostaPopup = (resposta) => {
               pago: item.pago,
               placa: item.placa,
               notificacao: item.notificacao,
+              regularizacao: item.regularizacao,
               id_vaga_veiculo: item.id_vaga_veiculo,
             }));
             setData(newData);
@@ -323,6 +324,7 @@ if (idrequisicao !== "" && passar !== "") {
         estado: false,
         pago: item.pago,
         placa: item.placa,
+        regularizacao: item.regularizacao,
         notificacao: item.notificacao,
         id_vaga_veiculo: item.id_vaga_veiculo,
       }));
@@ -381,10 +383,32 @@ if (idrequisicao !== "" && passar !== "") {
                     </thead>
                     <tbody>
                     {data.map((item, index) => (
-                      <tr key={index} style={{backgroundColor: item.notificacao === 'S' ? "#F8D7DA" : "#FFF" }} onClick={() => {chamarPopup(index)}}>
-                        <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.placa}</td>
-                        <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.data} - {item.chegada}</td>
-                        <td style={{ color:  item.notificacao === 'S' ? "#842029" : "#303030" }}>{item.vaga}</td>
+                      <tr key={index} style={{
+                        backgroundColor: 
+                        item.regularizacao === "S"
+                            ?  '#D1E7DD'
+                            : item.notificacao === "S" && item.regularizacao !== "S" 
+                              ? "#F8D7DA"
+                              : "#FFF" 
+                      }} onClick={() => {chamarPopup(index)}}>
+                        <td style={{ color:   item.regularizacao === "S"
+                            ?  '#0F5132'
+                            : item.notificacao === "S" && item.regularizacao !== "S" 
+                              ? "#842029" 
+                              : "#303030" 
+                              }}>{item.placa}</td>
+                        <td style={{ color:
+                        item.regularizacao === "S"
+                            ?  '#0F5132'
+                            : item.notificacao === "S" && item.regularizacao !== "S" 
+                              ? "#842029" 
+                              : "#303030"  }}>{item.data} - {item.chegada}</td>
+                        <td style={{ color:
+                        item.regularizacao === "S"
+                            ?  '#0F5132'
+                            : item.notificacao === "S" && item.regularizacao !== "S" 
+                              ? "#842029" 
+                              : "#303030"  }}>{item.vaga}</td>
                       </tr>
                    ))}
                     </tbody>
