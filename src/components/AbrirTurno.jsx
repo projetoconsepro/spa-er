@@ -1,18 +1,16 @@
 import axios from 'axios'
 import {React, useState, useEffect} from 'react'
 
-const AbrirCaixa = () => {
+const AbrirTurno = () => {
     const [valor, setValor] = useState(0)
-    const [estado, setEstado] = useState(false)
-    const [primeiro, setPrimeiro] = useState(null)
+    const [estado, setEstado] = useState(true)
     const [abTurno, setAbTurno] = useState(false)
+    const [setorSelecionado, setSetorSelecionado] = useState(1)
+    const [setorSelecionado2, setSetorSelecionado2] = useState("A")
     const [botaoFecharTurno, setBotaoFecharTurno] = useState(false)
-    const [botaoFecharCaixa, setBotaoFecharCaixa] = useState(false)
-    const [caixaAberto, setCaixaAberto] = useState(false)
     const [nome, setNome] = useState("")
     const [tempoAtual, setTempoAtual] = useState("")
     const [resposta2] = useState([])
-
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -29,34 +27,17 @@ const AbrirCaixa = () => {
         requisicao.get('/setores'
         ).then(
             response => {
+                console.log(response)
                 for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
                     resposta2[i] = {};
                     resposta2[i].setores = response.data.data.setores[i].nome;
+                    resposta2[i].id_setores = response.data.data.setores[i].id_setor;
                 }
             }
         ).catch(function (error) {
             console.log(error)
         }
         );
-
-        requisicao.get('/turno/primeiro'
-        ).then(
-            response => {
-                console.log(response.data)
-                if(response.data.resultado === true){
-                    setPrimeiro(true)
-                }else{
-                    setPrimeiro(false)
-                }
-            }
-        ).catch(function (error) {
-            console.log(error)
-        }
-        );
-
-        if(primeiro === true){
-            setEstado(true)
-        }
 
         setNome(user2.nome)
         const data = new Date();
@@ -74,39 +55,69 @@ const AbrirCaixa = () => {
         }
         const horaAtual = hora + ":" + minuto + ":" + segundos;
         setTempoAtual(horaAtual);
-        console.log(horaAtual)
-        //verificar se é a primeira abertura de caixa do dia (setprimeiro === true)
 
-
+        if(localStorage.getItem("valorTurno")){
+            localStorage.setItem("componente", "FecharTurno")
+        }
     }, [])
 
-    const abrirTurno = () => {
-        if(estado === true){
-            setEstado(false)
-        }
-        else{
-            setEstado(true)
-        }
+    const setarSetor = () => {
+        const setor2 = document.getElementById("setoresSelect2").value;
+        setSetorSelecionado2(setor2)
+        console.log(setor2)
+
+        const setorA = resposta2.find((setor) => setor.setores === setor2);
+        const setorId2 = setorA && setorA.id_setores;
+        console.log(setorId2)
+        setSetorSelecionado(setorId2)
     }
 
-    const abrirTurno2 = (botaoClicado) => {
-        if (botaoClicado === 'fecharTurno') {
-          setBotaoFecharTurno(false);
-        } else if (botaoClicado === 'fecharCaixa') {
-          setBotaoFecharCaixa(false);
+
+    const abrirTurno = () => {
+        //parametros requisicao
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        })
+        //abrir turno
+        console.log(setorSelecionado)
+        console.log(valor)
+        console.log(tempoAtual)
+
+        requisicao.post('/turno/abrir',{
+            hora: tempoAtual,
+            idSetor: setorSelecionado,
+            caixa: {
+                valor_abertura: valor
+            }
         }
-      
-        if (botaoClicado !== 'fecharTurno' && botaoClicado !== 'fecharCaixa') {
-            setBotaoFecharTurno(true);
-            setBotaoFecharCaixa(true);
-          if (abTurno === false) {
-            setAbTurno(true);
-          } else {
-            setEstado(false);
-            setAbTurno(false);
-          }
+        ).then(
+            response => {
+               console.log(response.data.msg.resultado)
+               if(response.data.msg.resultado === true){
+                    localStorage.setItem("horaTurno", tempoAtual)
+                    localStorage.setItem("setorTurno", setorSelecionado2)
+                    localStorage.setItem("idSetorTurno", setorSelecionado)
+                    localStorage.setItem("valorTurno", valor)
+                    localStorage.setItem("componente", "FecharTurno")
+               }
+               else{
+                console.log("sim")
+               }
+            }
+        ).catch(function (error) {
+            console.log(error)
         }
-      };
+        );
+       
+
+        //condições
+        
+    }
 
   return (
     <div className="container">
@@ -128,11 +139,9 @@ const AbrirCaixa = () => {
             ?
 
             <div>
-            {botaoFecharTurno === true ? <button type="button" className="btn7 botao mt-3" onClick={() => {abrirTurno2('fecharTurno')}}>Fechar turno</button>
+            {botaoFecharTurno === true ? <button type="button" className="btn7 botao mt-3" onClick={() => {abrirTurno('fecharTurno')}}>Fechar turno</button>
             : null
             }
-            {botaoFecharCaixa === true ? <button type="button" className="btn7 botao mt-3" onClick={() => {abrirTurno2('fecharCaixa')}}>Fechar caixa</button>
-            : null}
             </div>
 
             : 
@@ -142,25 +151,17 @@ const AbrirCaixa = () => {
                     <h6 className="text-start">Escolha seu setor:</h6>
                 </div>
                 <div className="col-6">
-                <select className="form-select form-select-sm mb-3 mt-2" aria-label=".form-select-lg example" id="setoresSelect2">
+                <select className="form-select form-select-sm mb-3 mt-2" aria-label=".form-select-lg example" id="setoresSelect2"
+                onChange={() => {setarSetor()}}>
                     {resposta2.map((link, index) => (
                     <option value={link.setores} key={index}>Setor: {link.setores}</option>
                     ))}
                     </select>
                 </div>
                 </div>
-            <div className="row">
-                <div className="col-12">
-                    <h6 className="text-start">Abrir turno:</h6>
-                </div>
-                    <div className="col-12 mt-2">
-                        {estado === true ? <button type="button" className="btn8 botao" disabled onClick={() => {abrirTurno()}}>Abrir turno</button>
-                        : <button type="button" className="btn4 botao" onClick={() => {abrirTurno()}}>Abrir turno</button>}
-                    </div>
-                </div>
 
                 {estado === true ? 
-                        <div className="align-items-center justify-content-between pb-3 mt-4">
+                        <div className="align-items-center justify-content-between pb-3 mt-2">
 
                             <div className="row justify-content-center align-items-center">
                                 <div className="col-12">
@@ -180,7 +181,7 @@ const AbrirCaixa = () => {
                                     <h6 className="mt-4 text-start">Valor definido em: R${valor === 0 ? '00' : valor},00</h6>
                                 </div>
                                 <div className="col-12">
-                                <button type="button" className="btn5 botao mt-3"  onClick={() => {abrirTurno2()}}>Confirmar abertura</button>
+                                <button type="button" className="btn5 botao mt-3"  onClick={() => {abrirTurno()}}>Confirmar abertura</button>
                                 </div>
                             </div>
                         </div> : ""}   
@@ -193,4 +194,4 @@ const AbrirCaixa = () => {
   )
 }
 
-export default AbrirCaixa
+export default AbrirTurno

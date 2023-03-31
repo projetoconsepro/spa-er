@@ -218,7 +218,8 @@ const ListarVagasMonitor = () => {
             localStorage.clear();
         });
 
-        const setor = 'A'
+        const setor = localStorage.getItem("setorTurno")
+        console.log("SETOIRTURNO", setor)
         getVagas(setor);
         localStorage.removeItem('idVagaVeiculo');
         localStorage.removeItem('placa');
@@ -374,7 +375,7 @@ const ListarVagasMonitor = () => {
                             <div className="row mx-2">
                                 <div className="col-5 align-middle">
                                 <select className="form-select form-select-lg mb-3 mt-2" aria-label=".form-select-lg example" id="setoresSelect"
-                                    onChange={() => { getVagas('A') }}>
+                                    onChange={() => { getVagas(setor) }}>
                                     {resposta2.map((link, index) => (
                                         <option value={link.setores} key={index}>Setor: {link.setores}</option>
                                     ))}

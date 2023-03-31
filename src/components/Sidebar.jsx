@@ -188,8 +188,8 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <BsCashCoin />,
-            name: "‎ Abrir Caixa",
-            componente: "AbrirCaixa",
+            name: "‎ Abrir/fechar turno",
+            componente: "AbrirTurno",
         })
     }
 
