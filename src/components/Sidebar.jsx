@@ -185,6 +185,12 @@ const Sidebar = () => {
             icon: <BiSearchAlt />,
             componente: "BuscarVeiculo"
         })
+        links.push({
+            className: styles.className,
+            icon: <BsCashCoin />,
+            name: "‎ Abrir/fechar turno",
+            componente: "AbrirTurno",
+        })
     }
 
     return(
