@@ -65,10 +65,6 @@ const LoginPage = () => {
         localStorage.setItem("componente", "RegisterPage");
     }
 
-    const voltar = () => {
-        localStorage.setItem("componente", "RegisterPage");
-    }
-
     const recuperar = () => {
         localStorage.setItem("componente", "ResetPassword");
     }

@@ -19,7 +19,7 @@ const HomePage =  () => {
         logout();
     }
 
-    if(teste === null){
+    if(teste === null || teste === undefined){
         if (localStorage.getItem("componente") !== "RegisterPage" && localStorage.getItem("componente") !== "LoginPage"
             && localStorage.getItem("componente") !== "NewPassword" && localStorage.getItem("componente") !== "Confirmation"
             && localStorage.getItem("componente") !== "ResetPassword") {
@@ -33,6 +33,8 @@ const HomePage =  () => {
             localStorage.setItem("componente", "MeusVeiculos");
             } else if (teste2.perfil[0] === 'monitor') {
                 localStorage.setItem("componente", "ListarVagasMonitor");
+            } else if (teste2.perfil[0] === 'parceiro') {
+                localStorage.setItem("componente", "RegistrarEstacionamentoParceiro");
             }
         }
     }
@@ -42,7 +44,6 @@ const HomePage =  () => {
             setCont(cont + 1)
         }, 500);
         setData(localStorage.getItem("componente"));
-
     }, [cont])
 
     return (

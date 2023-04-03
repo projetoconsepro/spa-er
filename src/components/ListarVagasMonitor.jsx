@@ -377,10 +377,10 @@ const ListarVagasMonitor = () => {
                         <div className="col-12 mb-4">
                             <div className="row mx-2">
                                 <div className="col-5 align-middle">
-                                <select className="form-select form-select-lg mb-3 mt-2"  aria-label=".form-select-lg example" id="setoresSelect"
+                                <select className="form-select form-select-lg mb-3 mt-2" value={salvaSetor} aria-label=".form-select-lg example" id="setoresSelect"
                                     onChange={() => { getVagas(salvaSetor) }}>
                                     {resposta2.map((link, index) => (
-                                        <option value={link.setores} selected={link.setores === salvaSetor} key={index}>Setor: {link.setores}</option>
+                                        <option value={link.setores}  key={index}>Setor: {link.setores}</option>
                                     ))}
                                 </select>
                                 </div>
