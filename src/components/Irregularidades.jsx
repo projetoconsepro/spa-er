@@ -155,6 +155,9 @@ const Irregularidades = () => {
     } 
 
   useEffect(() => {
+    if (localStorage.getItem("turno") === 'false' && user2.perfil[0] === "monitor") {
+      localStorage.setItem("componente", "FecharTurno");
+  }
     const placa = localStorage.getItem("placaCarro");
     if (placa !== null && placa !== undefined && placa !== ""){
       startPlaca(placa);

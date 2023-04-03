@@ -206,6 +206,9 @@ const ListarNotificacoes = () => {
   };
 
   useEffect(() => {
+    if (localStorage.getItem("turno") === 'false' && user2.perfil[0] === "monitor") {
+      localStorage.setItem("componente", "FecharTurno");
+    }
     const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
     const placa = localStorage.getItem("placaCarro");
     if (localVagaVeiculo !== null && localVagaVeiculo !== undefined && localVagaVeiculo !== "") {
