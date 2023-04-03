@@ -206,6 +206,9 @@ const RegistrarVagaMonitor = () => {
 }
 
     useEffect(() => {
+        if (localStorage.getItem("turno") === 'false' && user2.perfil[0] === "monitor") {
+            localStorage.setItem("componente", "FecharTurno");
+        }
         setTipoVaga(localStorage.getItem('tipoVaga'))
         param();
         if (localStorage.getItem('popup')) {

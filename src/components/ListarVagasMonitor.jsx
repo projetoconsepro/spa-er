@@ -13,7 +13,6 @@ const ListarVagasMonitor = () => {
     const [resposta, setResposta] = useState([]);
     const [vaga, setVaga] = useState("");
     const [resposta2, setResposta2] = useState([]);
-    const [setor, setSetor] = useState('');
     const [tempoAtual, setTempoAtual] = useState('');
     const [estado, setEstado] = useState(false);
     const [mensagem, setMensagem] = useState("");
@@ -37,6 +36,7 @@ const ListarVagasMonitor = () => {
                 delete resposta[i];
             }
         }
+        localStorage.setItem('setorTurno', setor);
         setSalvaSetor(setor);
         await requisicao.get(`/vagas?setor=${setor}`
         ).then(
@@ -46,7 +46,7 @@ const ListarVagasMonitor = () => {
                     setEstado(false);
                     setMensagem("");
                     for (let i = 0; i < response?.data?.data.length; i++) {
-                        setSetor(response.data.data[0].nome);
+                        setSalvaSetor(response.data.data[0].nome);
                         if (response.data.data[i].numero !== 0) {
                             resposta[i] = {};
                             resposta[i].numero = response.data.data[i].numero;
@@ -156,7 +156,7 @@ const ListarVagasMonitor = () => {
    useEffect(() => {
     if (contador === 60) {
         setContador(0);
-        getVagas(setor);
+        getVagas(salvaSetor);
     }
     setTimeout(() => {
         setContador(contador + 1);
@@ -164,7 +164,6 @@ const ListarVagasMonitor = () => {
 }, [contador]);
         
     useEffect(() => {
-        console.log("foi")
         setTimeout(() => {
         if(localStorage.getItem("numero_vaga")){
             setVaga(localStorage.getItem("numero_vaga"));
@@ -184,6 +183,10 @@ const ListarVagasMonitor = () => {
     
 
     useEffect(() => {
+        if (localStorage.getItem("turno") === 'false') {
+            localStorage.setItem("componente", "FecharTurno");
+        }
+
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -219,7 +222,7 @@ const ListarVagasMonitor = () => {
         });
 
         const setor = localStorage.getItem("setorTurno")
-        console.log("SETOIRTURNO", setor)
+        setSalvaSetor(setor);
         getVagas(setor);
         localStorage.removeItem('idVagaVeiculo');
         localStorage.removeItem('placa');
@@ -259,7 +262,7 @@ const ListarVagasMonitor = () => {
                                 if (response.data.msg.resultado) {
                                     Swal.fire('Vaga liberada', '', 'success')
                                     setTimeout(() => {
-                                        getVagas(setor);
+                                        getVagas(salvaSetor);
                                     }, 1000);
                                 } else {
                                     Swal.fire(`${response.data.msg.msg}`, '', 'error')
@@ -294,7 +297,7 @@ const ListarVagasMonitor = () => {
                             if (response.data.msg.resultado) {
                                 Swal.fire('Vaga liberada', '', 'success')
                                 setTimeout(() => {
-                                    getVagas(setor);
+                                    getVagas(salvaSetor);
                                 }, 1000);
                             } else {
                                 Swal.fire(`${response.data.msg.msg}`, '', 'error')
@@ -340,7 +343,7 @@ const ListarVagasMonitor = () => {
                             response => {
                                 if (response.data.msg.resultado) {
                                     Swal.fire('Vaga liberada', '', 'success')
-                                    getVagas(setor);
+                                    getVagas(salvaSetor);
                                 } else {
                                     Swal.fire(`${response.data.msg.msg}`, '', 'error')
                                 }
@@ -374,10 +377,10 @@ const ListarVagasMonitor = () => {
                         <div className="col-12 mb-4">
                             <div className="row mx-2">
                                 <div className="col-5 align-middle">
-                                <select className="form-select form-select-lg mb-3 mt-2" aria-label=".form-select-lg example" id="setoresSelect"
-                                    onChange={() => { getVagas(setor) }}>
+                                <select className="form-select form-select-lg mb-3 mt-2"  aria-label=".form-select-lg example" id="setoresSelect"
+                                    onChange={() => { getVagas(salvaSetor) }}>
                                     {resposta2.map((link, index) => (
-                                        <option value={link.setores} key={index}>Setor: {link.setores}</option>
+                                        <option value={link.setores} selected={link.setores === salvaSetor} key={index}>Setor: {link.setores}</option>
                                     ))}
                                 </select>
                                 </div>

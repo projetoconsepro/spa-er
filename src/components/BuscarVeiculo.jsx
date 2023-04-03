@@ -49,6 +49,9 @@ const BuscarVeiculo = () => {
         }
 
         useEffect(() => {
+            if (localStorage.getItem("turno") === 'false') {
+                localStorage.setItem("componente", "FecharTurno");
+            }
             const clicado = document.getElementById("flexSwitchCheckDefault").checked
             if(clicado === false){
             if (textoPlaca.at(4) === '1' || textoPlaca.at(4) === '2' 

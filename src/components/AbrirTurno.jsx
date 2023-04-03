@@ -4,6 +4,8 @@ import {React, useState, useEffect} from 'react'
 const AbrirTurno = () => {
     const [valor, setValor] = useState(0)
     const [estado, setEstado] = useState(true)
+    const [estado2, setEstado2] = useState(false);
+    const [mensagem, setMensagem] = useState("")
     const [abTurno, setAbTurno] = useState(false)
     const [setorSelecionado, setSetorSelecionado] = useState(1)
     const [setorSelecionado2, setSetorSelecionado2] = useState("A")
@@ -56,7 +58,7 @@ const AbrirTurno = () => {
         const horaAtual = hora + ":" + minuto + ":" + segundos;
         setTempoAtual(horaAtual);
 
-        if(localStorage.getItem("valorTurno")){
+        if(localStorage.getItem("turno") === "true"){
             localStorage.setItem("componente", "FecharTurno")
         }
     }, [])
@@ -99,14 +101,18 @@ const AbrirTurno = () => {
             response => {
                console.log(response.data.msg.resultado)
                if(response.data.msg.resultado === true){
+                    localStorage.setItem("turno", true)
                     localStorage.setItem("horaTurno", tempoAtual)
                     localStorage.setItem("setorTurno", setorSelecionado2)
-                    localStorage.setItem("idSetorTurno", setorSelecionado)
-                    localStorage.setItem("valorTurno", valor)
-                    localStorage.setItem("componente", "FecharTurno")
+                    localStorage.setItem("componente", "ListarVagasMonitor")
                }
                else{
-                console.log("sim")
+                setEstado(true);
+                setMensagem(response.data.msg.msg);
+                setTimeout(() => {
+                  setEstado(false);
+                  setMensagem("")
+                }, 5000);
                }
             }
         ).catch(function (error) {
@@ -188,6 +194,9 @@ const AbrirTurno = () => {
                     </div>
                 }
                 </div>
+                <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado2 ? 'block' : 'none' }}>
+                      {mensagem}
+                  </div>
             </div>
         </div>
     </div>

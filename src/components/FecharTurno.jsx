@@ -7,16 +7,31 @@ const FecharTurno = () => {
     const [estadoCaixa, setEstadoCaixa] = useState(true);
     const [abrirTurno, setAbrirTurno] = useState(false);
     const [estadoSelect, setEstadoSelect] = useState(false);
-    const [setorSelecionado, setSetorSelecionado] = useState("");
+    const [setorSelecionado, setSetorSelecionado] = useState(1);
     const [setorSelecionado2, setSetorSelecionado2] = useState("");
     const [resposta2, setResposta2] = useState([]);
-    const [confirmFecharCaixa, setConfirmFecharCaixa] = useState(false);
+    const [resposta3] = useState([]);
     const [tempoAtual, setTempoAtual] = useState("");
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
     useEffect(() => {
+        if (localStorage.getItem("turno") === 'false' && localStorage.getItem("caixa") === 'false') {
+            localStorage.setItem("componente", "AbrirTurno")
+        }
+
+        if(localStorage.getItem("turno") === 'true'){
+            setEstadoTurno(true)
+            setEstadoSelect(false)
+            setAbrirTurno(false)
+
+        }else{ 
+            setEstadoTurno(false)
+            setEstadoSelect(true)
+            setAbrirTurno(true)
+        }
+
         setTempoAtual(localStorage.getItem('horaTurno'))
 
         const requisicao = axios.create({
@@ -54,7 +69,8 @@ const FecharTurno = () => {
     }
 
     const fecharTurno = () => {
-
+        localStorage.setItem("setorTurno", "A")
+        setSetorSelecionado(1)
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -70,6 +86,7 @@ const FecharTurno = () => {
             response => {
                console.log(response)
                if(response.data.msg.resultado === true){
+                    localStorage.setItem("turno", false)
                     setEstadoTurno(false)
                     setEstadoSelect(true)
                     setAbrirTurno(true)
@@ -100,7 +117,22 @@ const FecharTurno = () => {
         ).then(
             response => {
                if(response.data.msg.resultado === true){
-                localStorage.setItem("horaTurno", tempoAtual)
+                localStorage.setItem("turno", true)
+                const data = new Date();
+                let hora = data.getHours();
+                if(hora < 10){
+                    hora = "0" + hora;
+                }
+                let minuto = data.getMinutes();
+                if(minuto < 10){
+                    minuto = "0" + minuto;
+                }
+                    let segundos = data.getSeconds();
+                if(segundos < 10){
+                    segundos = "0" + segundos;
+                }
+                const horaAtual = hora + ":" + minuto + ":" + segundos;
+                localStorage.setItem("horaTurno", horaAtual)
                 localStorage.setItem("componente", "ListarVagasMonitor")
                }
             }
@@ -136,12 +168,46 @@ const FecharTurno = () => {
                 'perfil_usuario': "monitor"
             }
         })
-        
+
         requisicao.get('/turno/caixa').then(
             response => {
-               console.log(response)
-               setConfirmFecharCaixa(true)
-               setEstadoCaixa(false)
+                if(response.data.msg.resultado){
+                    const sim = parseFloat(response.data.caixa.valor_abertura) + parseFloat(response.data.caixa.valor_movimentos);
+                    Swal.fire({
+                        title: 'Confirmar fechamento de caixa',
+                        showDenyButton: true,
+                        html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response.data.caixa.valor_abertura},00</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response.data.caixa.valor_movimentos},00</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4></div><div className="col-12"></div></div></div>`,
+                        confirmButtonText: `Confirmar`,
+                        confirmButtonColor: '#28a745',
+                        denyButtonText: `Cancelar`,
+                        
+                        }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            requisicao.post('/turno/fechar',{
+                                hora: tempoAtual,
+                                caixa: {
+                                    valor_movimentacao: sim,
+                                }
+                                }
+                            ).then(
+                                response => {
+                                if(response.data.msg.resultado === true){
+                                    Swal.fire('Caixa fechado com sucesso', '', 'success')
+                                    localStorage.setItem("caixa", false)
+                                    localStorage.setItem("turno", false)
+                                    localStorage.setItem("componente", "AbrirTurno")
+                                }
+                                }
+                            ).catch(function (error) {
+                                console.log(error)
+                            }
+                            );
+                        } else if (result.isDenied) {
+                            
+                        }
+                    })
+                }
             }
         ).catch(function (error) {
             console.log(error)
@@ -149,9 +215,8 @@ const FecharTurno = () => {
         );
     }
 
-    const abrirCaixa2 = () => {
-
-        setConfirmFecharCaixa(false)
+    const abrirCaixa = () => {
+        //
     }
 
   return (
@@ -167,8 +232,10 @@ const FecharTurno = () => {
                     <h6 className="mt-2 text-start">Nome do monitor: {user2.nome}</h6>
                 </div>
                 <div className="col-12">
-                    <p className="mt-2 text-start">Turno iniciado as: {tempoAtual}</p>
+                    {localStorage.getItem("turno") === 'true' ? <h6 className="mt-2 text-start">Turno iniciado as: {tempoAtual}</h6> : null }
                 </div>
+                <div className="col-12">
+                    {localStorage.getItem("turno") === 'true' ? <h6 className="mt-2 text-start">Setor atual: {localStorage.getItem("setorTurno")}</h6> : null }
             </div>
                 <div>
 
@@ -193,38 +260,9 @@ const FecharTurno = () => {
                     {estadoTurno === true ? <button type="button" className="btn4 botao mt-3" onClick={() => {fecharTurno()}}>Fechar turno</button> : <button type="button" className="btn4 botao mt-3" onClick={() => {abrirTurno2()}}>Abrir turno</button>}
                     {estadoCaixa === true ? <button type="button" className="btn7 botao mt-3" onClick={() => {fecharCaixa()}}>Fechar caixa</button> : null}
                     </div>
-
-                    <div>
-                    
-                    </div>
-
-                    <div>
-                    {confirmFecharCaixa === true ?
-                        <div className="align-items-center justify-content-between pb-3 mt-4">
-
-                            <div className="row justify-content-center align-items-center">
-                                <div className="col-12">
-                                    <h6 className="text-start">Confirmar fechamento de caixa:</h6>
-                                </div>
-                            </div>
-                            <div className="row justify-content-center align-items-center">
-                                <div className="col-12">
-                                    <h6 className="mt-4 text-start">Você inicou o caixa com: R$00,00</h6>
-                                </div>
-                                <div className="col-12">
-                                    <h6 className="mt-4 text-start">Saldo fechamento: R$00,00</h6>
-                                </div>
-                                <div className="col-12">
-                                    <h6 className="mt-4 text-start">Quantidade a ser devolvida: R$00,00</h6>
-                                </div>
-                                <div className="col-12">
-                                <button type="button" className="btn6 botao mt-3"  onClick={() => {abrirCaixa2()}}>Confirmar</button>
-                                </div>
-                            </div>
-                        </div> : null}
-                    </div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
   )
