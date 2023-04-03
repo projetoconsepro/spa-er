@@ -8,25 +8,27 @@ const FecharTurno = () => {
     const [abrirTurno, setAbrirTurno] = useState(false);
     const [estadoSelect, setEstadoSelect] = useState(false);
     const [setorSelecionado, setSetorSelecionado] = useState(1);
-    const [setorSelecionado2, setSetorSelecionado2] = useState("");
     const [resposta2, setResposta2] = useState([]);
     const [resposta3] = useState([]);
     const [tempoAtual, setTempoAtual] = useState("");
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
+    const [Nome , setNome] = useState("");
 
     useEffect(() => {
+
         if (localStorage.getItem("turno") === 'false' && localStorage.getItem("caixa") === 'false') {
             localStorage.setItem("componente", "AbrirTurno")
         }
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        const user2 = JSON.parse(user);
+        setNome(user2.nome)
 
         if(localStorage.getItem("turno") === 'true'){
             setEstadoTurno(true)
             setEstadoSelect(false)
             setAbrirTurno(false)
 
-        }else{ 
+        } else { 
             setEstadoTurno(false)
             setEstadoSelect(true)
             setAbrirTurno(true)
@@ -69,6 +71,9 @@ const FecharTurno = () => {
     }
 
     const fecharTurno = () => {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        const user2 = JSON.parse(user);
         localStorage.setItem("setorTurno", "A")
         setSetorSelecionado(1)
         const requisicao = axios.create({
@@ -100,6 +105,9 @@ const FecharTurno = () => {
 
     const abrirTurno2 = () => {
          //parametros requisicao
+         const token = localStorage.getItem('token');
+         const user = localStorage.getItem('user');
+         const user2 = JSON.parse(user);
          const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -159,6 +167,9 @@ const FecharTurno = () => {
     }
 
     const fecharCaixa = () => {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        const user2 = JSON.parse(user);
         //parametros requisicao
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
@@ -182,7 +193,6 @@ const FecharTurno = () => {
                         denyButtonText: `Cancelar`,
                         
                         }).then((result) => {
-                        /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
                             requisicao.post('/turno/fechar',{
                                 hora: tempoAtual,
@@ -215,10 +225,6 @@ const FecharTurno = () => {
         );
     }
 
-    const abrirCaixa = () => {
-        //
-    }
-
   return (
     <div className="container">
     <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
@@ -229,7 +235,7 @@ const FecharTurno = () => {
                     <h5 className="mt-1">Fechar turno</h5>
                 </div>
                 <div className="col-12">
-                    <h6 className="mt-2 text-start">Nome do monitor: {user2.nome}</h6>
+                    <h6 className="mt-2 text-start">Nome do monitor: {Nome}</h6>
                 </div>
                 <div className="col-12">
                     {localStorage.getItem("turno") === 'true' ? <h6 className="mt-2 text-start">Turno iniciado as: {tempoAtual}</h6> : null }
@@ -268,4 +274,4 @@ const FecharTurno = () => {
   )
 }
 
-export default FecharTurno
+export default FecharTurno;
