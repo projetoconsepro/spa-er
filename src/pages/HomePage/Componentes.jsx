@@ -21,6 +21,7 @@ import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstaciona
 import AdicionarCreditos from '../../components/AdicionarCreditos';
 import FecharTurno from '../../components/FecharTurno';
 import AbrirTurno from '../../components/AbrirTurno';
+import HistoricoFinanceiro from '../../components/HistoricoFinanceiro';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -83,6 +84,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "FecharTurno"){
             return <FecharTurno />
+        }
+        else if(Componente === "HistoricoFinanceiro"){
+            return <HistoricoFinanceiro />
         }
         else {
             return <Error />
