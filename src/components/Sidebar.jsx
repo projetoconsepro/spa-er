@@ -129,6 +129,12 @@ const Sidebar = () => {
             name: "‎ Histórico",
             componente: "HistoricoVeiculo",
         })
+        links.push({
+            className: styles.className,
+            icon: <AiOutlineFileSearch />,
+            name: "‎ Histórico financeiro",
+            componente: "HistoricoFinanceiro",
+        })
         }
     else if (teste.perfil[0] === "admin"){
         links.push({
