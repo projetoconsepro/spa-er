@@ -9,12 +9,6 @@
     margin-left: 10px;
 }
 
-.card{
-	border: none;
-	border-radius: 10px;
-	width: 275px;
-	margin-top: 20%;
-}
 .fa-ellipsis-v{
 	font-size: 10px;
 	color: #C2C2C4;
@@ -66,7 +60,7 @@ font-size: 1rem !important;
     top: 20px;
     bottom: 0;
     left: 10px;
-    border-left: 2px solid #000;
+    border-left: 1px solid #b9b9b9;
     height: 100%;
   }
   
@@ -89,7 +83,7 @@ font-size: 1rem !important;
   
   .preco {
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 650;
   }
   
 
@@ -161,6 +155,13 @@ opacity: 0.6;
         padding-top: 0.2rem !important;
     }
 }
+
+@media (min-width: 1024px){
+    #divEspaco{
+        margin-top: -2rem !important;
+    }
+}
+
 
 /*scroll up*/
 .scrollTop {
