@@ -65,7 +65,7 @@ function validarPlaca(placa) {
       headers: {
           'token': token,
           'id_usuario': user2.id_usuario,
-          'perfil_usuario': 'parceiro'
+          'perfil_usuario': user2.perfil[0],
       }
     })
 

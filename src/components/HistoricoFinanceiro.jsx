@@ -141,13 +141,14 @@ const HistoricoFinanceiro = () => {
       <div className="col-2">
         <div className="icon-container">
           <BsCashCoin size={25} color={item.tipo === 'Acréscimo de crédito' ? '#3DAE30' : '#FB6660'} className="icon mt-1" />
-          <div className="line"></div>
+          {resposta[index + 1] === undefined || null
+          ? null : <div className="line"> </div>}
           <div className="spacer"></div>
         </div>
         </div>
       <div className="col-5 p-0">
         <div className="titulo text-start">
-          {item.tipo === 'credito' ? 'Estacionamento' : item.tipo === 'tolerancia' ? 'Estacionamento' : 'Acréscimo de crédito'}
+          {item.tipo === 'credito' ? 'Estacionamento' : item.tipo === 'tolerancia' ? 'Estacionamento' : item.tipo === 'regularizacao' ? 'Regularizacao'  : 'Acréscimo de crédito'}
         </div>
         </div>
         <div className="col-5 p-0">
