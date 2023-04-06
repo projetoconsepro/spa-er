@@ -58,7 +58,7 @@ const AbrirTurno = () => {
         const horaAtual = hora + ":" + minuto + ":" + segundos;
         setTempoAtual(horaAtual);
 
-        if(localStorage.getItem("turno") === "true"){
+        if(localStorage.getItem("turno") === "true" || localStorage.getItem("caixa") === 'true'){
             localStorage.setItem("componente", "FecharTurno")
         }
     }, [])
@@ -102,6 +102,7 @@ const AbrirTurno = () => {
                console.log(response.data.msg.resultado)
                if(response.data.msg.resultado === true){
                     localStorage.setItem("turno", true)
+                    localStorage.setItem("caixa", true)
                     localStorage.setItem("horaTurno", tempoAtual)
                     localStorage.setItem("setorTurno", setorSelecionado2)
                     localStorage.setItem("componente", "ListarVagasMonitor")

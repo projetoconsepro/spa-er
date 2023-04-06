@@ -11,11 +11,13 @@ const FecharTurno = () => {
     const [resposta2, setResposta2] = useState([]);
     const [resposta3] = useState([]);
     const [tempoAtual, setTempoAtual] = useState("");
+    const [mensagem, setMensagem] = useState("");
+    const [estadoDiv, setEstadoDiv] = useState(false);
     const [Nome , setNome] = useState("");
 
     useEffect(() => {
 
-        if (localStorage.getItem("turno") === 'false' && localStorage.getItem("caixa") === 'false') {
+        if (localStorage.getItem("turno") !== 'true' && localStorage.getItem("caixa") !== 'true') {
             localStorage.setItem("componente", "AbrirTurno")
         }
         const token = localStorage.getItem('token');
@@ -96,6 +98,17 @@ const FecharTurno = () => {
                     setEstadoSelect(true)
                     setAbrirTurno(true)
                }
+               else{
+                console.log(response)
+                setEstadoTurno(false)
+                setEstadoSelect(true)
+                setEstadoDiv(true)
+                setMensagem(response.data.msg.msg)
+                    setTimeout(() => {
+                    setEstadoDiv(false)
+                    setMensagem("")
+                    }, 4000)
+               }
             }
         ).catch(function (error) {
             console.log(error)
@@ -143,6 +156,19 @@ const FecharTurno = () => {
                 localStorage.setItem("horaTurno", horaAtual)
                 localStorage.setItem("componente", "ListarVagasMonitor")
                }
+               else{
+                console.log(response)
+                localStorage.setItem("turno", true)
+                setEstadoTurno(true)
+                setEstadoDiv(true)
+                setEstadoSelect(false)
+                setMensagem(response.data.msg.msg)
+                    setTimeout(() => {
+                    setEstadoDiv(false)
+                    setMensagem("")
+                    }, 4000)
+
+            }
             }
         ).catch(function (error) {
             console.log(error)
@@ -208,6 +234,10 @@ const FecharTurno = () => {
                                     localStorage.setItem("turno", false)
                                     localStorage.setItem("componente", "AbrirTurno")
                                 }
+                                else{
+                                    Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error')
+                                    console.log(response)
+                                }
                                 }
                             ).catch(function (error) {
                                 console.log(error)
@@ -270,6 +300,9 @@ const FecharTurno = () => {
             </div>
         </div>
         </div>
+        <div className="alert alert-danger" id="sim" role="alert" style={{ display: estadoDiv ? 'block' : 'none' }}>
+                                {mensagem}
+                            </div>
     </div>
   )
 }

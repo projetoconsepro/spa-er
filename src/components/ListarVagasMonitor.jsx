@@ -183,7 +183,7 @@ const ListarVagasMonitor = () => {
     
 
     useEffect(() => {
-        if (localStorage.getItem("turno") === 'false') {
+        if (localStorage.getItem("turno") !== 'true') {
             localStorage.setItem("componente", "FecharTurno");
         }
 

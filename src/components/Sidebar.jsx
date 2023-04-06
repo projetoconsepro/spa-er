@@ -68,8 +68,14 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: "",
-            name: "",
+            icon: <AiOutlineFileSearch />,
+            name: "‎ Histórico financeiro",
+            componente: "HistoricoFinanceiroParceiro",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaMapMarkerAlt />,
+            name: "‎ Vagas livres",
             componente: "VagasLivres",
         })
         links.push({

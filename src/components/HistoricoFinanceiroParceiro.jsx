@@ -4,14 +4,14 @@ import { BsCashCoin } from "react-icons/bs";
 import { Container, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 
-const HistoricoFinanceiro = () => {
+const HistoricoFinanceiroParceiro = () => {
   const [resposta, setResposta] = useState([]);
   const [resposta2, setResposta2] = useState([]);
   const [cont, setCont] = useState(0);
 
   function filtrar(filtro) {
    const filtrado = resposta2.filter((item) => {
-      if(item.tipo === filtro){
+      if(item.debito === filtro){
         return item
       }
       else if(item.data.includes(filtro)){
@@ -55,8 +55,8 @@ const HistoricoFinanceiro = () => {
       const inputOptions = new Promise((resolve) => {
         setTimeout(() => {
           resolve({
-            'Acréscimo de crédito': 'Acréscimo',
-            'credito': 'Débito',
+            'S': 'Acréscimo',
+            'N': 'Débito',
           })
         }, 1000)
       })
@@ -100,7 +100,7 @@ const HistoricoFinanceiro = () => {
     },
   });
 
-  requisicao.get('/financeiro/cliente')
+  requisicao.get('/financeiro/parceiro')
   .then((response) => {
     console.log(response?.data?.dados?.movimentos);
     const newData = response?.data.dados.movimentos.map((item) => ({
@@ -109,17 +109,15 @@ const HistoricoFinanceiro = () => {
       tipo: item.tipo,
     }));
     console.log('essa é a newdata', newData)
+
     for ( let i = 0; i < newData.length; i++) {
       if(newData[i].tipo === 'credito'){
         newData[i].debito = 'S'
       } else if(newData[i].tipo === 'Acréscimo de crédito'){
-        newData[i].debito = 'N'
-      }
-      else if (newData[i].tipo === 'regularizacao'){
         newData[i].debito = 'S'
       }
-
     }
+
     setResposta(newData)
     setResposta2(newData)
   }
@@ -144,13 +142,12 @@ const HistoricoFinanceiro = () => {
     </div>
     </div>
     {resposta.map((item, index) => (
-      <div id="kkk">
   <div className="estacionamento" key={index}>
   <div className="container">
     <div className="row">
       <div className="col-2">
         <div className="icon-container">
-          <BsCashCoin size={25} color={item.tipo === 'Acréscimo de crédito' ? '#3DAE30' : '#FB6660'} className="icon mt-1" />
+          <BsCashCoin size={25} color={item.tipo === 'Acréscimo de crédito' || 'Estacionamento' ? '#3DAE30' : '#3DAE30'} className="icon mt-1" />
           {resposta[index + 1] === undefined || null
           ? null : <div className="line"> </div>}
           <div className="spacer"></div>
@@ -172,11 +169,10 @@ const HistoricoFinanceiro = () => {
       </div>
     </div>
 </div>
-</div>
 ))}
 </div>
 
 );
 }
 
-export default HistoricoFinanceiro;
+export default HistoricoFinanceiroParceiro;
