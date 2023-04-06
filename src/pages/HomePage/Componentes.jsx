@@ -22,6 +22,7 @@ import AdicionarCreditos from '../../components/AdicionarCreditos';
 import FecharTurno from '../../components/FecharTurno';
 import AbrirTurno from '../../components/AbrirTurno';
 import HistoricoFinanceiro from '../../components/HistoricoFinanceiro';
+import HistoricoFinanceiroParceiro from '../../components/HistoricoFinanceiroParceiro';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -63,6 +64,9 @@ export default function Veiculos({Componente}) {
             return <NewPassword />
         }else if ( Componente === "RegistrarEstacionamentoParceiro"){
             return <RegistrarEstacionamentoParceiro />
+        }
+        else if ( Componente === "HistoricoFinanceiroParceiro"){
+            return <HistoricoFinanceiroParceiro />
         }
         else if ( Componente === "HistoricoVeiculo"){
             return <HistoricoVeiculo />

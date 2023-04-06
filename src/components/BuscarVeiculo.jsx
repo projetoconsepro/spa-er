@@ -49,7 +49,7 @@ const BuscarVeiculo = () => {
         }
 
         useEffect(() => {
-            if (localStorage.getItem("turno") === 'false') {
+            if (localStorage.getItem("turno") !== 'true') {
                 localStorage.setItem("componente", "FecharTurno");
             }
             const clicado = document.getElementById("flexSwitchCheckDefault").checked

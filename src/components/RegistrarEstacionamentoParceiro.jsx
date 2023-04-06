@@ -65,7 +65,7 @@ function validarPlaca(placa) {
       headers: {
           'token': token,
           'id_usuario': user2.id_usuario,
-          'perfil_usuario': 'parceiro'
+          'perfil_usuario': user2.perfil[0],
       }
     })
 
@@ -267,7 +267,7 @@ function validarPlaca(placa) {
   }, [textoPlaca]);
 
   useEffect(() => {
-    if (localStorage.getItem("turno") === 'false' && user2.perfil[0] === "monitor") {
+   if(localStorage.getItem('turno') !== 'true' && user2.perfil[0] === "monitor") {
       localStorage.setItem("componente", "FecharTurno");
   }
     param();
