@@ -262,7 +262,7 @@ const FecharTurno = () => {
             <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
             <div className="row">
                 <div className="col-12">
-                    <h5 className="mt-1">Fechar turno</h5>
+                    <h5 className="mt-1">{estadoSelect === true ? 'Abrir turno' : 'Fechar turno'}</h5>
                 </div>
                 <div className="col-12">
                     <h6 className="mt-2 text-start">Nome do monitor: {Nome}</h6>
@@ -294,7 +294,9 @@ const FecharTurno = () => {
                 </div>
                     <div>
                     {estadoTurno === true ? <button type="button" className="btn4 botao mt-3" onClick={() => {fecharTurno()}}>Fechar turno</button> : <button type="button" className="btn4 botao mt-3" onClick={() => {abrirTurno2()}}>Abrir turno</button>}
-                    {estadoCaixa === true ? <button type="button" className="btn7 botao mt-3" onClick={() => {fecharCaixa()}}>Fechar caixa</button> : null}
+                    {estadoTurno === true ? 
+                    <div>{estadoCaixa === true ? <button type="button" className="btn7 botao mt-3" onClick={() => {fecharCaixa()}}>Fechar caixa</button> : null}
+                    </div>: null }   
                     </div>
                 </div>
             </div>

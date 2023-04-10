@@ -41,13 +41,12 @@ font-size: 1rem !important;
 }
 
 #kkk{
-    background-color: white;
-    border-radius: 25px;
+    background-color: #fff;
+    border-radius: 0.6rem;
 }
 
 .estacionamento {
     color: #525252;
-    background-color: #fff;
     padding: 10px;
     display: flex;
     align-items: center;

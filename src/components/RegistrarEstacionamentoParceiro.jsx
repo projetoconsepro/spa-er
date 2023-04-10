@@ -97,12 +97,17 @@ function validarPlaca(placa) {
 
     if (textoPlaca.length >= 7) {
       const vagaa = []
+      if(vaga === ""){
+      vagaa[0] = 0;
+      }else{
       vagaa[0] = vaga;
+      }
       await requisicao.get(`/veiculo/${placaMaiuscula}`).then(
           response => {
             console.log('b', response)
             if(response.data.msg.msg === "Dados encontrados"){
               if (response.data.data[0].estacionado[0].estacionado === "S") {
+                console.log(vagaa)
                 requisicao.post('/estacionamento', {
                   placa: placaMaiuscula,
                   numero_vaga: vagaa,
@@ -132,12 +137,13 @@ function validarPlaca(placa) {
                     }
                 }
                 ).catch(function (error) {
-                  localStorage.clear();
+                  console.log(error)
                 }
               );
 
                   
               }else {
+                console.log(vagaa) 
                   requisicao.post('/estacionamento', {
                   placa: placaMaiuscula,
                   numero_vaga: vagaa,
@@ -165,7 +171,7 @@ function validarPlaca(placa) {
                       }
                     }
                 ).catch(function (error) {
-                  localStorage.clear();
+                  console.log(error)
                 }
               );
               }
@@ -197,13 +203,13 @@ function validarPlaca(placa) {
                     }
                   }
               ).catch(function (error) {
-                localStorage.clear();
+                console.log(error)
               }
             );
             }
           }
       ).catch(function (error) {
-        localStorage.clear();
+        console.log(error)
       }
       );
     }else{
