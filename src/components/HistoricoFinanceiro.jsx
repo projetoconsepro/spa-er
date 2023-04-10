@@ -1,6 +1,7 @@
 import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
+import { FaCoins } from "react-icons/fa";
 import { Container, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 
@@ -8,6 +9,7 @@ const HistoricoFinanceiro = () => {
   const [resposta, setResposta] = useState([]);
   const [resposta2, setResposta2] = useState([]);
   const [cont, setCont] = useState(0);
+  const [saldo, setSaldo] = useState(0);
 
   function filtrar(filtro) {
    const filtrado = resposta2.filter((item) => {
@@ -102,7 +104,8 @@ const HistoricoFinanceiro = () => {
 
   requisicao.get('/financeiro/cliente')
   .then((response) => {
-    console.log(response?.data?.dados?.movimentos);
+    console.log(response);
+    setSaldo(response?.data.dados.saldo)
     const newData = response?.data.dados.movimentos.map((item) => ({
       valor: item.valor,
       data: ArrumaHora(item.data),
@@ -142,9 +145,13 @@ const HistoricoFinanceiro = () => {
         <option value="selectTipo">Tipo</option>
         </select>
     </div>
+    <div className="col-7 text-end">
+    <FaCoins/> R${saldo},00
     </div>
+
+    </div>
+    <div id="kkk" className="mb-3">
     {resposta.map((item, index) => (
-      <div id="kkk">
   <div className="estacionamento" key={index}>
   <div className="container">
     <div className="row">
@@ -172,8 +179,8 @@ const HistoricoFinanceiro = () => {
       </div>
     </div>
 </div>
-</div>
 ))}
+</div>
 </div>
 
 );
