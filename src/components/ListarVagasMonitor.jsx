@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
-import { FaSearch } from "react-icons/fa";
+import { FaParking, FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
 import ScrollTopArrow from "./ScrollTopArrow";
@@ -376,7 +376,7 @@ const ListarVagasMonitor = () => {
                     <div className="row">
                         <div className="col-12 mb-4">
                             <div className="row mx-2">
-                                <div className="col-5 align-middle">
+                                <div className="col-6 align-middle">
                                 <select className="form-select form-select-lg mb-3 mt-2" value={salvaSetor} aria-label=".form-select-lg example" id="setoresSelect"
                                     onChange={() => { getVagas(salvaSetor) }}>
                                     {resposta2.map((link, index) => (
@@ -384,15 +384,11 @@ const ListarVagasMonitor = () => {
                                     ))}
                                 </select>
                                 </div>
-                                <div className="col-7 px-5">
-                        <input
-                        className="form-control"
-                        type="number"
-                        value={vaga}
-                        onChange={(e) => setVaga(e.target.value)}
-                        placeholder="Número da vaga"
-                        />
-                    </div>
+
+                                <div className="col-6 input-group w-50 h-25 mt-3">
+                                <span className="input-group-text" id="basic-addon1"><FaSearch /></span>
+                                <input className="form-control" type="number" value={vaga} onChange={(e) => setVaga(e.target.value)} placeholder="Número da vaga" aria-describedby="basic-addon1" />
+                                </div>
                         </div>
                             <div className="card border-0 shadow">
                                 <div className="table-responsive">
