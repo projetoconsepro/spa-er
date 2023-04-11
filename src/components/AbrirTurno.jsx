@@ -108,11 +108,14 @@ const AbrirTurno = () => {
                     localStorage.setItem("componente", "ListarVagasMonitor")
                }
                else{
-                setEstado(true);
-                setMensagem(response.data.msg.msg);
+                setEstado2(true);
+                setMensagem(response.data.msg.msg, 'Redirecionando para fechar turno...');
                 setTimeout(() => {
-                  setEstado(false);
+                  setEstado2(false);
                   setMensagem("")
+                  localStorage.setItem("turno", true)
+                localStorage.setItem("caixa", true)
+                localStorage.setItem("componente", "FecharTurno")
                 }, 5000);
                }
             }
@@ -195,10 +198,10 @@ const AbrirTurno = () => {
                     </div>
                 }
                 </div>
-                <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado2 ? 'block' : 'none' }}>
+            </div>
+            <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado2 ? 'block' : 'none' }}>
                       {mensagem}
                   </div>
-            </div>
         </div>
     </div>
   )

@@ -56,7 +56,6 @@ const ListarVeiculos = () => {
         })
         await requisicao.get('/veiculo').then(
             response => {
-                console.log(response.data.data)
                 if(response.data.msg.resultado === false){
                     localStorage.setItem("componente", "CadastrarVeiculo")
                     //era pra ser window.location.reload()
