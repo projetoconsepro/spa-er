@@ -29,7 +29,9 @@ const RegistrarEstacionamentoParceiro = () => {
             setValorCobranca(response.data.data.param.estacionamento.valorHora)
         }
     ).catch(function (error) {
-      localStorage.clear();
+      localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
     });
 }
 
@@ -137,7 +139,15 @@ function validarPlaca(placa) {
                     }
                 }
                 ).catch(function (error) {
-                  console.log(error)
+                              if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
                 }
               );
 
@@ -171,7 +181,15 @@ function validarPlaca(placa) {
                       }
                     }
                 ).catch(function (error) {
-                  console.log(error)
+                              if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
                 }
               );
               }
@@ -203,13 +221,29 @@ function validarPlaca(placa) {
                     }
                   }
               ).catch(function (error) {
+                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
                 console.log(error)
+            }
               }
             );
             }
           }
       ).catch(function (error) {
-        console.log(error)
+                    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
       }
       );
     }else{

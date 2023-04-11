@@ -45,7 +45,15 @@ const RegistrarVagaCliente = () => {
                 }
             }
         ).catch(function (error) {
-            localStorage.clear();
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
 
         requisicao.get('/usuario/saldo-credito'
@@ -59,7 +67,15 @@ const RegistrarVagaCliente = () => {
                 }
             }
         ).catch(function (error) {
-            localStorage.clear();
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
 
         parametros.get('/parametros').then(
@@ -67,7 +83,15 @@ const RegistrarVagaCliente = () => {
                 setValorCobranca(response.data.data.param.estacionamento.valorHora)
             }
         ).catch(function (error) {
-            localStorage.clear();
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
     }, [])
 
@@ -152,7 +176,15 @@ const RegistrarVagaCliente = () => {
                     }
                 }
             ).catch(function (error) {
-                localStorage.clear();
+                if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                || error?.response?.data?.msg === "Token inválido!" 
+                || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                    localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+                } else {
+                    console.log(error)
+                }
             });
         }
     }

@@ -57,7 +57,8 @@ const ListarVeiculos = () => {
         await requisicao.get('/veiculo').then(
             response => {
                 if(response.data.msg.resultado === false){
-                    localStorage.setItem("componente", "CadastrarVeiculo")
+
+                    localStorage.setItem("componente","CadastrarVeiculo")
                     //era pra ser window.location.reload()
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
@@ -137,7 +138,15 @@ const ListarVeiculos = () => {
             }
 
         ).catch(function (error) {
-            console.log(error)
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
 
         await requisicao.get('/usuario/saldo-credito').then(
@@ -145,7 +154,15 @@ const ListarVeiculos = () => {
                 setSaldoCredito(response?.data?.data?.saldo)
             }
         ).catch(function (error) {
-            console.log(error)
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
 
         await parametros.get('/parametros').then(
@@ -153,7 +170,15 @@ const ListarVeiculos = () => {
                 setValorCobranca(response.data.data.param.estacionamento.valorHora)
             }
         ).catch(function (error) {
-            console.log(error)
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
     }
 
@@ -231,7 +256,15 @@ const ListarVeiculos = () => {
                     }
                 }
             ).catch(function (error) {
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
                 console.log(error)
+            }
             });
             }
 }
@@ -282,7 +315,15 @@ const ListarVeiculos = () => {
                 }
             }
         ).catch(function (error) {
-            console.log(error)
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
         }
     }

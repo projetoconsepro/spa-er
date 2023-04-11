@@ -57,7 +57,15 @@ const FecharTurno = () => {
                 }
             }
         ).catch(function (error) {
-            console.log(error)
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         }
         );
     }, [])
@@ -111,7 +119,15 @@ const FecharTurno = () => {
                }
             }
         ).catch(function (error) {
-            console.log(error)
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         }
         );
     }
@@ -171,7 +187,15 @@ const FecharTurno = () => {
             }
             }
         ).catch(function (error) {
-            console.log(error)
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         }
         );
 
@@ -193,6 +217,7 @@ const FecharTurno = () => {
     }
 
     const fecharCaixa = () => {
+        console.log("fechando caixa")
         const token = localStorage.getItem('token');
         const user = localStorage.getItem('user');
         const user2 = JSON.parse(user);
@@ -209,6 +234,7 @@ const FecharTurno = () => {
         requisicao.get('/turno/caixa').then(
             response => {
                 if(response.data.msg.resultado){
+                    console.log(response)
                     const sim = parseFloat(response.data.caixa.valor_abertura) + parseFloat(response.data.caixa.valor_movimentos);
                     Swal.fire({
                         title: 'Confirmar fechamento de caixa',
@@ -228,6 +254,7 @@ const FecharTurno = () => {
                                 }
                             ).then(
                                 response => {
+                                    console.log(response)
                                 if(response.data.msg.resultado === true){
                                     Swal.fire('Caixa fechado com sucesso', '', 'success')
                                     localStorage.setItem("caixa", false)
@@ -240,17 +267,34 @@ const FecharTurno = () => {
                                 }
                                 }
                             ).catch(function (error) {
-                                console.log(error)
-                            }
-                            );
-                        } else if (result.isDenied) {
-                            
-                        }
-                    })
+                                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
                 }
+                );
+            } else if (result.isDenied) {
+                            
+            }
+            })
+            }
+            else {console.log(response)}
             }
         ).catch(function (error) {
-            console.log(error)
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         }
         );
     }
