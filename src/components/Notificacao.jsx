@@ -67,7 +67,9 @@ const Notificacao = () => {
             response => {
             }
         ).catch(function (error) {
-            localStorage.clear();
+            localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
         });
     }
     else{
@@ -91,7 +93,9 @@ const Notificacao = () => {
             "cor": cor2,
         }).then(
         ).catch(function (error) {
-            localStorage.clear();
+            localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
         });
     }
     }
@@ -122,7 +126,9 @@ const Notificacao = () => {
                     }, 4000);
                 }
             }).catch(function (error) {
-                localStorage.clear();
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
         });
     } else{
         requisicao.post('/notificacao', {
@@ -151,7 +157,9 @@ const Notificacao = () => {
                     }, 4000);
                 }
             }).catch(function (error) {
-                localStorage.clear();
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
         });
     }
  } else {
@@ -218,7 +226,15 @@ const Notificacao = () => {
                 setModelo(newData);
             }
         ).catch(function (error){
-            console.log(error);
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
     }
 
@@ -280,7 +296,15 @@ const Notificacao = () => {
                 }
             }
         ).catch(function (error){
-            console.log(error);
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
     }
     else {
@@ -297,7 +321,15 @@ const Notificacao = () => {
                 setTiposNot(newData);
             }
         ).catch(function (error){
-            console.log(error);
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
         
         requisicao.get('/veiculo/fabricantes').then(
@@ -309,7 +341,15 @@ const Notificacao = () => {
                 setFabricante(newData);
             }
         ).catch(function (error){
-            console.log(error);
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
 
         requisicao.get(`/veiculo/modelos/1`).then(
@@ -321,7 +361,15 @@ const Notificacao = () => {
                 setModelo(newData);
             }
         ).catch(function (error){
-            console.log(error);
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
         if (cont === 0) {
             pegarFotos();

@@ -26,7 +26,15 @@ const AdicionarCreditos = () => {
               console.log(response)
             }
         ).catch(function (error) {
-            console.log(error)
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
     }
         
@@ -76,7 +84,15 @@ const AdicionarCreditos = () => {
                 }
             }
             ).catch(function (error) {
+                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
                 console.log(error)
+            }
             });
         }
         else if (valor === 0){

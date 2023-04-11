@@ -146,7 +146,15 @@ const ListarVagasMonitor = () => {
                 }
             }
         ).catch(function (error) {
-            localStorage.clear();
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
 
         
@@ -205,7 +213,15 @@ const ListarVagasMonitor = () => {
                 }
             }
         ).catch(function (error) {
-            localStorage.clear();
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         }
         );
         requisicao.get('setores/tolerancia').then(
@@ -218,7 +234,15 @@ const ListarVagasMonitor = () => {
 
             }
         ).catch(function (error) {
-            localStorage.clear();
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
         });
 
         const setor = localStorage.getItem("setorTurno")
@@ -269,7 +293,15 @@ const ListarVagasMonitor = () => {
                                 }
                             }
                         ).catch(function (error) {
-                            localStorage.clear();
+                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                            || error?.response?.data?.msg === "Token inválido!" 
+                            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+                            } else {
+                                console.log(error)
+                            }
                         }
                         );
                     }
@@ -304,7 +336,15 @@ const ListarVagasMonitor = () => {
                             }
                         }
                     ).catch(function (error) {
-                        localStorage.clear();
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                        || error?.response?.data?.msg === "Token inválido!" 
+                        || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                            localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+                        } else {
+                            console.log(error)
+                        }
                     }
                     );
 
@@ -349,7 +389,15 @@ const ListarVagasMonitor = () => {
                                 }
                             }
                         ).catch(function (error) {
-                            localStorage.clear();
+                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                            || error?.response?.data?.msg === "Token inválido!" 
+                            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+                            } else {
+                                console.log(error)
+                            }
                         }
                         );
     
