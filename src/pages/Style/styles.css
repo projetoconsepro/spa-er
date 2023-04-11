@@ -4330,6 +4330,13 @@ textarea.form-control-lg {
     margin-bottom: 0.125rem;
 }
 
+.form-check2 {
+    margin-top: 20px;
+    display: flex;
+    min-height: 1.0rem;
+    margin-bottom: 0.1rem;
+}
+
 .form-check .form-check-input {
     float: left;
     margin-left: -1.625em;
@@ -7881,9 +7888,15 @@ textarea.form-control-lg {
 }
 
 .card-body3 {
-    height: 8rem;
+    height: 5.5rem;
     flex: 1 1 auto;
-    padding: 1.25rem 1.5rem;
+    padding: 1.25rem 1.5rem 0rem;
+}
+
+.card-body4 {
+    height: 7rem;
+    flex: 1 1 auto;
+    padding: 0rem 1.5rem;
 }
 
 #bordaBaixo{
@@ -7892,8 +7905,9 @@ textarea.form-control-lg {
 }
 
 #bordaBaixo2{
-    font-size: 1px;
+    border-top: 1px solid #b1b1b1;  
 }
+
 
 @media (max-width: 360px){
     #bordaBaixo{

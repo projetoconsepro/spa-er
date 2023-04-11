@@ -121,7 +121,7 @@ const Sidebar = () => {
             className: styles.className,
             icon: <RiSettings5Fill />,
             name: "‎ Configurar",
-            componente: "Configurar",
+            componente: "Configuracoes",
         })
         links.push({
             className: styles.className,

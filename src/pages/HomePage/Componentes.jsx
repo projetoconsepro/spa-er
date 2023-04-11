@@ -23,6 +23,7 @@ import FecharTurno from '../../components/FecharTurno';
 import AbrirTurno from '../../components/AbrirTurno';
 import HistoricoFinanceiro from '../../components/HistoricoFinanceiro';
 import HistoricoFinanceiroParceiro from '../../components/HistoricoFinanceiroParceiro';
+import Configuracoes from '../../components/Configuracoes';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -91,6 +92,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "HistoricoFinanceiro"){
             return <HistoricoFinanceiro />
+        }
+        else if(Componente === "Configuracoes"){
+            return <Configuracoes />
         }
         else {
             return <Error />

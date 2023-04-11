@@ -496,7 +496,7 @@ const ListarNotificacoes = () => {
       {data.map((link, index) => (
         <div className="card border-0 shadow mt-2" key={index}>
           <div
-            className="card-body3"
+            className="card-body"
             onClick={() => {
               atualiza(index);
             }}
