@@ -7888,15 +7888,20 @@ textarea.form-control-lg {
 }
 
 .card-body3 {
-    height: 5.5rem;
+    height: 6rem;
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem 0rem;
 }
 
 .card-body4 {
-    height: 7rem;
+    height: 7.8rem;
     flex: 1 1 auto;
     padding: 0rem 1.5rem;
+}
+
+#divD[disabled]{
+    pointer-events: none;
+  opacity: 0.5;
 }
 
 #bordaBaixo{
