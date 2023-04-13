@@ -8,6 +8,8 @@ import { FaCoins } from "react-icons/fa";
 const HistoricoFinanceiroParceiro = () => {
   const [resposta, setResposta] = useState([]);
   const [resposta2, setResposta2] = useState([]);
+  const [mensagem, setMensagem] = useState("");
+  const [estado, setEstado] = useState(false);
   const [cont, setCont] = useState(0);
   const [saldo, setSaldo] = useState(0);
 
@@ -18,6 +20,15 @@ const HistoricoFinanceiroParceiro = () => {
       }
       else if(item.data.includes(filtro)){
         return item
+      }
+      else{
+        setMensagem('Nenhum resultado encontrado')
+        setEstado(true)
+        setTimeout(() => {
+          setMensagem("")
+          setEstado(false)
+          setResposta(resposta2)
+        }, 3000);
       }
     })
     setResposta(filtrado)
@@ -93,7 +104,7 @@ const HistoricoFinanceiroParceiro = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-     const requisicao = axios.create({
+    const requisicao = axios.create({
     baseURL: process.env.REACT_APP_HOST,
     headers: {
       token: token,
@@ -187,6 +198,9 @@ const HistoricoFinanceiroParceiro = () => {
 </div>
 ))}
 </div>
+<div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                      {mensagem}
+                  </div>
 </div>
 
 );

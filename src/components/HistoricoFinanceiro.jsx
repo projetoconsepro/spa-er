@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 const HistoricoFinanceiro = () => {
   const [resposta, setResposta] = useState([]);
   const [resposta2, setResposta2] = useState([]);
+  const [mensagem, setMensagem] = useState("");
+  const [estado, setEstado] = useState(false);
   const [cont, setCont] = useState(0);
   const [saldo, setSaldo] = useState(0);
 
@@ -18,6 +20,15 @@ const HistoricoFinanceiro = () => {
       }
       else if(item.data.includes(filtro)){
         return item
+      }
+      else{
+        setMensagem('Nenhum resultado encontrado')
+        setEstado(true)
+        setTimeout(() => {
+          setMensagem("")
+          setEstado(false)
+          setResposta(resposta2)
+        }, 3000);
       }
     })
     setResposta(filtrado)
@@ -188,6 +199,9 @@ const HistoricoFinanceiro = () => {
     </div>
 </div>
 ))}
+</div>
+<div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+      {mensagem}
 </div>
 </div>
 
