@@ -449,7 +449,7 @@ const Irregularidades = () => {
                 </div>
                 ) : 
                 <div
-                  className="h6 d-flex align-items-center fs-6" id="bordaBaixo2"
+                  className="h6 d-flex align-items-center fs-6"
                 >
                   <h6> <FaClipboardList />‎ Motivo: {link.tipo_notificacao}</h6>
                 </div>
@@ -496,9 +496,10 @@ const Irregularidades = () => {
                     className="form-select form-select-lg mb-1"
                     aria-label=".form-select-lg example"
                     id="pagamentos"
+                    defaultValue="01:00:00"
                   >
                     <option value="00:30:00">PIX</option>
-                    <option value="01:00:00" selected>
+                    <option value="01:00:00">
                       Dinheiro
                     </option>
                   </select>

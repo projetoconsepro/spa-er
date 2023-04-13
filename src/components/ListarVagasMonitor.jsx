@@ -63,6 +63,7 @@ const ListarVagasMonitor = () => {
                                 resposta[i].variaDisplay = "escondido";
                             }
                             else {
+                                resposta[i].debito = response.data.data[i].debitar_automatico;
                                 resposta[i].numero_notificaoes = response.data.data[i].numero_notificacoes_pendentes;
                                 resposta[i].variaDisplay = "aparece";
                                 if (response.data.data[i].numero_notificacoes_pendentes !== 0) {
@@ -257,7 +258,7 @@ const ListarVagasMonitor = () => {
         localStorage.removeItem('tipoVaga');
     }, [])
 
-    const estaciona = (numero, id_vaga, tempo, placa, notificacoes, notificacoess, tipo) => {
+    const estaciona = (numero, id_vaga, tempo, placa, notificacoes, notificacoess, tipo, debito) => {
         localStorage.setItem("numero_vaga", numero)
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
@@ -268,7 +269,117 @@ const ListarVagasMonitor = () => {
             }
         })
         if (tempo === '00:00:00') {
-            if ( notificacoes !== 0 || notificacoess !== 0) {
+            if(debito === "S"){
+                Swal.fire({
+                    title: 'Deseja liberar esta vaga?',
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonText: 'Liberar',
+                    denyButtonText: `Debitar`,
+                    denyButtonColor: 'green'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        requisicao.post(`/estacionamento/saida`, {
+                            idvagaVeiculo: id_vaga
+                        }).then(
+                            response => {
+                                if (response.data.msg.resultado) {
+                                    Swal.fire('Vaga liberada', '', 'success')
+                                    setTimeout(() => {
+                                        getVagas(salvaSetor);
+                                    }, 1000);
+                                } else {
+                                    Swal.fire(`${response.data.msg.msg}`, '', 'error')
+                                }
+                            }
+                        ).catch(function (error) {
+                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                            || error?.response?.data?.msg === "Token inválido!" 
+                            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                                localStorage.removeItem("user")
+                localStorage.removeItem("token")
+                localStorage.removeItem("perfil");
+                            } else {
+                                console.log(error)
+                            }
+                        }
+                        );
+    
+                    } else if (result.isDenied) {
+                        requisicao.post('/estacionamento', {
+                            placa: placa,
+                            numero_vaga: numero,
+                            tempo: tempo,
+                            id_vaga_veiculo: id_vaga
+                        }).then(
+                            response => {
+                                if (response.data.msg.resultado === true) {
+                                    getVagas(salvaSetor);
+                                }
+                                else {
+                                    Swal.fire({
+                                        title: `${response.data.msg.msg}`,
+                                        showCancelButton: true,
+                                        showDenyButton: true,
+                                        cancelButtonText: 'Cancelar',
+                                        confirmButtonText: 'Liberar',
+                                        denyButtonText: `Notificar`,
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            requisicao.post(`/estacionamento/saida`, {
+                                                idvagaVeiculo: id_vaga
+                                            }).then(
+                                                response => {
+                                                    if (response.data.msg.resultado) {
+                                                        Swal.fire('Vaga liberada', '', 'success')
+                                                        setTimeout(() => {
+                                                            getVagas(salvaSetor);
+                                                        }, 1000);
+                                                    } else {
+                                                        Swal.fire(`${response.data.msg.msg}`, '', 'error')
+                                                    }
+                                                }
+                                            ).catch(function (error) {
+                                                if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                                                || error?.response?.data?.msg === "Token inválido!" 
+                                                || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                                                    localStorage.removeItem("user")
+                                localStorage.removeItem("token")
+                                localStorage.removeItem("perfil");
+                                                } else {
+                                                    console.log(error)
+                                                }
+                                            }
+                                            );
+                                        }
+                                        else if (result.isDenied) {
+                                            localStorage.setItem('id_vagaveiculo', id_vaga);
+                                            localStorage.setItem('vaga', numero);
+                                            localStorage.setItem('placa', placa);
+                                            localStorage.setItem('idVagaVeiculo', id_vaga);
+                                            localStorage.setItem('componente', 'Notificacao');
+                                    }
+                                    });
+                                }
+                            }
+                        ).catch(function (error) {
+                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                            || error?.response?.data?.msg === "Token inválido!" 
+                            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                                localStorage.removeItem("user")
+                            localStorage.removeItem("token")
+                            localStorage.removeItem("perfil");
+                            } else {
+                                console.log(error)
+                            }
+                        });
+                    }
+                    
+    
+                })
+            }
+            else if ( notificacoes !== 0 || notificacoess !== 0) {
                 Swal.fire({
                     title: 'Deseja liberar esta vaga?',
                     showCancelButton: true,
@@ -418,7 +529,7 @@ const ListarVagasMonitor = () => {
 
     return (
 
-        <div className="dashboard-container">
+        <div className="dashboard-container mb-5">
             <div className="row">
                 <div className="col-12 col-xl-8">
                     <div className="row">
@@ -451,7 +562,7 @@ const ListarVagasMonitor = () => {
                                         </thead>
                                         <tbody>
                                             {resposta.map((vaga, index) => (
-                                                <tr key={index} className="card-list" data-vaga={vaga.numero} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes , vaga.numero_notificacoes_pendentess, vaga.tipo) }}>
+                                                <tr key={index} className="card-list" data-vaga={vaga.numero} onClick={() => { estaciona(vaga.numero, vaga.id_vaga_veiculo, vaga.temporestante, vaga.placa ,vaga.numero_notificacoes_pendentes , vaga.numero_notificacoes_pendentess, vaga.tipo, vaga.debito) }}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.corvaga, color: vaga.cor }}>{vaga.numero}</th>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.placa} <small id={vaga.display}>{vaga.numero_notificaoes}</small></td>
                                                     <td className="fw-bolder" style={{ backgroundColor: vaga.corline, color: vaga.cor }}>{vaga.chegada}</td>

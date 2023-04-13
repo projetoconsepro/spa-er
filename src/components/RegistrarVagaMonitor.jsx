@@ -188,9 +188,7 @@ const RegistrarVagaMonitor = () => {
                 console.log(error)
             }
         });
-
-
-
+        
      }
      else {
      await estacionamento.post('/estacionamento', {
@@ -207,7 +205,7 @@ const RegistrarVagaMonitor = () => {
               }
               else {
                 setEstado(true);
-                setMensagem(response.data.msg.mensagem);
+                setMensagem(response.data.msg.msg);
                 setTimeout(() => {
                     setEstado(false);
                     setMensagem("");
