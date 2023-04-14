@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import emailValidator from 'email-validator';
 import InputMask from "react-input-mask";
-import CarroLoading from "./Carregamento"
+import TailSpin from "react-loading-icons/dist/esm/components/tail-spin";
 
 const RegisterPage = () => {
     const { register } = useContext(AuthContext);
@@ -361,7 +361,7 @@ const RegisterPage = () => {
                                     </svg></span></button>
 
                                     <div className="mt-3" style={{ display: estado2 ? 'block' : 'none'}}>
-                                    <CarroLoading />
+                                    <TailSpin />
                             </div>
                                     <p className='text-muted'> <small>Já possui uma conta? </small><small className="color-primary" onClick={() => {registrado()}}><u>Clique aqui!</u></small></p>
                                 </div>

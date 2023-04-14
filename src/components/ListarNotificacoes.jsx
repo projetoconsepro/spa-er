@@ -12,6 +12,7 @@ const ListarNotificacoes = () => {
   const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);
   const [estado, setEstado ] = useState(false);
+  const [placaSetada, setPlacaSetada] = useState("");
   const [mensagem, setMensagem] = useState("");
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
@@ -30,7 +31,7 @@ const ListarNotificacoes = () => {
       headers: {
         token: token,
         id_usuario: user2.id_usuario,
-        perfil_usuario: "monitor",
+        perfil_usuario: user2.perfil[0]
       },
     });
     const idVagaVeiculo = data[index].id_vaga_veiculo;
@@ -71,7 +72,7 @@ const ListarNotificacoes = () => {
         headers: {
           token: token,
           id_usuario: user2.id_usuario,
-          perfil_usuario: "monitor",
+          perfil_usuario: user2.perfil[0],
         },
       });
       const idrequisicao= `{where:{vaga_veiculo='${localVagaVeiculo}'}}`
@@ -105,6 +106,7 @@ const ListarNotificacoes = () => {
         }
         })
         .catch((error) => {
+          console.log(error)
                       if(error?.response?.data?.msg === "Cabeçalho inválido!" 
             || error?.response?.data?.msg === "Token inválido!" 
             || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
@@ -129,7 +131,7 @@ const ListarNotificacoes = () => {
         headers: {
           token: token,
           id_usuario: user2.id_usuario,
-          perfil_usuario: "monitor",
+          perfil_usuario: user2.perfil[0],
         },
       });
       const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
@@ -181,14 +183,15 @@ const ListarNotificacoes = () => {
         headers: {
           token: token,
           id_usuario: user2.id_usuario,
-          perfil_usuario: "monitor",
+          perfil_usuario: user2.perfil[0]
         },
       });
-      const idrequisicao= `{where:{placa='${placa}'}}`
+      const idrequisicao= `{where:{placa='${placa}', placa='${placa}'}}`
       const passar = btoa(idrequisicao)
       await requisicao
       .get(`/notificacao/?query=${passar}`)
       .then((response) => {
+        console.log(response)
         if (response.data.msg.resultado) {
         const newData = response?.data.data.map((item) => ({
           data: ArrumaHora(item.data),
@@ -224,9 +227,6 @@ const ListarNotificacoes = () => {
                 console.log(error)
             }
       });
-      setTimeout(() => {
-        localStorage.removeItem("placaCarro");
-      }, 2000);
   };
 
   useEffect(() => {
@@ -238,6 +238,7 @@ const ListarNotificacoes = () => {
     if (localVagaVeiculo !== null && localVagaVeiculo !== undefined && localVagaVeiculo !== "") {
       startVagaVeiculo(localVagaVeiculo)
     } else if (placa !== null && placa !== undefined && placa !== ""){
+      setPlacaSetada(placa)
       startPlaca(placa);
     }
     else {
@@ -397,7 +398,7 @@ const ListarNotificacoes = () => {
         headers: {
           token: token,
           id_usuario: user2.id_usuario,
-          perfil_usuario: "monitor",
+          perfil_usuario: user2.perfil[0],
         },
       });
     for (let i = 0; i < data.length; i++) {
@@ -415,26 +416,40 @@ const ListarNotificacoes = () => {
     const select = document.getElementById("filtroSelect").value;
     let idrequisicao = "";
     let passar = "";
+    if (user2.perfil[0] === "monitor" || user2.perfil[0] === "parceiro") {
     if (select === "selectData") {
-       idrequisicao= `{where:{hora=${resposta}}}`
-        passar = btoa(idrequisicao)
-    }
-    else if(select === "selectPlaca") {
-        idrequisicao= `{where:{placa='${resposta}'}}`
+       idrequisicao= `{where:{placa='${placaSetada}', hora='%${resposta}%'}}`
         passar = btoa(idrequisicao)
     }
     else if(select === "selectVaga") {
-        idrequisicao= `{where:{vaga='${resposta}'}}`
-        passar = btoa(idrequisicao)
-    }
-    else if(select === "selectTipo") {
-        idrequisicao= `{where:{tipo='${resposta}'}}`
+        idrequisicao= `{where:{placa='${placaSetada}', vaga='${resposta}'}}`
         passar = btoa(idrequisicao)
     }
     else if(select === "selectStatus"){
-        idrequisicao= `{where:{status='${resposta}'}}`
+        idrequisicao= `{where:{placa='${placaSetada}', status='${resposta}'}}`
         passar = btoa(idrequisicao)
     }
+    else if(select === "selectTipo"){
+      idrequisicao= `{where:{placa='${placaSetada}', tipo='${resposta}'}}`
+      passar = btoa(idrequisicao)
+  }
+  } else {
+    if (select === "selectData") {
+        idrequisicao= `{where:{hora=${resposta}}}`
+         passar = btoa(idrequisicao)
+     }
+     else if(select === "selectVaga") {
+         idrequisicao= `{where:{vaga='${resposta}'}}`
+         passar = btoa(idrequisicao)
+     }
+     else if(select === "selectStatus"){
+         idrequisicao= `{where:{tipo='${resposta}'}}`
+         passar = btoa(idrequisicao)
+     }else if (select === "selectPlaca") {
+        idrequisicao= `{where:{placa='${resposta}'}}`
+         passar = btoa(idrequisicao)
+     }
+}
 
     if (idrequisicao !== "" && passar !== "") {
         requisicao.get(`/notificacao/?query=${passar}`)
@@ -521,7 +536,7 @@ const ListarNotificacoes = () => {
                 </div>
                 ) : 
                 <div
-                  className="h6 d-flex align-items-center fs-6" id="bordaBaixo2"
+                  className="h6 d-flex align-items-center fs-6"
                 >
                   <h6> <FaClipboardList />‎ Motivo: {link.tipo_notificacao}</h6>
                 </div>

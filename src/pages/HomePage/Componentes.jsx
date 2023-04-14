@@ -24,6 +24,7 @@ import AbrirTurno from '../../components/AbrirTurno';
 import HistoricoFinanceiro from '../../components/HistoricoFinanceiro';
 import HistoricoFinanceiroParceiro from '../../components/HistoricoFinanceiroParceiro';
 import Configuracoes from '../../components/Configuracoes';
+import Regularizacao from '../../components/Regularizacao';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -95,6 +96,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "Configuracoes"){
             return <Configuracoes />
+        }
+        else if(Componente === "Regularizacao"){
+            return <Regularizacao />
         }
         else {
             return <Error />

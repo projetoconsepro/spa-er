@@ -80,9 +80,9 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: "",
-            name: "",
-            componente: "VagasLivres",
+            icon: <FaMapMarkerAlt />,
+            name: "‎ Regularizar",
+            componente: "Regularizacao",
         })
     }
     

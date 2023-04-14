@@ -7815,17 +7815,6 @@ textarea.form-control-lg {
 #infoVeiculos{
     width: 75% !important;
 }
-.card-body4 {
-    height: 24rem;
-    flex: 1 1 auto;
-    padding: 1.25rem 1.5rem;
-}
-
-.card-body5{
-    height: 13rem;
-    flex: 1 1 auto;
-    padding: 1.25rem 1.5rem;
-}
 
 @media (max-width: 460px) {
     #sumirCarro{
@@ -7894,9 +7883,15 @@ textarea.form-control-lg {
 }
 
 .card-body4 {
-    height: 7.8rem;
+    height: 24rem;
     flex: 1 1 auto;
-    padding: 0rem 1.5rem;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-body5{
+    height: 8rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
 }
 
 #divD[disabled]{

@@ -29,7 +29,7 @@ const Irregularidades = () => {
       headers: {
         token: token,
         id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
+        perfil_usuario: user2.perfil[0],
       },
     });
     const idVagaVeiculo = data[index].id_vaga_veiculo;
@@ -70,7 +70,7 @@ const Irregularidades = () => {
         headers: {
           token: token,
           id_usuario: user2.id_usuario,
-          perfil_usuario: "cliente",
+          perfil_usuario: user2.perfil[0],
         },
       });
       const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
@@ -122,7 +122,7 @@ const Irregularidades = () => {
         headers: {
           token: token,
           id_usuario: user2.id_usuario,
-          perfil_usuario: "cliente",
+          perfil_usuario: user2.perfil[0],
         },
       });
       const idrequisicao= `{where:{placa='${placa}'}}`
@@ -335,7 +335,7 @@ const Irregularidades = () => {
         headers: {
           token: token,
           id_usuario: user2.id_usuario,
-          perfil_usuario: "cliente",
+          perfil_usuario: user2.perfil[0],
         },
       });
     for (let i = 0; i < data.length; i++) {
