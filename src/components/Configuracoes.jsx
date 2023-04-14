@@ -137,7 +137,7 @@ const mudaEstado = (index) => {
 
                     </div>
                     {data[index].estado ?
-                                <div className="card-body4" onChange={() => {mudaEstado(index)}}>
+                                <div className="card-body5" onChange={() => {mudaEstado(index)}}>
                                {data[index].estado ? <div id="bordaBaixo"></div> : null}
                                <div className="form-check2">
                                <input

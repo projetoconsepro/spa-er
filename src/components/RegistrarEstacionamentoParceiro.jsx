@@ -310,6 +310,7 @@ function validarPlaca(placa) {
    if(localStorage.getItem('turno') !== 'true' && user2.perfil[0] === "monitor") {
       localStorage.setItem("componente", "FecharTurno");
   }
+  localStorage.removeItem("placaCarro");
     param();
     setValorCobranca2(1);
     setTempo("00:30:00");

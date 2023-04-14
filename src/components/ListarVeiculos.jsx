@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import { FcPlus } from "react-icons/fc";
-import { FaCarAlt, FaParking } from "react-icons/fa";
+import { FaBell, FaCarAlt, FaParking, FaStickerMule } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
@@ -98,27 +98,17 @@ const ListarVeiculos = () => {
                         resposta[i].div = "card-body2";
                         resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
                         mostrardiv[i] = { "estado": false };
+                        resposta[i].notificacoesVaga = response.data.data[i].numero_notificacoes_pendentesVaga;
                         resposta[i].vaga = response.data.data[i].numerovaga;
                         resposta[i].estacionado ="Estacionado - Vaga: " + response.data.data[i].numerovaga;
                         resposta[i].tempo = response.data.data[i].tempo;
                         resposta[i].chegada = response.data.data[i].chegada;
                         resposta[i].id_vaga_veiculo =  response.data.data[i].id_vaga_veiculo;
                         resposta[i].temporestante = response.data.data[i].temporestante;
-                        const tempo = resposta[i].temporestante.split(':');
-                        const data = new Date();
-                        const ano = data.getFullYear();
-                        const mes = data.getMonth() + 1;
-                        const dia = data.getDate();
-                        tempo[0] = (parseInt(tempo[0].replace(0, '')));
-                        tempo[1] = (parseInt(tempo[1].replace(0, '')))
-                        let minuto = data.getMinutes() + tempo[1];
-                        if (minuto >= 60 ) {
-                            tempo[0] = tempo[0] + 1;
-                            minuto = minuto - 60;
+                        if (response.data.data[i].numero_notificacoes_pendentesVaga > 0) {
+                            resposta[i].textoestacionado = "Clique aqui para regularizar";
+                            resposta[i].temporestante = "00:00:00";
                         }
-                        const hora = data.getHours() + tempo[0];
-                        const formatada = ano + "-" + mes + "-" + dia + " " + hora + ":" + minuto + ":00";
-                        resposta[i].Countdown = formatada;
                     if (response.data.data[i].numero_notificacoes_pendentes === 0) {
                         resposta[i].numero_notificacoes_pendentes = "Sem notificações";
                         notificacao[i] = {"estado": true};
@@ -328,6 +318,11 @@ const ListarVeiculos = () => {
         }
     }
 
+    const regularizarNot = async (placa) => {
+          localStorage.setItem("placaCarro", placa)
+          localStorage.setItem("componente", "Irregularidades")
+    }
+
     return (
         <div className="col-12 px-3 mb-4">
             <p className="text-start fs-2 fw-bold">Meus veículos</p>
@@ -387,7 +382,20 @@ const ListarVeiculos = () => {
                     </div>
                     {mostrar2[index].estado ? 
                     <div className="mb-1">
-                        {mostrardiv[index].estado ? 
+                        { link.notificacoesVaga > 0 ?
+                        <div className="card border-0">
+                               <div className="card-body4">
+                                      <div className="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <div className="h6 d-flex text-start fs-6" id="estacionadocarroo">
+                                                    <h6><FaBell /> Você foi notificado nesta vaga. </h6>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                <button className="btn3 botao mt-3" onClick={() => {regularizarNot(link.placa)}}>Regularizar</button>
+                                                </div>
+                        </div>
+                        : mostrardiv[index].estado ? 
                          <div className="h6 mt-3 mx-5" onChange={atualizafunc}>
                             <select className="form-select form-select-lg mb-1" defaultValue="01:00:00" aria-label=".form-select-lg example" id="tempos">
                                  <option value="00:30:00">30 Minutos</option>
