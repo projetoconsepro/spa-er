@@ -66,6 +66,9 @@ export const AuthProvider = ({ children }) => {
         else if (loggedUser.perfil[0] === 'parceiro'){
             localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
         }
+        else if (loggedUser.perfil[0] === 'admin'){
+            localStorage.setItem('componente', 'VagasLivress');
+        }
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;

@@ -443,7 +443,7 @@ const Notificacao = () => {
                                             <div onChange={()=>{getModelos()}}>
                                             <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
                                             <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectFabricantes">
-                                            <option value="">Selecione uma cor</option>
+                                            <option value="">Selecione um fabricante</option>
                                         {fabricante.map((link, index) => (
                                             <option value={link.id_fabricante_veiculo} key={index}>{link.nome}</option>
                                         ))}
