@@ -29,6 +29,9 @@ function red(id) {
     } else if (analiseFeita.perfil[0] === 'parceiro'){
     localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
     }
+    else if (analiseFeita.perfil[0] === 'admin'){
+    localStorage.setItem('componente', 'VagasLivress');
+    }
 }
         return (
           <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">

@@ -433,6 +433,12 @@ const ListarNotificacoes = () => {
       idrequisicao= `{where:{placa='${placaSetada}', tipo='${resposta}'}}`
       passar = btoa(idrequisicao)
   }
+  else if (select === "selectPlaca") {
+    idrequisicao= `{where:{placa='${resposta}', placa='${resposta}'}}`
+     passar = btoa(idrequisicao)
+     localStorage.setItem("placaCarro", resposta)
+     setPlacaSetada(resposta)
+ }
   } else {
     if (select === "selectData") {
         idrequisicao= `{where:{hora=${resposta}}}`

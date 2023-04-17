@@ -1,9 +1,14 @@
 import { 
     FaCarAlt,
     FaParking,
-    FaMapMarkerAlt
+    FaMapMarkerAlt,
+    FaUserPlus
  } from "react-icons/fa";
+import { RxLapTimer } from "react-icons/rx";
+import { SiOpenstreetmap } from "react-icons/si";
+import { RiFileAddFill } from "react-icons/ri";
 import { BsConeStriped, BsCashCoin } from "react-icons/bs";
+import { MdAddLocationAlt } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
 import { useState } from "react";
 import { BiSearchAlt } from "react-icons/bi";
@@ -51,7 +56,8 @@ const Sidebar = () => {
         className: "nav-link d-flex align-items-center fs-6",
         }
 
-    const links = [{}]
+    const links = []
+    const links2 = []
 
     if(teste.perfil[0] === "parceiro"){
         links.push({
@@ -144,9 +150,60 @@ const Sidebar = () => {
         }
     else if (teste.perfil[0] === "admin"){
         links.push({
+            icon: <RiFileAddFill />,
             className: styles.className,
-            name: "Admin",
-            to: "/admin",
+            name: "‎ Cadastros",
+            subitem: [
+                {
+                    className: styles.className,
+                    icon: <FaUserPlus />,
+                    name: "‎ Usuários",
+                    componente: "UsuariosAdmin",
+                },
+                {
+                    className: styles.className,
+                    icon: <MdAddLocationAlt />,
+                    name: "‎ Setores",
+                    componente: "BB",
+                },
+                {
+                    className: styles.className,
+                    icon: <RxLapTimer />,
+                    name: "‎ Turno",
+                    componente: "AA",
+                }
+            ]
+        })
+        links.push({
+            icon: <FaMapMarkerAlt />,
+            className: styles.className,
+            name: "‎ Outro lugar",
+            subitem: [
+                {
+                    icon: <SiOpenstreetmap />,
+                    className: styles.className,
+                    name: "‎ Mais coisa ",
+                    componente: "",
+                },
+                {
+                    icon: <FaMapMarkerAlt />,
+                    className: styles.className,
+                    name: "‎ #happybirthday",
+                    componente: "",
+                }
+            ]
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Registrar estacionamento",
+            componente: "RegistrarEstacionamentoParceiro",
+        })
+        links.push({
+            className: styles.className,
+            icon: <BsCashCoin />,
+            name: "‎ Adicionar créditos",
+            componente: "AdicionarCreditos",
         })
     }
     else if (teste.perfil[0] === "monitor"){
@@ -263,16 +320,61 @@ const Sidebar = () => {
                             </a>
                             </div>
                     <li className="nav-item">
-                    {links.map((link, key) => (<a key={key} className={link.className} id="textoSm" onClick={() => componentefunc(link.componente)}>{link.icon}{link.name}</a>))}
+                    {teste.perfil[0] !== "admin" ? 
+  <ul className="navbar-nav">
+    {links.map((link, key) => (
+      <li className="nav-item" key={key}>
+        <a className={link.className} id="textoSm" onClick={() => componentefunc(link.componente)}>
+          {link.icon}
+          {link.name}
+        </a>
+      </li>
+    ))}
+  </ul> 
+  : null
+}
+{teste.perfil[0] === "admin" ? 
+  <div>
+    {links.map((link, key) => (
+      <div key={key}>
+        <span id="textoSm" className="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target={`#submenu-app-${key}`}>
+          <span>
+            <span>{link.icon}{link.name}</span>
+          </span>
+          {link.subitem && 
+          <span className="link-arrow" >
+            <svg className="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+          </span>
+            }
+        </span>
+        <div className="multi-level collapse" role="list" id={`submenu-app-${key}`} aria-expanded="false">
+          <ul className="flex-column nav" >
+          {link.subitem &&
+          link.subitem.map((subitem, key) => (
+            <li className="nav-item" key={key}>
+                <a className={subitem.className} id="textoSm" onClick={() => componentefunc(subitem.componente)}>
+                    {subitem.icon}
+                    {subitem.name}
+                </a>
+            </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    ))}
+  </div>
+  : null
+}
                     </li>
                 </ul>
             </div>
             </nav> : null}
         <div>
-            {ariaExpanded ?  null : ( <div className="col-12 mb-4" id="divEspaco"> </div> )} 
+            {ariaExpanded ?  null : ( <div className="col-12 mb-4" id="divEspaco"> </div> )}
         </div>
     </div>
-    
     )
 }
 
