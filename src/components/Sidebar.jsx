@@ -321,7 +321,7 @@ const Sidebar = () => {
                             </div>
                     <li className="nav-item">
                     {teste.perfil[0] !== "admin" ? 
-  <ul className="navbar-nav">
+    <ul className="navbar-nav">
     {links.map((link, key) => (
       <li className="nav-item" key={key}>
         <a className={link.className} id="textoSm" onClick={() => componentefunc(link.componente)}>
