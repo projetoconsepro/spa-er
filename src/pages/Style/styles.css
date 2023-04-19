@@ -34,6 +34,10 @@
 	font-size: 18px;
 }
 
+#tabelaUsuarios{
+    font-size: 14px !important;
+}
+
 #inputAbrirCaixa{
 margin-left: 20%;
 margin-right: 5%;
@@ -6823,11 +6827,18 @@ textarea.form-control-lg {
     width: 100% !important;
 }
 
+#swal-input1, #swal-input2, #swal-input3, #swal-input4{
+    font-size: 14px !important;
+    width: 50% !important;
+    font-family: var(--bs-font-sans-serif) !important;
+}
+
 .swal2-title{
     font-size: 1.5rem;
     font-weight: 600;
     color: #374151;
 }
+
 .swal2-input{
     font-family: "FE" !important;
 }
