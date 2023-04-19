@@ -38,6 +38,22 @@
     font-size: 14px !important;
 }
 
+#tabelaUsuarios2{
+    font-size: 14px !important;
+    display: visible;
+}
+
+#tabelaUsuarios3{
+    font-size: 14px !important;
+    width: 10%;
+}
+
+@media (max-width: 600px){
+    #tabelaUsuarios2{
+        display: none;
+    }
+}
+
 #inputAbrirCaixa{
 margin-left: 20%;
 margin-right: 5%;
@@ -6827,11 +6843,43 @@ textarea.form-control-lg {
     width: 100% !important;
 }
 
-#swal-input1, #swal-input2, #swal-input3, #swal-input4{
+#swal-input1, #swal-input2, #swal-input3, #swal-input4, #swal-input5{
     font-size: 14px !important;
     width: 50% !important;
     font-family: var(--bs-font-sans-serif) !important;
 }
+
+@media (max-width: 768px) {
+    #adicionarUsuario{
+        display: flex;
+        justify-content: flex-end;
+    }
+    #iconeAddUsuario{
+        margin-right: 20%;
+    }
+}
+
+@media (min-width: 768px) {
+    #adicionarUsuario{
+        display: flex;
+        justify-content: flex-end;
+    }
+    #iconeAddUsuario{
+        margin-right: 15%;
+    }
+}
+
+@media (min-width: 1200px) {
+    #adicionarUsuario{
+        display: flex;
+        justify-content: flex-start;
+    }
+    #iconeAddUsuario{
+        margin-left: 5%;
+    }
+}
+
+
 
 .swal2-title{
     font-size: 1.5rem;
@@ -23575,7 +23623,7 @@ button:focus {
 }
 
 label {
-    font-weight: 500;
+    font-weight: 400 !important;
     margin-bottom: .5rem;
 }
 
