@@ -6843,7 +6843,7 @@ textarea.form-control-lg {
     width: 100% !important;
 }
 
-#swal-input1, #swal-input2, #swal-input3, #swal-input4, #swal-input5{
+#swal-input1, #swal-input2, #swal-input3, #swal-input4, #swal-input5, #swal-input6{
     font-size: 14px !important;
     width: 50% !important;
     font-family: var(--bs-font-sans-serif) !important;
