@@ -7,12 +7,13 @@ import {
 import { RxLapTimer } from "react-icons/rx";
 import { SiOpenstreetmap } from "react-icons/si";
 import { RiFileAddFill } from "react-icons/ri";
-import { BsConeStriped, BsCashCoin } from "react-icons/bs";
-import { MdAddLocationAlt } from "react-icons/md";
+import { BsConeStriped, BsCashCoin, BsPersonCircle } from "react-icons/bs";
+import { MdAddLocationAlt, MdOutlineContactSupport } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
 import { useState } from "react";
 import { BiSearchAlt } from "react-icons/bi";
 import { AiOutlineFileSearch } from "react-icons/ai";
+import { TbReportSearch } from "react-icons/tb";
 import { useEffect } from "react";
 
 const Sidebar = () => {
@@ -112,6 +113,25 @@ const Sidebar = () => {
             componente: "VagasLivres",
         })
         links.push({
+            icon: <TbReportSearch />,
+            className: styles.className,
+            name: "‎ Históricos",
+            subitem: [
+                {
+                    className: styles.className,
+                    icon: <FaCarAlt />,
+                    name: "‎ Estacionamentos",
+                    componente: "HistoricoVeiculo",
+                },
+                {
+                    className: styles.className,
+                    icon: <BsCashCoin />,
+                    name: "‎ Financeiro",
+                    componente: "HistoricoFinanceiro",
+                },
+            ]
+        })
+        links.push({
             className: styles.className,
             icon: <FaMapMarkerAlt />,
             name: "‎ Vagas livres",
@@ -134,18 +154,6 @@ const Sidebar = () => {
             icon: <FaCarAlt />,
             name: "‎ Cadastrar novo veículo",
             componente: "CadastrarVeiculo",
-        })
-        links.push({
-            className: styles.className,
-            icon: <AiOutlineFileSearch />,
-            name: "‎ Histórico",
-            componente: "HistoricoVeiculo",
-        })
-        links.push({
-            className: styles.className,
-            icon: <AiOutlineFileSearch />,
-            name: "‎ Histórico financeiro",
-            componente: "HistoricoFinanceiro",
         })
         }
     else if (teste.perfil[0] === "admin"){
@@ -300,16 +308,12 @@ const Sidebar = () => {
                             </a>
                             <div className="dropdown-menu dashboard-dropdown dropdown-menu-start py-1">
                             <a className="dropdown-item d-flex align-items-center text-dark">
-                                <svg className="dropdown-icon text-gray-400 me-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"></path>
-                                </svg>
-                                Meu perfil
+                            <BsPersonCircle />
+                            ‎ Meu perfil
                             </a>
                             <a className="dropdown-item d-flex align-items-center text-dark">
-                                <svg className="dropdown-icon text-gray-400 me-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                                Suporte
+                            <MdOutlineContactSupport />
+                            ‎ Suporte
                             </a>
                             <div role="separator" className="dropdown-divider my-1"></div>
                             <a className="dropdown-item d-flex align-items-center text-danger" onClick={() => {handleLogout()}}>
@@ -319,26 +323,14 @@ const Sidebar = () => {
                                 Desconectar-se
                             </a>
                             </div>
-                    <li className="nav-item">
-                    {teste.perfil[0] !== "admin" ? 
-    <ul className="navbar-nav">
-    {links.map((link, key) => (
-      <li className="nav-item" key={key}>
-        <a className={link.className} id="textoSm" onClick={() => componentefunc(link.componente)}>
-          {link.icon}
-          {link.name}
-        </a>
-      </li>
-    ))}
-  </ul> 
-  : null
-}
-{teste.perfil[0] === "admin" ? 
+
+<li className="nav-item">
+{teste.perfil[0] !== undefined ? 
   <div>
     {links.map((link, key) => (
       <div key={key}>
         <span id="textoSm" className="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target={`#submenu-app-${key}`}>
-          <span>
+          <span onClick={() => componentefunc(link.componente)}>
             <span>{link.icon}{link.name}</span>
           </span>
           {link.subitem && 
