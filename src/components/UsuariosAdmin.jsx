@@ -12,10 +12,26 @@ const UsuariosAdmin = () => {
     const [data2, setData2] = useState([])
     const [data3, setData3] = useState([])
     const [nome, setNome] = useState("")
+    const [senhaParam, setSenhaParam] = useState("")
     const [isLoading, setIsLoading] = useState(false);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
+
+    function extrairNumeros(string) {
+      return string ? string.replace(/\D/g, '') : string;
+  }
+
+    useEffect(() => {
+      const parametros = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+      });
+      parametros.get('/parametros').then(
+      response => {
+        setSenhaParam(response.data.data.param.usuario.default)
+      });
+    }, [])
+
 
     useEffect(() => {
     const newData = data2.filter((item) => {
@@ -196,10 +212,6 @@ const UsuariosAdmin = () => {
                    </select>
                    </div>
                    <div className="form-group">
-                   <label for="senha" class="form-label col-3 fs-6">Senha:</label>
-                   <input id="swal-input5" class="swal2-input" value="">
-                   </div>
-                   <div className="form-group">
                    <span for="cpf" class="form-label col-3 fs-6">CPF/CNPJ:</span>
                    <input id="swal-input6" class="swal2-input" value="">
                    </div>
@@ -212,14 +224,6 @@ const UsuariosAdmin = () => {
             allowOutsideClick: false,
             preConfirm: () => {
                 return new Promise((resolve) => {
-                  const nome2 = document.getElementById('swal-input1').value;
-                  const email = document.getElementById('swal-input2').value;
-                  const telefone = document.getElementById('swal-input3').value;
-                  const perfil = document.getElementById('swal-input4').value;
-                  const senha = document.getElementById('swal-input5').value;
-                  const cpf = document.getElementById('swal-input6').value;
-                  const senha2 = sha256(senha).toString();
-          
                   const requisicao = axios.create({
                     baseURL: process.env.REACT_APP_HOST,
                     headers: {
@@ -228,12 +232,30 @@ const UsuariosAdmin = () => {
                       perfil_usuario: user2.perfil[0],
                     },
                   });
+                  const nome2 = document.getElementById('swal-input1').value;
+                  const email = document.getElementById('swal-input2').value;
+                  const telefone = document.getElementById('swal-input3').value;
+                  const perfil = document.getElementById('swal-input4').value;
+                  const cpf = document.getElementById('swal-input6').value;
+                  const senha2 = sha256(senhaParam).toString();
+                 
+                  const cpf2 = extrairNumeros(cpf)
+                  let cnpjNovo = ""
+                  let cpfNovo = ""
+                  if(cpf2.length === 11){
+                     cpfNovo = cpf2
+                     cnpjNovo = ''
+                  }else{
+                     cnpjNovo = cpf2
+                     cpfNovo = ''
+                  }
                   requisicao.post('/usuario/', {
                     nome: nome2,
                     email: email,
                     telefone: telefone,
                     perfil: perfil,
-                    cpf: cpf,
+                    cpf: cpfNovo,
+                    cnpj: cnpjNovo,
                     senha: senha2,
                   })
                     .then(response => {

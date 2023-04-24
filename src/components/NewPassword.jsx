@@ -22,6 +22,38 @@ const NewPassword = () => {
             const veiculo = axios.create({
                 baseURL: process.env.REACT_APP_HOST,
             })
+            if (localStorage.getItem('SenhaDefault') === 'true'){
+                veiculo.post('/usuario/senha',{
+                    senha: password,
+                    id_usuario: localStorage.getItem('id_usuario')
+                }).then(
+                    response => {
+                        const resposta = response.data.msg.resultado;
+                        if (resposta === false){
+                            setMensagem(response.data.msg.msg);
+                            setEstado(true);
+                            setTimeout(() => {
+                            setMensagem("");
+                            setEstado(false);
+                            }, 4000);
+                        }
+                        else{
+                            localStorage.removeItem('codigoConfirm');
+                            localStorage.setItem('componente', 'LoginPage')
+                        }
+                    }
+                ).catch(function (error) {
+                                if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                || error?.response?.data?.msg === "Token inválido!" 
+                || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                    localStorage.removeItem("user")
+                localStorage.removeItem("token")
+                localStorage.removeItem("perfil");
+                } else {
+                    console.log(error)
+                }
+                });
+            } else {
             veiculo.post('/usuario/senha',{
                 codigo_seguranca: codigoConfirm,
                 senha: password
@@ -52,15 +84,19 @@ const NewPassword = () => {
                 console.log(error)
             }
             });
+        }
         } else {
             setInputSenha("form-control is-invalid");
             setInputSenha2("form-control is-invalid");
             setClassolho("olho is-invalid");
-
+            setMensagem("As senhas não coincidem ou não possuem o tamanho mínimo de 8 caracteres!");
+            setEstado(true);
             setTimeout(() => {
                 setClassolho("olho");
-                setInputSenha("form-control is-valid");
-                setInputSenha2("form-control is-valid");
+                setInputSenha("form-control");
+                setInputSenha2("form-control");
+                setMensagem("");
+                setEstado(false);
             }, 4000);
         }
     }

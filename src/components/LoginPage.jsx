@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { cpf, cnpj } from 'cpf-cnpj-validator';
 import { AuthContext } from "../pages/contexts/auth";
 
 
@@ -24,6 +25,15 @@ const LoginPage = () => {
         setPasswordType("password")
     }
 
+    function extrairNumeros(string) {
+        return string ? string.replace(/\D/g, '') : string;
+    }
+
+    useEffect(() => {
+        localStorage.removeItem("SenhaDefault");
+        localStorage.removeItem("id_usuario");
+    }, [])
+
     const handleSubmit = async (e) => {
         if (email === "" || password === "") {
             setEstado(true)
@@ -44,7 +54,11 @@ const LoginPage = () => {
         }
         else {
             e.preventDefault();
-            const resposta = await login(email, password);
+            let emailNovo = email;
+            if (cpf.isValid(emailNovo) || cnpj.isValid(emailNovo)) {
+                emailNovo = extrairNumeros(email);
+            }
+            const resposta = await login(emailNovo, password);
             if (resposta.auth === false) {
                 setEstado(true)
                 setMensagem(resposta.message)
