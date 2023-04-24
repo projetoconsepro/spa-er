@@ -8,6 +8,6 @@ export const createSession = async (login, senha) => {
     return api.post('/login', { login, senha });
 };
 
-export const registrar = async (nome, email, cpf, telefone , senha) => {
-    return api.post('/usuario', { nome, email, cpf, telefone, senha });
+export const registrar = async (nome, email, cpf, cnpj, telefone, senha) => {
+    return api.post('/usuario', { nome, email, cpf, cnpj, telefone, senha });
 };

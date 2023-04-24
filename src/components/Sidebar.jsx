@@ -22,13 +22,26 @@ const Sidebar = () => {
         const teste = JSON.parse(nome);
         const [mostrarSidebar, setMostrarSidebar] = useState(true);
         const [ariaExpanded, setAriaExpanded] = useState(false);
-        const componentefunc = (componente) =>{
+
+        const toggleSidebar = (componente) => {
             setAriaExpanded(false)
             localStorage.setItem("componente", componente)
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
             }, 1);
+        }
+        const componentefunc = (componente, index) =>{
+            if (links[index].subitem !== undefined) {
+                
+            } else {
+            setAriaExpanded(false)
+            localStorage.setItem("componente", componente)
+            setMostrarSidebar(false)
+            setTimeout(() => {
+                setMostrarSidebar(true)
+            }, 1);
+            }
         }
 
         const handleLogout = () => {
@@ -58,7 +71,6 @@ const Sidebar = () => {
         }
 
     const links = []
-    const links2 = []
 
     if(teste.perfil[0] === "parceiro"){
         links.push({
@@ -329,8 +341,8 @@ const Sidebar = () => {
   <div>
     {links.map((link, key) => (
       <div key={key}>
-        <span id="textoSm" className="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target={`#submenu-app-${key}`}>
-          <span onClick={() => componentefunc(link.componente)}>
+        <span id="textoSm" onClick={() => componentefunc(link.componente, key)} className="nav-link collapsed d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target={`#submenu-app-${key}`}>
+          <span>
             <span>{link.icon}{link.name}</span>
           </span>
           {link.subitem && 
@@ -346,7 +358,7 @@ const Sidebar = () => {
           {link.subitem &&
           link.subitem.map((subitem, key) => (
             <li className="nav-item" key={key}>
-                <a className={subitem.className} id="textoSm" onClick={() => componentefunc(subitem.componente)}>
+                <a className={subitem.className} id="textoSm" onClick={() => toggleSidebar(subitem.componente)}>
                     {subitem.icon}
                     {subitem.name}
                 </a>

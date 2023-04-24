@@ -21,9 +21,9 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const register = async (nome, email, cpf, telefone , senha) => {
+    const register = async (nome, email, cpf, cnpj, telefone , senha) => {
     const password = sha256(senha).toString();
-    const response = await registrar(nome, email, cpf, telefone , password);
+    const response = await registrar(nome, email, cpf, cnpj, telefone , password);
         try{
         if(response.data.msg.resultado === true){
         return {
@@ -53,27 +53,29 @@ export const AuthProvider = ({ children }) => {
         const password = sha256(senha).toString();
         const response = await createSession(login, password);
         try{
-        if(response.data.msg.resultado === true) {
-        if(response.data.msg.resultado === true && response.data.dados.usuario.perfil.length === 1){
+        if (response.data.msg.resultado === true) {
+        if (response.data.dados.senhaPadrao === true) {
+            localStorage.setItem('id_usuario', response.data.dados.usuario.id_usuario);
+            localStorage.setItem('SenhaDefault', true)
+            localStorage.setItem('componente', 'NewPassword');
+        } else {
+        if (response.data.msg.resultado === true && response.data.dados.usuario.perfil.length === 1) {
         let loggedUser = response.data.dados.usuario;
         loggedUser.perfil = [loggedUser.perfil[0].perfil];
         const token = response.data.dados.token;
-        if(loggedUser.perfil[0] === 'cliente'){
+        if (loggedUser.perfil[0] === 'cliente'){
             localStorage.setItem('componente', 'MeusVeiculos');
-        }else if (loggedUser.perfil[0] === 'monitor'){
+        } else if (loggedUser.perfil[0] === 'monitor'){
             localStorage.setItem('componente', 'ListarVagasMonitor');
-        }
-        else if (loggedUser.perfil[0] === 'parceiro'){
+        } else if (loggedUser.perfil[0] === 'parceiro'){
             localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
-        }
-        else if (loggedUser.perfil[0] === 'admin'){
+        } else if (loggedUser.perfil[0] === 'admin'){
             localStorage.setItem('componente', 'VagasLivress');
         }
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
-        }
-        else if(response.data.msg.resultado === true && response.data.dados.usuario.perfil.length > 1){
+        } else if(response.data.msg.resultado === true && response.data.dados.usuario.perfil.length > 1){
         const loggedUser = response.data.dados.usuario;
         const token = response.data.dados.token;
         localStorage.setItem("user", JSON.stringify(loggedUser));
@@ -86,7 +88,7 @@ export const AuthProvider = ({ children }) => {
             message: response.data.msg.msg
         };
         }
-        else {
+        } else {
         return {
             auth: response.data.msg.resultado,
             message: response.data.msg.msg

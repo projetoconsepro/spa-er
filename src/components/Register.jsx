@@ -11,7 +11,8 @@ const RegisterPage = () => {
     const { register } = useContext(AuthContext);
     const [nome, setNome] = useState("");
     const [mail, setMail] = useState('');
-    const [cpff, setCpff] = useState("");
+    const [cpff, setCpff] = useState('');
+    const [cnpjj, setCnpj] = useState('');
     const [telefone, setTelefone] = useState("");
     const [senha, setSenha] = useState("");
     const [senha2, setSenha2] = useState("");
@@ -43,7 +44,7 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         const checkValidate = document.getElementById("flexCheckDefault").checked;
         e.preventDefault();
-        if (nome === "" || cpf === "" || telefone === "" || senha === "" || senha2 === "") {
+        if (nome === "" || cpff === "" || telefone === "" || senha === "" || senha2 === "") {
             if (nome === "") {
                 setInputNome("form-control is-invalid")
             }
@@ -155,9 +156,19 @@ const RegisterPage = () => {
                 }
             else{
                 const cell = extrairNumeros(telefone)
-
+                const cpf2 = extrairNumeros(cpff)
+                setCpff(cpf2)
+                let cnpjNovo = ""
+                let cpfNovo = ""
+                if(cpf2.length === 11){
+                     cpfNovo = cpf2
+                     cnpjNovo = ''
+                }else{
+                     cnpjNovo = cpf2
+                     cpfNovo = ''
+                }
                 setEstado2(true)
-                const cadastro = await register(nome, mail, cpff, cell, senha)
+                const cadastro = await register(nome, mail, cpfNovo, cnpjNovo, cell, senha)
                 if (cadastro.auth) {
                 setMensagem2("Cadastro realizado com sucesso! Você será redirecionado a página de login")
                 setSucesso(true)
@@ -176,7 +187,7 @@ const RegisterPage = () => {
                     setEstado(false)
                 }, 4000);
             }
-            }
+        }
             }
     }
     const togglePassword = () => {
