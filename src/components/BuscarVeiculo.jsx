@@ -88,7 +88,7 @@ const BuscarVeiculo = () => {
                 headers: {
                     'token': token,
                     'id_usuario': user2.id_usuario,
-                    'perfil_usuario': "monitor"
+                    'perfil_usuario': user2.perfil[0]
                 }
             })
             const tirarTraco = textoPlaca.split("-").join("");

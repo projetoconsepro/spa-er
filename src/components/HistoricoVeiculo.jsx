@@ -209,7 +209,7 @@ const respostaPopup = (resposta) => {
     const select = document.getElementById("filtroSelect").value;
     let idrequisicao = "";
     let passar = "";
-    if (user2.perfil[0] === "monitor") {
+    if (user2.perfil[0] === "monitor" || user2.perfil[0] === "admin") {
     if (select === "selectData") {
        idrequisicao= `{where:{placa='${plaquinha}', hora='%${resposta}%'}}`
         passar = btoa(idrequisicao)
@@ -307,7 +307,7 @@ const respostaPopup = (resposta) => {
   setEstado2(true);
   let idrequisicao = "";
   let passar = "";
-  if (user2.perfil[0] === "monitor") {
+  if (user2.perfil[0] === "monitor" || user2.perfil[0] === "admin") {
   const plaquinha = localStorage.getItem("placaCarro");
   setEstado2(true);
   idrequisicao= `{where:{placa='${plaquinha}'}}`

@@ -7953,6 +7953,13 @@ textarea.form-control-lg {
     padding: 1.25rem 1.5rem;
 }
 
+.card-body6{
+    height: 4rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+}
+
 #divD[disabled]{
     pointer-events: none;
   opacity: 0.5;

@@ -26,6 +26,8 @@ import HistoricoFinanceiroParceiro from '../../components/HistoricoFinanceiroPar
 import Configuracoes from '../../components/Configuracoes';
 import Regularizacao from '../../components/Regularizacao';
 import UsuariosAdmin from '../../components/UsuariosAdmin';
+import SetoresAdmin from '../../components/SetoresAdmin';
+import VagasAdmin from '../../components/VagasAdmin';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -35,6 +37,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "CadastrarVeiculo"){
             return <RegistrarVeiculo />
+        }
+        else if (Componente === "SetoresAdmin"){
+            return <SetoresAdmin />
         }
         else if(Componente === "RegistrarVagaMonitor"){
             return <RegistrarVagaMonitor />
@@ -103,6 +108,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "UsuariosAdmin"){
             return <UsuariosAdmin />
+        }
+        else if (Componente === "VagasAdmin"){
+            return <VagasAdmin />
         }
         else {
             return <Error />
