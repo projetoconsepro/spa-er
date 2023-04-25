@@ -6,8 +6,6 @@ import { BsCalendarDate, BsFillPersonFill, BsCashCoin} from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal  from "sweetalert2";
 
-
-
 const ListarNotificacoes = () => {
   const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);
@@ -416,7 +414,7 @@ const ListarNotificacoes = () => {
     const select = document.getElementById("filtroSelect").value;
     let idrequisicao = "";
     let passar = "";
-    if (user2.perfil[0] === "monitor" || user2.perfil[0] === "parceiro") {
+    if (user2.perfil[0] === "monitor" || user2.perfil[0] === "parceiro" || user2.perfil[0] === "admin") {
     if (select === "selectData") {
        idrequisicao= `{where:{placa='${placaSetada}', hora='%${resposta}%'}}`
         passar = btoa(idrequisicao)

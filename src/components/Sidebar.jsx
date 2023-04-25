@@ -2,7 +2,8 @@ import {
     FaCarAlt,
     FaParking,
     FaMapMarkerAlt,
-    FaUserPlus
+    FaUserPlus,
+    FaCar
  } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { SiOpenstreetmap } from "react-icons/si";
@@ -184,7 +185,7 @@ const Sidebar = () => {
                     className: styles.className,
                     icon: <MdAddLocationAlt />,
                     name: "‎ Setores",
-                    componente: "BB",
+                    componente: "SetoresAdmin",
                 },
                 {
                     className: styles.className,
@@ -215,9 +216,9 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <FaParking />,
-            name: "‎ Registrar estacionamento",
-            componente: "RegistrarEstacionamentoParceiro",
+            icon: <FaCarAlt />,
+            name: "‎ Buscar Veículo",
+            componente: "BuscarVeiculo",
         })
         links.push({
             className: styles.className,
