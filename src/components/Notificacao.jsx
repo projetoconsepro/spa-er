@@ -115,7 +115,7 @@ const Notificacao = () => {
                     for (let i = 0; i < 6; i++) {
                         localStorage.removeItem(`foto${i}`);
                     }
-                    //era pra ser window.location.reload()
+                    
                 }
                 else {
                     setMensagem(response.data.msg.msg)
@@ -146,7 +146,7 @@ const Notificacao = () => {
                     for (let i = 0; i < 6; i++) {
                         localStorage.removeItem(`foto${i}`);
                     }
-                    //era pra ser window.location.reload()
+                    
                 }
                 else {
                     setMensagem(response.data.msg.msg)
@@ -180,12 +180,12 @@ const Notificacao = () => {
         for (let i = 0; i < 6; i++) {
             localStorage.removeItem(`foto${i}`);
         }
-        //era pra ser window.location.reload()
+        
     }
 
     const renderCamera = () => {
         localStorage.setItem("componente", "Camera");
-        //era pra ser window.location.reload()
+        
     }
 
     const pegarFotos = async () => {

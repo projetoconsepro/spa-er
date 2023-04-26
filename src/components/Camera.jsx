@@ -77,7 +77,7 @@ function Camera() {
       }
     }
     localStorage.setItem("componente", "Notificacao");
-    //era pra ser window.location.reload()
+    
   }
   }
 

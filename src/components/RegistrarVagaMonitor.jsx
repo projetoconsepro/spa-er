@@ -79,7 +79,7 @@ const RegistrarVagaMonitor = () => {
                 const placaMaiuscula = placaString.toUpperCase();
                 localStorage.setItem('placa',`${placaMaiuscula}`)
                 localStorage.setItem('componente', 'Notificacao')
-                //era pra ser window.location.reload()
+                
                 }
                 else{
                     setEstado(true);
@@ -97,7 +97,7 @@ const RegistrarVagaMonitor = () => {
         localStorage.removeItem('popup');
         localStorage.removeItem('id_vagaveiculo');
         localStorage.setItem('componente', 'ListarVagasMonitor')
-        //era pra ser window.location.reload()
+        
     }
         
     function validarPlaca(placa) {
@@ -165,7 +165,7 @@ const RegistrarVagaMonitor = () => {
                     localStorage.removeItem('popup');
                     localStorage.removeItem('id_vagaveiculo');
                     localStorage.setItem('componente', 'ListarVagasMonitor')
-                    //era pra ser window.location.reload()
+                    
                 }
                 else {
                     Swal.fire({
@@ -201,7 +201,7 @@ const RegistrarVagaMonitor = () => {
               if(response.data.msg.resultado === true){
                 localStorage.removeItem('vaga');
                 localStorage.setItem('componente', 'ListarVagasMonitor')
-                //era pra ser window.location.reload()
+                
               }
               else {
                 setEstado(true);

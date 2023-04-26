@@ -30,7 +30,7 @@ const BuscarVeiculo = () => {
         const upperCase = tirarTraco.toUpperCase();
         localStorage.setItem('placaCarro', upperCase)
         localStorage.setItem('componente', 'HistoricoVeiculo')
-        //era pra ser window.location.reload()
+        
     }
 
 
@@ -145,7 +145,7 @@ const BuscarVeiculo = () => {
             const upperCase = tirarTraco.toUpperCase();
             localStorage.setItem('placaCarro', upperCase)
             localStorage.setItem('componente', 'ListarNotificacoes')
-            //era pra ser window.location.reload()
+            
         }
             
 
