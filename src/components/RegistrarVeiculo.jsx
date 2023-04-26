@@ -113,7 +113,7 @@ const RegistrarVeiculo = () => {
 
     const HangleBack = () => {
         localStorage.setItem('componente', 'MeusVeiculos')
-        //era pra ser window.location.reload()
+        
     }
 
     useEffect(() => {

@@ -167,7 +167,7 @@ const chamarPopup = (index) => {
     if (result.isConfirmed) {
       localStorage.setItem("componente", "ListarNotificacoes");
       localStorage.setItem("VagaVeiculoId", data[index].id_vaga_veiculo);
-      //era pra ser window.location.reload()
+      
     } else if (result.isDenied) {
       
     }

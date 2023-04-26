@@ -419,7 +419,7 @@ const ListarVagasMonitor = () => {
                     else if (result.isDenied) {
                         localStorage.setItem('VagaVeiculoId', id_vaga);
                         localStorage.setItem('componente', 'ListarNotificacoes');
-                        //era pra ser window.location.reload()
+                        
                 }
                 });
             }
@@ -465,7 +465,7 @@ const ListarVagasMonitor = () => {
                     localStorage.setItem('placa', placa);
                     localStorage.setItem('idVagaVeiculo', id_vaga);
                     localStorage.setItem('componente', 'Notificacao');
-                    //era pra ser window.location.reload()
+                    
                 }
                 
 
@@ -518,10 +518,7 @@ const ListarVagasMonitor = () => {
                         localStorage.setItem('placa', placa);
                         localStorage.setItem('popup', true);
                         localStorage.setItem('componente', 'RegistrarVagaMonitor');
-                        //era pra ser window.location.reload()
-                        
                     }
-    
                 })
             }
         }
@@ -545,8 +542,8 @@ const ListarVagasMonitor = () => {
                                 </div>
 
                                 <div className="col-6 input-group w-50 h-25 mt-3">
-                                <span className="input-group-text" id="basic-addon1"><FaSearch /></span>
-                                <input className="form-control" type="number" value={vaga} onChange={(e) => setVaga(e.target.value)} placeholder="Número da vaga" aria-describedby="basic-addon1" />
+                                <span className="input-group-text bg-blue-50 text-white" id="basic-addon1"><FaSearch /></span>
+                                <input className="form-control bg-white rounded-end border-bottom-0" type="number" value={vaga} onChange={(e) => setVaga(e.target.value)} placeholder="Número da vaga" aria-describedby="basic-addon1" />
                                 </div>
                         </div>
                             <div className="card border-0 shadow">

@@ -447,12 +447,22 @@ const UsuariosAdmin = () => {
                         data3[index] = {ativo: ativo, email: email, id_usuario: item.id_usuario, nome: nome2, perfil: perfil, telefone: telefone}
                         console.log(data3[index])
                         setData3([...data])
-                        Swal.fire({
-                            title: 'Sucesso!',
-                            text: 'Usuário editado com sucesso!',
-                            icon: 'success',
-                            confirmButtonText: 'Ok'
-                        })
+                        if(response.data.msg.resultado){
+                          Swal.fire({
+                              title: 'Sucesso!',
+                              text: 'Usuário editado com sucesso!',
+                              icon: 'success',
+                              confirmButtonText: 'Ok'
+  
+                          })
+                      }else{
+                          Swal.fire({
+                              title: 'Erro!',
+                              text: 'Erro ao editar usuário!',
+                              icon: 'error',
+                              confirmButtonText: 'Ok'
+                          })
+                      }
                     }).catch((error) => {
                         Swal.fire({
                             title: 'Erro!',
@@ -482,9 +492,9 @@ const UsuariosAdmin = () => {
                 <div className="col-12 mb-4">
                     <div className="row mx-2">
                     <div className="col-6 input-group w-50 h-25 mt-3">
-                        <span className="input-group-text" id="basic-addon1"><FaSearch /></span>
-                        <input className="form-control" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite o nome" aria-describedby="basic-addon1" />
-                        </div>
+                    <span className="input-group-text bg-blue-50 text-white" id="basic-addon1"><FaSearch /></span>
+                    <input className="form-control bg-white rounded-end border-bottom-0" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite o nome" aria-describedby="basic-addon1" />
+                    </div>
 
                         <div className="col-6 align-middle" onChange={() => {filtroSelect()}}>
                         <select className="form-select form-select-sm mb-3 mt-3" aria-label=".form-select-lg example" id="setoresSelect">
