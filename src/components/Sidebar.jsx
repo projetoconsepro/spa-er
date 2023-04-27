@@ -3,7 +3,8 @@ import {
     FaParking,
     FaMapMarkerAlt,
     FaUserPlus,
-    FaCar
+    FaCar,
+    FaHistory
  } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { SiOpenstreetmap } from "react-icons/si";
@@ -225,6 +226,12 @@ const Sidebar = () => {
             icon: <BsCashCoin />,
             name: "‎ Adicionar créditos",
             componente: "AdicionarCreditos",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaHistory />,
+            name: "‎ Histórico do caixa",
+            componente: "HistoricoCaixa",
         })
     }
     else if (teste.perfil[0] === "monitor"){
