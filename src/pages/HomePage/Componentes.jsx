@@ -28,6 +28,7 @@ import Regularizacao from '../../components/Regularizacao';
 import UsuariosAdmin from '../../components/UsuariosAdmin';
 import SetoresAdmin from '../../components/SetoresAdmin';
 import VagasAdmin from '../../components/VagasAdmin';
+import HistoricoCaixa from '../../components/HistoricoCaixa';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -111,6 +112,9 @@ export default function Veiculos({Componente}) {
         }
         else if (Componente === "VagasAdmin"){
             return <VagasAdmin />
+        }
+        else if(Componente === "HistoricoCaixa"){
+            return <HistoricoCaixa />
         }
         else {
             return <Error />

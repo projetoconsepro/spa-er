@@ -13,6 +13,8 @@ const Irregularidades = () => {
   const [estado, setEstado ] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const token = localStorage.getItem("token");
+  const [saldoCredito, setSaldoCredito] = useState(0);
+  const [valorCobranca, setValorCobranca] = useState(0);
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
@@ -32,6 +34,16 @@ const Irregularidades = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
+
+    console.log('saldo', saldoCredito)
+    console.log('valor', valorCobranca)
+    if(saldoCredito < valorCobranca){
+      Swal.fire({
+          icon: 'error',
+          title: 'Saldo insuficiente',
+          footer: '<a href="">Clique aqui para adicionar crédito.</a>'
+        })
+    }else{
     const idVagaVeiculo = data[index].id_vaga_veiculo;
     requisicao.put('/notificacao/',{
         "id_vaga_veiculo": idVagaVeiculo,
@@ -51,6 +63,7 @@ const Irregularidades = () => {
       }
     }).catch((error) => {
     })
+    }
   }
 
   
@@ -171,6 +184,45 @@ const Irregularidades = () => {
     } 
 
   useEffect(() => {
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+          'token': token,
+          'id_usuario': user2.id_usuario,
+          'perfil_usuario': "cliente"
+      }
+    })
+    requisicao.get('/parametros').then(
+      response => {
+          setValorCobranca(response.data.data.param.estacionamento.valor_notificacao)
+      }
+      ).catch(function (error) {
+      if(error?.response?.data?.msg === "Cabeçalho inválido!"
+      || error?.response?.data?.msg === "Token inválido!"
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+          localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
+    });
+
+    requisicao.get('/usuario/saldo-credito').then(
+      response => {
+          setSaldoCredito(response?.data?.data?.saldo)
+      }
+      ).catch(function (error) {
+      if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+          localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
+    });
     if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
       localStorage.setItem("componente", "FecharTurno");
   }

@@ -123,8 +123,11 @@ const AdicionarCreditos = () => {
     const HangleBack = () => {
         if (user2.perfil[0] === "parceiro") {
         localStorage.setItem("componente", "RegistrarEstacionamentoParceiro");
-        } else {
+        } else if(user2.perfil[0] === "monitor") {
         localStorage.setItem("componente", "ListarVagasMonitor");
+        }
+        else if (user2.perfil[0] === "admin") {
+            localStorage.setItem("componente", "ListarVagas");
         }
     }
 
