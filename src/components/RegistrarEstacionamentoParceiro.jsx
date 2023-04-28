@@ -114,7 +114,7 @@ function validarPlaca(placa) {
                   placa: placaMaiuscula,
                   numero_vaga: vagaa,
                   tempo: tempo,
-                  pagamento: "credito",
+                  pagamento: "dinheiro",
                   id_vaga_veiculo: response.data.data[0].estacionado[0].id_vaga_veiculo
                 }).then(
                   response => {

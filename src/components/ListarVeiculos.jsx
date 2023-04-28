@@ -384,7 +384,7 @@ const ListarVeiculos = () => {
                     <div className="mb-1">
                         { link.notificacoesVaga > 0 ?
                         <div className="card border-0">
-                               <div className="card-body4">
+                               <div className="card-body2">
                                       <div className="d-flex align-items-center justify-content-between">
                                         <div>
                                             <div className="h6 d-flex text-start fs-6" id="estacionadocarroo">
