@@ -14,6 +14,7 @@ const VagasAdmin = () => {
     const user2 = JSON.parse(user);
     const [data, setData] = useState([]);
     const [data2, setData2] = useState([]);
+    const [data3, setData3] = useState([]);
     const [tipoVaga, setTipoVaga] = useState([]);
     const [vaga, setVaga] = useState("");
     const [estado, setEstado] = useState(false);
@@ -41,7 +42,6 @@ const VagasAdmin = () => {
         await requisicao.get(`/vagas/admin/${setor}`
         ).then(
             response => {
-                console.log('a', response)
                 if (response.data.msg.resultado !== false) {
                     setEstado(false)
                     setMensagem('')
@@ -53,7 +53,7 @@ const VagasAdmin = () => {
                         cor: item.cor,
                         corStatus: item.corStatus,
                         status: item.status,
-
+                        id_status_vaga: item.id_status_vaga,
                     }))
                     setData(newData);
                 }
@@ -74,7 +74,27 @@ const VagasAdmin = () => {
             }
         });
 
-        
+        await requisicao.get(`/vagas/status`).then(
+            response => {
+                console.log('b', response)
+                const newData = response.data.data.map((item) => ({
+                    status: item.status,
+                    id_status_vaga: item.id_status_vaga,
+                    cor: item.cor,
+                }))
+                setData3(newData)
+            }
+        ).catch(function (error) {
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
+        });
     }
 
     useEffect(() => {
@@ -82,7 +102,6 @@ const VagasAdmin = () => {
   if (cardToScroll) {
     setTimeout(() => {
         cardToScroll.scrollIntoView({behavior: 'smooth', block: 'center'});
-        console.log(vaga)
       }, 100);
 }
 }, [vaga]);
@@ -100,7 +119,6 @@ const VagasAdmin = () => {
         requisicao.get('/setores'
         ).then(
             response => {
-                console.log(response)
                 const newData = response.data.data.setores.map((item) => ({
                         setores: item.nome,
                         id_setor: item.id_setor
@@ -123,7 +141,7 @@ const VagasAdmin = () => {
 
         requisicao.get('/vagas/tipos').then(
             response => {
-                console.log(response)
+            
                 const newData = response.data.data.map((item) => ({
                     tipo: item.tipo,
                     id_tipo: item.id_tipo_vaga,
@@ -207,7 +225,6 @@ const VagasAdmin = () => {
                     status: status
                 }).then(
                     response => {
-                        console.log(response)
                         if(response.data.msg.resultado){
                             getVagas(salvaSetor)
                             Swal.fire({
@@ -264,8 +281,7 @@ const VagasAdmin = () => {
                     <div className="form-group">
                     <label for="status" class="form-label col-3 fs-6">Status:</label>
                     <select id="swal-input5" class="swal2-input">
-                        <option value="1" ${vaga.status === 'ativo' ? 'selected' : null } >Ativo</option>
-                        <option value="2" ${vaga.status === 'ativo' ? null : 'selected' } >Inativo</option>
+                    ${data3.map(option => `<option value="${option.id_status_vaga}" ${option.status === vaga.status ? 'selected' : null }>${option.status}</option>`).join('')}
                     </select>
                     </div>`
                     ,
@@ -290,7 +306,6 @@ const VagasAdmin = () => {
                       perfil_usuario: user2.perfil[0],
                     },
                   });
-                  console.log(vaga.id_vaga)
                 requisicao.put(`/vagas/${vaga.id_vaga}`, {
                     numero: numero,
                     local: endereco,
@@ -299,7 +314,6 @@ const VagasAdmin = () => {
                     status: status
                 }).then(
                     response => {
-                        console.log('wekrfeftg', response)
                         if(response.data.msg.resultado){
                             getVagas(salvaSetor)
                             Swal.fire({

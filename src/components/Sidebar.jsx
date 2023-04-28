@@ -233,6 +233,12 @@ const Sidebar = () => {
             name: "‎ Histórico do caixa",
             componente: "HistoricoCaixa",
         })
+        links.push({
+            className: styles.className,
+            icon: <BsConeStriped />,
+            name: "‎ Listar notificações",
+            componente: "ListarNotificacoesAdmin",
+        })
     }
     else if (teste.perfil[0] === "monitor"){
         links.push({

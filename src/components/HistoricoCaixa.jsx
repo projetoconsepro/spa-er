@@ -43,7 +43,9 @@ const HistoricoCaixa = () => {
                           perfil_usuario: user2.perfil[0],
                         },
                       });
-                    requisicao.get(`/turno/caixa/admin/${data}`).then((response) => {
+                      const idrequisicao= `{where:{data=${data}}}`
+                      const passar = btoa(idrequisicao)
+                    requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
                        
                         const newData = response.data.data.map((item) => ({
                             nome: item.nome,
@@ -53,7 +55,15 @@ const HistoricoCaixa = () => {
                             valor_fechamento: item.valor_fechamento,
                             data: ArrumaHora(item.data)
                         }))
-                        setData(newData)
+                        if(newData.length <= 0){
+                          setEstado(true)
+                          setMensagem("Nenhum registro encontrado")
+                          }
+                          else{
+                            setEstado(false)
+                            setMensagem("")
+                            setData(newData)
+                        }
                     }).catch((error) => {
                         console.log(error)
                     })
@@ -61,7 +71,48 @@ const HistoricoCaixa = () => {
             })
         }
         if (filtro === "selectNome") {
-            
+          Swal.fire({
+            title: 'Filtrar por nome',
+            html: `<input type="text" id="nome" class="form-control">`,
+            showCancelButton: true,
+            cancelButtonText: 'Fechar',
+            confirmButtonText: 'Filtrar',
+            preConfirm: () => {
+              const nome = document.getElementById("nome").value;
+              const requisicao = axios.create({
+                baseURL: process.env.REACT_APP_HOST,
+                headers: {
+                  token: token,
+                  id_usuario: user2.id_usuario,
+                  perfil_usuario: user2.perfil[0],
+                },
+              });
+              const idrequisicao= `{where:{nome=${nome}}}`
+              const passar = btoa(idrequisicao)
+              requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
+                console.log(response)
+                const newData = response.data.data.map((item) => ({
+                  nome: item.nome,
+                  abertura: item.hora_abertura,
+                  fechamento: item.hora_fechamento,
+                  valor_abertura: item.valor_abertura,
+                  valor_fechamento: item.valor_fechamento,
+                  data: ArrumaHora(item.data)
+                }))
+                if(newData.length <= 0){
+                  setEstado(true)
+                  setMensagem("Nenhum registro encontrado")
+                  }
+                  else{
+                    setEstado(false)
+                    setMensagem("")
+                    setData(newData)
+                }
+              }).catch((error) => {
+                console.log(error)
+              })
+            }
+        })
         }
     };
 
@@ -81,8 +132,9 @@ const HistoricoCaixa = () => {
               perfil_usuario: user2.perfil[0],
             },
           });
-        requisicao.get(`/turno/caixa/admin/${dataHoje}`).then((response) => {
-           
+          const idrequisicao= `{where:{data=${dataHoje}}}`
+          const passar = btoa(idrequisicao)
+          requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
             const newData = response.data.data.map((item) => ({
                 nome: item.nome,
                 abertura: item.hora_abertura,
@@ -91,7 +143,15 @@ const HistoricoCaixa = () => {
                 valor_fechamento: item.valor_fechamento,
                 data: ArrumaHora(item.data)
             }))
-            setData(newData)
+            if(newData.length <= 0){
+              setEstado(true)
+              setMensagem("Nenhum registro encontrado")
+              }
+              else{
+                setEstado(false)
+                setMensagem("")
+                setData(newData)
+            }
         }).catch((error) => {
             console.log(error)
         })
@@ -136,8 +196,9 @@ const HistoricoCaixa = () => {
               perfil_usuario: user2.perfil[0],
             },
           });
-        requisicao.get(`/turno/caixa/admin/${dataHoje}`).then((response) => {
-           
+          const idrequisicao= `{where:{data=${dataHoje}}}`
+          const passar = btoa(idrequisicao)
+          requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
             const newData = response.data.data.map((item) => ({
                 nome: item.nome,
                 abertura: item.hora_abertura,
@@ -146,7 +207,15 @@ const HistoricoCaixa = () => {
                 valor_fechamento: item.valor_fechamento,
                 data: ArrumaHora(item.data)
             }))
-            setData(newData)
+            if(newData.length <= 0){
+              setEstado(true)
+              setMensagem("Nenhum registro encontrado")
+              }
+              else{
+                setEstado(false)
+                setMensagem("")
+                setData(newData)
+            }
         }).catch((error) => {
             console.log(error)
         })

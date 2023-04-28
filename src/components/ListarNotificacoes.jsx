@@ -134,7 +134,6 @@ const ListarNotificacoes = () => {
       });
       const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
     const passar = btoa(idrequisicao)
-    
     await requisicao
       .get(`/notificacao/?query=${passar}`)
       .then((response) => {
