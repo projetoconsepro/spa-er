@@ -52,6 +52,16 @@ const LoginPage = () => {
                 setEstado(false)
             }, 4000);
         }
+        else if (email.includes("'") || password.includes("'") || email.includes('"') || password.includes('"')){
+            setEstado(true)
+            setMensagem(`Alguns caracteres como (' ") não são permitidos`)
+            setTimeout(() => {
+                setinputLogin("form-control")
+                setInputSenha("form-control")
+                setClassolho("olho")
+                setEstado(false)
+            }, 4000);
+        }
         else {
             e.preventDefault();
             let emailNovo = email;

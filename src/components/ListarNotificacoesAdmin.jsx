@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { React, useState, useEffect } from 'react'
-import { AiOutlineReload } from 'react-icons/ai'
+import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import Swal from 'sweetalert2'
 
 const ListarNotificacoesAdmin = () => {
     const [data, setData] = useState([])
@@ -18,6 +21,152 @@ const ListarNotificacoesAdmin = () => {
         return data4;
     }
 
+    function ArrumaHora2(data) {
+      const data2 = data.split("T");
+      const data6 = data2[1].split(":");
+      const data5 = (data6[0]-3) + ":" + data6[1] + ":";
+      const data7 = data5 + data6[2].split(".")[0];
+      return data7;
+      }
+
+      const createPDF = () => {
+        const doc = new jsPDF();
+      
+        // Define as colunas da tabela
+        const columns = ['Data', 'Placa', 'Vaga', 'Estado', 'Fabricante', 'Modelo', 'Tipo', 'Valor'];
+      
+        // Cria uma matriz com os dados da tabela
+        const dataD = [];
+        dataD.push(...data.map((item) => [item.data, item.placa, item.vaga, item.pendente === 'S' ? 'Pago' : 'Pendente', item.fabricante, item.modelo, item.tipo, item.valor]));
+        // Cria a tabela com o método table do jsPDF
+        doc.autoTable({
+          head: [columns],
+          body: dataD,
+          styles: {
+            cell: {
+              textColor: [0, 0, 0], // cor padrão do texto
+            },
+          },
+          didParseCell: function (data) {
+            if (data.column.index === 3 && data.cell.raw === "Pendente") {
+              data.cell.styles.textColor = 'red';
+            } 
+            else if(data.column.index === 3 && data.cell.raw === "Pago"){
+              data.cell.styles.textColor = 'green'; 
+            }
+          },
+        });
+        
+        // cria a data atual formatada
+      const dateNow = new Date();
+      const day = dateNow.getDate().toString().padStart(2, "0"); // adiciona um zero à esquerda se o número tiver apenas um dígito
+      const month = (dateNow.getMonth() + 1).toString().padStart(2, "0"); // adiciona um zero à esquerda se o número tiver apenas um dígito
+      const year = dateNow.getFullYear().toString().slice(-2); // pega apenas os últimos dois dígitos do ano
+      const formattedDate = `${day}-${month}-${year}`;
+
+// define o nome do arquivo
+      const fileName = `${formattedDate} - Irregularidades.pdf`;
+
+        // Salva o PDF com o nome tabela.pdf
+        doc.save(fileName);
+      }
+
+    const filtroSelect = async () => {
+        const select = document.getElementById('filtroSelect').value
+        if (select === 'selectData') {
+          setEstado(false)
+          setMensagem('')
+          Swal.fire({
+            title: 'Filtrar por data',
+            html: `<input type="date" id="data" class="form-control">`,
+            showCancelButton: true,
+            cancelButtonText: 'Fechar',
+            confirmButtonText: 'Filtrar',
+            preConfirm: () => {
+                const data = document.getElementById("data").value;
+                const data4 = ArrumaHora(data)
+                const newData = data2.filter((item) => item.data === data4)
+                setData(newData)
+                if (newData.length === 0) {
+                    setEstado(true)
+                    setMensagem('Nenhum dado encontrado')
+                }
+            }
+        })
+        }
+        else if(select === 'selectPlaca'){
+          setEstado(false)
+          setMensagem('')
+            Swal.fire({
+                title: 'Filtrar por placa',
+                html: `<input type="text" id="placaId" class="form-control">`,
+                showCancelButton: true,
+                cancelButtonText: 'Fechar',
+                confirmButtonText: 'Filtrar',
+                preConfirm: () => {
+                    const placa = document.getElementById("placaId").value;
+                    const newData = data2.filter((item) => item.placa === placa)
+                    setData(newData)
+                    if (newData.length === 0) {
+                        setEstado(true)
+                        setMensagem('Nenhum dado encontrado')
+                    }
+                }
+            })
+        }
+      else if(select === 'selectVaga'){
+        setEstado(false)
+        setMensagem('')
+        Swal.fire({
+            title: 'Filtrar por vaga',
+            html: `<input type="number" id="vaga" class="form-control">`,
+            showCancelButton: true,
+            cancelButtonText: 'Fechar',
+            confirmButtonText: 'Filtrar',
+            preConfirm: () => {
+                const vaga = document.getElementById("vaga").value;
+                const newData = data2.filter((item) => item.vaga == vaga)
+                setData(newData)
+                if (newData.length === 0) {
+                    setEstado(true)
+                    setMensagem('Nenhum dado encontrado')
+                }
+            }
+        })
+      }
+      else if(select === 'selectTipo'){
+        setEstado(false)
+        setMensagem('')
+        const inputOptions = new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({
+              'S': 'Pago',
+              'N': 'Pendente'
+            })
+          }, 1000)
+        })
+        
+        const { value: color } = await Swal.fire({
+          title: 'Selecione o estado da notificação',
+          input: 'radio',
+          inputOptions: inputOptions,
+          inputValidator: (value) => {
+            if (!value) {
+              return 'Você deve selecionar um estado de notificação!'
+            }
+          }
+        })
+        if (color) {
+          const newData = data2.filter((item) => item.pendente === color)
+          setData(newData)
+          if (newData.length === 0) {
+            setEstado(true)
+            setMensagem('Nenhum dado encontrado')
+        }
+        }
+        
+      }
+    }
 
     useEffect(() => {
         const requisicao = axios.create({
@@ -29,7 +178,6 @@ const ListarNotificacoesAdmin = () => {
             },
           });
           requisicao.get('/notificacao').then((response) => {
-            console.log(response)
             const newData = response.data.data.map((item) => ({
                 id_notificacao: item.id_notificacao,
                 data: ArrumaHora(item.data),
@@ -41,23 +189,56 @@ const ListarNotificacoesAdmin = () => {
                 tipo: item.tipo_notificacao.nome,
                 valor: item.valor,
                 monitor: item.monitor.nome,
+                hora: ArrumaHora2(item.data),
             }));
-            console.log('ESSA É A NEW DATA EM', newData)
             setData(newData)
+            setData2(newData)
         }).catch((error) => {
             console.log(error)
           })
     }, [])
 
+    const reload = () => {
+      setEstado(false)
+      setMensagem("")
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+      requisicao.get('/notificacao').then((response) => {
+        const newData = response.data.data.map((item) => ({
+            id_notificacao: item.id_notificacao,
+            data: ArrumaHora(item.data),
+            placa: item.veiculo.placa,
+            vaga: item.vaga,
+            pendente: item.pago,
+            fabricante: item.veiculo.modelo.fabricante.nome,
+            modelo: item.veiculo.modelo.nome,
+            tipo: item.tipo_notificacao.nome,
+            valor: item.valor,
+            monitor: item.monitor.nome,
+            hora: ArrumaHora2(item.data),
+        }));
+        setData(newData)
+        setData2(newData)
+    }).catch((error) => {
+        console.log(error)
+      })
+  }
+
 
   return (
     <div className="dashboard-container">
         <p className="mx-3 text-start fs-4 fw-bold">Listar notificações</p>
-        <div>
-        <div className="col-12 col-xl-8">
         <div className="row">
-        <div className="col-8">
-        <select className="mx-3 form-select form-select-sm mb-3" defaultValue="1" aria-label=".form-select-lg example" id="filtroSelect">
+        <div className="col-12">
+        <div className="row">
+        <div className="col-7">
+        <select className="mx-3 form-select form-select-sm mb-3" defaultValue="1" onChange={() => {filtroSelect()}} aria-label=".form-select-lg example" id="filtroSelect">
           <option disabled  value='1' id="filtro">Filtro</option>
           <option value="selectData">Data</option>
           <option value="selectPlaca">Placa</option>
@@ -66,15 +247,16 @@ const ListarNotificacoesAdmin = () => {
           </select>
           </div>
           <div className="col-3 text-end">
-            <AiOutlineReload className="mt-1" size={21}/>
+          <button className="btn3 botao p-0 w-75 h-75" type="button" onClick={() => {createPDF()}}><AiFillPrinter  size={21}/></button>
           </div>
-          <div className="col-1">
+          <div className="col-1 text-end">
+            <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21}/>
           </div>
           </div>
           </div>
           </div>
             <div className="row">
-          <div className="col-12 col-xl-8">
+          <div className="col-12">
             <div className="row">
               <div className="col-12 mb-4">
                 <div className="card border-0 shadow">
@@ -82,17 +264,17 @@ const ListarNotificacoesAdmin = () => {
                     <table className="table align-items-center table-flush">
                       <thead className="thead-light">
                         <tr>
-                        <th className="border-bottom" scope="col">
+                        <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Data
                           </th>
-                          <th className="border-bottom" scope="col">
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Placa
                           </th>
-                          <th className="border-bottom" scope="col">
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Vaga
                           </th>
-                          <th className="border-bottom" scope="col">
-                            Pendente
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col">
+                            Estado
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios2" scope="col">
                             Fabricante
@@ -106,6 +288,9 @@ const ListarNotificacoesAdmin = () => {
                           <th className="border-bottom" id="tabelaUsuarios2" scope="col">
                             Valor
                           </th>
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
+                            Hora
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -115,11 +300,14 @@ const ListarNotificacoesAdmin = () => {
                           <td>{item.data}</td>
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
-                          <td> {item.pendente === 'S' ? 'Sim' : 'Não'}</td>
+                          <td style={
+                            item.pendente === 'S' ? {color: 'green'} : {color: 'red'}
+                          }> {item.pendente === 'S' ? 'Pago' : 'Pendente'}</td>
                           <td id="tabelaUsuarios2">{item.fabricante}</td>
                           <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td id="tabelaUsuarios2">{item.tipo}</td>
                           <td id="tabelaUsuarios2">{item.valor}</td>
+                          <td id="tabelaUsuarios2">{item.hora}</td>
                         </tr>
                     ))}
                       </tbody>

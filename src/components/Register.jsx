@@ -73,7 +73,15 @@ const RegisterPage = () => {
                 setInputSenha2("form-control")
                 setClassolho("olho")
             }, 4000);
-        } else if (nome.includes(" ") && nome.length < 3) {
+        } else if (nome.includes('"') || cpff.includes('"') || telefone.includes('"') || senha.includes('"') || senha2.includes('"')
+        || nome.includes("'") || cpff.includes("'") || telefone.includes("'") || senha.includes("'") || senha2.includes("'")) {
+            setEstado(true)
+            setMensagem(`Alguns caracteres como (' ") não são permitidos`)
+            setTimeout(() => {
+                setEstado(false)
+            }, 4000);
+        }
+        else if (nome.includes(" ") && nome.length < 3) {
             if (!nome.includes(1, 2, 3, 4, 5, 6, 7, 8, 9, 0)) {
                 setEstado(true)
                 setMensagem("Digite seu nome completo")
@@ -177,12 +185,12 @@ const RegisterPage = () => {
                     setSucesso(false)
                     setEstado2(false)
                     localStorage.setItem("componente", "LoginPage")
-                }, 3000);
+                }, 5000);
                 }
             else {
                 setEstado2(false)
                 setEstado(true)
-                setMensagem("Erro ao cadastrar! " + cadastro.message)
+                setMensagem("Aviso! " + cadastro.message)
                 setTimeout(() => {
                     setEstado(false)
                 }, 4000);
@@ -249,7 +257,7 @@ const RegisterPage = () => {
                                 <div className="form-group mb-4">
                                     <label id="labelLogin">CPF/CNPJ:</label>
                                     <div className="input-group">
-                                        <input className={inputCpf} name="cpf" id="cpf" value={cpff} onChange={(e) => setCpff(e.target.value)} placeholder="Digite seu CPF p/ pessoa física ou CPNJ p/ jurídica" />
+                                        <input className={inputCpf} name="cpf" id="cpf" value={cpff} onChange={(e) => setCpff(e.target.value)} placeholder="Digite seu CPF p/ pessoa física ou CNPJ p/ jurídica" />
                                     </div>
                                 </div>
                                 <div className="form-group mb-4">

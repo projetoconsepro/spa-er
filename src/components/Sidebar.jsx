@@ -172,6 +172,12 @@ const Sidebar = () => {
         }
     else if (teste.perfil[0] === "admin"){
         links.push({
+            className: styles.className,
+            icon: <FaCarAlt />,
+            name: "‎ Buscar Veículo",
+            componente: "BuscarVeiculo",
+        })
+        links.push({
             icon: <RiFileAddFill />,
             className: styles.className,
             name: "‎ Cadastros",
@@ -189,55 +195,37 @@ const Sidebar = () => {
                     componente: "SetoresAdmin",
                 },
                 {
+                    icon: <FaParking />,
                     className: styles.className,
-                    icon: <RxLapTimer />,
-                    name: "‎ Turno",
-                    componente: "AA",
+                    name: "‎ Vagas ", 
+                    componente: "VagasAdmin",
                 }
             ]
         })
         links.push({
-            icon: <FaMapMarkerAlt />,
+            icon: <FaHistory />,
             className: styles.className,
-            name: "‎ Outro lugar",
+            name: "‎ Históricos",
             subitem: [
                 {
-                    icon: <SiOpenstreetmap />,
                     className: styles.className,
-                    name: "‎ Mais coisa ",
-                    componente: "",
+                    icon: <FaHistory />,
+                    name: "‎ Caixa monitor",
+                    componente: "HistoricoCaixa",
                 },
                 {
-                    icon: <FaMapMarkerAlt />,
                     className: styles.className,
-                    name: "‎ #happybirthday",
-                    componente: "",
+                    icon: <BsConeStriped />,
+                    name: "‎ Irregularidades",
+                    componente: "ListarNotificacoesAdmin",
                 }
             ]
-        })
-        links.push({
-            className: styles.className,
-            icon: <FaCarAlt />,
-            name: "‎ Buscar Veículo",
-            componente: "BuscarVeiculo",
         })
         links.push({
             className: styles.className,
             icon: <BsCashCoin />,
             name: "‎ Adicionar créditos",
             componente: "AdicionarCreditos",
-        })
-        links.push({
-            className: styles.className,
-            icon: <FaHistory />,
-            name: "‎ Histórico do caixa",
-            componente: "HistoricoCaixa",
-        })
-        links.push({
-            className: styles.className,
-            icon: <BsConeStriped />,
-            name: "‎ Listar notificações",
-            componente: "ListarNotificacoesAdmin",
         })
     }
     else if (teste.perfil[0] === "monitor"){
