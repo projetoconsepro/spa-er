@@ -4521,6 +4521,7 @@ textarea.form-control-lg {
 }
 
 .esqueciSenha{
+    cursor: pointer;
     text-align: right !important;
     font-size: 0.9rem !important;
     color: #585858 !important;

@@ -2,8 +2,9 @@ import axios from 'axios'
 import { React, useEffect, useState } from 'react'
 import { FaHistory } from 'react-icons/fa'
 import CarroLoading from './Carregamento'
-import { AiOutlineReload } from 'react-icons/ai'
+import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'
+import jsPDF from 'jspdf';
 
 const HistoricoCaixa = () => {
     const [data, setData] = useState([])
@@ -22,6 +23,44 @@ const HistoricoCaixa = () => {
         const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
         return data4;
     }
+
+    const createPDF = () => {
+      const doc = new jsPDF();
+    
+      // carrega a imagem
+      const img = new Image();
+      img.src = '../../assets/img/logoconseproof2.png';
+    
+      img.onload = function () {
+        // adiciona a imagem ao pdf
+        doc.addImage(img, 'PNG', 10, 10, 50, 50);
+
+        const columns = ['Data', 'Nome', 'Abertura', 'Fechamento', 'Valor de abertura', 'Valor de fechamento'];
+        const dataD = [];
+        dataD.push(...data.map((item) => [item.data, item.nome, item.abertura, item.fechamento, `R$${item.valor_abertura},00`, item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento},00`]));
+        doc.autoTable({
+          head: [columns],
+          body: dataD,
+          startY: 80, // começa a tabela após a imagem
+          styles: {
+            cell: {
+              textColor: [0, 0, 0],
+            },
+          },
+        });
+    
+        const dateNow = new Date();
+        const day = dateNow.getDate().toString().padStart(2, "0"); 
+        const month = (dateNow.getMonth() + 1).toString().padStart(2, "0"); 
+        const year = dateNow.getFullYear().toString().slice(-2);
+        const formattedDate = `${day}-${month}-${year}`;
+    
+        const fileName = `${formattedDate} - Caixa_Monitor.pdf`;
+    
+        doc.save(fileName);
+      };
+    };
+    
 
     const filtrarCaixa = () => {
         const filtro = document.getElementById("filtroSelect").value;
@@ -207,6 +246,7 @@ const HistoricoCaixa = () => {
                 valor_fechamento: item.valor_fechamento,
                 data: ArrumaHora(item.data)
             }))
+            setData(newData)
             if(newData.length <= 0){
               setEstado(true)
               setMensagem("Nenhum registro encontrado")
@@ -214,7 +254,6 @@ const HistoricoCaixa = () => {
               else{
                 setEstado(false)
                 setMensagem("")
-                setData(newData)
             }
         }).catch((error) => {
             console.log(error)
@@ -225,8 +264,8 @@ const HistoricoCaixa = () => {
         <div className="dashboard-container">
         <p className="mx-3 text-start fs-4 fw-bold">Histórico do caixa:</p>
         <div> 
-            <div className="row">
-        <div className="col-8">
+        <div className="row">
+        <div className="col-7">
         <select className="mx-3 form-select form-select-sm mb-3" onChange={() => {filtrarCaixa()}} defaultValue="1" aria-label=".form-select-lg example" id="filtroSelect">
           <option disabled  value='1' id="filtro">Filtro</option>
           <option value="selectData">Data</option>
@@ -234,6 +273,9 @@ const HistoricoCaixa = () => {
           </select>
           </div>
           <div className="col-3 text-end">
+          <button className="btn3 botao p-0 w-75 h-75" type="button" onClick={() => {createPDF()}}><AiFillPrinter size={21}/></button>
+          </div>
+          <div className="col-1 text-end">
             <AiOutlineReload className="mt-1" size={21} onClick={() => {reload()}}/>
           </div>
           <div className="col-1">
@@ -242,7 +284,7 @@ const HistoricoCaixa = () => {
           </div>
           </div>
         <div className="row">
-          <div className="col-12 col-xl-8">
+          <div className="col-12 col-xl-12">
             <div className="row">
               <div className="col-12 mb-4">
                 <div className="card border-0 shadow">

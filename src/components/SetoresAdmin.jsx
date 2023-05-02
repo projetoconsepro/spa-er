@@ -164,7 +164,7 @@ const SetoresAdmin = () => {
                         </div>
                         <div className="col-1">
                         </div>
-                        <div className="col-5 d-flex justify-content-end ">
+                        <div className="col-5 d-flex justify-content-end">
                         <button className="btn3 botao mt-3 p-0" type="button" onClick={() => {cadastraSetor()}}><BsPlus size={25}/></button>
                         </div>
 

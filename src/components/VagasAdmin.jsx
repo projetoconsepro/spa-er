@@ -159,8 +159,13 @@ const VagasAdmin = () => {
                 console.log(error)
             }});
 
-        getVagas(localStorage.getItem('setor'))
-        setSalvaSetor(localStorage.getItem('setor'))
+        if (localStorage.getItem('setor') === null || localStorage.getItem('setor') === undefined || localStorage.getItem('setor') === '') {
+            getVagas('A')
+            setSalvaSetor('A')
+        } else {
+            getVagas(localStorage.getItem('setor'))
+            setSalvaSetor(localStorage.getItem('setor'))
+        }
     }, []);
 
     const adicionarVaga = async () => {
