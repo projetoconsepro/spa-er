@@ -5,7 +5,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Swal from 'sweetalert2'
 
-const ListarNotificacoesAdmin = () => {
+const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
     const [estado, setEstado] = useState(false)
@@ -29,75 +29,6 @@ const ListarNotificacoesAdmin = () => {
       return data7;
       }
 
-      const createPDF = () => {
-        const doc = new jsPDF();
-      
-        // Define as colunas da tabela
-        const columns = ['Data', 'Placa', 'Vaga', 'Estado', 'Fabricante', 'Modelo', 'Tipo', 'Valor'];
-      
-        // Cria uma matriz com os dados da tabela
-        const dataD = [];
-        dataD.push(...data.map((item) => [item.data, item.placa, item.vaga, item.pendente === 'S' ? 'Pago' : 'Pendente', item.fabricante, item.modelo, item.tipo, item.valor]));
-        // Cria a tabela com o método table do jsPDF
-        doc.autoTable({
-          head: [columns],
-          body: dataD,
-          styles: {
-            cell: {
-              textColor: [0, 0, 0], // cor padrão do texto
-            },
-          },
-          didParseCell: function (data) {
-            if (data.column.index === 3 && data.cell.raw === "Pendente") {
-              data.cell.styles.textColor = 'red';
-            } 
-            else if(data.column.index === 3 && data.cell.raw === "Pago"){
-              data.cell.styles.textColor = 'green'; 
-            }
-          },
-        });
-        
-        // cria a data atual formatada
-      const dateNow = new Date();
-      const day = dateNow.getDate().toString().padStart(2, "0"); // adiciona um zero à esquerda se o número tiver apenas um dígito
-      const month = (dateNow.getMonth() + 1).toString().padStart(2, "0"); // adiciona um zero à esquerda se o número tiver apenas um dígito
-      const year = dateNow.getFullYear().toString().slice(-2); // pega apenas os últimos dois dígitos do ano
-      const formattedDate = `${day}-${month}-${year}`;
-
-// define o nome do arquivo
-      const fileName = `${formattedDate} - Irregularidades.pdf`;
-
-        // Salva o PDF com o nome tabela.pdf
-        doc.save(fileName);
-      }
-
-      const mostrar = async (item) => {
-        const width = window.innerWidth
-        if(width < 768){
-        Swal.fire({
-            title: 'Informações da notificação',
-            html: `<p><b>Data:</b> ${item.data}</p>
-                   <p><b>Placa:</b> ${item.placa}</p>
-                   <p><b>Estado:</b> ${item.pendente === 'N' ? 'Pendente' : 'Pago'}</p>
-                   <p><b>Modelo:</b> ${item.modelo}</p>
-                   <p><b>Fabricante:</b> ${item.fabricante}</p>
-                   <p><b>Tipo:</b> ${item.tipo}</p>
-                   <p><b>Valor:</b> R$${item.valor},00</p>
-                   <p><b>Monitor:</b> ${item.monitor}</p>
-                   <p><b>Hora:</b> ${item.hora}</p>`,
-            showCancelButton: true,
-            showConfirmButton: false,
-            cancelButtonText: 'Fechar',
-            }).then((result) => {
-            if (result.isDismissed) {
-                Swal.close();
-            }
-            });
-        }else{
-            
-        }
-        }
-
     const filtroSelect = async () => {
         const select = document.getElementById('filtroSelect').value
         if (select === 'selectData') {
@@ -120,11 +51,6 @@ const ListarNotificacoesAdmin = () => {
                 }
             }
         })
-        }
-        else if(select === 'selectTodos'){
-          setEstado(false)
-          setMensagem('')
-          setData(data2)
         }
         else if(select === 'selectPlaca'){
           setEstado(false)
@@ -201,6 +127,7 @@ const ListarNotificacoesAdmin = () => {
     }
 
     useEffect(() => {
+        localStorage.removeItem('autoInfracao')
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -210,10 +137,12 @@ const ListarNotificacoesAdmin = () => {
             },
           });
           requisicao.get('/notificacao').then((response) => {
+            console.log(response)
             const newData = response.data.data.map((item) => ({
                 id_notificacao: item.id_notificacao,
                 data: ArrumaHora(item.data),
                 placa: item.veiculo.placa,
+                cor: item.veiculo.cor,
                 vaga: item.vaga,
                 pendente: item.pago,
                 fabricante: item.veiculo.modelo.fabricante.nome,
@@ -223,15 +152,45 @@ const ListarNotificacoesAdmin = () => {
                 monitor: item.monitor.nome,
                 hora: ArrumaHora2(item.data),
             }));
-            const arrayNovo = newData.filter((item) => item.pendente === 'N')
-            setData(arrayNovo)
-
+            setData(newData)
             setData2(newData)
-
         }).catch((error) => {
             console.log(error)
           })
     }, [])
+
+    const mostrar = async (item) => {
+        const width = window.innerWidth
+        if(width < 768){
+        Swal.fire({
+            title: 'Informações da notificação',
+            html: `<p><b>Data:</b> ${item.data}</p>
+                   <p><b>Placa:</b> ${item.placa}</p>
+                   <p><b>Estado:</b> ${item.pendente === 'N' ? 'Pendente' : 'Pago'}</p>
+                   <p><b>Modelo:</b> ${item.modelo}</p>
+                   <p><b>Fabricante:</b> ${item.fabricante}</p>
+                   <p><b>Cor do veículo:</b> ${item.cor}</p>
+                   <p><b>Tipo:</b> ${item.tipo}</p>
+                   <p><b>Valor:</b> R$${item.valor},00</p>
+                   <p><b>Monitor:</b> ${item.monitor}</p>
+                   <p><b>Hora:</b> ${item.hora}</p>`,
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Auto de infração',
+            cancelButtonText: 'Fechar',
+            }).then((result) => {
+            if (result.isDismissed) {
+                Swal.close();
+            }
+            else if (result.isConfirmed) {
+                localStorage.setItem('autoInfracao', JSON.stringify(item))
+                localStorage.setItem('componente', 'AutoInfracao')
+            }
+            });
+        }else{
+            
+        }
+        }
 
     const reload = () => {
       setEstado(false)
@@ -268,7 +227,7 @@ const ListarNotificacoesAdmin = () => {
 
   return (
     <div className="dashboard-container">
-        <p className="mx-3 text-start fs-4 fw-bold">Listar notificações</p>
+        <p className="mx-3 text-start fs-4 fw-bold">Notificações pendentes</p>
         <div className="row">
         <div className="col-12">
         <div className="row">
@@ -279,11 +238,9 @@ const ListarNotificacoesAdmin = () => {
           <option value="selectPlaca">Placa</option>
           <option value="selectVaga">Vaga</option>
           <option value="selectTipo">Tipo</option>
-          <option value="selectTodos">Todos</option>
           </select>
           </div>
           <div className="col-3 text-end">
-          <button className="btn3 botao p-0 w-75 h-75" type="button" onClick={() => {createPDF()}}><AiFillPrinter  size={21}/></button>
           </div>
           <div className="col-1 text-end">
             <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21}/>
@@ -309,7 +266,7 @@ const ListarNotificacoesAdmin = () => {
                           <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Vaga
                           </th>
-                          <th className="border-bottom" id="tabelaUsuarios" scope="col">
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
                             Estado
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios2" scope="col">
@@ -332,11 +289,11 @@ const ListarNotificacoesAdmin = () => {
                       <tbody>
 
                     {data.map((item, index) => (
-                        <tr key={index} onClick={()=>mostrar(item)}>
+                        <tr key={index} onClick={()=>{mostrar(item)}}>
                           <td>{item.data}</td>
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
-                          <td style={
+                          <td id="tabelaUsuarios2" style={
                             item.pendente === 'S' ? {color: 'green'} : {color: 'red'}
                           }> {item.pendente === 'S' ? 'Pago' : 'Pendente'}</td>
                           <td id="tabelaUsuarios2">{item.fabricante}</td>
@@ -361,4 +318,4 @@ const ListarNotificacoesAdmin = () => {
   )
 }
 
-export default ListarNotificacoesAdmin
+export default ListarNotificacoesAgente;
