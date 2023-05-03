@@ -32,6 +32,9 @@ function red(id) {
     else if (analiseFeita.perfil[0] === 'admin'){
     localStorage.setItem('componente', 'VagasLivress');
     }
+    else if (analiseFeita.perfil[0] === 'agente'){
+    localStorage.setItem('componente', 'ListarNotificacoesAgente');
+    }
 }
         return (
           <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">

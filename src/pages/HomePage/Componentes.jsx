@@ -30,6 +30,8 @@ import SetoresAdmin from '../../components/SetoresAdmin';
 import VagasAdmin from '../../components/VagasAdmin';
 import HistoricoCaixa from '../../components/HistoricoCaixa';
 import ListarNotificacoesAdmin from '../../components/ListarNotificacoesAdmin';
+import ListarNotificacoesAgente from '../../components/ListarNotificacoesAgente';
+import AutoInfracao from '../../components/AutoInfracao';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -119,6 +121,12 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "ListarNotificacoesAdmin"){
             return <ListarNotificacoesAdmin />
+        }
+        else if(Componente === "ListarNotificacoesAgente"){
+            return <ListarNotificacoesAgente />
+        }
+        else if(Componente === "AutoInfracao"){
+            return <AutoInfracao />
         }
         else {
             return <Error />

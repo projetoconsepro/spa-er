@@ -71,6 +71,8 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
         } else if (loggedUser.perfil[0] === 'admin'){
             localStorage.setItem('componente', 'VagasLivress');
+        } else if (loggedUser.perfil[0] === 'agente'){
+            localStorage.setItem('componente', 'ListarNotificacoesAgente');
         }
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);

@@ -283,6 +283,26 @@ const Sidebar = () => {
             componente: "AbrirTurno",
         })
     }
+    else if (teste.perfil[0] === "agente"){
+        links.push({
+            className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Listar Notificações",
+            componente: "ListarNotificacoesAgente",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Listar Notificações",
+            componente: "ListarNotificacoesAgente",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Listar Notificações",
+            componente: "ListarNotificacoesAgente",
+        })
+    }
 
     return(
     <div className="header-container mb-4">
