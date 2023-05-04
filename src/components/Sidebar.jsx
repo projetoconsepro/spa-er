@@ -293,14 +293,14 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaParking />,
-            name: "‎ Listar Notificações",
-            componente: "ListarNotificacoesAgente",
+            name: "‎ Componente",
+            componente: "Componente",
         })
         links.push({
             className: styles.className,
             icon: <FaParking />,
-            name: "‎ Listar Notificações",
-            componente: "ListarNotificacoesAgente",
+            name: "‎ Componente",
+            componente: "Componente",
         })
     }
 

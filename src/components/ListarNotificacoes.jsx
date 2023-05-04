@@ -5,6 +5,7 @@ import { AiFillCheckCircle, AiFillPrinter } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin} from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal  from "sweetalert2";
+import Paginacao from "./Paginacao";
 
 const ListarNotificacoes = () => {
   const [resposta, setResposta] = useState([]);

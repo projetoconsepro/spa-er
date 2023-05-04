@@ -383,8 +383,11 @@ function validarPlaca(placa) {
               <select
                 className="form-select form-select-lg mb-2"
                 aria-label=".form-select-lg example"
-                id="tempos"
+                id="tempos" defaultValue="00:30:00"
               >
+                {user2.perfil[0] === "monitor" ? (
+                  <option value="00:10:00">Tolerância</option>
+                ) : ( null ) }
                 <option value="00:30:00">30 Minutos</option>
                 <option value="01:00:00">60 Minutos</option>
                 <option value="02:00:00">120 Minutos</option>

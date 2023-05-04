@@ -139,6 +139,7 @@ const ListarNotificacoesAgente = () => {
           requisicao.get('/notificacao').then((response) => {
             console.log(response)
             const newData = response.data.data.map((item) => ({
+                id_vaga_veiculo: item.id_vaga_veiculo,
                 id_notificacao: item.id_notificacao,
                 data: ArrumaHora(item.data),
                 placa: item.veiculo.placa,
@@ -188,7 +189,8 @@ const ListarNotificacoesAgente = () => {
             }
             });
         }else{
-            
+          localStorage.setItem('autoInfracao', JSON.stringify(item))
+          localStorage.setItem('componente', 'AutoInfracao')
         }
         }
 
@@ -205,6 +207,7 @@ const ListarNotificacoesAgente = () => {
       });
       requisicao.get('/notificacao').then((response) => {
         const newData = response.data.data.map((item) => ({
+            id_vaga_veiculo: item.id_vaga_veiculo,
             id_notificacao: item.id_notificacao,
             data: ArrumaHora(item.data),
             placa: item.veiculo.placa,
