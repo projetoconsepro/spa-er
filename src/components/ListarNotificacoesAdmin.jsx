@@ -4,15 +4,21 @@ import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Swal from 'sweetalert2'
+import Paginacao from './Paginacao';
 
 const ListarNotificacoesAdmin = () => {
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
+    const [data3, setData3] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState('')
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
+  
+    function handlePaginatedData(currentItems) {
+      setData(currentItems);
+    }
 
     function ArrumaHora(data, hora ) {
         const data2 = data.split("T");
@@ -71,9 +77,16 @@ const ListarNotificacoesAdmin = () => {
         doc.save(fileName);
       }
 
-      const mostrar = async (item) => {
-        const width = window.innerWidth
-        if(width < 768){
+      const mostrar = async (item, index) => {
+        const requisicao = axios.create({
+          baseURL: process.env.REACT_APP_HOST,
+          headers: {
+            token: token,
+            id_usuario: user2.id_usuario,
+            perfil_usuario: user2.perfil[0],
+          },
+        });
+        if(item.pendente === 'N'){
         Swal.fire({
             title: 'Informações da notificação',
             html: `<p><b>Data:</b> ${item.data}</p>
@@ -86,16 +99,56 @@ const ListarNotificacoesAdmin = () => {
                    <p><b>Monitor:</b> ${item.monitor}</p>
                    <p><b>Hora:</b> ${item.hora}</p>`,
             showCancelButton: true,
-            showConfirmButton: false,
+            showConfirmButton: true,
+            confirmButtonText: 'Regularizar',
+            confirmButtonColor: '#3A58C8',
             cancelButtonText: 'Fechar',
             }).then((result) => {
             if (result.isDismissed) {
                 Swal.close();
             }
+            else if(result.isConfirmed){
+              requisicao.put('/notificacao/',{
+                "id_vaga_veiculo": item.id_vaga_veiculo,
+            }).then((response) => {
+              if(response.data.msg.resultado){
+                Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
+                data[index].pendente = 'S';
+                setData([...data]);
+              }
+              else {
+                setEstado(true);
+                setMensagem(response.data.msg.msg);
+                setTimeout(() => {
+                  setEstado(false);
+                  setMensagem("")
+                }, 5000);
+              }
+            }).catch((error) => {
+            })
+            }
             });
-        }else{
-            
-        }
+          }else{
+            Swal.fire({
+              title: 'Informações da notificação',
+              html: `<p><b>Data:</b> ${item.data}</p>
+                     <p><b>Placa:</b> ${item.placa}</p>
+                     <p><b>Estado:</b> ${item.pendente === 'N' ? 'Pendente' : 'Pago'}</p>
+                     <p><b>Modelo:</b> ${item.modelo}</p>
+                     <p><b>Fabricante:</b> ${item.fabricante}</p>
+                     <p><b>Tipo:</b> ${item.tipo}</p>
+                     <p><b>Valor:</b> R$${item.valor},00</p>
+                     <p><b>Monitor:</b> ${item.monitor}</p>
+                     <p><b>Hora:</b> ${item.hora}</p>`,
+              showCancelButton: true,
+              showConfirmButton: false,
+              cancelButtonText: 'Fechar',
+              }).then((result) => {
+              if (result.isDismissed) {
+                  Swal.close();
+              }
+              });
+          }
         }
 
     const filtroSelect = async () => {
@@ -124,7 +177,7 @@ const ListarNotificacoesAdmin = () => {
         else if(select === 'selectTodos'){
           setEstado(false)
           setMensagem('')
-          setData(data2)
+          setData(data3)
         }
         else if(select === 'selectPlaca'){
           setEstado(false)
@@ -210,7 +263,9 @@ const ListarNotificacoesAdmin = () => {
             },
           });
           requisicao.get('/notificacao').then((response) => {
+            console.log(response)
             const newData = response.data.data.map((item) => ({
+                id_vaga_veiculo: item.id_vaga_veiculo,
                 id_notificacao: item.id_notificacao,
                 data: ArrumaHora(item.data),
                 placa: item.veiculo.placa,
@@ -223,10 +278,9 @@ const ListarNotificacoesAdmin = () => {
                 monitor: item.monitor.nome,
                 hora: ArrumaHora2(item.data),
             }));
-            const arrayNovo = newData.filter((item) => item.pendente === 'N')
-            setData(arrayNovo)
-
+            setData(newData)
             setData2(newData)
+            setData3(newData)
 
         }).catch((error) => {
             console.log(error)
@@ -246,6 +300,7 @@ const ListarNotificacoesAdmin = () => {
       });
       requisicao.get('/notificacao').then((response) => {
         const newData = response.data.data.map((item) => ({
+            id_vaga_veiculo: item.id_vaga_veiculo,
             id_notificacao: item.id_notificacao,
             data: ArrumaHora(item.data),
             placa: item.veiculo.placa,
@@ -260,6 +315,7 @@ const ListarNotificacoesAdmin = () => {
         }));
         setData(newData)
         setData2(newData)
+        setData3(newData)
     }).catch((error) => {
         console.log(error)
       })
@@ -332,7 +388,7 @@ const ListarNotificacoesAdmin = () => {
                       <tbody>
 
                     {data.map((item, index) => (
-                        <tr key={index} onClick={()=>mostrar(item)}>
+                        <tr key={index} onClick={()=>mostrar(item, index)}>
                           <td>{item.data}</td>
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
@@ -357,6 +413,7 @@ const ListarNotificacoesAdmin = () => {
             </div>
           </div>
         </div>
+        <Paginacao data={data2} itemsPerPage={25} handleCurrentItems={handlePaginatedData} />
       </div>
   )
 }

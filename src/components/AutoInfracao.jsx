@@ -1,11 +1,17 @@
+import axios from 'axios';
 import { React, useEffect, useState } from 'react'
 import { AiFillCheckCircle, AiFillPrinter } from 'react-icons/ai';
 import { BiErrorCircle } from 'react-icons/bi';
 import { BsCalendarDate, BsCashCoin, BsFillPersonFill } from 'react-icons/bs';
 import { FaCarAlt, FaClipboardList, FaParking, FaSearch } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const AutoInfracao = () => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
     const [data, setData] = useState([])
+    const [codigo, setCodigo] = useState('')
 
     useEffect(() => {
         document.title = 'Auto de Infração'
@@ -13,6 +19,36 @@ const AutoInfracao = () => {
         setData([infos])
         console.log([infos])
     }, [])
+
+    const confirmarInfracao = () => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+
+      requisicao.post('/notificacao/auto-infracao',{
+          codigo: codigo,
+          idVagaVeiculo: data[0].id_vaga_veiculo,
+      }).then((response) => {
+        if (response.data.msg.resultado){
+          Swal.fire( 'Sucesso!', 'Auto de infração confirmado com sucesso!', 'success')
+          setTimeout(() => {
+            localStorage.removeItem('autoInfracao')
+            localStorage.setItem('componente', 'ListarNotificacoesAgente')
+            Swal.close()
+          }, 1000);
+        } else {
+          Swal.fire( 'Erro!', `${response.data.msg.msg}`, 'error')
+
+        }
+    }).catch((error) => {
+        console.log(error)
+    })
+  }
 
   return (
     <div className="col-12 px-3">
@@ -69,17 +105,17 @@ const AutoInfracao = () => {
 
         <div className="row">
             <div className="col-12">
-                <button className="btn4 botao mt-4"> REGISTRAR PROVA </button>
+                <button className="btn3 botao mt-4 w-50"> REGISTRAR PROVA </button>
             </div>
             <div className="col-12">
-                <button className="btn2 botao w-100 mt-3"> VISUALIZAR FOTOS </button>
+                <button className="btn2 botao w-50 mt-3 mx-0"> VISUALIZAR FOTOS </button>
             </div>
-            <div className="col-12 input-group w-100 mt-5">
+            <div className="col-12 input-group mt-5">
                 <span className="input-group-text bg-blue-50 text-white" id="basic-addon1"><FaClipboardList /></span>
-                <input className="form-control bg-white rounded-end border-bottom-0" placeholder="Código do DETRAN" aria-describedby="basic-addon1" />
+                <input className="form-control bg-white rounded-end border-bottom-0" placeholder="Código do DETRAN" value={codigo} onChange={(e) => setCodigo(e.target.value)} aria-describedby="basic-addon1" />
             </div>
             <div className="col-12">
-                <button className="btn4 botao mt-3 mb-5"> CONFIRMAR AUTO DE INFRAÇÃO </button>
+                <button className="btn4 botao mt-3 mb-5 w-50" onClick={() => {confirmarInfracao()}}> CONFIRMAR AUTO DE INFRAÇÃO </button>
             </div>
         </div>
     </div>

@@ -1,23 +1,13 @@
-import React, { useContext } from 'react';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from "../contexts/auth";
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { React, useState, useEffect  } from 'react';
 import Sidebar from '../../components/Sidebar';
 import Componentes from './Componentes';
-import { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const HomePage =  () => {
-    const { authenticated, logout } = useContext(AuthContext);
     const [data , setData] = useState('');
-    const navigate = useNavigate();
     const teste = localStorage.getItem("user");
     const teste2 = JSON.parse(teste);
     const [cont, setCont] = useState(0);
-
-    const handleLogout = () => {
-        logout();
-    }
 
     if(teste === null || teste === undefined){
         if (localStorage.getItem("componente") !== "RegisterPage" && localStorage.getItem("componente") !== "LoginPage"

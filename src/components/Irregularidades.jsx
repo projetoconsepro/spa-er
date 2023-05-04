@@ -13,10 +13,10 @@ const Irregularidades = () => {
   const [estado, setEstado ] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const token = localStorage.getItem("token");
-  const [saldoCredito, setSaldoCredito] = useState(0);
-  const [valorCobranca, setValorCobranca] = useState(0);
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
+  const [saldoCredito, setSaldoCredito] = useState(0);
+  const [valorCobranca, setValorCobranca] = useState(0);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
 
