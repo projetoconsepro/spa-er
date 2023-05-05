@@ -174,6 +174,12 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaCarAlt />,
+            name: "‎ Dashboard",
+            componente: "Dashboard",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaCarAlt />,
             name: "‎ Buscar Veículo",
             componente: "BuscarVeiculo",
         })

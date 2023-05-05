@@ -404,6 +404,9 @@ const VagasAdmin = () => {
                             <div className="alert alert-danger" id="sim" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
                             </div>
+                            <div>
+                            <button className="btn2 botao mt-4" type="button" onClick={() => localStorage.setItem('componente', "SetoresAdmin")}>Voltar</button>
+                            </div>
                         </div>
                     </div>
                 </div>

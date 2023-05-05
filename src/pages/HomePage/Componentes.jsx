@@ -32,6 +32,7 @@ import HistoricoCaixa from '../../components/HistoricoCaixa';
 import ListarNotificacoesAdmin from '../../components/ListarNotificacoesAdmin';
 import ListarNotificacoesAgente from '../../components/ListarNotificacoesAgente';
 import AutoInfracao from '../../components/AutoInfracao';
+import Dashboard from '../../components/Dashboard';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -127,6 +128,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "AutoInfracao"){
             return <AutoInfracao />
+        }
+        else if(Componente === "Dashboard"){
+            return <Dashboard />
         }
         else {
             return <Error />
