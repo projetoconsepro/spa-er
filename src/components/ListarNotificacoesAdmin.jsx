@@ -190,7 +190,8 @@ const ListarNotificacoesAdmin = () => {
                 confirmButtonText: 'Filtrar',
                 preConfirm: () => {
                     const placa = document.getElementById("placaId").value;
-                    const newData = data2.filter((item) => item.placa === placa)
+                    const placa2 = placa.toUpperCase()
+                    const newData = data2.filter((item) => item.placa === placa2)
                     setData(newData)
                     if (newData.length === 0) {
                         setEstado(true)

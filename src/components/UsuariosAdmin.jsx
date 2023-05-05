@@ -1,11 +1,13 @@
 import axios from 'axios'
 import { React, useEffect, useState } from 'react'
-import { FaSearch, FaUserPlus } from 'react-icons/fa'
+import { FaEllipsisH, FaEye, FaPowerOff, FaSearch, FaUserPlus } from 'react-icons/fa'
 import { GrDocumentConfig } from 'react-icons/gr'
 import { BiEdit } from 'react-icons/bi'
+import { MdManageSearch } from 'react-icons/md'
 import ScrollTopArrow from './ScrollTopArrow'
 import Swal from 'sweetalert2'
 import sha256 from 'crypto-js/sha256';
+import { BsFillShieldLockFill } from 'react-icons/bs'
 
 const UsuariosAdmin = () => {
     const [data, setData] = useState([])
@@ -407,8 +409,10 @@ const UsuariosAdmin = () => {
                    <label for="telefone" class="form-label col-3 fs-6">Telefone:</label>
                    <input id="swal-input3" class="swal2-input" value="${item.telefone}">
                    </div>
+                   <div className="form-group">
                    <label for="perfil" class="form-label col-3 fs-6">Perfil:</label>
                    <input id="swal-input4" class="swal2-input" disabled value="${item.perfil}">
+                   </div>
                    <div className="form-group">
                    <label for="status" class="form-label col-3 fs-6">Status:</label>
                    <select id="swal-input5" class="swal2-input">
@@ -444,16 +448,15 @@ const UsuariosAdmin = () => {
                     ativo: ativo,
                     perfil: perfil,
                     }).then((response) => {
-                        data3[index] = {ativo: ativo, email: email, id_usuario: item.id_usuario, nome: nome2, perfil: perfil, telefone: telefone}
-                        console.log(data3[index])
-                        setData3([...data])
                         if(response.data.msg.resultado){
+                          data3[index] = {ativo: ativo, email: email, id_usuario: item.id_usuario, nome: nome2, perfil: perfil, telefone: telefone}
+                          console.log(data3[index])
+                          setData3([...data])
                           Swal.fire({
                               title: 'Sucesso!',
                               text: 'Usuário editado com sucesso!',
                               icon: 'success',
                               confirmButtonText: 'Ok'
-  
                           })
                       }else{
                           Swal.fire({
@@ -476,6 +479,145 @@ const UsuariosAdmin = () => {
             allowOutsideClick: () => !Swal.isLoading()
         });
     }
+
+    const desativaUsuario = async (item, index) => {
+        Swal.fire({
+            title: item.ativo === 'S' ? 'Desativar usuário' : 'Ativar usuário',
+            text: item.ativo === 'S' ? 'Tem certeza que deseja desativar esse usuário?' : 'Tem certeza que deseja ativar esse usuário?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Não',
+            confirmButtonColor: '#3A58C8',
+            cancelButtonColor: '#d33',
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                const requisicao = axios.create({
+                    baseURL: process.env.REACT_APP_HOST,
+                    headers: {
+                      token: token,
+                      id_usuario: user2.id_usuario,
+                      perfil_usuario: user2.perfil[0],
+                    },
+                  });
+                  requisicao.put('/usuario', {
+                    id_usuario: item.id_usuario,
+                    nome: item.nome,
+                    email: item.email,
+                    telefone: item.telefone,
+                    ativo: item.ativo === 'N' ? 'S' : 'N',
+                    perfil: item.perfil,
+                    }).then((response) => {
+                        if(response.data.msg.resultado){
+                        data3[index] = {ativo: 'N', email: item.email, id_usuario: item.id_usuario, nome: item.nome, perfil: item.perfil, telefone: item.telefone}
+                        setData3([...data])
+                          Swal.fire({
+                              title: 'Sucesso!',
+                              text: item.ativo === 'N' ? 'Usuário ativado com sucesso!' : 'Usuário desativado com sucesso!',
+                              icon: 'success',
+                            })
+                        }else{
+                              Swal.fire({
+                                  title: 'Erro!',
+                                  text: 'Erro ao alterar usuário!',
+                                  icon: 'error',
+                                  confirmButtonText: 'Ok'
+                              })
+                          }
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+                  }
+        })
+    }
+       
+    const mudarSenha = async (item) => {
+          Swal.fire({
+              title: 'Tem certeza que deseja alterar a senha?',
+              text: 'Será enviado um e-mail para o usuário com a nova senha!',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Sim',
+              cancelButtonText: 'Não',
+              confirmButtonColor: '#3A58C8',
+              cancelButtonColor: '#d33',
+              showLoaderOnConfirm: true,
+          }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                  title: 'Alterar senha',
+                  html: `<div class="form-group">
+                  <label for="senhausuario" class="form-label col-3 fs-6">Senha:</label>
+                  <input id="swal-input1" class="swal2-input" type="text" placeholder="Digite a nova senha">
+                  </div>`,
+                  showCancelButton: true,
+                  confirmButtonText: 'Salvar',
+                  confirmButtonColor: '#3A58C8',
+                  cancelButtonText: 'Cancelar',
+                  showLoaderOnConfirm: true,
+                  preConfirm: () => {
+                      const senha = document.getElementById('swal-input1').value;
+                      const password = sha256(senha).toString();
+                          const requisicao = axios.create({
+                              baseURL: process.env.REACT_APP_HOST,
+                              headers: {
+                                token: token,
+                                id_usuario: user2.id_usuario,
+                                perfil_usuario: user2.perfil[0],
+                              },
+                            });
+                            Swal.fire({
+                              title: 'Você tem certeza que deseja alterar a senha?',
+                              text: `A senha do usuário será: ${senha}`,
+                              icon: 'warning',
+                              showCancelButton: true,
+                              confirmButtonText: 'Sim',
+                              cancelButtonText: 'Não',
+                              confirmButtonColor: '#3A58C8',
+                              cancelButtonColor: '#d33',
+                              showLoaderOnConfirm: true,
+                            }).then((result) => {
+                                if(result.isConfirmed){
+                                requisicao.put('/usuario/admin/senha', {
+                                  id_usuario: item.id_usuario,
+                                  nome: item.nome,
+                                  email: item.email,
+                                  telefone: item.telefone,
+                                  senha: password,
+                                  }).then((response) => {
+                                    console.log(response)
+                                      if(response.data.msg.resultado){
+                                        Swal.fire({
+                                            title: 'Sucesso!',
+                                            text: 'Senha alterada com sucesso!',
+                                            icon: 'success',
+                                            confirmButtonText: 'Ok'
+                                        })
+                                    }else{
+                                        Swal.fire({
+                                            title: 'Erro!',
+                                            text: 'Erro ao alterar senha!',
+                                            icon: 'error',
+                                            confirmButtonText: 'Ok'
+                                        })
+                                    }
+                                  }).catch((error) => {
+                                    console.log(error)
+                                  })
+                                }else{
+                                  console.log(result)
+                                }
+                              });
+                            },      
+                          })
+              }
+              else{
+                  console.log('naoi')
+              }
+          })    
+    }
+  
+
 
   return (
     <div className="dashboard-container mb-5">
@@ -521,14 +663,28 @@ const UsuariosAdmin = () => {
                                 <tbody>
                                     {data.map((item, index) => (
                                         <tr className="card-list" key={index}>
-                                            <th className="fw-bolder col" scope="row" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}  onClick={() => {informacoes(item)}}> 
+                                            <th className="fw-bolder col" scope="row" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> 
                                             {item.nome.length > 14 ? item.nome.substring(0, 14) + "..." : item.nome}
                                              </th>
-                                            <td className="fw-bolder col" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}  onClick={() => {informacoes(item)}}> <small> {item.telefone} </small></td>
-                                            <td className="fw-bolder col" id="tabelaUsuarios2" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}  onClick={() => {informacoes(item)}}> <small> {item.email} </small></td>
-                                            <td className="fw-bolder col" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}  onClick={() => {informacoes(item)}}> <small> {item.perfil} </small></td>
-                                            <td className="fw-bolder col" id="tabelaUsuarios2" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}  onClick={() => {informacoes(item)}}> <small> {item.ativo === 'S' ? 'Ativado' : 'Desativado'} </small></td>
-                                            <td className="fw-bolder col" id="tabelaUsuarios3" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }} onClick={()=>{editaUsuario(item, index)}}> <small><BiEdit size={20} /></small></td>
+                                            <td className="fw-bolder col" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> <small> {item.telefone} </small></td>
+                                            <td className="fw-bolder col" id="tabelaUsuarios2" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> <small> {item.email} </small></td>
+                                            <td className="fw-bolder col" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> <small> {item.perfil} </small></td>
+                                            <td className="fw-bolder col" id="tabelaUsuarios2" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> <small> {item.ativo === 'S' ? 'Ativado' : 'Desativado'} </small></td>
+                                            <td className="fw-bolder col" id="tabelaUsuarios3" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}>
+                                              <div className="btn-group">
+                                                <button className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                  <FaEllipsisH /> 
+                                                </button>
+                                              <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
+                                                <h6 className="dropdown-item d-flex align-items-center" onClick={() => {mudarSenha(item)}}> 
+                                                <BsFillShieldLockFill /> ‎‎  Mudar senha </h6>
+                                                <h6 className="dropdown-item d-flex align-items-center" onClick={()=>{informacoes(item)}}>
+                                                  <FaEye />‎‎  Ver mais </h6>
+                                                  <h6 className="dropdown-item d-flex align-items-center" onClick={() => {desativaUsuario(item)}} style={{ color : item.ativo === 'S' ?  'red' :'#0F5132' }}>
+                                                    <FaPowerOff size={13} className='mb-1'/> ‎‎   {item.ativo === 'S' ? 'Desativar' : 'Ativar'}</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
