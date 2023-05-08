@@ -311,6 +311,7 @@ const RegistrarVagaMonitor = () => {
                                 <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="pagamentos">
                                 <option value="dinheiro">Dinheiro</option>
                                 <option value="pix">PIX</option>
+                                <option value="parkimetro">Parkimetro</option>
                                 </select>
                             </div>
 

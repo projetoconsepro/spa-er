@@ -4,7 +4,8 @@ import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Swal from 'sweetalert2'
-import Paginacao from './Paginacao';
+import Paginacao from '../util/Paginacao';
+import RelatoriosPDF from '../util/RelatoriosPDF';
 
 const ListarNotificacoesAdmin = () => {
     const [data, setData] = useState([])
@@ -36,45 +37,9 @@ const ListarNotificacoesAdmin = () => {
       }
 
       const createPDF = () => {
-        const doc = new jsPDF();
-      
-        // Define as colunas da tabela
-        const columns = ['Data', 'Placa', 'Vaga', 'Estado', 'Fabricante', 'Modelo', 'Tipo', 'Valor'];
-      
-        // Cria uma matriz com os dados da tabela
-        const dataD = [];
-        dataD.push(...data.map((item) => [item.data, item.placa, item.vaga, item.pendente === 'S' ? 'Pago' : 'Pendente', item.fabricante, item.modelo, item.tipo, item.valor]));
-        // Cria a tabela com o método table do jsPDF
-        doc.autoTable({
-          head: [columns],
-          body: dataD,
-          styles: {
-            cell: {
-              textColor: [0, 0, 0], // cor padrão do texto
-            },
-          },
-          didParseCell: function (data) {
-            if (data.column.index === 3 && data.cell.raw === "Pendente") {
-              data.cell.styles.textColor = 'red';
-            } 
-            else if(data.column.index === 3 && data.cell.raw === "Pago"){
-              data.cell.styles.textColor = 'green'; 
-            }
-          },
-        });
-        
-        // cria a data atual formatada
-      const dateNow = new Date();
-      const day = dateNow.getDate().toString().padStart(2, "0"); // adiciona um zero à esquerda se o número tiver apenas um dígito
-      const month = (dateNow.getMonth() + 1).toString().padStart(2, "0"); // adiciona um zero à esquerda se o número tiver apenas um dígito
-      const year = dateNow.getFullYear().toString().slice(-2); // pega apenas os últimos dois dígitos do ano
-      const formattedDate = `${day}-${month}-${year}`;
-
-// define o nome do arquivo
-      const fileName = `${formattedDate} - Irregularidades.pdf`;
-
-        // Salva o PDF com o nome tabela.pdf
-        doc.save(fileName);
+        const nomeArquivo = 'Relatório de irregularidades'
+        const cabecalho = ['Data', 'Placa', 'Vaga', 'Estado', 'Fabricante', 'Modelo', 'Tipo', 'Valor'];
+        RelatoriosPDF(nomeArquivo, cabecalho, data)
       }
 
       const mostrar = async (item, index) => {
@@ -266,16 +231,16 @@ const ListarNotificacoesAdmin = () => {
           requisicao.get('/notificacao').then((response) => {
             console.log(response)
             const newData = response.data.data.map((item) => ({
-                id_vaga_veiculo: item.id_vaga_veiculo,
-                id_notificacao: item.id_notificacao,
                 data: ArrumaHora(item.data),
                 placa: item.veiculo.placa,
                 vaga: item.vaga,
-                pendente: item.pago,
+                pendente: item.pago === 'S' ? 'Pago' : 'Pendente',
                 fabricante: item.veiculo.modelo.fabricante.nome,
                 modelo: item.veiculo.modelo.nome,
                 tipo: item.tipo_notificacao.nome,
                 valor: item.valor,
+                id_vaga_veiculo: item.id_vaga_veiculo,
+                id_notificacao: item.id_notificacao,
                 monitor: item.monitor.nome,
                 hora: ArrumaHora2(item.data),
             }));
@@ -394,8 +359,8 @@ const ListarNotificacoesAdmin = () => {
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
                           <td style={
-                            item.pendente === 'S' ? {color: 'green'} : {color: 'red'}
-                          }> {item.pendente === 'S' ? 'Pago' : 'Pendente'}</td>
+                            item.pendente === 'Pago' ? {color: 'green'} : {color: 'red'}
+                          }> {item.pendente}</td>
                           <td id="tabelaUsuarios2">{item.fabricante}</td>
                           <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td id="tabelaUsuarios2">{item.tipo}</td>
@@ -414,7 +379,6 @@ const ListarNotificacoesAdmin = () => {
             </div>
           </div>
         </div>
-        <Paginacao data={data2} itemsPerPage={25} handleCurrentItems={handlePaginatedData} />
       </div>
   )
 }

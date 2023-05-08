@@ -16,9 +16,8 @@ const RegistrarEstacionamentoParceiro = () => {
   const [tempo, setTempo] = useState("");
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
-  const token = localStorage.getItem('token');
-  const user = localStorage.getItem('user');
-  const user2 = JSON.parse(user);
+  const [token, setToken] = useState("");
+  const [user2, setUser2] = useState("");
 
   const param = async () => {
     const requisicao = axios.create({
@@ -60,6 +59,9 @@ function validarPlaca(placa) {
   };
 
   const handleRegistrar = async () => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = axios.create({
@@ -104,6 +106,9 @@ function validarPlaca(placa) {
       }else{
       vagaa[0] = vaga;
       }
+
+      const formaPagamentoo = document.getElementById("pagamentos").value;
+      console.log(formaPagamentoo)
       await requisicao.get(`/veiculo/${placaMaiuscula}`).then(
           response => {
             console.log('b', response)
@@ -114,7 +119,7 @@ function validarPlaca(placa) {
                   placa: placaMaiuscula,
                   numero_vaga: vagaa,
                   tempo: tempo,
-                  pagamento: "dinheiro",
+                  pagamento: formaPagamentoo,
                   id_vaga_veiculo: response.data.data[0].estacionado[0].id_vaga_veiculo
                 }).then(
                   response => {
@@ -150,6 +155,7 @@ function validarPlaca(placa) {
             }
                 }
               );
+            
 
                   
               }else {
@@ -158,7 +164,7 @@ function validarPlaca(placa) {
                   placa: placaMaiuscula,
                   numero_vaga: vagaa,
                   tempo: tempo,
-                  pagamento: "dinheiro"
+                  pagamento: formaPagamentoo
                 }).then(
                     response => {
                       console.log(response)
@@ -198,7 +204,7 @@ function validarPlaca(placa) {
                 placa: placaMaiuscula,
                 numero_vaga: vagaa,
                 tempo: tempo,
-                pagamento: "dinheiro"
+                pagamento: formaPagamentoo
               }).then(
                   response => {
                     console.log(response)
@@ -267,6 +273,9 @@ function validarPlaca(placa) {
         else if(tempoo === "00:10:00"){
             setValorCobranca2(valorCobranca*0);
         }
+        else{
+            setValorCobranca2(valorCobranca*0);
+        }
 }
 
   useEffect(() => {
@@ -307,6 +316,12 @@ function validarPlaca(placa) {
   }, [textoPlaca]);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
+    setToken(token);
+    setUser2(user2.perfil[0]);
+    console.log(user2)
    if(localStorage.getItem('turno') !== 'true' && user2.perfil[0] === "monitor") {
       localStorage.setItem("componente", "FecharTurno");
   }
@@ -378,14 +393,14 @@ function validarPlaca(placa) {
                 />
               </div>
             </div>
-            <div className="text-start mt-3 mb-5 px-2" onChange={() => {atualiza()}}>
+            <div className="text-start mt-3 mb-1 px-2" onChange={() => {atualiza()}}>
               <h6>Selecione o tempo:</h6>
               <select
                 className="form-select form-select-lg mb-2"
                 aria-label=".form-select-lg example"
                 id="tempos" defaultValue="00:30:00"
               >
-                {user2.perfil[0] === "monitor" ? (
+                {user2 === "monitor" ? (
                   <option value="00:10:00">Tolerância</option>
                 ) : ( null ) }
                 <option value="00:30:00">30 Minutos</option>
@@ -394,6 +409,18 @@ function validarPlaca(placa) {
                 </select>
                 <p id="tempoCusto" className="text-end"> Valor a ser cobrado: R$ {valorcobranca2},00 </p>
             </div>
+
+            <div className="h6 mt-1 mb-4" >
+                 <p className='text-start'>Forma de pagamento:</p>
+                 <select className="form-select form-select-lg mb-3" defaultValue="dinheiro" aria-label=".form-select-lg example" id="pagamentos">
+                 <option value="dinheiro">Dinheiro</option>
+                 <option value="pix">PIX</option>
+                 {user2 === "monitor" ? (
+                  <option value="parkimetro">Parkimetro</option>
+                ) : ( null ) }
+                 </select>
+            </div>
+
             <div className="mb-2 mt-3 gap-2 d-md-block">
               <button
                 type="submit"
