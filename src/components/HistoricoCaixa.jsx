@@ -5,6 +5,7 @@ import CarroLoading from './Carregamento'
 import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'
 import jsPDF from 'jspdf';
+import RelatoriosPDF from '../util/RelatoriosPDF'
 
 const HistoricoCaixa = () => {
     const [data, setData] = useState([])
@@ -25,40 +26,11 @@ const HistoricoCaixa = () => {
     }
 
     const createPDF = () => {
-      const doc = new jsPDF();
-    
-      // carrega a imagem
-      const img = new Image();
-      img.src = '../../assets/img/logoconseproof2.png';
-    
-      img.onload = function () {
-        // adiciona a imagem ao pdf
-        doc.addImage(img, 'PNG', 10, 10, 50, 50);
-
-        const columns = ['Data', 'Nome', 'Abertura', 'Fechamento', 'Valor de abertura', 'Valor de fechamento'];
-        const dataD = [];
-        dataD.push(...data.map((item) => [item.data, item.nome, item.abertura, item.fechamento, `R$${item.valor_abertura},00`, item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento},00`]));
-        doc.autoTable({
-          head: [columns],
-          body: dataD,
-          startY: 80, // começa a tabela após a imagem
-          styles: {
-            cell: {
-              textColor: [0, 0, 0],
-            },
-          },
-        });
-    
-        const dateNow = new Date();
-        const day = dateNow.getDate().toString().padStart(2, "0"); 
-        const month = (dateNow.getMonth() + 1).toString().padStart(2, "0"); 
-        const year = dateNow.getFullYear().toString().slice(-2);
-        const formattedDate = `${day}-${month}-${year}`;
-    
-        const fileName = `${formattedDate} - Caixa_Monitor.pdf`;
-    
-        doc.save(fileName);
-      };
+      const dataD = [];
+      const nomeArquivo = 'Relatório do caixa'
+      const cabecalho = ['Data', 'Nome', 'Abertura', 'Fechamento', 'Valor de abertura', 'Valor de fechamento'];
+      dataD.push(...data.map((item) => ([item.data, item.nome, item.abertura, item.fechamento, `R$${item.valor_abertura},00`, `R$${item.valor_fechamento},00`])))
+      RelatoriosPDF(nomeArquivo, cabecalho, dataD)
     };
     
 
@@ -87,12 +59,12 @@ const HistoricoCaixa = () => {
                     requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
                        
                         const newData = response.data.data.map((item) => ({
+                            data: ArrumaHora(item.data),
                             nome: item.nome,
                             abertura: item.hora_abertura,
                             fechamento: item.hora_fechamento,
                             valor_abertura: item.valor_abertura,
                             valor_fechamento: item.valor_fechamento,
-                            data: ArrumaHora(item.data)
                         }))
                         if(newData.length <= 0){
                           setEstado(true)
@@ -131,12 +103,12 @@ const HistoricoCaixa = () => {
               requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
                 console.log(response)
                 const newData = response.data.data.map((item) => ({
+                  data: ArrumaHora(item.data),
                   nome: item.nome,
                   abertura: item.hora_abertura,
                   fechamento: item.hora_fechamento,
                   valor_abertura: item.valor_abertura,
                   valor_fechamento: item.valor_fechamento,
-                  data: ArrumaHora(item.data)
                 }))
                 if(newData.length <= 0){
                   setEstado(true)
@@ -175,12 +147,12 @@ const HistoricoCaixa = () => {
           const passar = btoa(idrequisicao)
           requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
             const newData = response.data.data.map((item) => ({
-                nome: item.nome,
-                abertura: item.hora_abertura,
-                fechamento: item.hora_fechamento,
-                valor_abertura: item.valor_abertura,
-                valor_fechamento: item.valor_fechamento,
-                data: ArrumaHora(item.data)
+              data: ArrumaHora(item.data),
+              nome: item.nome,
+              abertura: item.hora_abertura,
+              fechamento: item.hora_fechamento,
+              valor_abertura: item.valor_abertura,
+              valor_fechamento: item.valor_fechamento,
             }))
             if(newData.length <= 0){
               setEstado(true)
@@ -239,12 +211,12 @@ const HistoricoCaixa = () => {
           const passar = btoa(idrequisicao)
           requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
             const newData = response.data.data.map((item) => ({
-                nome: item.nome,
-                abertura: item.hora_abertura,
-                fechamento: item.hora_fechamento,
-                valor_abertura: item.valor_abertura,
-                valor_fechamento: item.valor_fechamento,
-                data: ArrumaHora(item.data)
+              data: ArrumaHora(item.data),
+              nome: item.nome,
+              abertura: item.hora_abertura,
+              fechamento: item.hora_fechamento,
+              valor_abertura: item.valor_abertura,
+              valor_fechamento: item.valor_fechamento,
             }))
             setData(newData)
             if(newData.length <= 0){
