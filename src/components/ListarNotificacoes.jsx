@@ -175,6 +175,7 @@ const ListarNotificacoes = () => {
     };
 
     const startPlaca = async (placa) => {
+      console.log(placa)
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -512,7 +513,7 @@ const ListarNotificacoes = () => {
     </div>
 
       {data.map((link, index) => (
-        <div className="card border-0 shadow mt-2" key={index}>
+        <div className="card border-0 shadow mt-2 mb-2" key={index}>
           <div
             className="card-body"
             onClick={() => {

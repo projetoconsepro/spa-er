@@ -18,7 +18,7 @@ const RelatoriosPDF = (nomeArquivo, cabecalho, array) => {
         if (data.column.index === 3 && data.cell.raw === "Pendente") {
           data.cell.styles.textColor = 'red';
         } 
-        else if(data.column.index === 3 && data.cell.raw === "Pago"){
+        else if(data.column.index === 3 && data.cell.raw === "Quitado"){
           data.cell.styles.textColor = 'green'; 
         }
       },

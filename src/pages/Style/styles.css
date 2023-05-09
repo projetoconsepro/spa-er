@@ -7981,6 +7981,12 @@ textarea.form-control-lg {
     border-radius: 12px;
 }
 
+.card-body7 {
+    height: 18rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+
 #divD[disabled]{
     pointer-events: none;
   opacity: 0.5;
