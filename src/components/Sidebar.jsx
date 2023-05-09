@@ -4,7 +4,8 @@ import {
     FaMapMarkerAlt,
     FaUserPlus,
     FaCar,
-    FaHistory
+    FaHistory,
+    FaUser
  } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { SiOpenstreetmap } from "react-icons/si";
@@ -196,10 +197,17 @@ const Sidebar = () => {
                 },
                 {
                     className: styles.className,
+                    icon: <FaUser />,
+                    name: "‎ Clientes",
+                    componente: "ClientesAdmin",
+                },
+                {
+                    className: styles.className,
                     icon: <MdAddLocationAlt />,
                     name: "‎ Setores",
                     componente: "SetoresAdmin",
                 },
+                
                 {
                     icon: <FaParking />,
                     className: styles.className,

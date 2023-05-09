@@ -51,12 +51,12 @@ const ListarNotificacoesAdmin = () => {
             perfil_usuario: user2.perfil[0],
           },
         });
-        if(item.pendente === 'N'){
+        if(item.pendente === 'Pendente') {
         Swal.fire({
             title: 'Informações da notificação',
             html: `<p><b>Data:</b> ${item.data}</p>
                    <p><b>Placa:</b> ${item.placa}</p>
-                   <p><b>Estado:</b> ${item.pendente === 'N' ? 'Pendente' : 'Pago'}</p>
+                   <p><b>Estado:</b> ${item.pendente}</p>
                    <p><b>Modelo:</b> ${item.modelo}</p>
                    <p><b>Fabricante:</b> ${item.fabricante}</p>
                    <p><b>Tipo:</b> ${item.tipo}</p>
@@ -76,9 +76,9 @@ const ListarNotificacoesAdmin = () => {
               requisicao.put('/notificacao/',{
                 "id_vaga_veiculo": item.id_vaga_veiculo,
             }).then((response) => {
-              if(response.data.msg.resultado){
+              if (response.data.msg.resultado) {
                 Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
-                data[index].pendente = 'S';
+                data[index].pendente = 'Quitado';
                 setData([...data]);
               }
               else {
@@ -98,7 +98,7 @@ const ListarNotificacoesAdmin = () => {
               title: 'Informações da notificação',
               html: `<p><b>Data:</b> ${item.data}</p>
                      <p><b>Placa:</b> ${item.placa}</p>
-                     <p><b>Estado:</b> ${item.pendente === 'N' ? 'Pendente' : 'Pago'}</p>
+                     <p><b>Estado:</b> ${item.pendente}</p>
                      <p><b>Modelo:</b> ${item.modelo}</p>
                      <p><b>Fabricante:</b> ${item.fabricante}</p>
                      <p><b>Tipo:</b> ${item.tipo}</p>
@@ -191,7 +191,7 @@ const ListarNotificacoesAdmin = () => {
         const inputOptions = new Promise((resolve) => {
           setTimeout(() => {
             resolve({
-              'S': 'Pago',
+              'S': 'Quitado',
               'N': 'Pendente'
             })
           }, 1000)
@@ -234,7 +234,7 @@ const ListarNotificacoesAdmin = () => {
                 data: ArrumaHora(item.data),
                 placa: item.veiculo.placa,
                 vaga: item.vaga,
-                pendente: item.pago === 'S' ? 'Pago' : 'Pendente',
+                pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
                 fabricante: item.veiculo.modelo.fabricante.nome,
                 modelo: item.veiculo.modelo.nome,
                 tipo: item.tipo_notificacao.nome,
@@ -266,18 +266,18 @@ const ListarNotificacoesAdmin = () => {
       });
       requisicao.get('/notificacao').then((response) => {
         const newData = response.data.data.map((item) => ({
-            id_vaga_veiculo: item.id_vaga_veiculo,
-            id_notificacao: item.id_notificacao,
-            data: ArrumaHora(item.data),
-            placa: item.veiculo.placa,
-            vaga: item.vaga,
-            pendente: item.pago,
-            fabricante: item.veiculo.modelo.fabricante.nome,
-            modelo: item.veiculo.modelo.nome,
-            tipo: item.tipo_notificacao.nome,
-            valor: item.valor,
-            monitor: item.monitor.nome,
-            hora: ArrumaHora2(item.data),
+          data: ArrumaHora(item.data),
+          placa: item.veiculo.placa,
+          vaga: item.vaga,
+          pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
+          fabricante: item.veiculo.modelo.fabricante.nome,
+          modelo: item.veiculo.modelo.nome,
+          tipo: item.tipo_notificacao.nome,
+          valor: item.valor,
+          id_vaga_veiculo: item.id_vaga_veiculo,
+          id_notificacao: item.id_notificacao,
+          monitor: item.monitor.nome,
+          hora: ArrumaHora2(item.data),
         }));
         setData(newData)
         setData2(newData)
@@ -359,7 +359,7 @@ const ListarNotificacoesAdmin = () => {
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
                           <td style={
-                            item.pendente === 'Pago' ? {color: 'green'} : {color: 'red'}
+                            item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}
                           }> {item.pendente}</td>
                           <td id="tabelaUsuarios2">{item.fabricante}</td>
                           <td id="tabelaUsuarios2">{item.modelo}</td>

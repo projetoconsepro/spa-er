@@ -8,6 +8,8 @@ import ScrollTopArrow from './ScrollTopArrow'
 import Swal from 'sweetalert2'
 import sha256 from 'crypto-js/sha256';
 import { BsFillShieldLockFill } from 'react-icons/bs'
+import { AiFillPrinter } from 'react-icons/ai'
+import RelatoriosPDF from '../util/RelatoriosPDF'
 
 const UsuariosAdmin = () => {
     const [data, setData] = useState([])
@@ -128,13 +130,16 @@ const UsuariosAdmin = () => {
             })
             requisicao.get('/usuario/listar?query=e3doZXJlOntwZXJmaWw6YWRtaW59fQ==').then(
                 response => {
-                    const newData = response.data.msg.usuarios.map((item) => ({
-                        ativo: item.ativo,
-                        email: item.email,
-                        id_usuario: item.id_usuario,
-                        nome: item.nome,
-                        perfil: item.perfil,
-                        telefone: item.telefone,
+  
+                    const newData = response.data.data.usuarios.map((item) => ({
+                      nome: item.nome,
+                      placa: item.veiculos ? item.veiculos.map((veiculo) => veiculo.placa) : [],
+                    telefone: item.telefone,
+                    email: item.email,
+                    saldo: item.saldo,
+                    perfil: item.perfil,
+                    ativo: item.ativo,
+                    id_usuario: item.id_usuario,
                     }))
                     setData(newData)
                     setData2(newData)
@@ -165,7 +170,10 @@ const UsuariosAdmin = () => {
                    <p><b>Email:</b> ${item.email === null ? "Email não cadastrado" : item.email}</p>
                    <p><b>Telefone:</b> ${item.telefone}</p>
                    <p><b>Perfil:</b> ${item.perfil}</p>
-                   <p><b>Status:</b> ${item.ativo === 'S' ? 'Ativado' : 'Desativado'}</p>`,
+                   <p><b>Status:</b> ${item.ativo === 'S' ? 'Ativado' : 'Desativado'}</p>
+                   ${item.perfil === 'cliente' ? `<p><p><b>Saldo:</b> R$${item.saldo > 0 ? item.saldo : `0${item.saldo}`},00</p>              
+                    <p><b>Veículos:</b> ${item.placa.join(', ')}</p>` : ''}`,
+                   
             background: item.ativo === 'S' ? '#fff' : '#f8d7da',
             showCancelButton: true,
             confirmButtonText: 'Editar',
@@ -261,7 +269,6 @@ const UsuariosAdmin = () => {
                     senha: senha2,
                   })
                     .then(response => {
-                      console.log(response)
                       if (response.data.msg.resultado) {
                         AtualizaFunc();
                         resolve({
@@ -274,7 +281,6 @@ const UsuariosAdmin = () => {
                           message: response.data.msg.msg
                         })
                       }
-                      console.log('resolve', resolve)
                     })
                     .catch(error => {
                       console.log(error)
@@ -298,7 +304,7 @@ const UsuariosAdmin = () => {
                 Swal.getConfirmButton().disabled = false
               }
             }).then(result => {
-                console.log('result', result)
+
               if (result.value.success) {
                 Swal.fire({
                   icon: 'success',
@@ -450,7 +456,6 @@ const UsuariosAdmin = () => {
                     }).then((response) => {
                         if(response.data.msg.resultado){
                           data3[index] = {ativo: ativo, email: email, id_usuario: item.id_usuario, nome: nome2, perfil: perfil, telefone: telefone}
-                          console.log(data3[index])
                           setData3([...data])
                           Swal.fire({
                               title: 'Sucesso!',
@@ -501,12 +506,12 @@ const UsuariosAdmin = () => {
                     },
                   });
                   requisicao.put('/usuario', {
-                    id_usuario: item.id_usuario,
                     nome: item.nome,
-                    email: item.email,
                     telefone: item.telefone,
-                    ativo: item.ativo === 'N' ? 'S' : 'N',
+                    email: item.email,
                     perfil: item.perfil,
+                    ativo: item.ativo === 'N' ? 'S' : 'N',
+                    id_usuario: item.id_usuario,
                     }).then((response) => {
                         if(response.data.msg.resultado){
                         data3[index] = {ativo: 'N', email: item.email, id_usuario: item.id_usuario, nome: item.nome, perfil: item.perfil, telefone: item.telefone}
@@ -585,7 +590,7 @@ const UsuariosAdmin = () => {
                                   telefone: item.telefone,
                                   senha: password,
                                   }).then((response) => {
-                                    console.log(response)
+                                
                                       if(response.data.msg.resultado){
                                         Swal.fire({
                                             title: 'Sucesso!',
@@ -605,16 +610,23 @@ const UsuariosAdmin = () => {
                                     console.log(error)
                                   })
                                 }else{
-                                  console.log(result)
+                                  
                                 }
                               });
                             },      
                           })
               }
               else{
-                  console.log('naoi')
+
               }
           })    
+    }
+
+    const imprimir = () => {
+      const dataD = [...data.map((item) => ([item.nome, item.telefone, item.email, item.saldo, item.perfil, item.ativo === 'S' ? 'Ativo' : 'Inativo']))];
+      const nomeArquivo = 'Relatório de Usuários'
+      const cabecalho = ['Nome', 'Telefone', 'Email', 'Saldo', 'Perfil', 'Status']
+      RelatoriosPDF(nomeArquivo, cabecalho, dataD)
     }
   
 
@@ -638,12 +650,15 @@ const UsuariosAdmin = () => {
                     <input className="form-control bg-white rounded-end border-bottom-0" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite o nome" aria-describedby="basic-addon1" />
                     </div>
 
-                        <div className="col-6 align-middle" onChange={() => {filtroSelect()}}>
+                        <div className="col-4 align-middle" onChange={() => {filtroSelect()}}>
                         <select className="form-select form-select-sm mb-3 mt-3" aria-label=".form-select-lg example" id="setoresSelect">
                                 <option value='1'>Filtro </option>
                                 <option value='perfil'>Perfil </option>
                                 <option value='ativo'>Status </option>
                         </select>
+                        </div>
+                        <div className="col-2 text-end">
+                          <button className="btn3 botao p-0 m-0 w-100 h-50 mt-3" type="button" onClick={()=>{imprimir()}}><AiFillPrinter  size={21}/></button>
                         </div>
 
                 </div>

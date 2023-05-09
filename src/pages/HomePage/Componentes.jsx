@@ -34,6 +34,7 @@ import ListarNotificacoesAgente from '../../components/ListarNotificacoesAgente'
 import AutoInfracao from '../../components/AutoInfracao';
 import Dashboard from '../../components/Dashboard';
 import VeiculosAdmin from '../../components/VeiculosAdmin';
+import ClientesAdmin from '../../components/ClientesAdmin';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -135,6 +136,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "VeiculosAdmin"){
             return <VeiculosAdmin />
+        }
+        else if(Componente === "ClientesAdmin"){
+            return <ClientesAdmin />
         }
         else {
             return <Error />

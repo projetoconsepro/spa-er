@@ -98,7 +98,7 @@ const ListarNotificacoesAgente = () => {
         const inputOptions = new Promise((resolve) => {
           setTimeout(() => {
             resolve({
-              'S': 'Pago',
+              'S': 'Quitado',
               'N': 'Pendente'
             })
           }, 1000)
@@ -167,7 +167,7 @@ const ListarNotificacoesAgente = () => {
             title: 'Informações da notificação',
             html: `<p><b>Data:</b> ${item.data}</p>
                    <p><b>Placa:</b> ${item.placa}</p>
-                   <p><b>Estado:</b> ${item.pendente === 'N' ? 'Pendente' : 'Pago'}</p>
+                   <p><b>Estado:</b> ${item.pendente === 'N' ? 'Pendente' : 'Quitado'}</p>
                    <p><b>Modelo:</b> ${item.modelo}</p>
                    <p><b>Fabricante:</b> ${item.fabricante}</p>
                    <p><b>Cor do veículo:</b> ${item.cor}</p>
@@ -298,7 +298,7 @@ const ListarNotificacoesAgente = () => {
                           <td> {item.vaga}</td>
                           <td id="tabelaUsuarios2" style={
                             item.pendente === 'S' ? {color: 'green'} : {color: 'red'}
-                          }> {item.pendente === 'S' ? 'Pago' : 'Pendente'}</td>
+                          }> {item.pendente === 'S' ? 'Quitado' : 'Pendente'}</td>
                           <td id="tabelaUsuarios2">{item.fabricante}</td>
                           <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td id="tabelaUsuarios2">{item.tipo}</td>
