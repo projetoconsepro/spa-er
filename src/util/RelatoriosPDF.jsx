@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
+import { useState } from 'react';
 
-const RelatoriosPDF = (nomeArquivo, cabecalho, array) => {
+const RelatoriosPDF = (nomeArquivo, cabecalho, array) => {  
     const doc = new jsPDF();
     const dataD = [];
 

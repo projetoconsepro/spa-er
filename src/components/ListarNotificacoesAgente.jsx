@@ -1,15 +1,17 @@
 import axios from 'axios'
 import { React, useState, useEffect } from 'react'
-import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
+import { AiFillPrinter, AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineReload } from 'react-icons/ai'
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Swal from 'sweetalert2'
+import moment from 'moment'
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState('')
+    const [sortAsc, setSortAsc] = useState(false);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -227,6 +229,17 @@ const ListarNotificacoesAgente = () => {
       })
   }
 
+  const handleSort = () => {
+    setData(data => [...data].sort((a, b) => {
+      if (sortAsc) {
+        return moment(a.data, 'DD/MM/YYYY').toDate() - moment(b.data, 'DD/MM/YYYY').toDate();
+      } else {
+        return moment(b.data, 'DD/MM/YYYY').toDate() - moment(a.data, 'DD/MM/YYYY').toDate();
+      }
+    }));
+    setSortAsc(prevSortAsc => !prevSortAsc);
+  };
+
 
   return (
     <div className="dashboard-container">
@@ -246,7 +259,7 @@ const ListarNotificacoesAgente = () => {
           <div className="col-3 text-end">
           </div>
           <div className="col-1 text-end">
-            <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21}/>
+            <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21} />
           </div>
           </div>
           </div>
@@ -260,8 +273,8 @@ const ListarNotificacoesAgente = () => {
                     <table className="table align-items-center table-flush">
                       <thead className="thead-light">
                         <tr>
-                        <th className="border-bottom" id="tabelaUsuarios" scope="col">
-                            Data
+                        <th className="border-bottom" id="tabelaUsuarios" scope="col" onClick={()=>{handleSort()}}>
+                            Data {sortAsc ? <AiOutlineArrowUp className="mb-1" size={15} /> : <AiOutlineArrowDown className="mb-1" size={15} />}
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Placa

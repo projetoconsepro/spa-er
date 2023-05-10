@@ -193,6 +193,20 @@ const AbrirTurno = () => {
                                 <div className="col-12">
                                     <h6 className="text-start">Defina o valor do caixa:</h6>
                                 </div>
+                                <div className="row align-items-center pt-2 pb-3">
+                                <div className="col-3">
+                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor(10)}>10</button>
+                                </div> 
+                                <div className="col-3">
+                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor(20)}>20</button>
+                                </div> 
+                                <div className="col-3">
+                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor(30)}>30</button>
+                                </div> 
+                                <div className="col-3">
+                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor(50)}>50</button>
+                                </div>
+                            </div>
                                 <div className="col-4">
                                 <div className="input-group w-75">
                                     <input type="number" className="form-control fs-6" maxLength="2" id="inputAbrirCaixa" placeholder="30" value={valor} onChange={(e) => setValor(e.target.value)} />
