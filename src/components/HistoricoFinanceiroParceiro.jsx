@@ -121,6 +121,9 @@ const HistoricoFinanceiroParceiro = () => {
       valor: item.valor,
       data: ArrumaHora(item.data),
       tipo: item.tipo,
+      cpf: item.cpf === undefined ? '' : item.cpf,
+      cnpj: item.cnpj === undefined ? '' : item.cnpj,
+      placa: item.placa === undefined ? '' : item.placa,
     }));
     console.log('essa é a newdata', newData)
 
@@ -162,8 +165,8 @@ const HistoricoFinanceiroParceiro = () => {
         <option value="selectTipo">Tipo</option>
         </select>
         </div>
-    <div className="col-6 text-end mt-1">
-    <FaCoins/> ‎ R${saldo},00
+    <div className="col-6 text-end mb-3">
+          <FaCoins/> Saldo do caixa ‎ R${saldo},00
     </div>
 
     </div>
@@ -182,16 +185,31 @@ const HistoricoFinanceiroParceiro = () => {
         </div>
       <div className="col-5 p-0">
         <div className="titulo text-start">
-          {item.tipo === 'credito' ? 'Estacionamento' : item.tipo === 'tolerancia' ? 'Estacionamento' : item.tipo === 'regularizacao' ? 'Regularizacao'  : 'Acréscimo de crédito'}
+          {item.tipo === 'credito' ? 'Estacionamento' : 
+          item.tipo === 'tolerancia' ? 'Estacionamento' : 
+          item.tipo === 'regularizacao' ? 'Regularizacao'  : 'Acréscimo de crédito'
+          } 
+        {item.tipo === 'regularizacao' && window.innerWidth > 1110 ? ` - ${item.placa}` :
+        item.tipo === 'credito' && window.innerWidth > 1110 ? ` - ${item.placa}` :
+        item.tipo === 'tolerancia' && window.innerWidth > 1110 ? ` - ${item.placa}` :
+        item.tipo === 'Acréscimo de crédito' && window.innerWidth > 1110 ? ` - ${item.cnpj === '' ?  item.cpf : item.cnpj}` : 
+        null}
         </div>
         </div>
         <div className="col-5 p-0">
-        <div className="data text-end mt-2">{item.data}</div>
+        <div className="data text-end ">{item.data} </div> 
         </div>
         <div className="col-2">
         </div>
         <div className="col-5 p-0">
         <div className="preco text-start">{`R$${item.valor.length === 1 || item.valor < 10 ? '0' + item.valor : item.valor}`},00</div>
+        </div>
+        <div className="col-5 text-end">
+        {item.tipo === 'regularizacao' && window.innerWidth <= 1110 ? `${item.placa}` :
+        item.tipo === 'credito' && window.innerWidth <= 1110 ? `${item.placa}` :
+        item.tipo === 'tolerancia' && window.innerWidth <= 1110 ? `${item.placa}` :
+        item.tipo === 'Acréscimo de crédito' && window.innerWidth <= 1110 ? `${item.cnpj === '' ?  item.cpf : item.cnpj}` : 
+        null}
         </div>
       </div>
     </div>

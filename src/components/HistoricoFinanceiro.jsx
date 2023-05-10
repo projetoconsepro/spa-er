@@ -98,7 +98,7 @@ const HistoricoFinanceiro = () => {
     const data6 = data2[1].split(":");
     const data5 = data4 + " " + (data6[0]-3) + ":" + data6[1];
     return data5;
-    }
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token');
