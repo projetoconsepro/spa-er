@@ -1,16 +1,13 @@
 import axios from 'axios'
 import { React, useEffect, useState } from 'react'
-import { FaCar, FaCarAlt, FaEllipsisH, FaEye, FaParking, FaPowerOff, FaSearch, FaUserPlus } from 'react-icons/fa'
-import { GrDocumentConfig } from 'react-icons/gr'
-import { BiEdit } from 'react-icons/bi'
-import { MdManageSearch } from 'react-icons/md'
+import { FaCar, FaCarAlt, FaEllipsisH, FaEye, FaParking, FaPowerOff, FaSearch } from 'react-icons/fa'
 import ScrollTopArrow from './ScrollTopArrow'
 import Swal from 'sweetalert2'
-import sha256 from 'crypto-js/sha256';
-import { BsCashCoin, BsFillShieldLockFill, BsPaintBucket } from 'react-icons/bs'
+import { BsCashCoin, BsPaintBucket } from 'react-icons/bs'
 import { AiFillPrinter, AiOutlineInfoCircle } from 'react-icons/ai'
 import RelatoriosPDF from '../util/RelatoriosPDF'
-import { Modal, Select } from '@mantine/core'
+import { Modal, Select, Group, Stepper, Button, Input } from '@mantine/core'
+import { IconClipboardList, IconCoin, IconMail, IconPhoneCall, IconUser } from '@tabler/icons-react';
 import Filtro from '../util/Filtro'
 import { useDisclosure } from '@mantine/hooks'
 import { RxLapTimer } from 'react-icons/rx'
@@ -19,18 +16,32 @@ import Cronometro from './Cronometro'
 
 const ClientesAdmin = () => {
     const [opened, { open, close }] = useDisclosure(false);
+    const [opened2, { open: open2, close: close2 }] = useDisclosure(false);
+    const [active, setActive] = useState(1);
+    const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
+    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+    const [step, setStep] = useState(0);
     const [selectedOption, setSelectedOption] = useState(null);
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
     const [data3, setData3] = useState([])
+    const [mensagemStep, setMensagemStep] = useState(false)
+    const [infoRemetente, setInfoRemetente] = useState("")
+    const [infoDestinatario, setInfoDestinatario] = useState("")
+    const [infoDestinatarioValor, setInfoDestinatarioValor] = useState(null)
+    const [arrayDestinatario, setArrayDestinatario] = useState([])
+    const [estadoInfoDestinatario, setEstadoInfoDestinatario] = useState(false)
     const [veiculos, setVeiculos] = useState([])
     const [detalhesVeiculo, setDetalhesVeiculo] = useState([])
     const [nome, setNome] = useState("")
     const [senhaParam, setSenhaParam] = useState("")
-    const [isLoading, setIsLoading] = useState(false);
+    const [estado , setEstado] = useState("")
+    const [mensagem , setMensagem] = useState("")
+    const [readyTransfer , setReadyTransfer] = useState(false);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
+
 
     function extrairNumeros(string) {
       return string ? string.replace(/\D/g, '') : string;
@@ -45,6 +56,27 @@ const ClientesAdmin = () => {
         setSenhaParam(response.data.data.param.usuario.default)
       });
     }, [])
+
+    useEffect(() => {
+        if (step >= 1 && step <= 4) {
+            console.log(step)
+            setTimeout(() => {
+                nextStep()
+                setStep(step+1)
+            }, 1000);
+        } if (step === 4) {
+            console.log('chegou')
+            setMensagemStep(true)
+        } else if (step === 0) {
+        console.log(step)
+        for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+        prevStep();
+        }, 500);
+        setReadyTransfer(false)
+        }
+        } 
+    }, [step])
 
 
     useEffect(() => {
@@ -227,15 +259,144 @@ const ClientesAdmin = () => {
     })
     }, [selectedOption])
 
+    const getInfo = async () => {
+        if(infoDestinatarioValor <= 0){
+            setEstado(true)
+            setMensagem(`Digite um valor válido para tranferência!`)
+            setTimeout(() => {
+                setEstado(false)
+            }, 4000)
+            setEstadoInfoDestinatario(false)
+            return;
+        }
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': user2.perfil[0]
+            }
+        })
+        const cpf = extrairNumeros(infoDestinatario)
+        let campo = ''
+                if(cpf.length === 11){
+                    campo = "cpf"
+                }else{
+                    campo = "cnpj"
+                }
+    await requisicao.get(`/verificar?${campo}=${infoDestinatario}`).then((response) => {
+        if(response.data.msg.resultado){
+            setEstadoInfoDestinatario(true)
+            const newData = response.data.usuario.map((item) => ({
+                nome: item.nome,
+                email: item.email === null ? "Email não cadastrado" : item.email,
+                telefone: item.telefone,
+                }));
+                setArrayDestinatario(newData)
+        }else{
+            setEstado(true)
+            setMensagem(`${response.data.msg.msg}`)
+                setTimeout(() => {
+                setEstado(false)
+                }, 4000)
+            setEstadoInfoDestinatario(false)
+        }
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    const handleTransfer = () => {
+        const cpf = extrairNumeros(infoDestinatario)
+        let campo = ''
+                if(cpf.length === 11){
+                    campo = "Destinatariocpf"
+                }else{
+                    campo = "Destinatariocnpj"
+                }
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': user2.perfil[0]
+            }
+        })
+        if (campo === "Destinatariocpf") {
+        requisicao.post(`/financeiro/credito/transferir`, {
+            Destinatariocpf: infoDestinatario,
+            valor: infoDestinatarioValor,
+            id_usuario: infoRemetente
+        }).then((response) => {
+            console.log(response)
+            if(response.data.msg.resultado){
+                setReadyTransfer(true)
+                setStep(1)
+            }
+            else {
+                setEstado(true)
+                setMensagem(`${response.data.msg.msg}`)
+                setTimeout(() => {
+                    setEstado(false)
+                }, 4000)
+            }
+        }).catch((error) => {
+            console.log(error)
+        })
+        }else if(campo === "Destinatariocnpj") {
+            requisicao.post(`/financeiro/credito/transferir`, {
+                Destinatariocnpj: infoDestinatario,
+                valor: infoDestinatarioValor,
+                id_usuario: infoRemetente
+            }).then((response) => {
+                console.log(response)
+                if (response.data.msg.resultado){
+                    setReadyTransfer(true)
+                    setStep(1)
+                }
+                else {
+                    setEstado(true)
+                    setMensagem(`${response.data.msg.msg}`)
+                    setTimeout(() => {
+                        setEstado(false)
+                    }, 4000)
+                }
+
+            }).catch((error) => {
+                console.log(error)
+            }
+            )
+    } else {
+
+    }
+}
+
+    
+
+
     const informacoesVeiculos = (item) => {
        setVeiculos(item.placa.map((veiculo) => veiculo))
        open()
     }
 
+    const closeHandle = () => {
+        setStep(0)
+        setDetalhesVeiculo([])
+        setEstadoInfoDestinatario(false)
+        setMensagemStep(false)
+        setInfoDestinatario('')
+        setInfoDestinatarioValor(null)
+        AtualizaFunc()
+    }
+
     const handleOptionChange = (event) => {
-      console.log(event)
       setSelectedOption(event);
     };
+
+    const transferirSaldo = (item) => {
+        setInfoRemetente(item.id_usuario)
+        open2()
+    }
     
     const imprimir = () => {
       const dataD = [...data.map((item) => ([item.nome, item.telefone, item.email, item.saldo, item.perfil, item.ativo === 'S' ? 'Ativo' : 'Inativo']))];
@@ -246,7 +407,7 @@ const ClientesAdmin = () => {
 
   return (
     <div className="dashboard-container mb-5">
-      <Modal opened={opened} onClose={close} title="Informações dos veículos" centered>
+      <Modal opened={opened} onClose={() => { closeHandle(); close(); }} title="Informações dos veículos" centered>
       <Select label="Selecione uma opção" data={veiculos} style={{ marginTop: '16px' }} 
       value={selectedOption} onChange={handleOptionChange} />
                     <div className="card-body4">
@@ -332,6 +493,97 @@ const ClientesAdmin = () => {
                         ))}
                     </div >
       </Modal>
+
+
+
+      <Modal size="xl" opened={opened2} onClose={() => { closeHandle(); close2(); }} title="Transferência de créditos" centered>
+        {readyTransfer ?
+        <div >
+        <Stepper active={active} breakpoint="sm">
+        <Stepper.Step label="Verificar usuários" description="Verificação de usuários">
+          Passo 1: Verificar usuários
+        </Stepper.Step>
+        <Stepper.Step label="Verificar saldo" description="Verificação de saldo">
+          Passo 2: Verificar saldo
+        </Stepper.Step>
+        <Stepper.Step label="Transferência" description="Transferência de créditos">
+          Passo 3: Transferir créditos
+        </Stepper.Step>
+        <Stepper.Completed className="mt-3">
+          Crédito transferido com sucesso!
+        </Stepper.Completed>
+        </Stepper>
+        
+        { mensagemStep ? 
+        <Group position="center" mt="xl">
+        <Button onClick={() => { closeHandle(); close2(); }}>Ok</Button>
+        </Group> : null    
+        }
+        
+        </div>
+        
+        :
+        <div>
+        <Input.Wrapper label="Digite o CPF/CNPJ do usuário" required maw={320} mx="auto">
+        <Input icon={<IconClipboardList />} placeholder="..." value={infoDestinatario} onChange={(e) => setInfoDestinatario(e.target.value)}/>
+        </Input.Wrapper>
+        <Input.Wrapper label="Digite o valor que deseja transferir" required maw={320} mx="auto" className="mt-2">
+        <Input icon={<IconCoin />} placeholder="..." type="number" value={infoDestinatarioValor} onChange={(e) => setInfoDestinatarioValor(e.target.value)}/>
+        </Input.Wrapper>
+        { estadoInfoDestinatario ? 
+        null
+        :
+        <Group position="center" mt="xl">
+        <Button variant="default" onClick={() => { closeHandle(); close2(); }}>Voltar</Button>
+        <Button className="bg-blue-50" onClick={()=> getInfo()}>Confirmar</Button>
+        </Group>
+    }
+
+        { estadoInfoDestinatario ? 
+        <div>
+        {arrayDestinatario.map((info, index) => (
+        <div className="card shadow mt-3" key={index}>
+        <div className="card-body7">
+             <div className="d-flex align-items-center justify-content-between pb-3">
+                        <div>
+                            <div className='fw-bolder'>
+                            Confirme as informações da transferência: 
+                            </div>
+                            Destinatario:
+                            <div className="h6 mt-2 d-flex align-items-center fs-6" id="estacionadocarroo">
+                               <h6><IconUser size={17}/>‎ {info.nome} </h6>
+                             </div>
+                             <div className="h6 mt-2 d-flex align-items-center fs-6" id="estacionadocarroo">
+                               <h6><IconMail size={17}/>‎ {info.email}</h6>
+                              </div>
+                                
+                            <div className="h6 mt-2 d-flex align-items-center fs-6" id="estacionadocarroo">
+                                   <h6><IconPhoneCall size={17}/>‎ {info.telefone} </h6>
+                             </div>
+                             Valor a ser transferido: 
+                             <div className="h6 mt-2 d-flex align-items-center fs-6" id="estacionadocarroo">
+                             <h6><IconCoin size={17}/>‎ R${infoDestinatarioValor},00</h6>
+                              </div>
+
+                        </div>
+                    </div>
+        </div>
+        </div>
+        ))}
+        <Group position="center" mt="xl">
+        <Button variant="default" onClick={() => {setEstadoInfoDestinatario(false)}}>Voltar</Button>
+        <Button className="bg-blue-50" onClick={()=>{handleTransfer()}}>Confirmar</Button>
+        </Group>
+        </div>
+            :
+            null 
+        }
+        <div className="alert alert-danger mt-3 fs-6 text-center" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+        {mensagem}
+        </div>
+        </div>
+    }
+    </Modal>
     <div className="row">
         <div className="col-7">
     <h6 className="text-start mx-4 mb-4">Clientes</h6>
@@ -358,7 +610,7 @@ const ClientesAdmin = () => {
                                     <tr>
                                         <th className="border-bottom" id="tabelaUsuarios" scope="col">Nome</th>
                                         <th className="border-bottom" id="tabelaUsuarios" scope="col">Telefone</th>
-                                        <th className="border-bottom" id="tabelaUsuarios" scope="col">Email</th>
+                                        <th className="border-bottom" id="tabelaUsuarios2" scope="col">Email</th>
                                         <th className="border-bottom" id="tabelaUsuarios" scope="col">Saldo</th>
                                         <th className="border-bottom" scope="col">‎‎</th>
                                     </tr>
@@ -381,9 +633,13 @@ const ClientesAdmin = () => {
                                               <h6 className="dropdown-item d-flex align-items-center" onClick={()=>{informacoes(item)}}>
                                                   <FaEye />‎‎  Ver mais </h6>   
                                                 <h6 className="dropdown-item d-flex align-items-center" onClick={() => {informacoesVeiculos(item)}}>
-                                                  <FaCar />‎‎  Veículos</h6>          
-                                                  <h6 className="dropdown-item d-flex align-items-center">
-                                                  <BsCashCoin />‎‎  Transferir saldo</h6>
+                                                  <FaCar />‎‎  Veículos</h6>
+                                                  {item.saldo > 0 ?
+                                                  <h6 className="dropdown-item d-flex align-items-center" onClick={() => { transferirSaldo(item)}}>
+                                                    <BsCashCoin />‎‎  Transferir saldo</h6>
+                                                    :
+                                                    null
+                                                  }
                                                   <h6 className="dropdown-item d-flex align-items-center" onClick={() => {desativaUsuario(item)}} style={{ color : item.ativo === 'S' ?  'red' :'#0F5132' }}>
                                                     <FaPowerOff size={13} className='mb-1'/> ‎‎   {item.ativo === 'S' ? 'Desativar' : 'Ativar'}</h6>            
                                                     </div>
