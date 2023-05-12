@@ -130,8 +130,8 @@ const UsuariosAdmin = () => {
             })
             requisicao.get('/usuario/listar?query=e3doZXJlOntwZXJmaWw6YWRtaW59fQ==').then(
                 response => {
-  
-                    const newData = response.data.data.usuarios.map((item) => ({
+                  console.log(response)
+                    const newData = response.data.data.map((item) => ({
                       nome: item.nome,
                       placa: item.veiculos ? item.veiculos.map((veiculo) => veiculo.placa) : [],
                     telefone: item.telefone,

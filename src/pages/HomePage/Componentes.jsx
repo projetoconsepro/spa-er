@@ -35,6 +35,8 @@ import AutoInfracao from '../../components/AutoInfracao';
 import Dashboard from '../../components/Dashboard';
 import VeiculosAdmin from '../../components/VeiculosAdmin';
 import ClientesAdmin from '../../components/ClientesAdmin';
+import OcupacaoVagasAdmin from '../../components/OcupacaoVagasAdmin';
+import TransferirCreditoCliente from '../../components/TransferirCreditoCliente';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -139,6 +141,12 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "ClientesAdmin"){
             return <ClientesAdmin />
+        }
+        else if(Componente === "OcupacaoVagasAdmin"){
+            return <OcupacaoVagasAdmin />
+        }
+        else if(Componente === "TransferirCreditoCliente"){
+            return <TransferirCreditoCliente />
         }
         else {
             return <Error />

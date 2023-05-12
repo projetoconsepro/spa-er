@@ -116,7 +116,7 @@ const AdicionarCreditos = () => {
                 setMensagem("");
             }, 4000);
         }
-        setValor(0)
+        setValor("")
         setCPF("")
      }
 
@@ -140,7 +140,7 @@ const AdicionarCreditos = () => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
             localStorage.setItem("componente", "FecharTurno");
         }
-        setValor(0)
+        setValor("")
     }, [])
 
     return (
@@ -177,7 +177,7 @@ const AdicionarCreditos = () => {
                                 
                                 <div className="input-group w-25">
                                     <span className="mt-3">R$ ‎</span>
-                                    <input className="form-control pt-3" placeholder="00" id="inputParceiro" value={valor} onChange={(e) => setValor([e.target.value])} type="number"/>
+                                    <input className="form-control pt-3"  id="inputParceiro" value={valor} onChange={(e) => setValor([e.target.value])} type="number"/>
                                     <span className="mt-3">,00</span>
                                 </div>
                             </div>

@@ -400,9 +400,19 @@ const ClientesAdmin = () => {
     
     const imprimir = () => {
       const dataD = [...data.map((item) => ([item.nome, item.telefone, item.email, item.saldo, item.perfil, item.ativo === 'S' ? 'Ativo' : 'Inativo']))];
-      const nomeArquivo = 'Relatório de Usuários'
+      const nomeArquivo = 'Relatório de Clientes'
       const cabecalho = ['Nome', 'Telefone', 'Email', 'Saldo', 'Perfil', 'Status']
       RelatoriosPDF(nomeArquivo, cabecalho, dataD)
+    }
+
+    const notificacoes = (link) => {
+        localStorage.setItem('placaCarro', link.placa)
+        localStorage.setItem('componente', 'ListarNotificacoes')
+    }
+
+    const goHistorico = (link) => {
+        localStorage.setItem('placaCarro', link.placa)
+        localStorage.setItem('componente', 'HistoricoVeiculo')
     }
 
   return (
@@ -484,17 +494,15 @@ const ClientesAdmin = () => {
                                     {link.numero_notificacoes_pendentes === 0  ?
                                             null
                                             :
-                                            <button type="submit" className="btn4 mb-2 bg-danger botao">Notificações</button>
+                                            <button type="submit" className="btn4 mb-2 bg-danger botao" onClick={()=>{notificacoes(link)}}>Notificações</button>
                                             }
-                                        <button type="submit" className="btn4 bg-gray-400 botao">Histórico</button>
+                                        <button type="submit" className="btn4 bg-blue-50 botao" onClick={() => {goHistorico(link)}}>Histórico</button>
                                     </div>
                                 </div>
                             </div>
                         ))}
                     </div >
       </Modal>
-
-
 
       <Modal size="xl" opened={opened2} onClose={() => { closeHandle(); close2(); }} title="Transferência de créditos" centered>
         {readyTransfer ?
@@ -584,6 +592,7 @@ const ClientesAdmin = () => {
         </div>
     }
     </Modal>
+
     <div className="row">
         <div className="col-7">
     <h6 className="text-start mx-4 mb-4">Clientes</h6>

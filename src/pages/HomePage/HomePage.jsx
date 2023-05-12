@@ -25,6 +25,8 @@ const HomePage =  () => {
                 localStorage.setItem("componente", "ListarVagasMonitor");
             } else if (teste2.perfil[0] === 'parceiro') {
                 localStorage.setItem("componente", "RegistrarEstacionamentoParceiro");
+            } else if (teste2.perfil[0] === 'admin') {
+                localStorage.setItem("componente", "Dashboard");
             }
         }
     }
