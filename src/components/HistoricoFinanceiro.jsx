@@ -118,7 +118,7 @@ const HistoricoFinanceiro = () => {
     console.log(response);
     setSaldo(response?.data.dados.saldo)
     const newData = response?.data.dados.movimentos.map((item) => ({
-      valor: item.valor,
+      valor: Math.abs(item.valor),
       data: ArrumaHora(item.data),
       tipo: item.tipo,
     }));
@@ -176,7 +176,7 @@ const HistoricoFinanceiro = () => {
     <div className="row">
       <div className="col-2">
         <div className="icon-container">
-          <BsCashCoin size={25} color={item.tipo === 'Acréscimo de crédito' ? '#3DAE30' : '#FB6660'} className="icon mt-1" />
+          <BsCashCoin size={25} color={item.tipo === 'Acréscimo de crédito' || item.tipo === 'Transferência recebida' ? '#3DAE30' : '#FB6660'} className="icon mt-1" />
           {resposta[index + 1] === undefined || null
           ? null : <div className="line"> </div>}
           <div className="spacer"></div>
@@ -184,7 +184,10 @@ const HistoricoFinanceiro = () => {
         </div>
       <div className="col-5 p-0">
         <div className="titulo text-start">
-          {item.tipo === 'credito' ? 'Estacionamento' : item.tipo === 'tolerancia' ? 'Estacionamento' : item.tipo === 'regularizacao' ? 'Regularizacao'  : 'Acréscimo de crédito'}
+          {item.tipo === 'credito' ? 'Estacionamento' : 
+          item.tipo === 'tolerancia' ? 'Estacionamento' : 
+          item.tipo === 'regularizacao' ? 'Regularizacao': 
+          item.tipo }
         </div>
         </div>
         <div className="col-5 p-0">
@@ -193,7 +196,7 @@ const HistoricoFinanceiro = () => {
         <div className="col-2">
         </div>
         <div className="col-5 p-0">
-        <div className="preco text-start">{`R$${item.valor.length === 1 || item.valor < 10 ? '0' + item.valor : item.valor}`},00</div>
+        <div className="preco text-start">{`R$ ${item.valor}`},00</div>
         </div>
       </div>
     </div>

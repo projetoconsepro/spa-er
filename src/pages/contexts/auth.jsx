@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
         } else if (loggedUser.perfil[0] === 'parceiro'){
             localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
         } else if (loggedUser.perfil[0] === 'admin'){
-            localStorage.setItem('componente', 'VagasLivress');
+            localStorage.setItem('componente', 'Dashboard');
         } else if (loggedUser.perfil[0] === 'agente'){
             localStorage.setItem('componente', 'ListarNotificacoesAgente');
         }

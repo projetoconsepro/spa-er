@@ -202,7 +202,7 @@ const HistoricoFinanceiroParceiro = () => {
         <div className="col-2">
         </div>
         <div className="col-5 p-0">
-        <div className="preco text-start">{`R$${item.valor.length === 1 || item.valor < 10 ? '0' + item.valor : item.valor}`},00</div>
+        <div className="preco text-start">{`R$ ${item.valor}`},00</div>
         </div>
         <div className="col-5 text-end">
         {item.tipo === 'regularizacao' && window.innerWidth <= 1110 ? `${item.placa}` :

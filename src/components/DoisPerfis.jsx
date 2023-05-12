@@ -30,7 +30,7 @@ function red(id) {
     localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
     }
     else if (analiseFeita.perfil[0] === 'admin'){
-    localStorage.setItem('componente', 'VagasLivress');
+    localStorage.setItem('componente', 'Dashboard');
     }
     else if (analiseFeita.perfil[0] === 'agente'){
     localStorage.setItem('componente', 'ListarNotificacoesAgente');
