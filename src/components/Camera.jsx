@@ -134,6 +134,7 @@ function Camera() {
 }
 
   const abrirModal = (id) => {
+    console.log(response[id])
     Swal.fire({
       html: `<img src="${response[id].foto}" />`,
       showCancelButton: true,

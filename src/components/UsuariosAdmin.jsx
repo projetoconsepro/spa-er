@@ -1,9 +1,6 @@
 import axios from 'axios'
 import { React, useEffect, useState } from 'react'
 import { FaEllipsisH, FaEye, FaPowerOff, FaSearch, FaUserPlus } from 'react-icons/fa'
-import { GrDocumentConfig } from 'react-icons/gr'
-import { BiEdit } from 'react-icons/bi'
-import { MdManageSearch } from 'react-icons/md'
 import ScrollTopArrow from './ScrollTopArrow'
 import Swal from 'sweetalert2'
 import sha256 from 'crypto-js/sha256';
@@ -17,7 +14,6 @@ const UsuariosAdmin = () => {
     const [data3, setData3] = useState([])
     const [nome, setNome] = useState("")
     const [senhaParam, setSenhaParam] = useState("")
-    const [isLoading, setIsLoading] = useState(false);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);

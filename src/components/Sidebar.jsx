@@ -5,20 +5,18 @@ import {
     FaUserPlus,
     FaCar,
     FaHistory,
-    FaUser
+    FaUser,
+    FaClipboardList
  } from "react-icons/fa";
-import { RxLapTimer } from "react-icons/rx";
-import { SiOpenstreetmap } from "react-icons/si";
 import { RiFileAddFill } from "react-icons/ri";
-import { BsConeStriped, BsCashCoin, BsPersonCircle, BsArrowReturnRight } from "react-icons/bs";
+import { BsConeStriped, BsCashCoin, BsPersonCircle } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineContactSupport, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
 import { useState } from "react";
 import { BiSearchAlt, BiTransfer } from "react-icons/bi";
-import { AiOutlineFileSearch } from "react-icons/ai";
+import { AiOutlineBarChart, AiOutlineFileSearch } from "react-icons/ai";
 import { TbReportSearch } from "react-icons/tb";
 import { useEffect } from "react";
-import { IconLogout, IconLogout2 } from "@tabler/icons-react";
 
 const Sidebar = () => {
 
@@ -175,7 +173,7 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <RiSettings5Fill />,
-            name: "‎ Configurar",
+            name: "‎ Configurar veículos",
             componente: "Configuracoes",
         })
         links.push({
@@ -188,7 +186,7 @@ const Sidebar = () => {
     else if (teste.perfil[0] === "admin"){
         links.push({
             className: styles.className,
-            icon: <FaCarAlt />,
+            icon: <AiOutlineBarChart />,
             name: "‎ Dashboard",
             componente: "Dashboard",
         })
@@ -208,12 +206,6 @@ const Sidebar = () => {
                     icon: <FaUserPlus />,
                     name: "‎ Usuários",
                     componente: "UsuariosAdmin",
-                },
-                {
-                    className: styles.className,
-                    icon: <FaUser />,
-                    name: "‎ Clientes",
-                    componente: "ClientesAdmin",
                 },
                 {
                     className: styles.className,
@@ -256,7 +248,7 @@ const Sidebar = () => {
                 {
                     className: styles.className,
                     icon: <FaParking />,
-                    name: "‎ Ocupação de vagas",
+                    name: "‎ Estacionamento",
                     componente: "OcupacaoVagasAdmin",
                 },
             ]
@@ -266,6 +258,18 @@ const Sidebar = () => {
             icon: <BsCashCoin />,
             name: "‎ Adicionar créditos",
             componente: "AdicionarCreditos",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaUser />,
+            name: "‎ Clientes",
+            componente: "ClientesAdmin",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaClipboardList />,
+            name: "‎ Movimentos setor",
+            componente: "MovimentosAdmin",
         })
     }
     else if (teste.perfil[0] === "monitor"){
@@ -377,10 +381,18 @@ const Sidebar = () => {
                 <a className="nav-link dropdown-toggle pt-1 px-2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div className="media d-flex align-items-center border-bottom border-top  border-white pb-4 pt-4">
                                 <img className="avatar rounded-circle mb" alt="Image placeholder" src="assets/img/img_avatar.png" id="imagemPerfil"/>
-                                <div className="media-body ms-2 text-white align-items-center">
-                                    <span className="mb-0 fw-bold fs-6 mx-2">{teste.nome}</span> <br />
-                                    <MdOutlineSubdirectoryArrowRight size={23} className="mb-1" />
+                                <div className="media-body ms-3 text-white">
+                                    <div className="row">
+                                    <div className="col-12 text-start">
+                                    <span className="mb-0 fw-bold fs-6 text-start">{teste.nome}</span> <br />
+                                    </div>
+                                    </div>
+                                    <div className="row">
+                                    <div className="col-12">
+                                    <MdOutlineSubdirectoryArrowRight size={23} className="mb-1" />      
                                     <span className="mb-0 text-sm fs-6 mx-2 ">{teste.perfil[0].perfil === undefined ? teste.perfil[0].slice(0, 1).toUpperCase() + teste.perfil[0].slice(1) : teste.perfil[0].perfil} </span>
+                                    </div>
+                                    </div>
                                 </div>
                             </div>
                             </a>

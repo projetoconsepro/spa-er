@@ -12,7 +12,6 @@ const RegisterPage = () => {
     const [nome, setNome] = useState("");
     const [mail, setMail] = useState('');
     const [cpff, setCpff] = useState('');
-    const [cnpjj, setCnpj] = useState('');
     const [telefone, setTelefone] = useState("");
     const [senha, setSenha] = useState("");
     const [senha2, setSenha2] = useState("");
@@ -29,9 +28,6 @@ const RegisterPage = () => {
     const [inputSenha2, setInputSenha2] = useState("form-control");
     const [passwordType, setPasswordType] = useState("password");
     const [classolho, setClassolho] = useState("olho");
-
-
-    const navigate = useNavigate();
 
     const registrado = () => {
         localStorage.setItem("componente", "LoginPage");
@@ -223,6 +219,12 @@ const RegisterPage = () => {
         )
     }
 
+    const aceitarTermo = () => {
+        const checkbox = document.getElementById('flexCheckDefault');
+        checkbox.checked = true; 
+    }
+
+
     const voltarLogin = () => {
         localStorage.setItem("componente", "LoginPage")
     }
@@ -362,7 +364,7 @@ const RegisterPage = () => {
                                                                 </small>
                                                             </div>
                                                             <div className="modal-footer">
-                                                                <button type="button" className="btn botao" data-bs-dismiss="modal">Li e aceito.</button>
+                                                                <button type="button" className="btn botao" data-bs-dismiss="modal" onClick={()=>aceitarTermo()}>Li e aceito.</button>
                                                             </div>
                                                         </div>
                                                     </div>

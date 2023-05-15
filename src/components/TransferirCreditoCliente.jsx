@@ -8,9 +8,6 @@ const TransferirCreditoCliente = () => {
     const [opened, { open, close }] = useDisclosure(false);
     const [step, setStep] = useState(0);
     const [mensagemStep, setMensagemStep] = useState(false)
-    const [selectedOption, setSelectedOption] = useState(null);
-    const [data, setData] = useState([])
-    const [infoRemetente, setInfoRemetente] = useState("")
     const [infoDestinatario, setInfoDestinatario] = useState("")
     const [infoDestinatarioValor, setInfoDestinatarioValor] = useState(null)
     const [arrayDestinatario, setArrayDestinatario] = useState([])
