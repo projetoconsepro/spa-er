@@ -1,16 +1,20 @@
 import axios from 'axios'
+import 'jspdf-autotable';
 import { React, useState, useEffect } from 'react'
 import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { FaEllipsisH, FaEye, FaImages } from 'react-icons/fa'
 import Swal from 'sweetalert2'
-import Paginacao from '../util/Paginacao';
 import RelatoriosPDF from '../util/RelatoriosPDF';
+import { Modal } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { Carousel } from '@mantine/carousel';
 
 const ListarNotificacoesAdmin = () => {
+    const [opened, { open, close }] = useDisclosure(false);
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
     const [data3, setData3] = useState([])
+    const [dataImagem, setDataImagem] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState('')
     const token = localStorage.getItem('token');
@@ -287,9 +291,51 @@ const ListarNotificacoesAdmin = () => {
       })
   }
 
+    const imagens = (item) => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+
+      requisicao.get(`/notificacao/imagens/${item.id_notificacao}`).then((response) => {
+        const newData = response.data.data && response.data.data.length > 0
+        ? response.data.data.map(item => ({
+        imagem: item.imagem ? item.imagem : undefined,
+        }))
+        : undefined;
+        setDataImagem(newData)
+      }).catch((error) => {
+        console.log(error)
+      })
+
+      open()
+    }
+
 
   return (
     <div className="dashboard-container">
+       <Modal size="xl" opened={opened} onClose={() => close()} title="Ver imagens" centered >
+       <Carousel slideSize="70%" slideGap="sm" loop>
+       {dataImagem === undefined || dataImagem.length === 0 ?
+          <Carousel.Slide>
+              <img src="../../assets/img/imagemError.png" alt="Imagem notificação" width="100%" />
+          </Carousel.Slide>
+          :
+        dataImagem.map((item, index) => (
+          <Carousel.Slide key={index}>
+            {item.imagem ?
+              <img src={item.imagem} alt="Imagem notificação" width="100%" />
+            :
+              <img src="../../assets/img/imagemError.png" alt="Imagem notificação" width="100%" />
+            }
+       </Carousel.Slide>
+       ))}
+        </Carousel>
+      </Modal>
         <p className="mx-3 text-start fs-4 fw-bold">Listar notificações</p>
         <div className="row">
         <div className="col-12">
@@ -349,12 +395,13 @@ const ListarNotificacoesAdmin = () => {
                           <th className="border-bottom" id="tabelaUsuarios2" scope="col">
                             Hora
                           </th>
+                          <th className="border-bottom" scope="col">‎‎</th>
                         </tr>
                       </thead>
                       <tbody>
 
                     {data.map((item, index) => (
-                        <tr key={index} onClick={()=>mostrar(item, index)}>
+                        <tr key={index}>
                           <td>{item.data}</td>
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
@@ -366,6 +413,19 @@ const ListarNotificacoesAdmin = () => {
                           <td id="tabelaUsuarios2">{item.tipo}</td>
                           <td id="tabelaUsuarios2">{item.valor}</td>
                           <td id="tabelaUsuarios2">{item.hora}</td>
+                          <td className="fw-bolder col" id="tabelaUsuarios3">
+                                    <div className="btn-group">
+                                                <button className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                  <FaEllipsisH /> 
+                                                </button>
+                                        <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
+                                                <h6 className="dropdown-item d-flex align-items-center" onClick={() => {imagens(item, index)}}> 
+                                                <FaImages /> ‎‎  Ver imagens </h6>
+                                                <h6 className="dropdown-item d-flex align-items-center"  onClick={()=>mostrar(item,index)}>
+                                            <FaEye />‎‎  Ver mais </h6>
+                                        </div>
+                                  </div>
+                            </td>
                         </tr>
                     ))}
                       </tbody>

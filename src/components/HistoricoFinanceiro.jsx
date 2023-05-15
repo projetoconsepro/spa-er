@@ -2,7 +2,6 @@ import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import { FaCoins } from "react-icons/fa";
-import { Container, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 
 const HistoricoFinanceiro = () => {
@@ -10,7 +9,6 @@ const HistoricoFinanceiro = () => {
   const [resposta2, setResposta2] = useState([]);
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [cont, setCont] = useState(0);
   const [saldo, setSaldo] = useState(0);
 
   function filtrar(filtro) {

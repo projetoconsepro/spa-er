@@ -8,7 +8,6 @@ import { FaSearch } from "react-icons/fa";
 import RelatoriosPDF from "../util/RelatoriosPDF";
 
 const OcupacaoVagasAdmin = () => {
-  const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
@@ -18,8 +17,6 @@ const OcupacaoVagasAdmin = () => {
   const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
-  const [plaquinha, setPlaquinha] = useState("");
-  const [perfil, setPerfil] = useState("");
 
   function ArrumaHora(data, hora) {
     const data2 = data.split("T");
