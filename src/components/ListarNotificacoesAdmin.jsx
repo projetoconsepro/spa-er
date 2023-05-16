@@ -2,7 +2,7 @@ import axios from 'axios'
 import 'jspdf-autotable';
 import { React, useState, useEffect } from 'react'
 import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
-import { FaEllipsisH, FaEye, FaImages } from 'react-icons/fa'
+import { FaEllipsisH, FaEye, FaImages, FaPowerOff } from 'react-icons/fa'
 import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF';
 import { Modal } from '@mantine/core';
@@ -224,37 +224,7 @@ const ListarNotificacoesAdmin = () => {
     }
 
     useEffect(() => {
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-              token: token,
-              id_usuario: user2.id_usuario,
-              perfil_usuario: user2.perfil[0],
-            },
-          });
-          requisicao.get('/notificacao').then((response) => {
-            console.log(response)
-            const newData = response.data.data.map((item) => ({
-                data: ArrumaHora(item.data),
-                placa: item.veiculo.placa,
-                vaga: item.vaga,
-                pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
-                fabricante: item.veiculo.modelo.fabricante.nome,
-                modelo: item.veiculo.modelo.nome,
-                tipo: item.tipo_notificacao.nome,
-                valor: item.valor,
-                id_vaga_veiculo: item.id_vaga_veiculo,
-                id_notificacao: item.id_notificacao,
-                monitor: item.monitor.nome,
-                hora: ArrumaHora2(item.data),
-            }));
-            setData(newData)
-            setData2(newData)
-            setData3(newData)
-
-        }).catch((error) => {
-            console.log(error)
-          })
+      reload()
     }, [])
 
     const reload = () => {
@@ -272,6 +242,8 @@ const ListarNotificacoesAdmin = () => {
         const newData = response.data.data.map((item) => ({
           data: ArrumaHora(item.data),
           placa: item.veiculo.placa,
+          cancelada: item.cancelada,
+          cancelada_motivo: item.cancelada_motivo,
           vaga: item.vaga,
           pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
           fabricante: item.veiculo.modelo.fabricante.nome,
@@ -315,6 +287,60 @@ const ListarNotificacoesAdmin = () => {
       open()
     }
 
+    const cancelar = (item, index) => {
+      Swal.fire({
+        title: 'Informe o motivo do cancelamento',
+        html: '<input type="text" id="cancelamento" class="form-control">',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Fechar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Salvar',
+        preConfirm: () => {
+          const cancelamentoInput = document.getElementById('cancelamento');
+          const cancelamentoValue = cancelamentoInput.value.trim();
+          
+          if (!cancelamentoValue) {
+            Swal.showValidationMessage('Por favor, informe o motivo do cancelamento');
+          }
+          
+          return cancelamentoValue;
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const motivo = result.value
+          const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+              token: token,
+              id_usuario: user2.id_usuario,
+              perfil_usuario: user2.perfil[0],
+            },
+          });
+          requisicao.post('/notificacao/cancelar/', {
+            idNotificacao: item.id_notificacao,
+            idVagaVeiculo: item.id_vaga_veiculo,
+            descricao: motivo
+          }).then((response) => {
+            console.log(response)
+            if(response.data.msg.resultado){
+            Swal.fire(
+              'Cancelado!',
+              'Notificação cancelada com sucesso.',
+              'success'
+            )
+            data[index].cancelada = 'S'
+            data[index].cancelada_motivo = motivo;
+            setData(data)
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+        }
+      });
+      
+    }
 
   return (
     <div className="dashboard-container">
@@ -348,10 +374,10 @@ const ListarNotificacoesAdmin = () => {
           <option value="selectVaga">Vaga</option>
           <option value="selectTipo">Tipo</option>
           <option value="selectTodos">Todos</option>
-          </select>
+        </select>
           </div>
           <div className="col-3 text-end">
-          <button className="btn3 botao p-0 w-75 h-75" type="button" onClick={() => {createPDF()}}><AiFillPrinter  size={21}/></button>
+            <button className="btn3 botao p-0 w-75 h-75" type="button" onClick={() => {createPDF()}}><AiFillPrinter  size={21}/></button>
           </div>
           <div className="col-1 text-end">
             <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21}/>
@@ -399,9 +425,8 @@ const ListarNotificacoesAdmin = () => {
                         </tr>
                       </thead>
                       <tbody>
-
                     {data.map((item, index) => (
-                        <tr key={index}>
+                        <tr key={index} className={item.cancelada === "S" ? "bg-gray-50" : ""}>
                           <td>{item.data}</td>
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
@@ -419,10 +444,16 @@ const ListarNotificacoesAdmin = () => {
                                                   <FaEllipsisH /> 
                                                 </button>
                                         <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                                <h6 className="dropdown-item d-flex align-items-center" onClick={() => {imagens(item, index)}}> 
-                                                <FaImages /> ‎‎  Ver imagens </h6>
-                                                <h6 className="dropdown-item d-flex align-items-center"  onClick={()=>mostrar(item,index)}>
-                                            <FaEye />‎‎  Ver mais </h6>
+                                                <h6 className="dropdown-item d-flex align-items-center" onClick={() => imagens(item, index)}> 
+                                                <FaImages /> ‎‎  Ver imagens 
+                                                </h6>
+                                                <h6 className="dropdown-item d-flex align-items-center"  onClick={()=> mostrar(item,index)}>
+                                                <FaEye />‎‎  Ver mais 
+                                                </h6>
+                                                {item.cancelada === "N" && item.pendente === 'Pendente' ? 
+                                                 <h6 className="dropdown-item d-flex align-items-center text-danger"  onClick={()=> cancelar(item,index)}>
+                                                 <FaPowerOff />‎‎ Cancelar notificação
+                                                 </h6> : null}
                                         </div>
                                   </div>
                             </td>
