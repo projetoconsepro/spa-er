@@ -38,6 +38,7 @@ import ClientesAdmin from '../../components/ClientesAdmin';
 import OcupacaoVagasAdmin from '../../components/OcupacaoVagasAdmin';
 import TransferirCreditoCliente from '../../components/TransferirCreditoCliente';
 import MovimentosAdmin from '../../components/MovimentosAdmin';
+import VeiculosAgente from '../../components/VeiculosAgente';
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
             return <ListarVeiculos />
@@ -151,6 +152,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "MovimentosAdmin"){
             return <MovimentosAdmin />
+        }
+        else if(Componente === "VeiculosAgente"){
+            return <VeiculosAgente />
         }
         else {
             return <Error />

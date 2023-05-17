@@ -1,13 +1,4 @@
-import { 
-    FaCarAlt,
-    FaParking,
-    FaMapMarkerAlt,
-    FaUserPlus,
-    FaCar,
-    FaHistory,
-    FaUser,
-    FaClipboardList
- } from "react-icons/fa";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaClipboardList } from "react-icons/fa";
 import { RiFileAddFill } from "react-icons/ri";
 import { BsConeStriped, BsCashCoin, BsPersonCircle } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineContactSupport, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
@@ -19,7 +10,6 @@ import { TbReportSearch } from "react-icons/tb";
 import { useEffect } from "react";
 
 const Sidebar = () => {
-
         const nome = localStorage.getItem("user");
         const teste = JSON.parse(nome);
         const [mostrarSidebar, setMostrarSidebar] = useState(true);
@@ -71,8 +61,26 @@ const Sidebar = () => {
         const styles = {
         className: "nav-link d-flex align-items-center fs-6",
         }
-
-    const links = []
+        
+        const links = [{
+            className: styles.className,
+            icon: <FaUser />,
+            name: "‎ Meu perfil",
+            subitem: [
+                {
+                    className: styles.className,
+                    icon: <RiSettings5Fill />,
+                    name: "‎ Configurar",
+                    componente: "ConfiguracoesGerais",
+                },
+                {   
+                    deslogar: true,
+                    className: styles.className,
+                    icon: <RiSettings5Fill />,
+                    name: "‎ Desconectar",
+                },
+            ]
+    }]
 
     if(teste.perfil[0] === "parceiro"){
         links.push({
@@ -330,15 +338,15 @@ const Sidebar = () => {
     else if (teste.perfil[0] === "agente"){
         links.push({
             className: styles.className,
-            icon: <FaParking />,
+            icon: <BsConeStriped />,
             name: "‎ Listar Notificações",
             componente: "ListarNotificacoesAgente",
         })
         links.push({
             className: styles.className,
             icon: <FaParking />,
-            name: "‎ Componente",
-            componente: "Componente",
+            name: "‎ Veículos Estacionados",
+            componente: "VeiculosAgente",
         })
         links.push({
             className: styles.className,
@@ -436,7 +444,7 @@ const Sidebar = () => {
           {link.subitem &&
           link.subitem.map((subitem, key) => (
             <li className="nav-item" key={key}>
-                <a className={subitem.className} id="textoSm" onClick={() => toggleSidebar(subitem.componente)}>
+                <a className={subitem.className} id="textoSm" onClick={subitem.deslogar ? () => handleLogout() : () => toggleSidebar(subitem.componente)}>
                     {subitem.icon}
                     {subitem.name}
                 </a>
