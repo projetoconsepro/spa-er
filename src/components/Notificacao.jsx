@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
 import { FaCarAlt, FaEdit } from 'react-icons/fa';
-import arrayCores from './cores';
+import arrayCores from '../services/cores';
 
 const Notificacao = () => {
     const token = localStorage.getItem('token');

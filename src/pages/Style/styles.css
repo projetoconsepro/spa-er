@@ -4,6 +4,10 @@
     float: left;
 }
 
+.leaflet-container {
+    height: 50vh;
+  }
+
 #labelLogin{
     float: left;
     margin-left: 10px;
