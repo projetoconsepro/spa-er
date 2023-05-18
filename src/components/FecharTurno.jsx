@@ -1,15 +1,15 @@
 import axios from 'axios'
 import {React, useState, useEffect} from 'react'
 import Swal from 'sweetalert2'
+import  FuncTrocaComp  from "../util/FuncTrocaComp";
 
 const FecharTurno = () => {
     const [estadoTurno, setEstadoTurno] = useState(true);
-    const [estadoCaixa, setEstadoCaixa] = useState(true);
-    const [abrirTurno, setAbrirTurno] = useState(false);
+    const [estadoCaixa] = useState(true);
+    const [setAbrirTurno] = useState(false);
     const [estadoSelect, setEstadoSelect] = useState(false);
     const [setorSelecionado, setSetorSelecionado] = useState(1);
-    const [resposta2, setResposta2] = useState([]);
-    const [resposta3] = useState([]);
+    const [resposta2] = useState([]);
     const [tempoAtual, setTempoAtual] = useState("");
     const [mensagem, setMensagem] = useState("");
     const [estadoDiv, setEstadoDiv] = useState(false);
@@ -18,7 +18,7 @@ const FecharTurno = () => {
     useEffect(() => {
 
         if (localStorage.getItem("turno") !== 'true' && localStorage.getItem("caixa") !== 'true') {
-            localStorage.setItem("componente", "AbrirTurno")
+            FuncTrocaComp( "AbrirTurno")
         }
         const token = localStorage.getItem('token');
         const user = localStorage.getItem('user');
@@ -170,7 +170,7 @@ const FecharTurno = () => {
                 }
                 const horaAtual = hora + ":" + minuto + ":" + segundos;
                 localStorage.setItem("horaTurno", horaAtual)
-                localStorage.setItem("componente", "ListarVagasMonitor")
+                FuncTrocaComp( "ListarVagasMonitor")
                }
                else{
                 console.log(response)
@@ -259,7 +259,7 @@ const FecharTurno = () => {
                                     Swal.fire('Caixa fechado com sucesso', '', 'success')
                                     localStorage.setItem("caixa", false)
                                     localStorage.setItem("turno", false)
-                                    localStorage.setItem("componente", "AbrirTurno")
+                                    FuncTrocaComp( "AbrirTurno")
                                 }
                                 else{
                                     Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error')

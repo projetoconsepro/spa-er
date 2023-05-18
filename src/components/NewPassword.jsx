@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import sha256 from 'crypto-js/sha256';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const NewPassword = () => {
     const [inputSenha, setInputSenha] = useState("form-control");
@@ -14,7 +15,6 @@ const NewPassword = () => {
     const codigoConfirm = localStorage.getItem('codigoConfirm');
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
-    const navigate = useNavigate();
 
     const handleSubmit = async () => {
         if (senha === senha2 && senha.length >= 8) {
@@ -39,7 +39,7 @@ const NewPassword = () => {
                         }
                         else{
                             localStorage.removeItem('codigoConfirm');
-                            localStorage.setItem('componente', 'LoginPage')
+                            FuncTrocaComp( 'LoginPage')
                         }
                     }
                 ).catch(function (error) {
@@ -70,7 +70,7 @@ const NewPassword = () => {
                     }
                     else{
                         localStorage.removeItem('codigoConfirm');
-                        localStorage.setItem('componente', 'LoginPage')
+                        FuncTrocaComp( 'LoginPage')
                     }
                 }
             ).catch(function (error) {

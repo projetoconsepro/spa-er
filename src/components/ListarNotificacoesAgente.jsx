@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { React, useState, useEffect } from 'react'
-import { AiFillPrinter, AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineReload } from 'react-icons/ai'
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'
 import moment from 'moment'
+import VoltarComponente from '../util/VoltarComponente';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
@@ -187,12 +187,12 @@ const ListarNotificacoesAgente = () => {
             }
             else if (result.isConfirmed) {
                 localStorage.setItem('autoInfracao', JSON.stringify(item))
-                localStorage.setItem('componente', 'AutoInfracao')
+                FuncTrocaComp('AutoInfracao')
             }
             });
         }else{
           localStorage.setItem('autoInfracao', JSON.stringify(item))
-          localStorage.setItem('componente', 'AutoInfracao')
+          FuncTrocaComp('AutoInfracao')
         }
         }
 
@@ -328,6 +328,7 @@ const ListarNotificacoesAgente = () => {
                 </div>
               </div>
             </div>
+            <VoltarComponente />
           </div>
         </div>
       </div>

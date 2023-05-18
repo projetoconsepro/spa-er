@@ -1,19 +1,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FiRefreshCw } from "react-icons/fi";
-import { FaParking, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
 import ScrollTopArrow from "./ScrollTopArrow";
+import VoltarComponente from "../util/VoltarComponente";
+import FuncTrocaComp from "../util/FuncTrocaComp";
 
 const ListarVagasMonitor = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-    const [resposta, setResposta] = useState([]);
+    const [resposta] = useState([]);
     const [vaga, setVaga] = useState("");
-    const [resposta2, setResposta2] = useState([]);
-    const [tempoAtual, setTempoAtual] = useState('');
+    const [resposta2] = useState([]);
+    const [setTempoAtual] = useState('');
     const [estado, setEstado] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [salvaSetor, setSalvaSetor] = useState('');
@@ -58,7 +59,6 @@ const ListarVagasMonitor = () => {
                                 resposta[i].chegada = "";
                                 resposta[i].placa = '';
                                 resposta[i].temporestante = "";
-                                const date = new Date();
                                 resposta[i].Countdown = "";
                                 resposta[i].variaDisplay = "escondido";
                             }
@@ -193,7 +193,7 @@ const ListarVagasMonitor = () => {
 
     useEffect(() => {
         if (localStorage.getItem("turno") !== 'true') {
-            localStorage.setItem("componente", "FecharTurno");
+            FuncTrocaComp( "FecharTurno");
         }
 
         const requisicao = axios.create({
@@ -358,7 +358,7 @@ const ListarVagasMonitor = () => {
                                             localStorage.setItem('vaga', numero);
                                             localStorage.setItem('placa', placa);
                                             localStorage.setItem('idVagaVeiculo', id_vaga);
-                                            localStorage.setItem('componente', 'Notificacao');
+                                            FuncTrocaComp( 'Notificacao');
                                     }
                                     });
                                 }
@@ -418,7 +418,7 @@ const ListarVagasMonitor = () => {
                     }
                     else if (result.isDenied) {
                         localStorage.setItem('VagaVeiculoId', id_vaga);
-                        localStorage.setItem('componente', 'ListarNotificacoes');
+                        FuncTrocaComp( 'ListarNotificacoes');
                         
                 }
                 });
@@ -464,7 +464,7 @@ const ListarVagasMonitor = () => {
                     localStorage.setItem('vaga', numero);
                     localStorage.setItem('placa', placa);
                     localStorage.setItem('idVagaVeiculo', id_vaga);
-                    localStorage.setItem('componente', 'Notificacao');
+                    FuncTrocaComp('Notificacao');
                     
                 }
                 
@@ -475,7 +475,7 @@ const ListarVagasMonitor = () => {
             if ( placa === ''){
                 localStorage.setItem('vaga', numero);
                 localStorage.setItem('tipoVaga', tipo);
-                localStorage.setItem('componente', 'RegistrarVagaMonitor');
+                FuncTrocaComp('RegistrarVagaMonitor');
             }
             else {
                 Swal.fire({
@@ -517,7 +517,7 @@ const ListarVagasMonitor = () => {
                         localStorage.setItem('id_vagaveiculo', id_vaga);
                         localStorage.setItem('placa', placa);
                         localStorage.setItem('popup', true);
-                        localStorage.setItem('componente', 'RegistrarVagaMonitor');
+                        FuncTrocaComp( 'RegistrarVagaMonitor');
                     }
                 })
             }
@@ -575,6 +575,7 @@ const ListarVagasMonitor = () => {
                             </div>
                         </div>
                     </div>
+                <VoltarComponente />
                 </div>
             </div>
             <ScrollTopArrow />

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { BiSearchAlt, BiTransfer } from "react-icons/bi";
 import { AiOutlineBarChart, AiOutlineFileSearch } from "react-icons/ai";
 import { TbReportSearch } from "react-icons/tb";
+import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { useEffect } from "react";
 
 const Sidebar = () => {
@@ -17,7 +18,7 @@ const Sidebar = () => {
 
         const toggleSidebar = (componente) => {
             setAriaExpanded(false)
-            localStorage.setItem("componente", componente)
+            FuncTrocaComp(componente)
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
@@ -28,7 +29,7 @@ const Sidebar = () => {
                 
             } else {
             setAriaExpanded(false)
-            localStorage.setItem("componente", componente)
+            FuncTrocaComp(componente)
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)

@@ -1,12 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FiRefreshCw } from "react-icons/fi";
-import { FaParking, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
-import Cronometro from "./Cronometro";
 import ScrollTopArrow from "./ScrollTopArrow";
 import { BsPlus } from "react-icons/bs";
 import { BiEdit } from "react-icons/bi";
+import VoltarComponente from "../util/VoltarComponente";
 
 const VagasAdmin = () => {
     const token = localStorage.getItem('token');
@@ -375,7 +374,7 @@ const VagasAdmin = () => {
                                 </div>
                                 </div>
 
-                            <div className="card border-0 shadow">
+                            <div className="card border-0 shadow mb-3">
                                 <div className="table-responsive">
                                     <table className="table align-items-center table-flush">
                                         <thead className="thead-light">
@@ -404,9 +403,7 @@ const VagasAdmin = () => {
                             <div className="alert alert-danger" id="sim" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
                             </div>
-                            <div>
-                            <button className="btn2 botao mt-4" type="button" onClick={() => localStorage.setItem('componente', "SetoresAdmin")}>Voltar</button>
-                            </div>
+                            <VoltarComponente/>
                         </div>
                     </div>
                 </div>

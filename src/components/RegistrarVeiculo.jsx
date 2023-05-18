@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+import VoltarComponente from '../util/VoltarComponente'
+import FuncTrocaComp from '../util/FuncTrocaComp'
 
 const RegistrarVeiculo = () => {
     const [placa, setPlaca] = useState("placa")
@@ -93,7 +95,7 @@ const RegistrarVeiculo = () => {
                 }, 4000);
             }
             else {
-            localStorage.setItem("componente", "MeusVeiculos")
+            FuncTrocaComp( "MeusVeiculos")
             }
         }
     ).catch(function (error) {
@@ -109,12 +111,6 @@ const RegistrarVeiculo = () => {
     });
     }
 }
-
-
-    const HangleBack = () => {
-        localStorage.setItem('componente', 'MeusVeiculos')
-        
-    }
 
     useEffect(() => {
         const clicado = document.getElementById("flexSwitchCheckDefault").checked
@@ -171,7 +167,7 @@ const RegistrarVeiculo = () => {
                                 <input type="text" id={inputVazio} className='mt-6 pt-4 fs-1 justify-content-center align-items-center text-align-center' value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
                             </div>
                             <div className="mt-1 mb-6 gap-2 d-md-block">
-                                    <button type="submit" className="btn2 botao" onClick={HangleBack}>Voltar</button>
+                                    <VoltarComponente />
                                     <button type="submit" onClick={requisicao} className="btn3 botao">Cadastrar</button>
                                 </div>
                                 <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>

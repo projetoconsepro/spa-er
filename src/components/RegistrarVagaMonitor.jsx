@@ -3,6 +3,8 @@ import { React, useState, useEffect } from 'react'
 import { FaUserInjured, FaWheelchair } from 'react-icons/fa';
 import Swal from 'sweetalert2'
 import '../pages/Style/styles.css';
+import VoltarComponente from '../util/VoltarComponente';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const RegistrarVagaMonitor = () => {
     const [mensagem, setMensagem] = useState("");
@@ -78,7 +80,7 @@ const RegistrarVagaMonitor = () => {
                 const placaString = placaVeiculo.toString()
                 const placaMaiuscula = placaString.toUpperCase();
                 localStorage.setItem('placa',`${placaMaiuscula}`)
-                localStorage.setItem('componente', 'Notificacao')
+                FuncTrocaComp('Notificacao')
                 
                 }
                 else{
@@ -96,8 +98,6 @@ const RegistrarVagaMonitor = () => {
         localStorage.removeItem('vaga');
         localStorage.removeItem('popup');
         localStorage.removeItem('id_vagaveiculo');
-        localStorage.setItem('componente', 'ListarVagasMonitor')
-        
     }
         
     function validarPlaca(placa) {
@@ -164,7 +164,7 @@ const RegistrarVagaMonitor = () => {
                     localStorage.removeItem('vaga');
                     localStorage.removeItem('popup');
                     localStorage.removeItem('id_vagaveiculo');
-                    localStorage.setItem('componente', 'ListarVagasMonitor')
+                    FuncTrocaComp( 'ListarVagasMonitor')
                     
                 }
                 else {
@@ -200,7 +200,7 @@ const RegistrarVagaMonitor = () => {
             response => {
               if(response.data.msg.resultado === true){
                 localStorage.removeItem('vaga');
-                localStorage.setItem('componente', 'ListarVagasMonitor')
+                FuncTrocaComp('ListarVagasMonitor')
                 
               }
               else {
@@ -229,7 +229,7 @@ const RegistrarVagaMonitor = () => {
 
     useEffect(() => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
-            localStorage.setItem("componente", "FecharTurno");
+            FuncTrocaComp( "FecharTurno");
         }
         setTipoVaga(localStorage.getItem('tipoVaga'))
         param();
@@ -316,7 +316,7 @@ const RegistrarVagaMonitor = () => {
                             </div>
 
                             <div className="pt-4 mb-6 gap-2 d-md-block">
-                                <button type="submit" className="btn2 botao"onClick={HangleBack}><a href="/">Cancelar</a></button>
+                                <VoltarComponente onClick={() => HangleBack()} />
                                 <button type="submit" onClick={handleSubmit} className="btn3 botao">Confirmar</button>
                             </div>
                             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>

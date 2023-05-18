@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState} from "react";
 import { BsCameraFill } from "react-icons/bs";
 import Swal from 'sweetalert2'
+import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
 
 function Camera() {
@@ -76,7 +77,7 @@ function Camera() {
         localStorage.setItem(`foto${i}`, response[i].foto);
       }
     }
-    localStorage.setItem("componente", "Notificacao");
+    FuncTrocaComp( "Notificacao");
     
   }
   }

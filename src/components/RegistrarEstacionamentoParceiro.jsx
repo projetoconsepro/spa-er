@@ -1,6 +1,8 @@
 import axios from "axios";
 import React from "react";
 import { useState, useEffect } from "react";
+import VoltarComponente from "../util/VoltarComponente";
+import FuncTrocaComp from "../util/FuncTrocaComp";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [placa, setPlaca] = useState("placa");
@@ -10,13 +12,13 @@ const RegistrarEstacionamentoParceiro = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [cont, setCont] = useState(0);
-  const [teste, setTeste] = useState("");
+  const [setTeste] = useState("");
   const [success, setSuccess] = useState(false);
   const [vaga, setVaga] = useState("");
   const [tempo, setTempo] = useState("");
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
-  const [token, setToken] = useState("");
+  const [setToken] = useState("");
   const [user2, setUser2] = useState("");
 
   const param = async () => {
@@ -323,7 +325,7 @@ function validarPlaca(placa) {
     setUser2(user2.perfil[0]);
     console.log(user2)
    if(localStorage.getItem('turno') !== 'true' && user2.perfil[0] === "monitor") {
-      localStorage.setItem("componente", "FecharTurno");
+      FuncTrocaComp("FecharTurno");
   }
   localStorage.removeItem("placaCarro");
     param();
@@ -422,13 +424,8 @@ function validarPlaca(placa) {
             </div>
 
             <div className="mb-2 mt-3 gap-2 d-md-block">
-              <button
-                type="submit"
-                onClick={() => {
-                  handleRegistrar();
-                }}
-                className="btn3 botao"
-              >
+              <VoltarComponente />
+              <button type="submit" onClick={() => {handleRegistrar();}} className="btn3 botao">
                 Registrar
               </button>
             </div>

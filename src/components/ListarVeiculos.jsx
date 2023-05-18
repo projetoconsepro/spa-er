@@ -1,15 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import { FcPlus } from "react-icons/fc";
-import { FaBell, FaCarAlt, FaParking, FaStickerMule } from "react-icons/fa";
+import { FaBell, FaCarAlt, FaParking } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import { TbHandClick, TbClick } from "react-icons/tb";
+import { TbHandClick } from "react-icons/tb";
 import '../pages/Style/styles.css';
 import Swal from "sweetalert2";
 import Cronometro from './Cronometro';
+import  FuncTrocaComp  from "../util/FuncTrocaComp";
 
 const ListarVeiculos = () => {
     const [resposta] = useState([]);
@@ -58,7 +59,7 @@ const ListarVeiculos = () => {
             response => {
                 if(response.data.msg.resultado === false){
 
-                    localStorage.setItem("componente","CadastrarVeiculo")
+                    FuncTrocaComp("CadastrarVeiculo")
                     
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
@@ -320,7 +321,7 @@ const ListarVeiculos = () => {
 
     const regularizarNot = async (placa) => {
           localStorage.setItem("placaCarro", placa)
-          localStorage.setItem("componente", "Irregularidades")
+          FuncTrocaComp( "Irregularidades")
     }
 
     return (

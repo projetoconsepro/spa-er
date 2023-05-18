@@ -5,9 +5,10 @@ import { AiFillCheckCircle, AiFillPrinter } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin} from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal  from "sweetalert2";
+import VoltarComponente from "../util/VoltarComponente";
+import FuncTrocaComp from "../util/FuncTrocaComp";
 
 const ListarNotificacoes = () => {
-  const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);
   const [estado, setEstado ] = useState(false);
   const [placaSetada, setPlacaSetada] = useState("");
@@ -229,7 +230,7 @@ const ListarNotificacoes = () => {
 
   useEffect(() => {
     if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
-      localStorage.setItem("componente", "FecharTurno");
+      FuncTrocaComp( "FecharTurno");
     }
     const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
     const placa = localStorage.getItem("placaCarro");
@@ -620,6 +621,7 @@ const ListarNotificacoes = () => {
         <div className="alert alert-danger mt-4" role="alert" style={{ display: estado ? 'block' : 'none' }}>
             {mensagem}
         </div>
+        <VoltarComponente />
     </div>
   );
 };

@@ -1,17 +1,17 @@
 import axios from 'axios'
 import { React, useState, useEffect } from 'react'
-import { FaUserPlus, FaPowerOff, FaEye, FaEllipsisH, FaSearch } from 'react-icons/fa'
-import { BsFillShieldLockFill } from 'react-icons/bs'
+import { FaEye, FaEllipsisH } from 'react-icons/fa'
 import { AiFillPrinter, AiOutlinePlusCircle, AiOutlineReload } from 'react-icons/ai'
 import ScrollTopArrow from "./ScrollTopArrow";
 import CarroLoading from '../components/Carregamento'
 import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF'
+import VoltarComponente from '../util/VoltarComponente'
 
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
-  const [placa, setPlaca] = useState('')
+  const [placa] = useState('')
   const [estado2, setEstado2] = useState(false)
   const [estado, setEstado] = useState(false)
   const [mensagem, setMensagem] = useState('')
@@ -211,6 +211,7 @@ const filtroSelect = async () => {
                     </div>
                 </div>
             </div>
+              <VoltarComponente />
         </div>
     </div>
     <ScrollTopArrow />

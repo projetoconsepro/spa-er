@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import sha256 from 'crypto-js/sha256';
 
 import {api, createSession, registrar } from '../../services/api'
+import FuncTrocaComp from "../../util/FuncTrocaComp";
 
 export const AuthContext = createContext();
 
@@ -55,22 +56,22 @@ export const AuthProvider = ({ children }) => {
         if (response.data.dados.senhaPadrao === true) {
             localStorage.setItem('id_usuario', response.data.dados.usuario.id_usuario);
             localStorage.setItem('SenhaDefault', true)
-            localStorage.setItem('componente', 'NewPassword');
+            FuncTrocaComp( 'NewPassword');
         } else {
         if (response.data.msg.resultado === true && response.data.dados.usuario.perfil.length === 1) {
         let loggedUser = response.data.dados.usuario;
         loggedUser.perfil = [loggedUser.perfil[0].perfil];
         const token = response.data.dados.token;
         if (loggedUser.perfil[0] === 'cliente'){
-            localStorage.setItem('componente', 'MeusVeiculos');
+            FuncTrocaComp( 'MeusVeiculos');
         } else if (loggedUser.perfil[0] === 'monitor'){
-            localStorage.setItem('componente', 'ListarVagasMonitor');
+            FuncTrocaComp( 'ListarVagasMonitor');
         } else if (loggedUser.perfil[0] === 'parceiro'){
-            localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
+            FuncTrocaComp( 'RegistrarEstacionamentoParceiro');
         } else if (loggedUser.perfil[0] === 'admin'){
-            localStorage.setItem('componente', 'Dashboard');
+            FuncTrocaComp( 'Dashboard');
         } else if (loggedUser.perfil[0] === 'agente'){
-            localStorage.setItem('componente', 'ListarNotificacoesAgente');
+            FuncTrocaComp( 'ListarNotificacoesAgente');
         }
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
@@ -81,7 +82,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", token);
         api.defaults.headers.Authorization = `Bearer ${token}`;
-        localStorage.setItem('componente', 'EscolherPerfil');
+        FuncTrocaComp( 'EscolherPerfil');
         }
         return {
             auth: response.data.msg.resultado,

@@ -1,16 +1,15 @@
 import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
-import { Container, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { FaCoins } from "react-icons/fa";
+import VoltarComponente from "../util/VoltarComponente";
 
 const HistoricoFinanceiroParceiro = () => {
   const [resposta, setResposta] = useState([]);
   const [resposta2, setResposta2] = useState([]);
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [cont, setCont] = useState(0);
   const [saldo, setSaldo] = useState(0);
 
   function filtrar(filtro) {
@@ -217,8 +216,11 @@ const HistoricoFinanceiroParceiro = () => {
 ))}
 </div>
 <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-                      {mensagem}
-                  </div>
+  {mensagem}
+</div>
+
+<VoltarComponente />
+
 </div>
 
 );

@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { React, useState, useEffect } from 'react'
-import { FaUserInjured, FaWheelchair } from 'react-icons/fa';
 import Swal from 'sweetalert2'
 import '../pages/Style/styles.css';
+import VoltarComponente from '../util/VoltarComponente';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const AdicionarCreditos = () => {
     const [mensagem, setMensagem] = useState("");
@@ -15,28 +16,6 @@ const AdicionarCreditos = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-
-    const parametros = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-    })
-
-    const param = async () => {
-        await parametros.get('/parametros').then(
-            response => {
-              console.log(response)
-            }
-        ).catch(function (error) {
-                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-        });
-    }
         
 
     const handleSubmit = async  () => {
@@ -120,17 +99,6 @@ const AdicionarCreditos = () => {
         setCPF("")
      }
 
-    const HangleBack = () => {
-        if (user2.perfil[0] === "parceiro") {
-        localStorage.setItem("componente", "RegistrarEstacionamentoParceiro");
-        } else if(user2.perfil[0] === "monitor") {
-        localStorage.setItem("componente", "ListarVagasMonitor");
-        }
-        else if (user2.perfil[0] === "admin") {
-            localStorage.setItem("componente", "ListarVagas");
-        }
-    }
-
     const atualiza = () => {
         const pagamentos = document.getElementById('pagamentos').value;
         setPagamento(pagamentos);
@@ -138,7 +106,7 @@ const AdicionarCreditos = () => {
 
     useEffect(() => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
-            localStorage.setItem("componente", "FecharTurno");
+            FuncTrocaComp("FecharTurno");
         }
         setValor("")
     }, [])
@@ -190,7 +158,7 @@ const AdicionarCreditos = () => {
                             </div>
 
                             <div className="pt-4 mb-6 gap-2 d-md-block">
-                                <button type="submit" className="btn2 botao" onClick={HangleBack}>Cancelar</button>
+                                <VoltarComponente />
                                 <button type="submit" onClick={handleSubmit} className="btn3 botao">Confirmar</button>
                             </div>
                             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>

@@ -7,6 +7,7 @@ import sha256 from 'crypto-js/sha256';
 import { BsFillShieldLockFill } from 'react-icons/bs'
 import { AiFillPrinter } from 'react-icons/ai'
 import RelatoriosPDF from '../util/RelatoriosPDF'
+import VoltarComponente from '../util/VoltarComponente'
 
 const UsuariosAdmin = () => {
     const [data, setData] = useState([])
@@ -287,7 +288,6 @@ const UsuariosAdmin = () => {
                     });
                 });
               },
-              allowOutsideClick: () => !Swal.isLoading(),
               allowEnterKey: false,
               preOpen: () => {
                 // desabilita o botão de confirmação
@@ -606,14 +606,12 @@ const UsuariosAdmin = () => {
                                     console.log(error)
                                   })
                                 }else{
-                                  
                                 }
                               });
                             },      
                           })
-              }
+                        }
               else{
-
               }
           })    
     }
@@ -704,6 +702,7 @@ const UsuariosAdmin = () => {
                     </div>
                 </div>
             </div>
+            <VoltarComponente />
         </div>
     </div>
     <ScrollTopArrow />

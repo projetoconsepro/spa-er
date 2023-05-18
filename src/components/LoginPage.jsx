@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import { AuthContext } from "../pages/contexts/auth";
+import  FuncTrocaComp  from "../util/FuncTrocaComp";
 
 
 const LoginPage = () => {
@@ -32,6 +33,7 @@ const LoginPage = () => {
     useEffect(() => {
         localStorage.removeItem("SenhaDefault");
         localStorage.removeItem("id_usuario");
+        localStorage.removeItem("componenteAnterior")
     }, [])
 
     const handleSubmit = async (e) => {
@@ -86,11 +88,11 @@ const LoginPage = () => {
     }
 
     const registrado = () => {
-        localStorage.setItem("componente", "RegisterPage");
+        FuncTrocaComp( "RegisterPage");
     }
 
     const recuperar = () => {
-        localStorage.setItem("componente", "ResetPassword");
+        FuncTrocaComp( "ResetPassword");
     }
     
     return (

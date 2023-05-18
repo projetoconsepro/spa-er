@@ -4,18 +4,13 @@ import { FaCarAlt, FaParking } from 'react-icons/fa'
 import { TbHandClick } from 'react-icons/tb'
 import { BsFillTrashFill } from 'react-icons/bs'
 import Swal from 'sweetalert2'
+import VoltarComponente from '../util/VoltarComponente'
 
 const Configuracoes = () => {
 const [data, setData] = useState([])
-const [IsDisponivel, setIsDisponivel] = useState(false)
-const [estado, setEstado] = useState(false)
-const [estadoBotao, setEstadoBotao] = useState(false)
-const [mensagem, setMensagem] = useState("")
-const [mostrar2, setMostrar2] = useState([])
-const [configuracoes, setConfiguracoes] = useState("")
-const [cardBody, setCardBody] = useState("card-body3")
-const [estadoDiv, setEstadoDiv] = useState(false)
-const [bordaBaixo, setBordaBaixo] = useState("")
+const [setEstado] = useState(false)
+const [setMensagem] = useState("")
+const [cardBody] = useState("card-body3")
 const token = localStorage.getItem("token");
 const user = localStorage.getItem("user");
 const user2 = JSON.parse(user);
@@ -182,6 +177,7 @@ const mudaEstado = (index) => {
                     </h6>
                 </div>
                 ))}
+                <VoltarComponente />
     </div>
   )
 }

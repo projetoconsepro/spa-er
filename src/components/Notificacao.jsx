@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
 import { FaCarAlt, FaEdit } from 'react-icons/fa';
 import arrayCores from '../services/cores';
+import VoltarComponente from '../util/VoltarComponente';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const Notificacao = () => {
     const token = localStorage.getItem('token');
@@ -108,7 +110,7 @@ const Notificacao = () => {
     }).then(
             response => {
                 if(response.data.msg.resultado === true){
-                    localStorage.setItem("componente", "ListarVagasMonitor");
+                    FuncTrocaComp( "ListarVagasMonitor");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
                     localStorage.removeItem("placa");
@@ -139,7 +141,7 @@ const Notificacao = () => {
     }).then(
             response => {
                 if(response.data.msg.resultado === true){
-                    localStorage.setItem("componente", "ListarVagasMonitor");
+                    FuncTrocaComp( "ListarVagasMonitor");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
                     localStorage.removeItem("placa");
@@ -173,7 +175,7 @@ const Notificacao = () => {
 }
 
     const back = () => {
-        localStorage.setItem("componente", "ListarVagasMonitor");
+        FuncTrocaComp( "ListarVagasMonitor");
         localStorage.removeItem("vaga");
         localStorage.removeItem("id_vagaveiculo");
         localStorage.removeItem("placa");
@@ -184,7 +186,7 @@ const Notificacao = () => {
     }
 
     const renderCamera = () => {
-        localStorage.setItem("componente", "Camera");
+        FuncTrocaComp( "Camera");
         
     }
 
@@ -258,7 +260,7 @@ const Notificacao = () => {
 
     useEffect(() => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
-            localStorage.setItem("componente", "FecharTurno");
+            FuncTrocaComp("FecharTurno");
         }
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
@@ -519,9 +521,11 @@ const Notificacao = () => {
                                                     <input className="form-control" name="vaga" value={vaga} onChange={(e) => setVaga(e.target.value)} id="fonteInputPlaca" placeholder="Digite a vaga que o veículo está" />
                                                 </div>
                                             </div>
-                                            <div className="h6 mt-3">
-                                                <button type="submit" className="btn4 botao" onClick={() => { SetdadosTrue() }}>Buscar dados</button>
+                                            <div className="pt-4 mb-6 gap-2 d-md-block">
+                                                <VoltarComponente />
+                                                <button type="submit" onClick={() => { SetdadosTrue() }} className="btn3 botao">Buscar dados</button>
                                             </div>
+                                            
                                         </div>
                                     }
                                 </div>
