@@ -1,10 +1,9 @@
 import axios from 'axios';
 import { React, useEffect, useState } from 'react'
-import { AiFillCheckCircle, AiFillPrinter } from 'react-icons/ai';
-import { BiErrorCircle } from 'react-icons/bi';
-import { BsCalendarDate, BsCashCoin, BsFillPersonFill } from 'react-icons/bs';
-import { FaCarAlt, FaClipboardList, FaParking, FaSearch } from 'react-icons/fa';
+import { BsCalendarDate, BsCashCoin } from 'react-icons/bs';
+import { FaCarAlt, FaClipboardList, FaParking } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const AutoInfracao = () => {
     const token = localStorage.getItem("token");
@@ -38,7 +37,7 @@ const AutoInfracao = () => {
           Swal.fire( 'Sucesso!', 'Auto de infração confirmado com sucesso!', 'success')
           setTimeout(() => {
             localStorage.removeItem('autoInfracao')
-            localStorage.setItem('componente', 'ListarNotificacoesAgente')
+            FuncTrocaComp('ListarNotificacoesAgente')
             Swal.close()
           }, 1000);
         } else {

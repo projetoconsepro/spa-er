@@ -12,6 +12,8 @@ import Filtro from '../util/Filtro'
 import { useDisclosure } from '@mantine/hooks'
 import { RxLapTimer } from 'react-icons/rx'
 import Cronometro from './Cronometro'
+import VoltarComponente from '../util/VoltarComponente'
+import FuncTrocaComp from '../util/FuncTrocaComp'
 
 
 const ClientesAdmin = () => {
@@ -34,7 +36,7 @@ const ClientesAdmin = () => {
     const [veiculos, setVeiculos] = useState([])
     const [detalhesVeiculo, setDetalhesVeiculo] = useState([])
     const [nome, setNome] = useState("")
-    const [senhaParam, setSenhaParam] = useState("")
+    const [setSenhaParam] = useState("")
     const [estado , setEstado] = useState("")
     const [mensagem , setMensagem] = useState("")
     const [readyTransfer , setReadyTransfer] = useState(false);
@@ -407,12 +409,12 @@ const ClientesAdmin = () => {
 
     const notificacoes = (link) => {
         localStorage.setItem('placaCarro', link.placa)
-        localStorage.setItem('componente', 'ListarNotificacoes')
+        FuncTrocaComp('ListarNotificacoes')
     }
 
     const goHistorico = (link) => {
         localStorage.setItem('placaCarro', link.placa)
-        localStorage.setItem('componente', 'HistoricoVeiculo')
+        FuncTrocaComp( 'HistoricoVeiculo')
     }
 
   return (
@@ -662,6 +664,7 @@ const ClientesAdmin = () => {
                     </div>
                 </div>
             </div>
+                <VoltarComponente />
         </div>
     </div>
     <ScrollTopArrow />

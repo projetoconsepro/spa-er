@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import {  FaParking } from 'react-icons/fa'
 import { AiOutlineInfoCircle } from 'react-icons/ai'
+import VoltarComponente from '../util/VoltarComponente'
 
 const MovimentosAdmin = () => {
     const [data, setData] = useState([]);
@@ -104,9 +105,10 @@ const MovimentosAdmin = () => {
                                 </div>
                             </div>
                             ))}
-                    </div >
+                          </div >
                         </div>
                     </div>
+                    <VoltarComponente />
                 </div>
             </div>
     </div>

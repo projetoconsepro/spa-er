@@ -3,6 +3,7 @@ import { Group, Input, Button, Modal, Stepper } from '@mantine/core'
 import { IconClipboardList, IconCoin, IconMail, IconPhoneCall, IconUser } from '@tabler/icons-react'
 import React, { useEffect, useState } from 'react'
 import { useDisclosure } from '@mantine/hooks'
+import VoltarComponente from '../util/VoltarComponente'
 
 const TransferirCreditoCliente = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -17,7 +18,7 @@ const TransferirCreditoCliente = () => {
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-    const [readyTransfer , setReadyTransfer] = useState(false);
+    const [setReadyTransfer] = useState(false);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -243,7 +244,7 @@ const TransferirCreditoCliente = () => {
                 : 
                 <div className="col-12">
                 <Group position="center" mt="xl">
-                    <Button variant="default" >Voltar</Button>
+                    <VoltarComponente />
                     <Button className="bg-blue-50" onClick={()=> getInfo()}>Confirmar</Button>
                 </Group>
                 </div>

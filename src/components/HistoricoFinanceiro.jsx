@@ -3,6 +3,7 @@ import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import { FaCoins } from "react-icons/fa";
 import Swal from "sweetalert2";
+import VoltarComponente from "../util/VoltarComponente";
 
 const HistoricoFinanceiro = () => {
   const [resposta, setResposta] = useState([]);
@@ -204,6 +205,9 @@ const HistoricoFinanceiro = () => {
 <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
       {mensagem}
 </div>
+
+  <VoltarComponente />
+  
 </div>
 
 );

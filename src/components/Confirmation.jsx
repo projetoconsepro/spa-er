@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import {  useNavigate } from 'react-router-dom';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const Confirmation = () => {
     const [codigo, setCodigo] = useState("");
-    const [inputLogin, setinputLogin] = useState("form-control");
+    const [inputLogin] = useState("form-control");
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         const veiculo = axios.create({
@@ -27,7 +26,7 @@ const Confirmation = () => {
                 else{
                     localStorage.setItem('codigoConfirm', codigo);
                     localStorage.removeItem('email')
-                    localStorage.setItem('componente', "NewPassword");
+                    FuncTrocaComp( "NewPassword");
                 }
             }
         ).catch(function (error) {

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { React, useEffect, useState } from 'react'
-import { FaSearch, FaUserPlus } from 'react-icons/fa'
+import { FaSearch } from 'react-icons/fa'
 import { BsPlus } from 'react-icons/bs'
 import Swal from 'sweetalert2';
+import VoltarComponente from '../util/VoltarComponente';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const SetoresAdmin = () => {
     const [data, setData] = useState([]);
@@ -120,7 +122,7 @@ const SetoresAdmin = () => {
 
         const vagasAdmin = async (setor) => {
             localStorage.setItem('setor', setor)
-            localStorage.setItem('componente', 'VagasAdmin')
+            FuncTrocaComp( 'VagasAdmin')
             }
 
   return (
@@ -187,11 +189,19 @@ const SetoresAdmin = () => {
             </div>
             </div>
             ))}
+            <div className="col-12 col-md-9 px-3 mt-2">
+            <div className="row">
+            <div className="col-1"></div>
+            <div className="col-10">
+            <VoltarComponente />
+            </div>
+            <div className="col-1"></div>
+            </div>
+            </div>
             </div>
             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-                                {mensagem}
+                {mensagem}
             </div>
-
             </div>
   )
 }

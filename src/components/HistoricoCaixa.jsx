@@ -1,18 +1,15 @@
 import axios from 'axios'
 import { React, useEffect, useState } from 'react'
-import { FaHistory } from 'react-icons/fa'
-import CarroLoading from './Carregamento'
 import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'
-import jsPDF from 'jspdf';
 import RelatoriosPDF from '../util/RelatoriosPDF'
+import VoltarComponente from '../util/VoltarComponente'
 
 const HistoricoCaixa = () => {
     const [data, setData] = useState([])
-    const [data2, setData2] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState("")
-    const [dataHoje, setDataHoje] = useState("")
+    const [setDataHoje] = useState("")
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -306,6 +303,9 @@ const HistoricoCaixa = () => {
             </div>
           </div>
         </div>
+
+        <VoltarComponente />
+        
       </div>
   )
 }

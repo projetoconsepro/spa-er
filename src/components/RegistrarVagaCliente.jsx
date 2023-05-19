@@ -1,16 +1,16 @@
 import axios from 'axios';
 import { React, useState, useEffect } from 'react'
 import '../pages/Style/styles.css';
+import VoltarComponente from '../util/VoltarComponente';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const RegistrarVagaCliente = () => {
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
-    const [inputVaga, setinputVaga] = useState("form-control fs-5");
+    const [inputVaga] = useState("form-control fs-5");
     const [vaga, setVaga] = useState([]);
-    const [resposta2, setResposta2] = useState([]);
-    const [resposta, setResposta] = useState([{}]);
-    const [placaVeiculo, setPlacaVeiculo] = useState("");
-    const [tempo, setTempo] = useState("00:10:00");
+    const [resposta2] = useState([]);
+    const [setResposta] = useState([{}]);
     const [valor, setValor] = useState(0);
     const [valorcobranca, setValorCobranca] = useState("");
     const [valorcobranca2, setValorCobranca2] = useState("2");
@@ -36,7 +36,7 @@ const RegistrarVagaCliente = () => {
             response => {
                 setResposta(response?.data?.data);
                 if (response.data.msg.resultado === false) {
-                    localStorage.setItem("componente", "MeusVeiculos")
+                    FuncTrocaComp( "MeusVeiculos")
                     
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
@@ -94,10 +94,6 @@ const RegistrarVagaCliente = () => {
             }
         });
     }, [])
-
-    function mudanca (){
-        localStorage.setItem("componente", "MeusVeiculos")
-    }
 
     function mexerValores () {
 
@@ -163,7 +159,7 @@ const RegistrarVagaCliente = () => {
             }).then(
                 response => {
                     if (response.data.msg.resultado === true) {
-                        localStorage.setItem("componente", "MeusVeiculos")
+                        FuncTrocaComp("MeusVeiculos")
                         
                     }
                     else {
@@ -224,7 +220,7 @@ const RegistrarVagaCliente = () => {
                             </div>
 
                             <div className="mt-1 mb-5 gap-2 d-md-block">
-                                <button type="submit" onClick={mudanca} className="btn2 botao"><a href="/">Cancelar</a></button>
+                                <VoltarComponente />
                                 <button type="submit" onClick={handleSubmit} className="btn3 botao">Confirmar</button>
                             </div>
                             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>

@@ -2,15 +2,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import ScrollTopArrow from "./ScrollTopArrow";
-import { BsPlus } from "react-icons/bs";
-import { BiEdit } from "react-icons/bi";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal } from '@mantine/core'
-import { IconBrandCitymapper } from "@tabler/icons-react";
 import { IconMapSearch } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
-import { Icon } from "leaflet";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import VoltarComponente from "../util/VoltarComponente";
+import FuncTrocaComp from "../util/FuncTrocaComp";
 
 const VeiculosAgente = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -19,7 +16,6 @@ const VeiculosAgente = () => {
     const user2 = JSON.parse(user);
     const [data, setData] = useState([]);
     const [data2, setData2] = useState([]);
-    const [data3, setData3] = useState([]);
     const [vaga, setVaga] = useState("");
     const [estado, setEstado] = useState(false);
     const [mensagem, setMensagem] = useState("");
@@ -135,7 +131,7 @@ const VeiculosAgente = () => {
 
     const autoInfracao = (item) => {
         localStorage.setItem('autoInfracao', JSON.stringify(item))
-        localStorage.setItem('componente', 'AutoInfracao')
+        FuncTrocaComp( 'AutoInfracao')
     }
 
     const abrirMapa = (item) => {
@@ -203,9 +199,7 @@ const VeiculosAgente = () => {
                             <div className="alert alert-danger" id="sim" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
                             </div>
-                            <div>
-                            <button className="btn2 botao mt-4" type="button" onClick={() => localStorage.setItem('componente', "ListarNotificacoesAgente")}>Voltar</button>
-                            </div>
+                            <VoltarComponente />
                         </div>
                     </div>
                 </div>

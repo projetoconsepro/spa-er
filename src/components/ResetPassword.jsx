@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import FuncTrocaComp from "../util/FuncTrocaComp";
 
 const ResetPassword = () => {
   const [metodo, setMetodo] = useState("");
@@ -12,8 +13,6 @@ const ResetPassword = () => {
   const [checkValidate2] = useState(false);
   const [checkValidate3] = useState(false);
   const [sucesso, setSucesso] = useState(false);
-  const navigate = useNavigate();
-
 
   const checkBoxValidate = () => {
     const checks = document.querySelectorAll('input[type="checkbox"]');
@@ -94,7 +93,7 @@ const ResetPassword = () => {
                         }, 4000);
                     }
                     else{
-                        localStorage.setItem('componente', 'Confirmation')
+                      FuncTrocaComp('Confirmation')
                     }
                 }
             ).catch(function (error) {
@@ -125,7 +124,7 @@ const ResetPassword = () => {
   };
 
   const voltarPagina = () => {
-    localStorage.setItem('componente', 'LoginPage')
+    FuncTrocaComp( 'LoginPage')
   }
 
   return (

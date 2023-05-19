@@ -1,11 +1,11 @@
 import React, { useState, useContext, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../pages/contexts/auth";
 import Swal from 'sweetalert2'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import emailValidator from 'email-validator';
 import InputMask from "react-input-mask";
 import TailSpin from "react-loading-icons/dist/esm/components/tail-spin";
+import  FuncTrocaComp  from "../util/FuncTrocaComp";
 
 const RegisterPage = () => {
     const { register } = useContext(AuthContext);
@@ -30,7 +30,7 @@ const RegisterPage = () => {
     const [classolho, setClassolho] = useState("olho");
 
     const registrado = () => {
-        localStorage.setItem("componente", "LoginPage");
+        FuncTrocaComp( "LoginPage");
     }
 
     function extrairNumeros(string) {
@@ -180,7 +180,7 @@ const RegisterPage = () => {
                 setTimeout(() => {
                     setSucesso(false)
                     setEstado2(false)
-                    localStorage.setItem("componente", "LoginPage")
+                    FuncTrocaComp( "LoginPage")
                 }, 5000);
                 }
             else {
@@ -226,7 +226,7 @@ const RegisterPage = () => {
 
 
     const voltarLogin = () => {
-        localStorage.setItem("componente", "LoginPage")
+        FuncTrocaComp( "LoginPage")
     }
 
     const telefoneRef = useRef(null)

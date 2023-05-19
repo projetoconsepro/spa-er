@@ -8,6 +8,7 @@ import RelatoriosPDF from '../util/RelatoriosPDF';
 import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Carousel } from '@mantine/carousel';
+import VoltarComponente from '../util/VoltarComponente';
 
 const ListarNotificacoesAdmin = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -20,10 +21,6 @@ const ListarNotificacoesAdmin = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-  
-    function handlePaginatedData(currentItems) {
-      setData(currentItems);
-    }
 
     function ArrumaHora(data, hora ) {
         const data2 = data.split("T");
@@ -469,7 +466,9 @@ const ListarNotificacoesAdmin = () => {
               </div>
             </div>
           </div>
+          
         </div>
+        <VoltarComponente />
       </div>
   )
 }

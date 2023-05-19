@@ -6,6 +6,8 @@ import Filtro from "../util/Filtro";
 import { AiFillPrinter } from "react-icons/ai";
 import { FaSearch } from "react-icons/fa";
 import RelatoriosPDF from "../util/RelatoriosPDF";
+import  FuncTrocaComp  from "../util/FuncTrocaComp";
+import VoltarComponente from "../util/VoltarComponente";
 
 const OcupacaoVagasAdmin = () => {
   const [data, setData] = useState([]);
@@ -147,7 +149,7 @@ const OcupacaoVagasAdmin = () => {
         cancelButtonText: "Voltar",
       }).then((result) => {
         if (result.isConfirmed) {
-          localStorage.setItem("componente", "ListarNotificacoes");
+          FuncTrocaComp("ListarNotificacoes")
           localStorage.setItem("placaCarro", data[index].placa);
         } else if (result.isDenied) {
         }
@@ -317,6 +319,7 @@ const OcupacaoVagasAdmin = () => {
               regularizacao: item.regularizacao,
               notificacao: item.notificacao,
               id_vaga_veiculo: item.id_vaga_veiculo,
+              tempo: item.tempo,
             }));
             setData(newData);
           } else {
@@ -364,7 +367,7 @@ const OcupacaoVagasAdmin = () => {
 
       </div>
       <div className="row">
-        <div className="col-12 col-xl-8">
+        <div className="col-12 col-xl-8 mb-4">
         <div className="row mx-2 mb-4">
                     <div className="col-6 input-group w-50 h-25 mt-2 pt-1">
                     <span className="input-group-text bg-blue-50 text-white" id="basic-addon1"><FaSearch /></span>
@@ -401,6 +404,9 @@ const OcupacaoVagasAdmin = () => {
                         </th>
                         <th className="border-bottom" scope="col" id="tabelaUsuarios2">
                             Situação
+                        </th>
+                        <th className="border-bottom" scope="col" id="tabelaUsuarios2">
+                            Tempo
                         </th>
                       </tr>
                     </thead>
@@ -506,6 +512,20 @@ const OcupacaoVagasAdmin = () => {
                                 ? "Notificado"
                                 : "Normal" }
                           </td>
+                          <td
+                            style={{
+                              color:
+                                item.regularizacao === "S"
+                                  ? "#0F5132"
+                                  : item.notificacao === "S" &&
+                                    item.regularizacao !== "S"
+                                  ? "#842029"
+                                  : "#303030",
+                            }}
+                            id="tabelaUsuarios2"
+                          >
+                            {item.tempo}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -527,6 +547,7 @@ const OcupacaoVagasAdmin = () => {
               </div>
             </div>
           </div>
+          <VoltarComponente />
         </div>
       </div>
     </div>

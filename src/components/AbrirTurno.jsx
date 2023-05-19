@@ -1,15 +1,16 @@
 import axios from 'axios'
+import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import {React, useState, useEffect} from 'react'
 
 const AbrirTurno = () => {
     const [valor, setValor] = useState(0)
-    const [estado, setEstado] = useState(true)
+    const [estado] = useState(true)
     const [estado2, setEstado2] = useState(false);
     const [mensagem, setMensagem] = useState("")
-    const [abTurno, setAbTurno] = useState(false)
+    const [abTurno] = useState(false)
     const [setorSelecionado, setSetorSelecionado] = useState(1)
     const [setorSelecionado2, setSetorSelecionado2] = useState("A")
-    const [botaoFecharTurno, setBotaoFecharTurno] = useState(false)
+    const [botaoFecharTurno] = useState(false)
     const [nome, setNome] = useState("")
     const [tempoAtual, setTempoAtual] = useState("")
     const [resposta2] = useState([])
@@ -67,7 +68,7 @@ const AbrirTurno = () => {
         setTempoAtual(horaAtual);
 
         if(localStorage.getItem("turno") === "true" || localStorage.getItem("caixa") === 'true'){
-            localStorage.setItem("componente", "FecharTurno")
+            FuncTrocaComp( "FecharTurno")
         }
     }, [])
 
@@ -113,7 +114,7 @@ const AbrirTurno = () => {
                     localStorage.setItem("caixa", true)
                     localStorage.setItem("horaTurno", tempoAtual)
                     localStorage.setItem("setorTurno", setorSelecionado2)
-                    localStorage.setItem("componente", "ListarVagasMonitor")
+                    FuncTrocaComp( "ListarVagasMonitor")
                }
                else{
                 setEstado2(true);
@@ -123,7 +124,7 @@ const AbrirTurno = () => {
                   setMensagem("")
                   localStorage.setItem("turno", true)
                 localStorage.setItem("caixa", true)
-                localStorage.setItem("componente", "FecharTurno")
+                FuncTrocaComp( "FecharTurno")
                 }, 5000);
                }
             }

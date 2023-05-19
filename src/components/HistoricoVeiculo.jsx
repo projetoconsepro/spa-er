@@ -2,9 +2,10 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import CarroLoading from "./Carregamento";
+import VoltarComponente from "../util/VoltarComponente";
+import FuncTrocaComp from "../util/FuncTrocaComp";
 
 const HistoricoVeiculo = () => {
-  const [resposta, setResposta] = useState([]);
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
@@ -14,7 +15,6 @@ const HistoricoVeiculo = () => {
   const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
-  const [plaquinha, setPlaquinha] = useState("");
   const [perfil, setPerfil] = useState("");
 
   function ArrumaHora(data, hora) {
@@ -146,7 +146,7 @@ const HistoricoVeiculo = () => {
         cancelButtonText: "Voltar",
       }).then((result) => {
         if (result.isConfirmed) {
-          localStorage.setItem("componente", "ListarNotificacoes");
+          FuncTrocaComp( "ListarNotificacoes");
           localStorage.setItem("placaCarro", data[index].placa);
         } else if (result.isDenied) {
         }
@@ -281,7 +281,7 @@ const HistoricoVeiculo = () => {
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
     ) {
-      localStorage.setItem("componente", "FecharTurno");
+      FuncTrocaComp( "FecharTurno");
     }
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
@@ -489,6 +489,7 @@ const HistoricoVeiculo = () => {
               </div>
             </div>
           </div>
+          <VoltarComponente />
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../pages/contexts/auth";
 import 'bootstrap/dist/css/bootstrap.min.css'
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const DoisPerfis = () => {
     const { authenticated, logout } = useContext(AuthContext);
@@ -23,17 +24,17 @@ function red(id) {
     analiseFeita.perfil = perfill;
     localStorage.setItem('user', JSON.stringify(analiseFeita));
     if(analiseFeita.perfil[0] === 'cliente'){
-    localStorage.setItem('componente', 'MeusVeiculos');
+      FuncTrocaComp('MeusVeiculos');
     }else if (analiseFeita.perfil[0] === 'monitor'){
-    localStorage.setItem('componente', 'ListarVagasMonitor');
+      FuncTrocaComp('ListarVagasMonitor');
     } else if (analiseFeita.perfil[0] === 'parceiro'){
-    localStorage.setItem('componente', 'RegistrarEstacionamentoParceiro');
+      FuncTrocaComp('RegistrarEstacionamentoParceiro');
     }
     else if (analiseFeita.perfil[0] === 'admin'){
-    localStorage.setItem('componente', 'Dashboard');
+      FuncTrocaComp('Dashboard');
     }
     else if (analiseFeita.perfil[0] === 'agente'){
-    localStorage.setItem('componente', 'ListarNotificacoesAgente');
+      FuncTrocaComp( 'ListarNotificacoesAgente');
     }
 }
         return (
