@@ -19,7 +19,7 @@ const Notificacao = () => {
     const [infoBanco, setInfoBanco] = useState(false);
     const [imagensSalvas, setImagenSalvas] = useState(false);
     const [placa, setPlaca] = useState("");
-    const [imagens] = useState([]);
+    const [imagens, setImagens] = useState([]);
     const [modelo, setModelo] = useState([]);
     const [modeloVeiculo, setModeloVeiculo] = useState("");
     const [cor, setCor] = useState([]);
@@ -29,8 +29,8 @@ const Notificacao = () => {
     const [fabricanteVeiculo, setFabricanteVeiculo] = useState("");
     const [tipoNot, setTipoNot] = useState("1");
     const [tiposNotificacao, setTiposNot] = useState([]);
-    let [cont, setCont] = useState(0);
     const [outro, setOutro] = useState (true);
+    let [cont, setCont] = useState(0);
 
 
     const submit = async () => {

@@ -4,16 +4,16 @@ import {React, useState, useEffect} from 'react'
 
 const AbrirTurno = () => {
     const [valor, setValor] = useState(0)
-    const [estado] = useState(true)
+    const [estado, setEstado] = useState(true)
     const [estado2, setEstado2] = useState(false);
     const [mensagem, setMensagem] = useState("")
-    const [abTurno] = useState(false)
+    const [abTurno, setAbTurno] = useState(false)
     const [setorSelecionado, setSetorSelecionado] = useState(1)
     const [setorSelecionado2, setSetorSelecionado2] = useState("A")
-    const [botaoFecharTurno] = useState(false)
+    const [botaoFecharTurno, setBotaoFecharTurno] = useState(false)
     const [nome, setNome] = useState("")
     const [tempoAtual, setTempoAtual] = useState("")
-    const [resposta2] = useState([])
+    const [resposta2, setResposta2] = useState([])
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);

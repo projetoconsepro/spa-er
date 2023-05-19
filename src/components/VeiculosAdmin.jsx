@@ -11,7 +11,7 @@ import VoltarComponente from '../util/VoltarComponente'
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
-  const [placa] = useState('')
+  const [placa, setPlaca] = useState('')
   const [estado2, setEstado2] = useState(false)
   const [estado, setEstado] = useState(false)
   const [mensagem, setMensagem] = useState('')

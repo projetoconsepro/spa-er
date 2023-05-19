@@ -11,10 +11,9 @@ const ListarVagasMonitor = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-    const [resposta] = useState([]);
+    const [resposta, setResposta] = useState([]);
     const [vaga, setVaga] = useState("");
-    const [resposta2] = useState([]);
-    const [setTempoAtual] = useState('');
+    const [resposta2, setResposta2] = useState([]);
     const [estado, setEstado] = useState(false);
     const [mensagem, setMensagem] = useState("");
     const [salvaSetor, setSalvaSetor] = useState('');
@@ -133,11 +132,6 @@ const ListarVagasMonitor = () => {
                                 resposta[i].Countdown = formatada;
                             }
                         }
-                        const data = new Date();
-                        const hora = data.getHours();
-                        const minuto = data.getMinutes();
-                        const horaAtual = hora + ":" + minuto;
-                        setTempoAtual(horaAtual);
 
                     }
                 }

@@ -5,11 +5,11 @@ import  FuncTrocaComp  from "../util/FuncTrocaComp";
 
 const FecharTurno = () => {
     const [estadoTurno, setEstadoTurno] = useState(true);
-    const [estadoCaixa] = useState(true);
-    const [setAbrirTurno] = useState(false);
+    const [estadoCaixa, setEstadoCaixa] = useState(true);
+    const [abrirTurno, setAbrirTurno] = useState(false);
     const [estadoSelect, setEstadoSelect] = useState(false);
     const [setorSelecionado, setSetorSelecionado] = useState(1);
-    const [resposta2] = useState([]);
+    const [resposta2, setResposta2] = useState([]);
     const [tempoAtual, setTempoAtual] = useState("");
     const [mensagem, setMensagem] = useState("");
     const [estadoDiv, setEstadoDiv] = useState(false);

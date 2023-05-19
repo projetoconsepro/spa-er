@@ -7,10 +7,10 @@ import FuncTrocaComp from '../util/FuncTrocaComp';
 const RegistrarVagaCliente = () => {
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
-    const [inputVaga] = useState("form-control fs-5");
+    const [inputVaga, setInputVaga] = useState("form-control fs-5");
     const [vaga, setVaga] = useState([]);
-    const [resposta2] = useState([]);
-    const [setResposta] = useState([{}]);
+    const [resposta, setResposta] = useState([{}]);
+    const [resposta2, setResposta2] = useState([]);
     const [valor, setValor] = useState(0);
     const [valorcobranca, setValorCobranca] = useState("");
     const [valorcobranca2, setValorCobranca2] = useState("2");

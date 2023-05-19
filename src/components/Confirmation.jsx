@@ -5,7 +5,7 @@ import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const Confirmation = () => {
     const [codigo, setCodigo] = useState("");
-    const [inputLogin] = useState("form-control");
+    const [inputLogin, setInputLogin] = useState("form-control");
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
 

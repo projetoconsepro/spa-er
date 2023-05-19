@@ -18,7 +18,7 @@ const TransferirCreditoCliente = () => {
     const [active, setActive] = useState(1);
     const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
     const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-    const [setReadyTransfer] = useState(false);
+    const [readyTransfer, setReadyTransfer] = useState(false);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);

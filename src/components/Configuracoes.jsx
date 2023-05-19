@@ -8,8 +8,8 @@ import VoltarComponente from '../util/VoltarComponente'
 
 const Configuracoes = () => {
 const [data, setData] = useState([])
-const [setEstado] = useState(false)
-const [setMensagem] = useState("")
+const [estado, setEstado] = useState(false)
+const [mensagem, setMensagem] = useState("")
 const [cardBody] = useState("card-body3")
 const token = localStorage.getItem("token");
 const user = localStorage.getItem("user");
