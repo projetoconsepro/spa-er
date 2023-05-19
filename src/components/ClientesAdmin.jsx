@@ -36,7 +36,7 @@ const ClientesAdmin = () => {
     const [veiculos, setVeiculos] = useState([])
     const [detalhesVeiculo, setDetalhesVeiculo] = useState([])
     const [nome, setNome] = useState("")
-    const [setSenhaParam] = useState("")
+    const [senhaParam, setSenhaParam] = useState("")
     const [estado , setEstado] = useState("")
     const [mensagem , setMensagem] = useState("")
     const [readyTransfer , setReadyTransfer] = useState(false);

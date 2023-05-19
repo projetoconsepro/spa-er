@@ -8,8 +8,8 @@ const Regularizacao = () => {
     const [textoPlaca, setTextoPlaca] = useState("")
     const [limite, setLimite] = useState(8)
     const [inputVazio, setInputVazio] = useState("inputvazio3")
-    const [mensagem] = useState("");
-    const [estado] = useState(false);
+    const [mensagem, setMensagem] = useState("");
+    const [estado, setEstado] = useState(false);
     const [cont, setCont] = useState(0);
     const [teste, setTeste] = useState("")
 

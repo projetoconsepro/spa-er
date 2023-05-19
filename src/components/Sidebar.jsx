@@ -280,6 +280,12 @@ const Sidebar = () => {
             name: "‎ Movimentos setor",
             componente: "MovimentosAdmin",
         })
+        links.push({
+            className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Prestação de Contas",
+            componente: "PrestacaoContas",
+        })
     }
     else if (teste.perfil[0] === "monitor"){
         links.push({
@@ -348,12 +354,6 @@ const Sidebar = () => {
             icon: <FaParking />,
             name: "‎ Veículos Estacionados",
             componente: "VeiculosAgente",
-        })
-        links.push({
-            className: styles.className,
-            icon: <FaParking />,
-            name: "‎ Componente",
-            componente: "Componente",
         })
     }
 

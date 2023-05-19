@@ -12,13 +12,13 @@ const RegistrarEstacionamentoParceiro = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [cont, setCont] = useState(0);
-  const [setTeste] = useState("");
+  const [teste, setTeste] = useState("");
   const [success, setSuccess] = useState(false);
   const [vaga, setVaga] = useState("");
   const [tempo, setTempo] = useState("");
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
-  const [setToken] = useState("");
+  const [token, setToken] = useState("");
   const [user2, setUser2] = useState("");
 
   const param = async () => {

@@ -58,6 +58,7 @@ const VeiculosAgente = () => {
                         status: item.status,
                         id_status_vaga: item.id_status_vaga,
                     }))
+                    console.log(newData)
                     setData(newData);
                 }
                 else {
@@ -172,7 +173,7 @@ const VeiculosAgente = () => {
                                 </div>
                                 </div>
 
-                            <div className="card border-0 shadow">
+                            <div className="card border-0 shadow mb-5">
                                 <div className="table-responsive">
                                     <table className="table align-items-center table-flush">
                                         <thead className="thead-light">
@@ -194,10 +195,12 @@ const VeiculosAgente = () => {
                                             ))}
                                         </tbody>
                                     </table>
+                                    <div className="d-flex justify-content-center">
+                                    <div className="alert alert-danger w-75 mt-2" id="sim" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                                        {mensagem}
+                                    </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="alert alert-danger" id="sim" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-                                {mensagem}
                             </div>
                             <VoltarComponente />
                         </div>

@@ -9,7 +9,7 @@ const HistoricoCaixa = () => {
     const [data, setData] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState("")
-    const [setDataHoje] = useState("")
+    const [dataHoje, setDataHoje] = useState("")
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);

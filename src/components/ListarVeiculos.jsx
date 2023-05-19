@@ -13,16 +13,16 @@ import Cronometro from './Cronometro';
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 
 const ListarVeiculos = () => {
-    const [resposta] = useState([]);
+    const [resposta, setResposta] = useState([]);
     const [valorcobranca,setValorCobranca] = useState("");
     const [valorcobranca2,setValorCobranca2] = useState("2");
     const [mostrar, setMostrar] = useState(false);
-    const [mostrar2] = useState([]);
-    const [mostrardiv] = useState([]);
-    const [nofityvar] = useState([]);
+    const [mostrar2, setMostrar2] = useState([]);
+    const [mostrardiv, setMostrarDiv] = useState([]);
+    const [nofityvar, setNotifyVar] = useState([]);
     const [saldoCredito, setSaldoCredito] = useState("");
     const [vaga, setVaga] = useState([]);
-    const [notificacao ] = useState([]);
+    const [notificacao, setNotificacao] = useState([]);
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');

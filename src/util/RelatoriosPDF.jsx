@@ -65,6 +65,22 @@ const header = () => {
 
   const fileName = `${formattedDate} - ${nomeArquivo}`;
 
+  
+  const totalPages = doc.internal.getNumberOfPages();
+
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    const text = `Página ${i} / ${totalPages}`;
+    const textWidth = doc.getTextWidth(text);
+    const textX = (doc.internal.pageSize.width - textWidth) / 2;
+    const textY = doc.internal.pageSize.height - 3;
+    
+    doc.text(text, textX, textY);
+  }
+
   doc.save(fileName);
+
 };
 export default RelatoriosPDF;
