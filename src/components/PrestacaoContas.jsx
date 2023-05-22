@@ -1,9 +1,15 @@
-import React, { useEffect } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Logo from '../util/logoconseproof2.png';
 
 const PrestacaoContas = () => {
+  const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
+  const [data3, setData3] = useState([]);
+
+
   const gerarPdf = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -35,17 +41,122 @@ const PrestacaoContas = () => {
     header();
 
     const regularizacaoData = [
-      ['', { content: 'Regularização', colSpan: 4 },{ content: 'Tickets', colSpan: 4 }, { content: 'Recarga', colSpan: 4 }, { content: 'Regularização', colSpan: 4}, { content: 'Total arrecadado', colSpan: 4 },],
+      ['', { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 4 }, { content: 'Regularização', colSpan: 4}, { content: 'Total arrecadado', colSpan: 4 },],
       ['', 'Quant' ,'Din', 'Pix', 'Total', 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix', 'Total'],
-      [{ content: 'Monitor - PDT', colSpan: 21 }],
-      ['Pedroca', '1295', '6.100,00 ', '20,00', '120,00',  '1295', '6.100,00 ', '20,00', '120,00', '1295', '6.100,00 ', '20,00', '120,00', '1295', '6.100,00 ', '20,00', '120,00',' 5000','24.400,00', '20,00', '120,00'],
-      ['Murilo', '1295', '6.100,00 ', '20,00', '120,00',  '1295', '6.100,00 ', '20,00', '120,00', '1295', '6.100,00 ', '20,00', '120,00', '1295', '6.100,00 ', '20,00', '120,00', ' 5000','24.400,00', '20,00', '120,00'],
-      ['Total', '2509', '120.200,00', '40,00', '240,00', '2509', '120.200,00', '40,00', '240,00' , '2509', '120.200,00', '40,00', '240,00' , '2509', '120.200,00', '40,00', '240,00' , '2509', '120.200,00', '40,00', '240,00' ],
-      [{ content: 'Aplicativo', colSpan: 21}],
-      ['Pedroca', '1295', '6.100,00 ', '20,00', '120,00',  '1295', '6.100,00 ', '20,00', '120,00', '1295', '6.100,00 ', '20,00', '120,00', '1295', '6.100,00 ', '20,00', '120,00', ' 5000','24.400,00', '20,00', '120,00'],
-      ['Murilo', '1295', '6.100,00 ', '20,00', '120,00',  '1295', '6.100,00 ', '20,00', '120,00', '1295', '6.100,00 ', '20,00', '120,00', '1295', '6.100,00 ', '20,00', '120,00', ' 5000','24.400,00', '20,00', '120,00'],
-      ['Total', '2509', '120.200,00', '40,00', '240,00', '2509', '120.200,00', '40,00', '240,00' , '2509', '120.200,00', '40,00', '240,00' , '2509', '120.200,00', '40,00', '240,00' , '2509', '120.200,00', '40,00', '240,00' ],    
+      
     ];
+
+    const formatNumero = (numero) => {
+      if (Number.isInteger(numero)) {
+        return numero + ',00';
+      } else {
+        return numero.toString();
+      }
+    };
+
+    regularizacaoData.push([{ content: 'Monitor', colSpan: 21 }]);
+    data[0].monitor.map((item) => {
+      if(item.Regularizacao !== undefined){
+      regularizacaoData.push(
+        [item.nome.length > 11 ? item.nome.substring(0, item.nome.indexOf(' ')) + ' ' + item.nome.split(' ')[1].charAt(0) + '.' : item.nome <= 11 ? item.nome.substring(0, 8) : item.nome.substring(0, 11),
+        item.Regularizacao.quantidade,
+        formatNumero(item.Regularizacao.dinheiro),
+        formatNumero(item.Regularizacao.pix),
+        formatNumero(item.Regularizacao.TotalValor),
+        item.estacionamento.quantidade,
+        formatNumero(item.estacionamento.dinheiro),
+        formatNumero(item.estacionamento.pix),
+        formatNumero(item.estacionamento.TotalValor),
+        item.creditosInseridos.quantidade,
+        formatNumero(item.creditosInseridos.dinheiro),
+        formatNumero(item.creditosInseridos.pix),
+        formatNumero(item.creditosInseridos.TotalValor),
+        ]);
+      }
+      else {
+        regularizacaoData.push(
+          ['Total',
+          item.total.Regularizacao.quantidade,
+          formatNumero(item.total.Regularizacao.dinheiro),
+          formatNumero(item.total.Regularizacao.pix),
+          formatNumero(item.total.Regularizacao.TotalValor),
+          item.total.estacionamento.quantidade,
+          formatNumero(item.total.estacionamento.dinheiro),
+          formatNumero(item.total.estacionamento.pix),
+          formatNumero(item.total.estacionamento.TotalValor),
+          item.total.creditosInseridos.quantidade,
+          formatNumero(item.total.creditosInseridos.dinheiro),
+          formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(item.total.creditosInseridos.TotalValor),
+          ]);
+
+      }
+    });
+    const BoldCol = regularizacaoData.length -2;
+
+    regularizacaoData.push([{ content: 'Parceiro', colSpan: 21 }]);
+    data[0].parceiro.map((item) => {
+      if(item.Regularizacao !== undefined){
+      regularizacaoData.push(
+        [item.nome.length > 11 ? item.nome.substring(0, item.nome.indexOf(' ')) + ' ' + item.nome.split(' ')[1].charAt(0) + '.' : item.nome,
+        item.Regularizacao.quantidade,
+        formatNumero(item.Regularizacao.dinheiro),
+        formatNumero(item.Regularizacao.pix),
+        formatNumero(item.Regularizacao.TotalValor),
+        item.estacionamento.quantidade,
+        formatNumero(item.estacionamento.dinheiro),
+        formatNumero(item.estacionamento.pix),
+        formatNumero(item.estacionamento.TotalValor),
+        item.creditosInseridos.quantidade,
+        formatNumero(item.creditosInseridos.dinheiro),
+        formatNumero(item.creditosInseridos.pix),
+        formatNumero(item.creditosInseridos.TotalValor),
+        ]);
+      }
+      else {
+        regularizacaoData.push(
+          ['Total',
+          item.total.Regularizacao.quantidade,
+          formatNumero(item.total.Regularizacao.dinheiro),
+          formatNumero(item.total.Regularizacao.pix),
+          formatNumero(item.total.Regularizacao.TotalValor),
+          item.total.estacionamento.quantidade,
+          formatNumero(item.total.estacionamento.dinheiro),
+          formatNumero(item.total.estacionamento.pix),
+          formatNumero(item.total.estacionamento.TotalValor),
+          item.total.creditosInseridos.quantidade,
+          formatNumero(item.total.creditosInseridos.dinheiro),
+          formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(item.total.creditosInseridos.TotalValor),
+          ])
+      }
+    });
+    const BoldLine = regularizacaoData.length - 2 ;
+
+    console.log(data[0].aplicativo)
+    regularizacaoData.push([{ content: 'Aplicativo', colSpan: 21 }]);
+    data[0].aplicativo.map((item) => {
+      if(item.Regularizacao !== undefined){
+      }
+      else {
+        regularizacaoData.push(
+          ['Total',
+          item.total.Regularizacao.quantidade,
+          formatNumero(item.total.Regularizacao.dinheiro),
+          formatNumero(item.total.Regularizacao.pix),
+          formatNumero(item.total.Regularizacao.TotalValor),
+          item.total.estacionamento.quantidade,
+          formatNumero(item.total.estacionamento.dinheiro),
+          formatNumero(item.total.estacionamento.pix),
+          formatNumero(item.total.estacionamento.TotalValor),
+          item.total.creditosInseridos.quantidade,
+          formatNumero(item.total.creditosInseridos.dinheiro),
+          formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(item.total.creditosInseridos.TotalValor),
+          ])
+      }
+    });
+
 
     const columnStyles = {
       0: { cellWidth: 15 },
@@ -72,11 +183,12 @@ const PrestacaoContas = () => {
     };
 
     const headStyles = {
-      fillColor: [204, 204, 204], 
-      textColor: [255, 255, 255], 
+      fillColor: [255, 255, 255], 
+      textColor: [0, 0, 0], 
       fontStyle: 'bold', 
-      lineWidth: 0.5, 
+      lineWidth: 0.1, 
       lineColor: [0, 0, 0],
+      halign: 'center'
     };
 
     
@@ -93,15 +205,17 @@ const PrestacaoContas = () => {
         fontSize: 6.7, 
       },
       didParseCell: (data) => {
-        const rowIndex = data.row.index;
-        if (rowIndex === 4 || rowIndex === 8) { // VARIAVEL QUE DEFINE A LINHA
-          const columnCount = data.table.columns.length;
+        const rowIndex = data.row ? data.row.index : null;
+        if (rowIndex === BoldCol || rowIndex === BoldLine || rowIndex === BoldCol + 1 || rowIndex === 0 || rowIndex === 1) { 
+        const columnCount = data.table.columns.length;
 
-          for (let i = 0; i < columnCount; i++) {
-            const cell = data.row.cells[i];
+        for (let i = 0; i < columnCount; i++) {
+          const cell = data.row.cells[i];
+          if (cell && cell.styles) {
             cell.styles.fontStyle = 'bold';
-          }
         }
+      }
+    }
       },
     });
 
@@ -122,7 +236,28 @@ const PrestacaoContas = () => {
     doc.save('Relatório de Prestação de Contas.pdf');
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+          'token': token,
+          'id_usuario': user2.id_usuario,
+          'perfil_usuario': "admin"
+      }
+  });
+
+  requisicao.get('/financeiro/admin').then((res) => {
+    console.log(res.data.data);
+    setData(res.data.data);
+  }).catch((err) => {
+    console.log(err);
+  });
+
+
+  }, []);
 
   return (
     <button onClick={() => gerarPdf()}>
