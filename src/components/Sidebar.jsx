@@ -1,10 +1,10 @@
 import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaClipboardList } from "react-icons/fa";
 import { RiFileAddFill } from "react-icons/ri";
-import { BsConeStriped, BsCashCoin, BsPersonCircle } from "react-icons/bs";
+import { BsConeStriped, BsCashCoin, BsPersonCircle, BsCashStack } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineContactSupport, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
 import { useState } from "react";
-import { BiSearchAlt, BiTransfer } from "react-icons/bi";
+import { BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
 import { AiOutlineBarChart, AiOutlineFileSearch } from "react-icons/ai";
 import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
@@ -77,7 +77,7 @@ const Sidebar = () => {
                 {   
                     deslogar: true,
                     className: styles.className,
-                    icon: <RiSettings5Fill />,
+                    icon: <BiLogOut />,
                     name: "‎ Desconectar",
                 },
             ]
@@ -264,7 +264,7 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <BsCashCoin />,
+            icon: <BsCashStack />,
             name: "‎ Adicionar créditos",
             componente: "AdicionarCreditos",
         })
@@ -282,7 +282,7 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <FaParking />,
+            icon: <BsCashCoin />,
             name: "‎ Prestação de Contas",
             componente: "PrestacaoContas",
         })
