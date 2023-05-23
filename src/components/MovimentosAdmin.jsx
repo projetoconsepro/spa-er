@@ -76,7 +76,7 @@ const MovimentosAdmin = () => {
                         <div className="col-12 mb-4">
                             <div>
                             {data.map((item, index) => (
-                            <div className="card border-0 mt-2" >
+                            <div className="card border-0 mt-2" key={index} >
                                 <div className="card-body2">
                                     <div className="d-flex align-items-center justify-content-between pb-3">
                                         <div>
