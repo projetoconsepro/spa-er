@@ -5,7 +5,7 @@ import ScrollTopArrow from './ScrollTopArrow'
 import Swal from 'sweetalert2'
 import sha256 from 'crypto-js/sha256';
 import { BsFillShieldLockFill } from 'react-icons/bs'
-import { AiFillPrinter } from 'react-icons/ai'
+import { AiFillEdit, AiFillPrinter } from 'react-icons/ai'
 import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
 
@@ -168,25 +168,14 @@ const UsuariosAdmin = () => {
                    <p><b>Telefone:</b> ${item.telefone}</p>
                    <p><b>Perfil:</b> ${item.perfil}</p>
                    <p><b>Status:</b> ${item.ativo === 'S' ? 'Ativado' : 'Desativado'}</p>
-                   ${item.perfil === 'cliente' ? `<p><p><b>Saldo:</b> R$${item.saldo > 0 ? item.saldo : `0${item.saldo}`},00</p>              
-                    <p><b>Veículos:</b> ${item.placa.join(', ')}</p>` : ''}`,
-                   
+                   `,
             background: item.ativo === 'S' ? '#fff' : '#f8d7da',
             showCancelButton: true,
-            confirmButtonText: 'Editar',
-            confirmButtonColor: 'orange',
             cancelButtonText: 'Fechar',
-            showDenyButton: true,
-            denyButtonText: 'Adicionar perfil',
-            denyButtonColor: 'green',
+            showDenyButton: false,
+            showConfirmButton: false,
             }).then((result) => {
-            if (result.isConfirmed) {
-                editaUsuario(item, index)
-            } else if (result.isDenied) {
-                adicionarPerfil(item, index)
-            } else if (result.isDismissed) {
-                Swal.close();
-            }
+              
             });
         
     }
@@ -688,9 +677,14 @@ const UsuariosAdmin = () => {
                                                 <h6 className="dropdown-item d-flex align-items-center" onClick={() => {mudarSenha(item)}}> 
                                                 <BsFillShieldLockFill /> ‎‎  Mudar senha </h6>
                                                 <h6 className="dropdown-item d-flex align-items-center" onClick={()=>{informacoes(item)}}>
-                                                  <FaEye />‎‎  Ver mais </h6>
-                                                  <h6 className="dropdown-item d-flex align-items-center" onClick={() => {desativaUsuario(item)}} style={{ color : item.ativo === 'S' ?  'red' :'#0F5132' }}>
-                                                    <FaPowerOff size={13} className='mb-1'/> ‎‎   {item.ativo === 'S' ? 'Desativar' : 'Ativar'}</h6>
+                                                <FaEye />‎‎  Ver mais </h6>
+                                                <h6 className="dropdown-item d-flex align-items-center" onClick={() => { adicionarPerfil(item, index)}}> 
+                                                <FaUserPlus /> ‎‎  Adicionar perfil </h6>
+                                                <h6 className="dropdown-item d-flex align-items-center" onClick={() => { editaUsuario(item, index)}}> 
+                                                <AiFillEdit /> ‎‎  Editar</h6>
+                                                <h6 className="dropdown-item d-flex align-items-center" onClick={() => {desativaUsuario(item)}} style={{ color : item.ativo === 'S' ?  'red' :'#0F5132' }}>
+                                                <FaPowerOff size={13} className='mb-1'/> ‎‎   {item.ativo === 'S' ? 'Desativar' : 'Ativar'}</h6>
+                                                    
                                                     </div>
                                                 </div>
                                             </td>

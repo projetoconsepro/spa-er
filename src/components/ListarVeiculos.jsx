@@ -335,7 +335,7 @@ const ListarVeiculos = () => {
                                 Seu saldo é de:
                             </div>
                             <div className="h1 mt-2 d-flex align-items-center">
-                                R$ {saldoCredito},00
+                                R$ {saldoCredito}
                             </div>
                         </div>
                         <div>

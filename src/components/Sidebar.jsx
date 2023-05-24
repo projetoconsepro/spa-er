@@ -5,7 +5,7 @@ import { MdAddLocationAlt, MdOutlineContactSupport, MdOutlineSubdirectoryArrowRi
 import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
 import { useState } from "react";
 import { BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
-import { AiOutlineBarChart, AiOutlineFileSearch } from "react-icons/ai";
+import { AiFillEdit, AiFillPrinter, AiOutlineBarChart, AiOutlineFileSearch } from "react-icons/ai";
 import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { useEffect } from "react";
@@ -72,7 +72,7 @@ const Sidebar = () => {
                     className: styles.className,
                     icon: <RiSettings5Fill />,
                     name: "‎ Configurar",
-                    componente: "ConfiguracoesGerais",
+                    componente: "ConfigurarPerfil",
                 },
                 {   
                     deslogar: true,
@@ -120,13 +120,13 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaCarAlt />,
-            name: "‎ Meus veiculos",
+            name: "‎ Meus Veiculos",
             componente: "MeusVeiculos",
         })
         links.push({
             className: styles.className,
             icon: <FaParking />,
-            name: "‎ Registrar estacionamento",
+            name: "‎ Registrar Estacionamento",
             componente: "RegistrarEstacionamento",
         })
         links.push({
@@ -137,13 +137,13 @@ const Sidebar = () => {
                 {
                     className: styles.className,
                     icon: <BsCashCoin />,
-                    name: "‎ Adicionar créditos",
+                    name: "‎ Adicionar Créditos",
                     componente: "AdicionarCreditosCliente",
                 },
                 {
                     className: styles.className,
                     icon: <BiTransfer />,
-                    name: "‎ Transferir créditos",
+                    name: "‎ Transferir Créditos",
                     componente: "TransferirCreditoCliente",
                 }
             ]
@@ -170,7 +170,7 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaMapMarkerAlt />,
-            name: "‎ Vagas livres",
+            name: "‎ Vagas Livres",
             componente: "VagasLivres",
         })
         links.push({
@@ -188,7 +188,7 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaCarAlt />,
-            name: "‎ Cadastrar novo veículo",
+            name: "‎ Cadastrar Novo Veículo",
             componente: "CadastrarVeiculo",
         })
         }
@@ -232,7 +232,7 @@ const Sidebar = () => {
                 {
                     className: styles.className,
                     icon: <FaCar />,
-                    name: "‎ Listar veículos",
+                    name: "‎ Listar Veículos",
                     componente: "VeiculosAdmin",
                 }
             ]
@@ -245,7 +245,7 @@ const Sidebar = () => {
                 {
                     className: styles.className,
                     icon: <FaHistory />,
-                    name: "‎ Caixa monitor",
+                    name: "‎ Caixa Monitor",
                     componente: "HistoricoCaixa",
                 },
                 {
@@ -265,7 +265,7 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <BsCashStack />,
-            name: "‎ Adicionar créditos",
+            name: "‎ Adicionar Créditos",
             componente: "AdicionarCreditos",
         })
         links.push({
@@ -277,14 +277,20 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaClipboardList />,
-            name: "‎ Movimentos setor",
+            name: "‎ Movimentos Setor",
             componente: "MovimentosAdmin",
         })
         links.push({
             className: styles.className,
-            icon: <BsCashCoin />,
+            icon: <AiFillPrinter />,
             name: "‎ Prestação de Contas",
             componente: "PrestacaoContas",
+        })
+        links.push({
+            className: styles.className,
+            icon: <AiFillEdit />,
+            name: "‎ Editar Parâmetro",
+            componente: "EditarParametroAdmin",
         })
     }
     else if (teste.perfil[0] === "monitor"){
@@ -362,8 +368,8 @@ const Sidebar = () => {
          <nav className="navbar navbar-dark fixed-top navbar-theme-primary px-4 col-12 d-lg-none bg-blue-50" id="nav">
                 <div className="d-flex align-items-center w-100 justify-content-between">
                 <img src="../../assets/img/logoconseproof3.png" alt="Rich Logo" className="w-25" />
-                    <button className="navbar-toggler d-lg-none collapsed" onClick={()=>{setAriaExpanded(true)}} type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded={ariaExpanded} aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
+                    <button className="navbar-toggler d-lg-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded={ariaExpanded} aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon" onClick={()=>{setAriaExpanded(true)}}></span>
                     </button>
                 </div>
             </nav>
@@ -371,10 +377,10 @@ const Sidebar = () => {
                 <div className="sidebar-inner px-3 pt-3">
                     <div className="row">
                         <div className="col-10">
-                        <div className="nav-item align-items-end"><a className="nav-link d-flex align-items-center pb-3"><span className="sidebar-icon"><img src="../../assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span className="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></div>
+                        <div className="nav-item align-items-end"><a className="nav-link d-flex align-items-center pb-3"><span className="sidebar-icon" onClick={()=>{setAriaExpanded(false)}}><img src="../../assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span className="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></div>
                 </div>
                 <div className="col-2">
-                <div className="d-flex d-md-none align-items-center justify-content-between justify-content-md-center mt-1 pb-4" onClick={()=>{setAriaExpanded(false)}}>
+                <div className="d-flex d-md-none align-items-center justify-content-between justify-content-md-center mt-1 pb-4">
                     <div className="collapse-close d-md-none">
                         <a href="#sidebarMenu" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
                             <svg className="icon icon-xs" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

@@ -164,7 +164,7 @@ const HistoricoFinanceiro = () => {
         </select>
     </div>
     <div className="col-6 text-end mt-1">
-    <FaCoins/> ‎ R${saldo},00
+    <FaCoins/> ‎ R${saldo}
     </div>
 
     </div>
