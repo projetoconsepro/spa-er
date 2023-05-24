@@ -59,6 +59,7 @@ console.log(requestBody)
 requisicao.put('/parametros', requestBody).then(
   response => {
     console.log(response)
+    setEnabledInputs(false)
   }).catch(
   error => {
     console.log(error)

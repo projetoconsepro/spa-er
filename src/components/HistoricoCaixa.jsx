@@ -51,7 +51,8 @@ const HistoricoCaixa = () => {
                           perfil_usuario: user2.perfil[0],
                         },
                       });
-                      const idrequisicao= `{where:{data=${data}}}`
+
+                      const idrequisicao= `{"where": [{ "field": "data", "operator": "=", "value": "${data}" }]}`
                       const passar = btoa(idrequisicao)
                     requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
                        
@@ -95,7 +96,7 @@ const HistoricoCaixa = () => {
                   perfil_usuario: user2.perfil[0],
                 },
               });
-              const idrequisicao= `{where:{nome=${nome}}}`
+              const idrequisicao= `{"where": [{ "field": "nome", "operator": "=", "value": "${nome}" }]}`
               const passar = btoa(idrequisicao)
               requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
                 console.log(response)
@@ -140,7 +141,7 @@ const HistoricoCaixa = () => {
               perfil_usuario: user2.perfil[0],
             },
           });
-          const idrequisicao= `{where:{data=${dataHoje}}}`
+          const idrequisicao= `{"where": [{ "field": "data", "operator": "=", "value": "${dataHoje}" }]}`
           const passar = btoa(idrequisicao)
           requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
             const newData = response.data.data.map((item) => ({
