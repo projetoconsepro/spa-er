@@ -40,6 +40,8 @@ import TransferirCreditoCliente from '../../components/TransferirCreditoCliente'
 import MovimentosAdmin from '../../components/MovimentosAdmin';
 import VeiculosAgente from '../../components/VeiculosAgente';
 import PrestacaoContas from '../../components/PrestacaoContas';
+import ConfigurarPerfil from '../../components/ConfigurarPerfil';
+import EditarParametroAdmin from '../../components/EditarParametroAdmin';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -160,6 +162,12 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "PrestacaoContas"){
             return <PrestacaoContas />
+        }
+        else if(Componente === "ConfigurarPerfil"){
+            return <ConfigurarPerfil />
+        }
+        else if(Componente === "EditarParametroAdmin"){
+            return <EditarParametroAdmin />
         }
         else {
             return <Error />
