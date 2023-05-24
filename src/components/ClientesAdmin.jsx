@@ -634,7 +634,7 @@ const ClientesAdmin = () => {
                                              </th>
                                             <td className="fw-bolder col" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> <small> {item.telefone} </small></td>
                                             <td className="fw-bolder col" id="tabelaUsuarios2" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> <small> {item.email} </small></td>
-                                            <td className="fw-bolder col" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> <small> R${item.saldo > 0 ? item.saldo : `0${item.saldo}`},00</small></td>
+                                            <td className="fw-bolder col" id="tabelaUsuarios" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}> <small> R${item.saldo != 0 ? item.saldo : `0${item.saldo},00`}</small></td>
                                             <td className="fw-bolder col" id="tabelaUsuarios3" style={{ backgroundColor: item.ativo === 'S' ? '#fff' : '#F8D7DA' }}>
                                               <div className="btn-group">
                                                 <button className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
