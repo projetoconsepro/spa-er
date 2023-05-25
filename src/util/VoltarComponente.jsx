@@ -11,7 +11,7 @@ const VoltarComponente = () => {
     }, [estado])
 
   return (
-        <button className="btn2 botao" type="button" onClick={() => setEstado(!estado)}>Voltar</button>
+        <button className="btn2 botao" type="button" onClick={() => {setEstado(!estado)}}>Voltar</button>
   )
 }
 
