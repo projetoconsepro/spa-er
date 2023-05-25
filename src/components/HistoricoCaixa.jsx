@@ -4,6 +4,7 @@ import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
+import Filtro from '../util/Filtro'
 
 const HistoricoCaixa = () => {
     const [data, setData] = useState([])
@@ -30,140 +31,8 @@ const HistoricoCaixa = () => {
       RelatoriosPDF(nomeArquivo, cabecalho, dataD)
     };
     
-
-    const filtrarCaixa = () => {
-        const filtro = document.getElementById("filtroSelect").value;
-
-        if (filtro === "selectData") {
-            Swal.fire({
-                title: 'Filtrar por data',
-                html: `<input type="date" id="data" class="form-control">`,
-                showCancelButton: true,
-                cancelButtonText: 'Fechar',
-                confirmButtonText: 'Filtrar',
-                preConfirm: () => {
-                    const data = document.getElementById("data").value;
-                    const requisicao = axios.create({
-                        baseURL: process.env.REACT_APP_HOST,
-                        headers: {
-                          token: token,
-                          id_usuario: user2.id_usuario,
-                          perfil_usuario: user2.perfil[0],
-                        },
-                      });
-
-                      const idrequisicao= `{"where": [{ "field": "data", "operator": "=", "value": "${data}" }]}`
-                      const passar = btoa(idrequisicao)
-                    requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
-                       
-                        const newData = response.data.data.map((item) => ({
-                            data: ArrumaHora(item.data),
-                            nome: item.nome,
-                            abertura: item.hora_abertura,
-                            fechamento: item.hora_fechamento,
-                            valor_abertura: item.valor_abertura,
-                            valor_fechamento: item.valor_fechamento,
-                        }))
-                        if(newData.length <= 0){
-                          setEstado(true)
-                          setMensagem("Nenhum registro encontrado")
-                          }
-                          else{
-                            setEstado(false)
-                            setMensagem("")
-                            setData(newData)
-                        }
-                    }).catch((error) => {
-                        console.log(error)
-                    })
-                }
-            })
-        }
-        if (filtro === "selectNome") {
-          Swal.fire({
-            title: 'Filtrar por nome',
-            html: `<input type="text" id="nome" class="form-control">`,
-            showCancelButton: true,
-            cancelButtonText: 'Fechar',
-            confirmButtonText: 'Filtrar',
-            preConfirm: () => {
-              const nome = document.getElementById("nome").value;
-              const requisicao = axios.create({
-                baseURL: process.env.REACT_APP_HOST,
-                headers: {
-                  token: token,
-                  id_usuario: user2.id_usuario,
-                  perfil_usuario: user2.perfil[0],
-                },
-              });
-              const idrequisicao= `{"where": [{ "field": "nome", "operator": "=", "value": "${nome}" }]}`
-              const passar = btoa(idrequisicao)
-              requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
-                console.log(response)
-                const newData = response.data.data.map((item) => ({
-                  data: ArrumaHora(item.data),
-                  nome: item.nome,
-                  abertura: item.hora_abertura,
-                  fechamento: item.hora_fechamento,
-                  valor_abertura: item.valor_abertura,
-                  valor_fechamento: item.valor_fechamento,
-                }))
-                if(newData.length <= 0){
-                  setEstado(true)
-                  setMensagem("Nenhum registro encontrado")
-                  }
-                  else{
-                    setEstado(false)
-                    setMensagem("")
-                    setData(newData)
-                }
-              }).catch((error) => {
-                console.log(error)
-              })
-            }
-        })
-        }
-    };
-
     useEffect(() => {
-        const data = new Date();
-        const dia = data.getDate();
-        const mes = data.getMonth() + 1;
-        const ano = data.getFullYear();
-        const dataHoje = ano + "-" + mes + "-" + dia;
-        setDataHoje(dataHoje);
-
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-              token: token,
-              id_usuario: user2.id_usuario,
-              perfil_usuario: user2.perfil[0],
-            },
-          });
-          const idrequisicao= `{"where": [{ "field": "data", "operator": "=", "value": "${dataHoje}" }]}`
-          const passar = btoa(idrequisicao)
-          requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
-            const newData = response.data.data.map((item) => ({
-              data: ArrumaHora(item.data),
-              nome: item.nome,
-              abertura: item.hora_abertura,
-              fechamento: item.hora_fechamento,
-              valor_abertura: item.valor_abertura,
-              valor_fechamento: item.valor_fechamento,
-            }))
-            if(newData.length <= 0){
-              setEstado(true)
-              setMensagem("Nenhum registro encontrado")
-              }
-              else{
-                setEstado(false)
-                setMensagem("")
-                setData(newData)
-            }
-        }).catch((error) => {
-            console.log(error)
-        })
+        reload();
     }, [])
 
     const mostrarInformacoes = (item) => {
@@ -205,7 +74,7 @@ const HistoricoCaixa = () => {
               perfil_usuario: user2.perfil[0],
             },
           });
-          const idrequisicao= `{where:{data=${dataHoje}}}`
+          const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
           const passar = btoa(idrequisicao)
           requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
             const newData = response.data.data.map((item) => ({
@@ -230,26 +99,57 @@ const HistoricoCaixa = () => {
         })
     }
 
+    const handleConsultaSelected = (consulta) => {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+      const base64 = btoa(consulta)
+      requisicao.get(`/turno/caixa/admin/?query=${base64}`).then((response) => {
+        const newData = response.data.data.map((item) => ({
+          data: ArrumaHora(item.data),
+          nome: item.nome,
+          abertura: item.hora_abertura,
+          fechamento: item.hora_fechamento,
+          valor_abertura: item.valor_abertura,
+          valor_fechamento: item.valor_fechamento,
+        }))
+        setData(newData)
+        if(newData.length <= 0){
+          setEstado(true)
+          setMensagem("Nenhum registro encontrado")
+          }
+          else{
+            setEstado(false)
+            setMensagem("")
+        }
+    }).catch((error) => {
+        console.log(error)
+    })
+      
+    };
+
     return (
         <div className="dashboard-container">
         <p className="mx-3 text-start fs-4 fw-bold">Histórico do caixa:</p>
-        <div> 
+        <div className="mb-3"> 
         <div className="row">
         <div className="col-7">
-        <select className="mx-3 form-select form-select-sm mb-3" onChange={() => {filtrarCaixa()}} defaultValue="1" aria-label=".form-select-lg example" id="filtroSelect">
-          <option disabled  value='1' id="filtro">Filtro</option>
-          <option value="selectData">Data</option>
-          <option value="selectNome">Nome</option>
-          </select>
-          </div>
+        <div className="w-50 mx-4">
+        <Filtro nome="HistoricoCaixa" onConsultaSelected={handleConsultaSelected}/>
+        </div>
+        </div>
           <div className="col-3 text-end">
-          <button className="btn3 botao p-0 w-75 h-75" type="button" onClick={() => {createPDF()}}><AiFillPrinter size={21}/></button>
+          <button className="btn3 botao p-0 w-75 h-100" type="button" onClick={() => {createPDF()}}><AiFillPrinter size={21}/></button>
           </div>
           <div className="col-1 text-end">
             <AiOutlineReload className="mt-1" size={21} onClick={() => {reload()}}/>
           </div>
           <div className="col-1">
-
           </div>
           </div>
           </div>

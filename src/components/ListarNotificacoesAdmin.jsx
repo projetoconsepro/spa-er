@@ -9,6 +9,7 @@ import { Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Carousel } from '@mantine/carousel';
 import VoltarComponente from '../util/VoltarComponente';
+import Filtro from '../util/Filtro';
 
 const ListarNotificacoesAdmin = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -336,8 +337,48 @@ const ListarNotificacoesAdmin = () => {
           })
         }
       });
-      
     }
+
+    const handleConsultaSelected = (consulta) => {
+      handleFiltro(consulta)
+    }
+
+    const handleFiltro = (where) => {
+      setEstado(false)
+      setMensagem("")
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+      const base64 = btoa(where)
+      requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
+        const newData = response.data.data.map((item) => ({
+          data: ArrumaHora(item.data),
+          placa: item.veiculo.placa,
+          cancelada: item.cancelada,
+          cancelada_motivo: item.cancelada_motivo,
+          vaga: item.vaga,
+          pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
+          fabricante: item.veiculo.modelo.fabricante.nome,
+          modelo: item.veiculo.modelo.nome,
+          tipo: item.tipo_notificacao.nome,
+          valor: item.valor,
+          id_vaga_veiculo: item.id_vaga_veiculo,
+          id_notificacao: item.id_notificacao,
+          monitor: item.monitor.nome,
+          hora: ArrumaHora2(item.data),
+        }));
+        setData(newData)
+        setData2(newData)
+        setData3(newData)
+    }).catch((error) => {
+        console.log(error)
+      })
+  }
 
   return (
     <div className="dashboard-container">
@@ -360,21 +401,14 @@ const ListarNotificacoesAdmin = () => {
         </Carousel>
       </Modal>
         <p className="mx-3 text-start fs-4 fw-bold">Listar notificações</p>
-        <div className="row">
+        <div className="row mb-3">
         <div className="col-12">
         <div className="row">
         <div className="col-7">
-        <select className="mx-3 form-select form-select-sm mb-3" defaultValue="1" onChange={() => {filtroSelect()}} aria-label=".form-select-lg example" id="filtroSelect">
-          <option disabled  value='1' id="filtro">Filtro</option>
-          <option value="selectData">Data</option>
-          <option value="selectPlaca">Placa</option>
-          <option value="selectVaga">Vaga</option>
-          <option value="selectTipo">Tipo</option>
-          <option value="selectTodos">Todos</option>
-        </select>
+        <Filtro nome={'ListarNotificacoesAdmin'} onConsultaSelected={handleConsultaSelected}/>
           </div>
           <div className="col-3 text-end">
-            <button className="btn3 botao p-0 w-75 h-75" type="button" onClick={() => {createPDF()}}><AiFillPrinter  size={21}/></button>
+            <button className="btn3 botao p-0 w-75 h-100" type="button" onClick={() => {createPDF()}}><AiFillPrinter  size={21}/></button>
           </div>
           <div className="col-1 text-end">
             <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21}/>
