@@ -118,109 +118,6 @@ const ListarNotificacoesAdmin = () => {
           }
         }
 
-    const filtroSelect = async () => {
-        const select = document.getElementById('filtroSelect').value
-        if (select === 'selectData') {
-          setEstado(false)
-          setMensagem('')
-          Swal.fire({
-            title: 'Filtrar por data',
-            html: `<input type="date" id="data" class="form-control">`,
-            showCancelButton: true,
-            cancelButtonText: 'Fechar',
-            confirmButtonText: 'Filtrar',
-            preConfirm: () => {
-                const data = document.getElementById("data").value;
-                const data4 = ArrumaHora(data)
-                const newData = data2.filter((item) => item.data === data4)
-                setData(newData)
-                if (newData.length === 0) {
-                    setEstado(true)
-                    setMensagem('Nenhum dado encontrado')
-                }
-            }
-        })
-        }
-        else if(select === 'selectTodos'){
-          setEstado(false)
-          setMensagem('')
-          setData(data3)
-        }
-        else if(select === 'selectPlaca'){
-          setEstado(false)
-          setMensagem('')
-            Swal.fire({
-                title: 'Filtrar por placa',
-                html: `<input type="text" id="placaId" class="form-control">`,
-                showCancelButton: true,
-                cancelButtonText: 'Fechar',
-                confirmButtonText: 'Filtrar',
-                preConfirm: () => {
-                    const placa = document.getElementById("placaId").value;
-                    const placa2 = placa.toUpperCase()
-                    const newData = data2.filter((item) => item.placa === placa2)
-                    setData(newData)
-                    if (newData.length === 0) {
-                        setEstado(true)
-                        setMensagem('Nenhum dado encontrado')
-                    }
-                }
-            })
-        }
-      else if(select === 'selectVaga'){
-        setEstado(false)
-        setMensagem('')
-        Swal.fire({
-            title: 'Filtrar por vaga',
-            html: `<input type="number" id="vaga" class="form-control">`,
-            showCancelButton: true,
-            cancelButtonText: 'Fechar',
-            confirmButtonText: 'Filtrar',
-            preConfirm: () => {
-                const vaga = document.getElementById("vaga").value;
-                const newData = data2.filter((item) => item.vaga == vaga)
-                setData(newData)
-                if (newData.length === 0) {
-                    setEstado(true)
-                    setMensagem('Nenhum dado encontrado')
-                }
-            }
-        })
-      }
-      else if(select === 'selectTipo'){
-        setEstado(false)
-        setMensagem('')
-        const inputOptions = new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              'S': 'Quitado',
-              'N': 'Pendente'
-            })
-          }, 1000)
-        })
-        
-        const { value: color } = await Swal.fire({
-          title: 'Selecione o estado da notificação',
-          input: 'radio',
-          inputOptions: inputOptions,
-          inputValidator: (value) => {
-            if (!value) {
-              return 'Você deve selecionar um estado de notificação!'
-            }
-          }
-        })
-        if (color) {
-          const newData = data2.filter((item) => item.pendente === color)
-          setData(newData)
-          if (newData.length === 0) {
-            setEstado(true)
-            setMensagem('Nenhum dado encontrado')
-        }
-        }
-        
-      }
-    }
-
     useEffect(() => {
       reload()
     }, [])
@@ -237,25 +134,31 @@ const ListarNotificacoesAdmin = () => {
         },
       });
       requisicao.get('/notificacao').then((response) => {
-        const newData = response.data.data.map((item) => ({
-          data: ArrumaHora(item.data),
-          placa: item.veiculo.placa,
-          cancelada: item.cancelada,
-          cancelada_motivo: item.cancelada_motivo,
-          vaga: item.vaga,
-          pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
-          fabricante: item.veiculo.modelo.fabricante.nome,
-          modelo: item.veiculo.modelo.nome,
-          tipo: item.tipo_notificacao.nome,
-          valor: item.valor,
-          id_vaga_veiculo: item.id_vaga_veiculo,
-          id_notificacao: item.id_notificacao,
-          monitor: item.monitor.nome,
-          hora: ArrumaHora2(item.data),
-        }));
-        setData(newData)
-        setData2(newData)
-        setData3(newData)
+        if (response.data.msg.resultado){
+          setEstado(false)
+          const newData = response.data.data.map((item) => ({
+            data: ArrumaHora(item.data),
+            placa: item.veiculo.placa,
+            cancelada: item.cancelada,
+            cancelada_motivo: item.cancelada_motivo,
+            vaga: item.vaga,
+            pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
+            fabricante: item.veiculo.modelo.fabricante.nome,
+            modelo: item.veiculo.modelo.nome,
+            tipo: item.tipo_notificacao.nome,
+            valor: item.valor,
+            id_vaga_veiculo: item.id_vaga_veiculo,
+            id_notificacao: item.id_notificacao,
+            monitor: item.monitor.nome,
+            hora: ArrumaHora2(item.data),
+          }));
+          setData(newData)
+        }
+        else {
+          setData([])
+          setEstado(true)
+          setMensagem("Não há notificações para exibir")
+        }
     }).catch((error) => {
         console.log(error)
       })
@@ -356,25 +259,32 @@ const ListarNotificacoesAdmin = () => {
       });
       const base64 = btoa(where)
       requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
-        const newData = response.data.data.map((item) => ({
-          data: ArrumaHora(item.data),
-          placa: item.veiculo.placa,
-          cancelada: item.cancelada,
-          cancelada_motivo: item.cancelada_motivo,
-          vaga: item.vaga,
-          pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
-          fabricante: item.veiculo.modelo.fabricante.nome,
-          modelo: item.veiculo.modelo.nome,
-          tipo: item.tipo_notificacao.nome,
-          valor: item.valor,
-          id_vaga_veiculo: item.id_vaga_veiculo,
-          id_notificacao: item.id_notificacao,
-          monitor: item.monitor.nome,
-          hora: ArrumaHora2(item.data),
-        }));
-        setData(newData)
-        setData2(newData)
-        setData3(newData)
+        console.log(response.data.msg.resultado)
+        if (response.data.msg.resultado){
+          setEstado(false)
+          const newData = response.data.data.map((item) => ({
+            data: ArrumaHora(item.data),
+            placa: item.veiculo.placa,
+            cancelada: item.cancelada,
+            cancelada_motivo: item.cancelada_motivo,
+            vaga: item.vaga,
+            pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
+            fabricante: item.veiculo.modelo.fabricante.nome,
+            modelo: item.veiculo.modelo.nome,
+            tipo: item.tipo_notificacao.nome,
+            valor: item.valor,
+            id_vaga_veiculo: item.id_vaga_veiculo,
+            id_notificacao: item.id_notificacao,
+            monitor: item.monitor.nome,
+            hora: ArrumaHora2(item.data),
+          }));
+          setData(newData)
+        }
+        else {
+          setData([])
+          setEstado(true)
+          setMensagem("Não há notificações para exibir")
+        }
     }).catch((error) => {
         console.log(error)
       })

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Group, Button, Input, Alert, Radio, Grid } from '@mantine/core';
@@ -19,7 +20,9 @@ const Filtro = ({ nome, onConsultaSelected }) => {
     const [inputNome, setInputNome] = useState('');
     const [inputPlaca, setInputPlaca] = useState('');
     const [inputVaga, setInputVaga] = useState('');
-    const [inputTipo, setInputTipo] = useState('');
+    const [radioTipo, setRadioTipo] = useState('');
+    const [tiposNot, setTiposNot] = useState([]);
+    const [valueMotivo, setValueMotivo] = useState('');
 
     const FormatDate =  (date) => {
       const data = new Date(date);
@@ -32,6 +35,9 @@ const Filtro = ({ nome, onConsultaSelected }) => {
     }
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
     if (nome === 'HistoricoCaixa') {
       setOptions([
         { value: 'Data', label: 'Data' },
@@ -41,14 +47,116 @@ const Filtro = ({ nome, onConsultaSelected }) => {
     }
     
     else if (nome === 'ListarNotificacoesAdmin') {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+      requisicao.get('/notificacao/tipos').then(
+        response => {
+            const newData = response?.data?.data?.map(item => ({
+                label: item.nome,
+                value: item.id_tipo_notificacao
+              }));
+            setTiposNot(newData);
+        });
       setOptions([
         { value: 'Data', label: 'Data' },
         { value: 'Placa', label: 'Placa' },
         { value: 'Vaga', label: 'Vaga' },
         { value: 'Tipo', label: 'Tipo' },
-        { value: 'Periodo', label: 'Período' }
+        { value: 'Periodo', label: 'Período' },
+        { value: 'Motivo', label: 'Motivo' }
       ]);
     }
+
+    else if (nome === 'ListarNotificacoesAgente') {
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+      requisicao.get('/notificacao/tipos').then(
+        response => {
+            const newData = response?.data?.data?.map(item => ({
+                label: item.nome,
+                value: item.id_tipo_notificacao
+              }));
+            setTiposNot(newData);
+        });
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Placa', label: 'Placa' },
+        { value: 'Vaga', label: 'Vaga' },
+        { value: 'Periodo', label: 'Período' },
+        { value: 'Motivo', label: 'Motivo' },
+        { value: 'Todos', label: 'Todos' }
+      ]);
+    }
+
+    else if(nome === 'ListarNotificacoes'){
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+      const user2 = JSON.parse(user);
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+      requisicao.get('/notificacao/tipos').then(
+        response => {
+            const newData = response?.data?.data?.map(item => ({
+                label: item.nome,
+                value: item.id_tipo_notificacao
+              }));
+            setTiposNot(newData);
+        });
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Placa', label: 'Placa' },
+        { value: 'Vaga', label: 'Vaga' },
+        { value: 'Periodo', label: 'Período' },
+        { value: 'Motivo', label: 'Motivo' },
+        { value: 'Tipo', label: 'Tipo' }
+      ]);
+    }
+
+    else if(nome === 'Irregularidades'){
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+      requisicao.get('/notificacao/tipos').then(
+        response => {
+            const newData = response?.data?.data?.map(item => ({
+                label: item.nome,
+                value: item.id_tipo_notificacao
+              }));
+            setTiposNot(newData);
+        });
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Placa', label: 'Placa' },
+        { value: 'Vaga', label: 'Vaga' },
+        { value: 'Periodo', label: 'Período' },
+        { value: 'Motivo', label: 'Motivo' },
+        { value: 'Tipo', label: 'Tipo' }
+      ]);
+    }
+
     else {
       setOptions([]);
     }
@@ -61,6 +169,9 @@ const Filtro = ({ nome, onConsultaSelected }) => {
     }
     else if(selectedOption.value === 'Tipo') {
       setCardBody('card-body7 d-flex flex-column text-black');
+    }
+    else if(selectedOption.value === 'Motivo'){
+      setCardBody('card-body4 d-flex flex-column text-black');
     }
     else {
       setCardBody('card-body7 d-flex flex-column text-black');
@@ -92,13 +203,19 @@ const Filtro = ({ nome, onConsultaSelected }) => {
         consulta = `{"where": [{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${FormatDate(valuePeriodo[1])}"] }]}`;
         break;
       case 'Placa':
-        consulta = `{"where": [{ "field": "placa", "operator": "LIKE", "value": "%${inputPlaca}%" }]}`;
+        consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${inputPlaca}" }]}`;
         break;
       case 'Vaga':
-        consulta = `{"where": [{ "field": "vaga", "operator": "LIKE", "value": "%${inputVaga}%" }]}`;
+        consulta = `{"where": [{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`;
         break;
       case 'Tipo':
-        consulta = `{"where": [{ "field": "tipo", "operator": "LIKE", "value": "%${inputTipo}%" }]}`;
+        consulta = `{"where": [{ "field": "tipo", "operator": "LIKE", "value": "${radioTipo}" }]}`;
+        break;
+      case 'Motivo':
+        consulta = `{"where": [{ "field": "tipo_notificacao", "operator": "LIKE", "value": "%${valueMotivo}%" }]}`;
+        break;
+      case 'Todos':
+        consulta = `{"where": [{ "field": "todos", "operator": "=", "value": "all" }]}`;
         break;
       default:
         break;
@@ -111,7 +228,7 @@ const Filtro = ({ nome, onConsultaSelected }) => {
       setEstadoLoading(false);
       onClose();
       close();
-    }, 1000);
+    }, 2000);
   }
   else {
     setEstado(true);
@@ -183,7 +300,7 @@ const Filtro = ({ nome, onConsultaSelected }) => {
               <div className="mt-4 mb-1">
                 Digite a placa:
               </div>
-              <Input icon={<IconParking size={16}/>} placeholder="Digite a placa" onChange={(e) => setInputPlaca(e.target.value)}/>
+              <Input icon={<IconParking size={16}/>} placeholder="Digite a placa" maxLength={15} onChange={(e) => setInputPlaca(e.target.value)}/>
               </div>
             ) :
             selectedOption.value === 'Vaga' ? (
@@ -191,7 +308,7 @@ const Filtro = ({ nome, onConsultaSelected }) => {
               <div className="mt-4 mb-1">
                 Digite a vaga:
               </div>
-              <Input icon={<IconParking size={16}/>} placeholder="Digite a vaga" onChange={(e) => setInputVaga(e.target.value)}/>
+              <Input icon={<IconParking size={16}/>} type="number" placeholder="Digite a vaga" maxLength={5} onChange={(e) => setInputVaga(e.target.value)}/>
               </div>
             ) :
             selectedOption.value === 'Tipo' ? (
@@ -199,16 +316,33 @@ const Filtro = ({ nome, onConsultaSelected }) => {
               <div className="mt-4 mb-3">
                 Selecione o tipo:
               </div>
-              <Radio.Group name="Escolha algum opção">
+              <Radio.Group name="Escolha algum opção" onChange={(e) => setRadioTipo(e)}>
                   <Grid>
                   <Grid.Col span={12}>
-                  <Radio value="pago" label="Pago" />
+                  <Radio value='PAGO' label="Pago" />
                   </Grid.Col>
                   <Grid.Col span={12}>
-                  <Radio value="pendente" label="Pendente" />
+                  <Radio value='PENDENTE' label="Pendente" />
                   </Grid.Col>
                   </Grid>
               </Radio.Group>
+              </div>
+            ) :
+            selectedOption.value === 'Motivo' ? (
+              <div>
+              <div className="mt-4 mb-3">
+                Selecione o motivo:
+              </div>
+              <Select
+                placeholder="Escolha o motivo"
+                options={tiposNot}
+                onChange={(e) => setValueMotivo(e.label)}
+              />
+              </div>
+            ) :
+            selectedOption.value === 'Todos' ? (
+              <div>
+                Clique em salvar para listar todas as notificações.
               </div>
             ) :
             ( null )

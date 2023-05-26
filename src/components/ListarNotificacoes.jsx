@@ -1,16 +1,19 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
-import { AiFillCheckCircle, AiFillPrinter } from "react-icons/ai";
+import { AiFillCheckCircle, AiFillPrinter, AiOutlineReload } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin} from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal  from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import Filtro from "../util/Filtro";
+import { Loader } from '@mantine/core';
 
 const ListarNotificacoes = () => {
   const [data, setData] = useState([]);
   const [estado, setEstado ] = useState(false);
+  const [estado2, setEstado2] = useState(false);
   const [placaSetada, setPlacaSetada] = useState("");
   const [mensagem, setMensagem] = useState("");
   const token = localStorage.getItem("token");
@@ -53,8 +56,6 @@ const ListarNotificacoes = () => {
     }).catch((error) => {
     })
   }
-
-  
 
     function ArrumaHora(data) {
     const data2 = data.split("T");
@@ -122,9 +123,8 @@ const ListarNotificacoes = () => {
         }, 2000);
       };
 
-
-
     const startNotificao = async () => {
+      setEstado2(false);
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -133,12 +133,14 @@ const ListarNotificacoes = () => {
           perfil_usuario: user2.perfil[0],
         },
       });
-      const idrequisicao= `{where:{usuario='${user2.id_usuario}'}}`
+    const idrequisicao= `{"where": [{ "field": "usuario", "operator": "=", "value": "${user2.id_usuario}" }]}`
     const passar = btoa(idrequisicao)
     await requisicao
       .get(`/notificacao/?query=${passar}`)
       .then((response) => {
+        setEstado2(true);
         if (response.data.msg.resultado) {
+          setEstado(false);
         const newData = response?.data.data.map((item) => ({
           data: ArrumaHora(item.data),
           id_notificacao: item.id_notificacao,
@@ -156,10 +158,6 @@ const ListarNotificacoes = () => {
       } else {
         setEstado(true);
         setMensagem(response.data.msg.msg);
-        setTimeout(() => {
-          setEstado(false);
-          setMensagem("")
-        }, 5000);
       }
       })
       .catch((error) => {
@@ -176,7 +174,7 @@ const ListarNotificacoes = () => {
     };
 
     const startPlaca = async (placa) => {
-      console.log(placa)
+      setEstado2(false);
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -185,12 +183,12 @@ const ListarNotificacoes = () => {
           perfil_usuario: user2.perfil[0]
         },
       });
-      const idrequisicao= `{where:{placa='${placa}', placa='${placa}'}}`
+      const idrequisicao= `{"where": [{ "field": "placa", "operator": "=", "value": "${placa}" }]}`
       const passar = btoa(idrequisicao)
       await requisicao
       .get(`/notificacao/?query=${passar}`)
       .then((response) => {
-        console.log(response)
+        setEstado2(true);
         if (response.data.msg.resultado) {
         const newData = response?.data.data.map((item) => ({
           data: ArrumaHora(item.data),
@@ -245,274 +243,73 @@ const ListarNotificacoes = () => {
     }
   }, []);
 
-    const tirarOpcao = async() => {
+const handleConsultaSelected = (consulta) => {
+  handleFiltro(consulta)
+}
 
-    const select = document.getElementById("filtroSelect").value;
-    if (cont === 0) {
-    let select = document.getElementById("filtro");
-    select.remove();
-    }
-    setCont(cont + 1);
-
-    let text = "";
-    let type = "";
-    let input = "";
-
-    if (select === "selectData") {
-        text = "Selecione a data desejada";
-        type = "date";
-        input = "data";
-    } else if (select === "selectPlaca") {
-        text = "Digite a placa desejada";
-        type = "text";
-        input = "placa";
-    } else if (select === "selectVaga") {
-        text = "Digite a vaga desejada";
-        type = "number";
-        input = "vaga";
-    } else if (select === "selectTipo") {
-        text = "Digite o tipo de notificação";
-        type = "text";
-        input = "tipo";
-    }
-    else if (select === "selectStatus") {
-        text = "Digite o status da notificação";
-        type = "text";
-        input = "status";
-    }
-
-
-    if (select !== "selectData" && select !== "selectTipo") {
-      if(select === "selectStatus") {
-        const inputOptions = new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              'Pago': 'Pago',
-              'Pendente': 'Pendente'
-            })
-          }, 1000)
-        })
-        
-        const { value: color } = await Swal.fire({
-          title: 'Selecione o status',
-          input: 'radio',
-          inputOptions: inputOptions,
-          inputValidator: (value) => {
-            if (!value) {
-              return 'Você deve selecionar um status de notificação!'
-            }
-          }
-        })
-        if (color) {
-        setFiltro(`Filtrado pelo ${input}: ${color}`);
-        teste(color);
-        }
-      }else {
-    Swal.fire({
-        title: text,
-        input: type,
-        inputAttributes: {
-          autocapitalize: 'on',
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Filtrar',
-        confirmButtonColor: '#3a58c8',
-        cancelButtonText: 'Voltar',
-        showLoaderOnConfirm: true,
-        preConfirm: (resposta) => {
-            if (resposta === "") {
-                Swal.showValidationMessage(
-                    `Digite uma ${input} válida`
-                  )
-                setFiltro("");
-            }
-            else {
-                teste(resposta);
-                resposta = resposta.toUpperCase();
-                setFiltro(`Filtrado pela ${input}: ${resposta}`);
-            }
-        },
-      }).then((result) => {
-        }
-        )
-      }
-    } else if (select === "selectTipo") {
-        Swal.fire({
-            title: text,
-            input: 'select',
-            inputOptions: {
-                'Tempo limite excedido': 'Tempo limite excedido',
-                'Ocupando vaga de idoso': 'Ocupando vaga de idoso',
-                'Ocupando vaga de deficiente': 'Ocupando vaga de deficiente'
-            },
-            inputAttributes: {
-                autocapitalize: 'off'
-            },
-            showCancelButton: true,
-            confirmButtonText: 'Filtrar',
-            confirmButtonColor: '#3a58c8',
-            cancelButtonText: 'Voltar',
-            showLoaderOnConfirm: true,
-            preConfirm: (item) => {
-                setFiltro(`Filtrado pelo ${input}: ${item}`);
-                teste(item);
-            }
-            }).then((result) => {
-            }
-            )
+const handleFiltro = (where) => {
+  setEstado2(false)
+  const requisicao = axios.create({
+    baseURL: process.env.REACT_APP_HOST,
+    headers: {
+      token: token,
+      id_usuario: user2.id_usuario,
+      perfil_usuario: user2.perfil[0],
+    },
+  });
+  const base64 = btoa(where)
+  requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
+    console.log(response.data.msg.resultado)
+    setEstado2(true)
+    if (response.data.msg.resultado){
+      setEstado(false)
+      const newData = response.data.data.map((item) => ({
+        data: ArrumaHora(item.data),
+        id_notificacao: item.id_notificacao,
+        tipo_notificacao: item.tipo_notificacao.nome,
+        monitor: item.monitor.nome,
+        id_vaga_veiculo: item.id_vaga_veiculo,
+        vaga: item.vaga,
+        modelo: item.veiculo.modelo.nome,
+        valor: item.valor,
+        placa: item.veiculo.placa,
+        estado: false,
+        pago: item.pago,
+      }));
+      setData(newData)
     }
     else {
-        Swal.fire({
-            title: text,
-            html : `<input type="date" id="date" class="swal2-input">`,
-            showCancelButton: true,
-            confirmButtonText: 'Filtrar',
-            confirmButtonColor: '#3a58c8',
-            cancelButtonText: 'Voltar',
-            showLoaderOnConfirm: true,
-            preConfirm: () => {
-                const resposta =document.getElementById('date').value
-                if (resposta === "" || resposta === null) {
-                    Swal.showValidationMessage(
-                        `Digite uma ${input} válida`
-                    )
-                }
-                else {
-                    setFiltro(`Filtrado pela ${input}: ${resposta}`);
-                    teste(resposta);
-                }
-            }
-            }).then((result) => {
-
-        
-            }
-            )
-        
+      setData([])
+      setEstado(true)
+      setMensagem("Não há notificações para exibir")
     }
+}).catch((error) => {
+    console.log(error)
+  })
 }
 
-    const teste = (resposta) => {
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
-    for (let i = 0; i < data.length; i++) {
-        delete data[i];
-    }
-    resposta = resposta.toUpperCase();
-    if (resposta.includes("'")  || resposta.includes('"')){
-      setEstado(true);
-      setMensagem("Caracteres inválidos"); 
-      setTimeout(() => {
-        setEstado(false);
-        setMensagem("")
-      }, 5000);
-    }else{
-    const select = document.getElementById("filtroSelect").value;
-    let idrequisicao = "";
-    let passar = "";
-    if (user2.perfil[0] === "monitor" || user2.perfil[0] === "parceiro" || user2.perfil[0] === "admin") {
-    if (select === "selectData") {
-       idrequisicao= `{where:{placa='${placaSetada}', hora='%${resposta}%'}}`
-        passar = btoa(idrequisicao)
-    }
-    else if(select === "selectVaga") {
-        idrequisicao= `{where:{placa='${placaSetada}', vaga='${resposta}'}}`
-        passar = btoa(idrequisicao)
-    }
-    else if(select === "selectStatus"){
-        idrequisicao= `{where:{placa='${placaSetada}', status='${resposta}'}}`
-        passar = btoa(idrequisicao)
-    }
-    else if(select === "selectTipo"){
-      idrequisicao= `{where:{placa='${placaSetada}', tipo='${resposta}'}}`
-      passar = btoa(idrequisicao)
-  }
-  else if (select === "selectPlaca") {
-    idrequisicao= `{where:{placa='${resposta}', placa='${resposta}'}}`
-     passar = btoa(idrequisicao)
-     localStorage.setItem("placaCarro", resposta)
-     setPlacaSetada(resposta)
- }
-  } else {
-    if (select === "selectData") {
-        idrequisicao= `{where:{hora=${resposta}}}`
-         passar = btoa(idrequisicao)
-     }
-     else if(select === "selectVaga") {
-         idrequisicao= `{where:{vaga='${resposta}'}}`
-         passar = btoa(idrequisicao)
-     }
-     else if(select === "selectStatus"){
-         idrequisicao= `{where:{tipo='${resposta}'}}`
-         passar = btoa(idrequisicao)
-     }else if (select === "selectPlaca") {
-        idrequisicao= `{where:{placa='${resposta}'}}`
-         passar = btoa(idrequisicao)
-     }
-}
 
-    if (idrequisicao !== "" && passar !== "") {
-        requisicao.get(`/notificacao/?query=${passar}`)
-        .then((response) => {
-          if (response.data.msg.resultado) {
-          const arraySemNulos = response?.data.data.filter(valor => valor !== null);
-          const newData = arraySemNulos.map((item) => ({
-              data: ArrumaHora(item.data),
-              id_notificacao: item.id_notificacao,
-              tipo_notificacao: item.tipo_notificacao.nome,
-              monitor: item.monitor.nome,
-              id_vaga_veiculo: item.id_vaga_veiculo,
-              vaga: item.vaga,
-              modelo: item.veiculo.modelo.nome,
-              valor: item.valor,
-              placa: item.veiculo.placa,
-              estado: false,
-              pago: item.pago,
-            }));
-            setData(newData);
-        } else {
-          setEstado(true);
-          setMensagem(response.data.msg.msg);
-          setTimeout(() => {
-            setEstado(false);
-            setMensagem("")
-          }, 5000);
-        }
-        }).catch((error) => {
-                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-        });
-    }
-  }
-}
 
   return (
     <div className="col-12 px-3">
       <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
-      <div onChange={() => {tirarOpcao()}}> 
-      <select className="form-select form-select-sm mb-3" defaultValue="1" aria-label=".form-select-lg example" id="filtroSelect">
-        <option disabled value="1" id="filtro">Filtro</option>
-        <option value="selectData">Data</option>
-        <option value="selectPlaca">Placa</option>
-        <option value="selectVaga">Vaga</option>
-        <option value="selectStatus">Status</option>
-        <option value="selectTipo">Tipo de notificação</option>
-        </select>
-        <h6 className="text-start"><small>{filtro}</small></h6>
-    </div>
-
+      <div className="row mb-3">
+        <div className="col-12">
+        <div className="row">
+        <div className="col-7">
+        <Filtro nome={'ListarNotificacoesAdmin'} onConsultaSelected={handleConsultaSelected}/>
+          </div>
+          <div className="col-3 text-end">
+            
+          </div>
+          <div className="col-1 text-end">
+            <AiOutlineReload onClick={() => {startNotificao()}} className="mt-1" size={21}/>
+          </div>
+          </div>
+          </div>
+          </div>
+      {estado2 ? (
+      <div>
       {data.map((link, index) => (
         <div className="card border-0 shadow mt-2 mb-2" key={index}>
           <div
@@ -618,6 +415,12 @@ const ListarNotificacoes = () => {
           ) : null}
         </div>
       ))}
+      </div>
+      ) : (
+      <div className="col-12 text-center mt-4 mb-4">
+      <Loader />
+      </div>
+      )}
         <div className="alert alert-danger mt-4" role="alert" style={{ display: estado ? 'block' : 'none' }}>
             {mensagem}
         </div>

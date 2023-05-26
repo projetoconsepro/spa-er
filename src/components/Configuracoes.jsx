@@ -107,7 +107,7 @@ const mudaEstado = (index) => {
 }
 
   return (
-    <div className="col-12 px-3">
+    <div className="col-12 px-3 mb-3">
     <p className="text-start fs-5 fw-bold">Configurações</p>
     {data.map((link, index) => (
         <div className="card border-0 shadow mt-5 mb-5" key={index} id="divD" disabled={(link.debitoDisponivel === 'N' && link.debito === 'N') || (link.debitoDisponivel === 'N' && link.debito !== 'S') ? true : false}>
