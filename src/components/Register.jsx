@@ -4,8 +4,10 @@ import Swal from 'sweetalert2'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import emailValidator from 'email-validator';
 import InputMask from "react-input-mask";
-import TailSpin from "react-loading-icons/dist/esm/components/tail-spin";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
+import { Input, Loader, PasswordInput } from "@mantine/core";
+import { IconClipboardText, IconLock, IconMail, IconPhone, IconPhoneX, IconUser } from "@tabler/icons-react";
+import { IconLockCheck } from "@tabler/icons-react";
 
 const RegisterPage = () => {
     const { register } = useContext(AuthContext);
@@ -20,14 +22,13 @@ const RegisterPage = () => {
     const [estado, setEstado] = useState(false);
     const [estado2, setEstado2] = useState(false);
     const [sucesso, setSucesso] = useState(false);
-    const [inputNome, setInputNome] = useState("form-control");
-    const [inputMail, setInputMail] = useState("form-control");
-    const [inputCpf, setInputCpf] = useState("form-control");
-    const [inputTelefone, setInputTelefone] = useState("form-control");
-    const [inputSenha, setInputSenha] = useState("form-control");
-    const [inputSenha2, setInputSenha2] = useState("form-control");
     const [passwordType, setPasswordType] = useState("password");
-    const [classolho, setClassolho] = useState("olho");
+    const [errorNome, setErrorNome] = useState(false);
+    const [errorMail, setErrorMail] = useState(false);
+    const [errorCpf, setErrorCpf] = useState(false);
+    const [errorTelefone, setErrorTelefone] = useState(false);
+    const [errorSenha, setErrorSenha] = useState(false);
+    const [errorSenha2, setErrorSenha2] = useState(false);
 
     const registrado = () => {
         FuncTrocaComp( "LoginPage");
@@ -42,32 +43,30 @@ const RegisterPage = () => {
         e.preventDefault();
         if (nome === "" || cpff === "" || telefone === "" || senha === "" || senha2 === "") {
             if (nome === "") {
-                setInputNome("form-control is-invalid")
+                setErrorNome(true)
             }
             if (cpff === "") {
-                setInputCpf("form-control is-invalid")
+                setErrorCpf(true)
             }
             if (telefone === "") {
-                setInputTelefone("form-control is-invalid")
+                setErrorTelefone(true)
             }
             if (senha === "") {
-                setInputSenha("form-control is-invalid")
-                setClassolho("olho-error")
+                setErrorSenha(true)
             }
             if (senha2 === "") {
-                setInputSenha2("form-control is-invalid")
+                setErrorSenha2(true)
             }
             setEstado(true)
             setMensagem("Preencha todos os campos!")
             setTimeout(() => {
                 setEstado(false)
-                setInputNome("form-control")
-                setInputMail("form-control")
-                setInputCpf("form-control")
-                setInputTelefone("form-control")
-                setInputSenha("form-control")
-                setInputSenha2("form-control")
-                setClassolho("olho")
+                setErrorNome(false)
+                setErrorMail(false)
+                setErrorCpf(false)
+                setErrorTelefone(false)
+                setErrorSenha(false)
+                setErrorSenha2(false)
             }, 4000);
         } else if (nome.includes('"') || cpff.includes('"') || telefone.includes('"') || senha.includes('"') || senha2.includes('"')
         || nome.includes("'") || cpff.includes("'") || telefone.includes("'") || senha.includes("'") || senha2.includes("'")) {
@@ -81,63 +80,59 @@ const RegisterPage = () => {
             if (!nome.includes(1, 2, 3, 4, 5, 6, 7, 8, 9, 0)) {
                 setEstado(true)
                 setMensagem("Digite seu nome completo")
-                setInputNome("form-control is-invalid")
+                setErrorNome(true)
                 setTimeout(() => {
                     setEstado(false)
-                    setInputNome("form-control")
+                    setErrorNome(false)
                 }, 4000);
             }
         }
         else if (cpf.isValid(cpff) === false && cnpj.isValid(cpff) === false) {
             setEstado(true)
             setMensagem("CPF ou CNPJ inválido!")
-            setInputCpf("form-control is-invalid")
+            setErrorCpf(true)
             setTimeout(() => {
-                setInputCpf("form-control")
+                setErrorCpf(false)
                 setEstado(false)
             }, 4000);
         }
         else if (telefone.length < 11) {
             setEstado(true)
-            setInputTelefone("form-control is-invalid")
+            setErrorTelefone(true)
             setMensagem("O telefone deve conter 11 caracteres!")
             setTimeout(() => {
-                setInputTelefone("form-control")
+                setErrorTelefone(false)
                 setEstado(false)
             }, 4000);
         }
         else if (senha.length < 8) {
             setEstado(true)
-            setInputSenha("form-control is-invalid")
-            setClassolho("olho-error")
+            setErrorSenha(true)
             setMensagem("A senha deve conter no mínimo 8 caracteres!")
 
             setTimeout(() => {
-                setInputSenha("form-control")
-                setClassolho("olho")
+                setErrorSenha(false)
                 setEstado(false)
             }, 4000);
         }
         else if (senha2.length < 8) {
             setEstado(true)
-            setInputSenha2("form-control is-invalid")
+            setErrorSenha(true)
             setMensagem("A senha deve conter no mínimo 8 caracteres!")
             setTimeout(() => {
-                setInputSenha2("form-control")
+                setErrorSenha(false)
                 setEstado(false)
             }, 4000);
         }
         else if (senha !== senha2) {
             setEstado(true)
-            setInputSenha2("form-control is-invalid")
-            setInputSenha("form-control is-invalid")
+            setErrorSenha(true)
+            setErrorSenha2(true)
             setMensagem("As senhas não coincidem!")
-            setClassolho("olho-error")
 
             setTimeout(() => {
-                setInputSenha2("form-control")
-                setInputSenha("form-control")
-                setClassolho("olho")
+                setErrorSenha(false)
+                setErrorSenha2(false)
                 setEstado(false)
             }, 4000);
         }
@@ -151,10 +146,10 @@ const RegisterPage = () => {
         else if(mail.length >= 0){
             if (!(await emailValidator.validate(mail)) && mail !== '') {
                     setEstado(true)
-                    setInputMail("form-control is-invalid")
+                    setErrorMail(true)
                     setMensagem("Email inválido!")
                     setTimeout(() => {
-                        setInputMail("form-control")
+                        setErrorMail(false)
                         setEstado(false)
                     }, 4000);
                 }
@@ -194,13 +189,6 @@ const RegisterPage = () => {
         }
             }
     }
-    const togglePassword = () => {
-        if (passwordType === "password") {
-            setPasswordType("text")
-            return;
-        }
-        setPasswordType("password")
-    }
 
     function popup() {
         return (
@@ -208,7 +196,7 @@ const RegisterPage = () => {
                 title: '',
                 icon: 'info',
                 html:
-                    '<small>O cadastro online é a forma mais conveniente e econômica de efetuar seus pagamentos do dia a dia. <br/><br/>Além de prático e seguro é pré-carregado com valores os quais você define. <br/><br/>Dessa forma você mesmo limita seus gastos economizando muito mais. Você pode inclusive vincular placas de veículos de pessoas dependentes e familiares ao seu cadastro. <br/><br/>Uma vez cadastrado seu veículo, você compra créditos, recarrega sua conta de vários maneiras, pontos de venda, smartphone entre outras.</small>',
+                    '<small>O cadastro online é a forma mais conveniente e econômica de efetuar seus pagamentos do dia a dia. <br/><br/>Além de prático e seguro é pré-carregado com valores os quais você define. <br/><br/>Dessa forma você mesmo limita seus gastos economizando muito mais. Você pode inclusive vincular placas de veículos de pessoas dependentes e familiares ao seu cadastro. <br/><br/>Uma vez cadastrado seu veículo, você compra créditos, recarrega sua conta de várias maneiras, pontos de venda, smartphone entre outras.</small>',
 
                 showCloseButton: true,
                 confirmButtonText:
@@ -243,52 +231,58 @@ const RegisterPage = () => {
                             <small className="text-left">O cadastro online é a forma mais conveniente e econômica de efetuar seus pagamentos do dia a dia. </small>
                             <small onClick={popup} className="pointer-cursor"><ins>Veja mais</ins></small>
                             <p className="pt-2"><strong>Preencha os dados abaixo e clique em avançar.</strong></p>
-                            <form action="#" className="mt-4">
-                                <div className="form-group mb-4">
-                                    <label id="labelLogin">Nome:</label>
-                                    <div className="input-group">
-                                        <input className={inputNome} name="nome" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite seu nome" />
-                                    </div>
+                            <form className="mt-4">
+                                <div className="form-group mb-4 text-start">
+                                <Input.Wrapper label="Login:">                        
+                                    <Input icon={<IconUser size={18}/>} placeholder="Digite seu login CPF/CNPJ ou Email"
+                                    id="nome" value={nome} onChange={(e) => setNome(e.target.value)}
+                                    error={errorNome}
+                                    />
+                                </Input.Wrapper>
                                 </div>
-                                <div className="form-group mb-4">
-                                    <label id="labelLogin">Email:</label>
-                                    <div className="input-group">
-                                        <input className={inputMail} name="email" id="email" value={mail} onChange={(e) => setMail(e.target.value)} placeholder="Digite seu endereço de email (não obrigatório)" />
-                                    </div>
+                                <div className="form-group mb-4 text-start">
+                                <Input.Wrapper label="Email:">                        
+                                    <Input icon={<IconMail size={18}/>} placeholder="Digite seu endereço de email (não obrigatório)"
+                                    id="email" value={mail} onChange={(e) => setMail(e.target.value)}
+                                    error={errorMail}
+                                    />
+                                </Input.Wrapper>
                                 </div>
-                                <div className="form-group mb-4">
-                                    <label id="labelLogin">CPF/CNPJ:</label>
-                                    <div className="input-group">
-                                        <input className={inputCpf} name="cpf" id="cpf" value={cpff} onChange={(e) => setCpff(e.target.value)} placeholder="Digite seu CPF p/ pessoa física ou CNPJ p/ jurídica" />
-                                    </div>
+                                <div className="form-group mb-4 text-start">
+                                <Input.Wrapper label="CPF/CNPJ:">                        
+                                    <Input icon={<IconClipboardText size={18}/>} placeholder="Digite seu CPF p/ pessoa física ou CNPJ p/ jurídica"
+                                    id="cpf" value={cpff} onChange={(e) => setCpff(e.target.value)}
+                                    error={errorCpf}
+                                    />
+                                </Input.Wrapper>
                                 </div>
-                                <div className="form-group mb-4">
-                                    <label id="labelLogin">Telefone:</label>
-                                    <div className="input-group">
-                                        <InputMask mask={'(99) 99999-9999'} ref={telefoneRef} className={inputTelefone} name="telefone" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite seu número de telefone" />
-                                    </div>
+                                <div className="form-group mb-4 text-start">
+                                <Input.Wrapper label="Telefone:">                        
+                                    <Input icon={<IconPhone size={18}/>} component={InputMask} mask={'(99) 99999-9999'} ref={telefoneRef} 
+                                    id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} 
+                                    placeholder="Digite seu número de telefone"
+                                    error={errorTelefone}
+                                    />
+                                </Input.Wrapper>
                                 </div>
-                                <div className="form-group">
+                                <div className="form-group text-start">
                                     <div className="form-group mb-4">
-                                        <label id="labelLogin">Senha:</label>
-                                        <div className="input-group">
-                                            <input className={inputSenha} type={passwordType} name="password" id="password2" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Digite sua senha" />
-                                            <button onClick={togglePassword} type="button" className={classolho}>
-                                                {passwordType === "password" ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-slash-fill" viewBox="0 0 16 16">
-                                                    <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z" />
-                                                    <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z" />
-                                                </svg> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-                                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-                                                </svg>}
-                                            </button>
-                                        </div>
+                                        <PasswordInput
+                                            icon={<IconLock size={18} />}
+                                            placeholder="Digite sua senha"
+                                            label="Senha:"
+                                            id="password2" value={senha} onChange={(e) => setSenha(e.target.value)}
+                                            error={errorSenha}
+                                            withAsterisk
+                                        />
                                     </div>
                                     <div className="form-group mb-4">
-                                        <label id="labelLogin">Confirme sua senha:</label>
-                                        <div className="input-group">
-                                            <input className={inputSenha2} type="password" name="password" id="password" value={senha2} onChange={(e) => setSenha2(e.target.value)} placeholder="Digite sua senha novamente" />
-                                        </div>
+                                    <Input.Wrapper label="Confirme a senha:">                        
+                                        <Input icon={<IconLockCheck size={18}/>} type="password" placeholder="Digite sua senha novamente"
+                                        id="password" value={senha2} onChange={(e) => setSenha2(e.target.value)}
+                                        error={errorSenha2}
+                                        />
+                                    </Input.Wrapper>
                                     </div>
                                     <div>
                                         <div className="form-check">
@@ -382,8 +376,8 @@ const RegisterPage = () => {
                                     </svg></span></button>
 
                                     <div className="mt-3" style={{ display: estado2 ? 'block' : 'none'}}>
-                                    <TailSpin />
-                            </div>
+                                    <Loader />
+                                    </div>
                                     <p className='text-muted'> <small>Já possui uma conta? </small><small className="color-primary" onClick={() => {registrado()}}><u>Clique aqui!</u></small></p>
                                 </div>
                             </form>

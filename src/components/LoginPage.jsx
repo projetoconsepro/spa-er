@@ -124,7 +124,7 @@ const LoginPage = () => {
                             withAsterisk
                             />
                             </div>
-                                <p className="esqueciSenha"><small onClick={() => {recuperar()}}>Esqueci minha senha</small></p>
+                                <p className="esqueciSenha"><small onClick={() => {recuperar()}} className="color-primary"><u>Esqueci minha senha</u></small></p>
                             <div>
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" id="flexCheckDefault" />

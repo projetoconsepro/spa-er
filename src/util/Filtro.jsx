@@ -157,6 +157,15 @@ const Filtro = ({ nome, onConsultaSelected }) => {
       ]);
     }
 
+    else if (nome === 'HistoricoVeiculo') {
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Placa', label: 'Placa' },
+        { value: 'Vaga', label: 'Vaga' },
+        { value: 'Periodo', label: 'Período' },
+        { value: 'Estado', label: 'Estado' }
+      ]);
+    }
     else {
       setOptions([]);
     }
@@ -217,18 +226,33 @@ const Filtro = ({ nome, onConsultaSelected }) => {
       case 'Todos':
         consulta = `{"where": [{ "field": "todos", "operator": "=", "value": "all" }]}`;
         break;
+      case 'Estado':
+        consulta = `{"where": [{ "field": "tipo", "operator": "=", "value": "${radioTipo}" }]}`;
+        break;
       default:
         break;
     }
     onConsultaSelected(
       consulta
     );
+    if (nome === 'HistoricoVeiculo') {
+    setEstadoLoading(true);
+    setTimeout(() => {
+      setEstadoLoading(false);
+      onClose();
+      close();
+    }, 8000);
+
+  }
+  else {
     setEstadoLoading(true);
     setTimeout(() => {
       setEstadoLoading(false);
       onClose();
       close();
     }, 2000);
+  }
+
   }
   else {
     setEstado(true);
@@ -328,6 +352,23 @@ const Filtro = ({ nome, onConsultaSelected }) => {
               </Radio.Group>
               </div>
             ) :
+            selectedOption.value === 'Estado' ? (
+                <div>
+                <div className="mt-4 mb-3">
+                  Selecione o estado:
+                </div>
+                <Radio.Group name="Escolha algum opção" onChange={(e) => setRadioTipo(e)}>
+                    <Grid>
+                    <Grid.Col span={12}>
+                    <Radio value="'S'" label="Notificado" />
+                    </Grid.Col>
+                    <Grid.Col span={12}>
+                    <Radio value="'N'" label="Regular" />
+                    </Grid.Col>
+                    </Grid>
+                </Radio.Group>
+                </div>
+              ) :
             selectedOption.value === 'Motivo' ? (
               <div>
               <div className="mt-4 mb-3">
