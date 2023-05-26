@@ -5,13 +5,15 @@ import Swal from 'sweetalert2'
 import moment from 'moment'
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
+import Filtro from '../util/Filtro'
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
     const [data2, setData2] = useState([])
+    const [data3, setData3] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState('')
-    const [sortAsc, setSortAsc] = useState(false);
+    const [sortAsc, setSortAsc] = useState(true);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -31,135 +33,9 @@ const ListarNotificacoesAgente = () => {
       return data7;
       }
 
-    const filtroSelect = async () => {
-        const select = document.getElementById('filtroSelect').value
-        if (select === 'selectData') {
-          setEstado(false)
-          setMensagem('')
-          Swal.fire({
-            title: 'Filtrar por data',
-            html: `<input type="date" id="data" class="form-control">`,
-            showCancelButton: true,
-            cancelButtonText: 'Fechar',
-            confirmButtonText: 'Filtrar',
-            preConfirm: () => {
-                const data = document.getElementById("data").value;
-                const data4 = ArrumaHora(data)
-                const newData = data2.filter((item) => item.data === data4)
-                setData(newData)
-                if (newData.length === 0) {
-                    setEstado(true)
-                    setMensagem('Nenhum dado encontrado')
-                }
-            }
-        })
-        }
-        else if(select === 'selectPlaca'){
-          setEstado(false)
-          setMensagem('')
-            Swal.fire({
-                title: 'Filtrar por placa',
-                html: `<input type="text" id="placaId" class="form-control">`,
-                showCancelButton: true,
-                cancelButtonText: 'Fechar',
-                confirmButtonText: 'Filtrar',
-                preConfirm: () => {
-                    const placa = document.getElementById("placaId").value;
-                    const newData = data2.filter((item) => item.placa === placa)
-                    setData(newData)
-                    if (newData.length === 0) {
-                        setEstado(true)
-                        setMensagem('Nenhum dado encontrado')
-                    }
-                }
-            })
-        }
-      else if(select === 'selectVaga'){
-        setEstado(false)
-        setMensagem('')
-        Swal.fire({
-            title: 'Filtrar por vaga',
-            html: `<input type="number" id="vaga" class="form-control">`,
-            showCancelButton: true,
-            cancelButtonText: 'Fechar',
-            confirmButtonText: 'Filtrar',
-            preConfirm: () => {
-                const vaga = document.getElementById("vaga").value;
-                const newData = data2.filter((item) => item.vaga == vaga)
-                setData(newData)
-                if (newData.length === 0) {
-                    setEstado(true)
-                    setMensagem('Nenhum dado encontrado')
-                }
-            }
-        })
-      }
-      else if(select === 'selectTipo'){
-        setEstado(false)
-        setMensagem('')
-        const inputOptions = new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              'S': 'Quitado',
-              'N': 'Pendente'
-            })
-          }, 1000)
-        })
-        
-        const { value: color } = await Swal.fire({
-          title: 'Selecione o estado da notificação',
-          input: 'radio',
-          inputOptions: inputOptions,
-          inputValidator: (value) => {
-            if (!value) {
-              return 'Você deve selecionar um estado de notificação!'
-            }
-          }
-        })
-        if (color) {
-          const newData = data2.filter((item) => item.pendente === color)
-          setData(newData)
-          if (newData.length === 0) {
-            setEstado(true)
-            setMensagem('Nenhum dado encontrado')
-        }
-        }
-        
-      }
-    }
-
     useEffect(() => {
         localStorage.removeItem('autoInfracao')
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-              token: token,
-              id_usuario: user2.id_usuario,
-              perfil_usuario: user2.perfil[0],
-            },
-          });
-          requisicao.get('/notificacao').then((response) => {
-            console.log(response)
-            const newData = response.data.data.map((item) => ({
-                id_vaga_veiculo: item.id_vaga_veiculo,
-                id_notificacao: item.id_notificacao,
-                data: ArrumaHora(item.data),
-                placa: item.veiculo.placa,
-                cor: item.veiculo.cor,
-                vaga: item.vaga,
-                pendente: item.pago,
-                fabricante: item.veiculo.modelo.fabricante.nome,
-                modelo: item.veiculo.modelo.nome,
-                tipo: item.tipo_notificacao.nome,
-                valor: item.valor,
-                monitor: item.monitor.nome,
-                hora: ArrumaHora2(item.data),
-            }));
-            setData(newData)
-            setData2(newData)
-        }).catch((error) => {
-            console.log(error)
-          })
+        reload()
     }, [])
 
     const mostrar = async (item) => {
@@ -208,22 +84,31 @@ const ListarNotificacoesAgente = () => {
         },
       });
       requisicao.get('/notificacao').then((response) => {
-        const newData = response.data.data.map((item) => ({
-            id_vaga_veiculo: item.id_vaga_veiculo,
-            id_notificacao: item.id_notificacao,
+        if (response.data.msg.resultado){
+          setEstado(false)
+          const newData = response.data.data.map((item) => ({
             data: ArrumaHora(item.data),
             placa: item.veiculo.placa,
+            cancelada: item.cancelada,
+            cancelada_motivo: item.cancelada_motivo,
             vaga: item.vaga,
-            pendente: item.pago,
+            pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
             fabricante: item.veiculo.modelo.fabricante.nome,
             modelo: item.veiculo.modelo.nome,
             tipo: item.tipo_notificacao.nome,
             valor: item.valor,
+            id_vaga_veiculo: item.id_vaga_veiculo,
+            id_notificacao: item.id_notificacao,
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
-        }));
-        setData(newData)
-        setData2(newData)
+          }));
+          setData(newData)
+        }
+        else {
+          setData([])
+          setEstado(true)
+          setMensagem("Não há notificações para exibir")
+        }
     }).catch((error) => {
         console.log(error)
       })
@@ -240,21 +125,63 @@ const ListarNotificacoesAgente = () => {
     setSortAsc(prevSortAsc => !prevSortAsc);
   };
 
+  const handleConsultaSelected = (consulta) => {
+    handleFiltro(consulta)
+  }
+
+  const handleFiltro = (where) => {
+    setEstado(false)
+    setMensagem("")
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    const base64 = btoa(where)
+    requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
+      if (response.data.msg.resultado){
+      setEstado(false)
+      const newData = response.data.data.map((item) => ({
+        data: ArrumaHora(item.data),
+        placa: item.veiculo.placa,
+        cancelada: item.cancelada,
+        cancelada_motivo: item.cancelada_motivo,
+        vaga: item.vaga,
+        pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
+        fabricante: item.veiculo.modelo.fabricante.nome,
+        modelo: item.veiculo.modelo.nome,
+        tipo: item.tipo_notificacao.nome,
+        valor: item.valor,
+        id_vaga_veiculo: item.id_vaga_veiculo,
+        id_notificacao: item.id_notificacao,
+        monitor: item.monitor.nome,
+        hora: ArrumaHora2(item.data),
+      }));
+      setData(newData)
+    }
+    else {
+      setData([])
+      setEstado(true)
+      setMensagem("Não há notificações para exibir")
+    }
+  }).catch((error) => {
+      console.log(error)
+    })
+}
+
+
 
   return (
     <div className="dashboard-container">
         <p className="mx-3 text-start fs-4 fw-bold">Notificações pendentes</p>
-        <div className="row">
+        <div className="row mb-3">
         <div className="col-12">
         <div className="row">
         <div className="col-7">
-        <select className="mx-3 form-select form-select-sm mb-3" defaultValue="1" onChange={() => {filtroSelect()}} aria-label=".form-select-lg example" id="filtroSelect">
-          <option disabled  value='1' id="filtro">Filtro</option>
-          <option value="selectData">Data</option>
-          <option value="selectPlaca">Placa</option>
-          <option value="selectVaga">Vaga</option>
-          <option value="selectTipo">Tipo</option>
-          </select>
+        <Filtro nome={'ListarNotificacoesAgente'} onConsultaSelected={handleConsultaSelected} />
           </div>
           <div className="col-3 text-end">
           </div>
@@ -310,8 +237,8 @@ const ListarNotificacoesAgente = () => {
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
                           <td id="tabelaUsuarios2" style={
-                            item.pendente === 'S' ? {color: 'green'} : {color: 'red'}
-                          }> {item.pendente === 'S' ? 'Quitado' : 'Pendente'}</td>
+                            item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}
+                          }> {item.pendente}</td>
                           <td id="tabelaUsuarios2">{item.fabricante}</td>
                           <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td id="tabelaUsuarios2">{item.tipo}</td>

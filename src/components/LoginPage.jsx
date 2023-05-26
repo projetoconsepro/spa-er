@@ -3,6 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import { AuthContext } from "../pages/contexts/auth";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
+import { Input, PasswordInput } from '@mantine/core';
+import { IconLockCode, IconPassword, IconUser } from '@tabler/icons-react';
+import { IconLock } from '@tabler/icons-react';
 
 
 const LoginPage = () => {
@@ -17,6 +20,8 @@ const LoginPage = () => {
     const [inputLogin, setinputLogin] = useState("form-control");
     const [passwordType, setPasswordType] = useState("password");
     const [classolho , setClassolho] = useState("olho");
+    const [errorLogin, setErrorLogin] = useState(false);
+    const [errorSenha, setErrorSenha] = useState(false);
 
     const togglePassword = () => {
         if (passwordType === "password") {
@@ -41,16 +46,16 @@ const LoginPage = () => {
             setEstado(true)
             setMensagem("Preencha todos os campos!")
             if (email === "") {
-                setinputLogin("form-control is-invalid")
+                //setinputLogin("form-control is-invalid")
+                setErrorLogin(true)
             }
             if (password === "") {
-                setInputSenha("form-control is-invalid")
-                setClassolho("olho-error")
+                //setInputSenha("form-control is-invalid")
+                setErrorSenha(true)
             }
             setTimeout(() => {
-                setinputLogin("form-control")
-                setInputSenha("form-control")
-                setClassolho("olho")
+                setErrorLogin(false)
+                setErrorSenha(false)
                 setEstado(false)
             }, 4000);
         }
@@ -58,9 +63,8 @@ const LoginPage = () => {
             setEstado(true)
             setMensagem(`Alguns caracteres como (' ") não são permitidos`)
             setTimeout(() => {
-                setinputLogin("form-control")
-                setInputSenha("form-control")
-                setClassolho("olho")
+                setErrorLogin(false)
+                setErrorSenha(false)
                 setEstado(false)
             }, 4000);
         }
@@ -74,14 +78,12 @@ const LoginPage = () => {
             if (resposta.auth === false) {
                 setEstado(true)
                 setMensagem(resposta.message)
-                setinputLogin("form-control is-invalid")
-                setInputSenha("form-control is-invalid")
-                setClassolho("olho-error")
+                setErrorLogin(true)
+                setErrorSenha(true)
                 setTimeout(() => {
                     setEstado(false)
-                    setinputLogin("form-control")
-                    setInputSenha("form-control")
-                    setClassolho("olho")
+                    setErrorLogin(false)
+                    setErrorSenha(false)
                 }, 6000);
             }
         }
@@ -104,28 +106,25 @@ const LoginPage = () => {
                             <div className="text-center text-md-center mb-3 pt-3 mt-4mt-md-0">
                                 <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
                             </div>
-                            <div className="form-group mb-4">
-                                <label id="labelLogin">Login:</label>
-                                <div className="input-group">
-                                    <input className={inputLogin} name="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Digite seu login CPF/CNPJ ou Email" />
-                                </div>
+                            <div className="form-group mb-4 text-start">
+                            <Input.Wrapper label="Login">                        
+                            <Input icon={<IconUser size={18}/>} placeholder="Digite seu login CPF/CNPJ ou Email"
+                            id="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                            error={errorLogin}
+                            />
+                            </Input.Wrapper>
                             </div>
-                            <div className="form-group mb-4">
-                                <label id="labelLogin">Senha:</label>
-                                <div className="input-group" >
-                                    <input className={inputSenha} type={passwordType} name="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Digite sua senha" />
-                                    <button onClick={togglePassword} type="button" className={classolho}>
-                                        {passwordType === "password" ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-slash-fill" viewBox="0 0 16 16">
-                                            <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z" />
-                                            <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z" />
-                                        </svg> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-fill" viewBox="0 0 16 16">
-                                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-                                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-                                        </svg>}
-                                    </button>
-                                </div>
+                            <div className="form-group mb-4 text-start">
+                            <PasswordInput
+                            icon={<IconLock size={18} />}
+                            placeholder="Digite sua senha"
+                            label="Senha:"
+                            id="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                            error={errorSenha}
+                            withAsterisk
+                            />
+                            </div>
                                 <p className="esqueciSenha"><small onClick={() => {recuperar()}}>Esqueci minha senha</small></p>
-                            </div>
                             <div>
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
@@ -144,8 +143,8 @@ const LoginPage = () => {
                             </div>
                         </div>
                     </div>
+                    </div>
                 </div>
-            </div>
         </section>
     )
 }

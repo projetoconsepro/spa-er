@@ -377,12 +377,12 @@ const Sidebar = () => {
                 <div className="sidebar-inner px-3 pt-3">
                     <div className="row">
                         <div className="col-10">
-                        <div className="nav-item align-items-end"><a className="nav-link d-flex align-items-center pb-3"><span className="sidebar-icon" onClick={()=>{setAriaExpanded(false)}}><img src="../../assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span className="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></div>
+                        <div className="nav-item align-items-end"><a className="nav-link d-flex align-items-center pb-3"><span className="sidebar-icon"><img src="../../assets/img/logo.png" height="20" width="20" alt="Rich Logo" /> </span><span className="mt-1 ms-1 sidebar-text">CONSEPRO</span></a></div>
                 </div>
                 <div className="col-2">
                 <div className="d-flex d-md-none align-items-center justify-content-between justify-content-md-center mt-1 pb-4">
                     <div className="collapse-close d-md-none">
-                        <a href="#sidebarMenu" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
+                        <a onClick={()=>{setAriaExpanded(false)}} href="#sidebarMenu" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation">
                             <svg className="icon icon-xs" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"></path>
                             </svg>
@@ -393,7 +393,7 @@ const Sidebar = () => {
                 </div>
                 </div>
                 <ul className="nav flex-column pt-md-0">
-                <a className="nav-link dropdown-toggle pt-1 px-2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a className="nav-link  pt-1 px-2">
                             <div className="media d-flex align-items-center border-bottom border-top  border-white pb-4 pt-4">
                                 <img className="avatar rounded-circle mb" alt="Image placeholder" src="assets/img/img_avatar.png" id="imagemPerfil"/>
                                 <div className="media-body ms-3 text-white">
@@ -411,23 +411,6 @@ const Sidebar = () => {
                                 </div>
                             </div>
                             </a>
-                            <div className="dropdown-menu dashboard-dropdown dropdown-menu-start py-1">
-                            <a className="dropdown-item d-flex align-items-center text-dark">
-                            <BsPersonCircle />
-                            ‎ Meu perfil
-                            </a>
-                            <a className="dropdown-item d-flex align-items-center text-dark">
-                            <MdOutlineContactSupport />
-                            ‎ Suporte
-                            </a>
-                            <div role="separator" className="dropdown-divider my-1"></div>
-                            <a className="dropdown-item d-flex align-items-center text-danger" onClick={() => {handleLogout()}}>
-                                <svg className="dropdown-icon text-danger me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                </svg>
-                                Desconectar-se
-                            </a>
-                            </div>
 
 <li className="nav-item">
 {teste.perfil[0] !== undefined ? 
