@@ -7,7 +7,7 @@ import Select from "react-select"
 import 'dayjs/locale/pt-br';
 import { IconAlertCircle, IconCloudCheck, IconParking, IconStatusChange, IconUser } from '@tabler/icons-react';
 
-const Filtro = ({ nome, onConsultaSelected }) => {
+const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     const [opened, { open, close }] = useDisclosure(false);
     const [cardBody, setCardBody] = useState('');
     const [estado, setEstado] = useState(false);
@@ -16,12 +16,14 @@ const Filtro = ({ nome, onConsultaSelected }) => {
     const [value, setValue] = useState(new Date());
     const [State , setState] = useState(false);
     const [valuePeriodo, setValuePeriodo] = useState([null, null]);
-    const [estadoLoading, setEstadoLoading] = useState(false);
+    const [estadoLoading, setEstadoLoading] = useState(onLoading);
     const [inputNome, setInputNome] = useState('');
     const [inputPlaca, setInputPlaca] = useState('');
     const [inputVaga, setInputVaga] = useState('');
     const [radioTipo, setRadioTipo] = useState('');
     const [tiposNot, setTiposNot] = useState([]);
+    const [tipoFinanceiro, setTipoFinanceiro] = useState([]);
+    const [valueTipoFinanceiro, setValueTipoFinanceiro] = useState('');
     const [valueMotivo, setValueMotivo] = useState('');
 
     const FormatDate =  (date) => {
@@ -33,6 +35,14 @@ const Filtro = ({ nome, onConsultaSelected }) => {
   
       return formattedDate;
     }
+
+    useEffect(() => {
+      setEstadoLoading(onLoading);
+      if(onLoading === false){
+      onClose()
+      close()
+      }
+    }, [onLoading]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -166,6 +176,40 @@ const Filtro = ({ nome, onConsultaSelected }) => {
         { value: 'Estado', label: 'Estado' }
       ]);
     }
+
+    else if (nome === 'HistoricoFinanceiro') {
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Periodo', label: 'Período' },
+        { value: 'Tipo financeiro', label: 'Tipo financeiro' }
+      ]);
+      setTipoFinanceiro([
+        { value: 'Transferencia de credito', label: 'Transferência de crédito' },
+        { value: 'Transferencia recebida', label: 'Transferência recebida' },
+        { value: 'Acrescimo de credito', label: 'Acréscimo de crédito' },
+        { value: 'credito', label: 'Estacionamento' },
+      ]);
+    }
+
+    else if (nome === 'HistoricoFinanceiroParceiro') {
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Periodo', label: 'Período' },
+        { value: 'Tipo financeiro', label: 'Tipo financeiro' }
+      ]);
+      setTipoFinanceiro([
+        { value: 'Acrescimo de credito', label: 'Acréscimo de crédito' },
+        { value: 'credito', label: 'Estacionamento' },
+      ]);
+    }
+
+    else if (nome === 'PrestacaoContas') {
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Periodo', label: 'Período' },
+      ]);
+    }
+
     else {
       setOptions([]);
     }
@@ -173,7 +217,7 @@ const Filtro = ({ nome, onConsultaSelected }) => {
 
   useEffect(() => {
     if(selectedOption !== null) {
-    if(selectedOption.value === 'Data' || selectedOption.value === 'Periodo') {
+    if(selectedOption.value === 'Data' || selectedOption.value === 'Periodo' || selectedOption.value === 'Tipo financeiro') {
       setCardBody('card-body8 d-flex flex-column text-black');
     }
     else if(selectedOption.value === 'Tipo') {
@@ -229,39 +273,17 @@ const Filtro = ({ nome, onConsultaSelected }) => {
       case 'Estado':
         consulta = `{"where": [{ "field": "tipo", "operator": "=", "value": "${radioTipo}" }]}`;
         break;
+      case 'Tipo financeiro':
+        consulta = `{"where": [{ "field": "tipo", "operator": "=", "value": "${valueTipoFinanceiro}" }]}`; 
+        break;
       default:
         break;
     }
     onConsultaSelected(
       consulta
     );
-    if (nome === 'HistoricoVeiculo') {
-    setEstadoLoading(true);
-    setTimeout(() => {
-      setEstadoLoading(false);
-      onClose();
-      close();
-    }, 8000);
-
-  }
-  else {
-    setEstadoLoading(true);
-    setTimeout(() => {
-      setEstadoLoading(false);
-      onClose();
-      close();
-    }, 2000);
-  }
-
-  }
-  else {
-    setEstado(true);
-    setTimeout(() => {
-    setEstado(false);
-    }, 4000);
   }
   };
-  
 
   const onClose = () => {
     setInputNome('');
@@ -306,7 +328,7 @@ const Filtro = ({ nome, onConsultaSelected }) => {
             selectedOption.value === 'Periodo' ? (
               <div>
               <div className="mt-4 mb-1">
-                Selecione o período:
+                Selecione a data de inicio e fim:
               </div>
               <DatePickerInput type="range" locale='pt-br' allowSingleDateInRange value={valuePeriodo} onChange={setValuePeriodo} />
               </div>
@@ -363,7 +385,7 @@ const Filtro = ({ nome, onConsultaSelected }) => {
                     <Radio value="'S'" label="Notificado" />
                     </Grid.Col>
                     <Grid.Col span={12}>
-                    <Radio value="'N'" label="Regular" />
+                    <Radio value="'N'" label="Normal" />
                     </Grid.Col>
                     </Grid>
                 </Radio.Group>
@@ -386,10 +408,21 @@ const Filtro = ({ nome, onConsultaSelected }) => {
                 Clique em salvar para listar todas as notificações.
               </div>
             ) :
+            selectedOption.value === 'Tipo financeiro' ? (
+              <div>
+                <div className="mt-4 mb-3">
+                  Selecione o tipo:
+                </div>
+              <Select
+                placeholder="Escolha o tipo"
+                options={tipoFinanceiro}
+                onChange={(e) => setValueTipoFinanceiro(e.value)}
+              />
+              </div>
+            ) :
             ( null )
             }
             </div>
-              
           )
           :
           ( null )

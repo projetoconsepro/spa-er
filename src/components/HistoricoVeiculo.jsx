@@ -12,6 +12,7 @@ const HistoricoVeiculo = () => {
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState("");
+  const [estadoLoading, setEstadoLoading] = useState(false);
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
@@ -158,6 +159,7 @@ const HistoricoVeiculo = () => {
   }
   
   const handleFiltro = (where) => {
+    setEstadoLoading(true)
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -168,8 +170,9 @@ const HistoricoVeiculo = () => {
     });
     const base64 = btoa(where)
     requisicao.get(`veiculo/historico/?query=${base64}`).then((response) => {
-      console.log(response.data.msg.resultado)
       if (response.data.msg.resultado) {
+        console.log('aacabou')
+        setEstadoLoading(false)
         setEstado2(false);
         setEstado(false);
         setMensagem("");
@@ -217,7 +220,7 @@ const HistoricoVeiculo = () => {
       <div>
       <div className="row mb-4">
         <div className="col-7">
-        <Filtro nome={'HistoricoVeiculo'} onConsultaSelected={handleConsultaSelected}/>
+        <Filtro nome={'HistoricoVeiculo'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
           </div>
           <div className="col-3 text-end">
             

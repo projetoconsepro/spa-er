@@ -4,6 +4,9 @@ import { BsCashCoin } from "react-icons/bs";
 import Swal from "sweetalert2";
 import { FaCoins } from "react-icons/fa";
 import VoltarComponente from "../util/VoltarComponente";
+import Filtro from "../util/Filtro";
+import { Badge } from "@mantine/core";
+import { IconCash } from "@tabler/icons-react";
 
 const HistoricoFinanceiroParceiro = () => {
   const [resposta, setResposta] = useState([]);
@@ -11,6 +14,8 @@ const HistoricoFinanceiroParceiro = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [saldo, setSaldo] = useState(0);
+  const [estadoLoading, setEstadoLoading] = useState(false);
+
 
   function filtrar(filtro) {
    const filtrado = resposta2.filter((item) => {
@@ -150,24 +155,76 @@ const HistoricoFinanceiroParceiro = () => {
   });
 }, []);
 
+const handleConsulta = (where) => {
+  setEstado(false);
+  setMensagem("");
+  setEstadoLoading(true)
+  const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
+  const user2 = JSON.parse(user);
+
+  setEstadoLoading(true)
+  
+  const requisicao = axios.create({
+    baseURL: process.env.REACT_APP_HOST,
+    headers: {
+      token: token,
+      id_usuario: user2.id_usuario,
+      perfil_usuario: user2.perfil[0],
+    },
+  });
+
+  const base64 = btoa(where)
+  requisicao.get(`/financeiro/parceiro/?query=${base64}`).then((response) => {
+    console.log(response);
+    if (response.data.msg.resultado) {
+      
+    setEstadoLoading(false)
+    setSaldo(response?.data.dados.saldo)
+     const newData = response?.data.dados.movimentos.map((item) => ({
+      valor: item.valor,
+      data: ArrumaHora(item.data),
+      tipo: item.tipo,
+      cpf: item.cpf === undefined ? '' : item.cpf,
+      cnpj: item.cnpj === undefined ? '' : item.cnpj,
+      placa: item.placa === undefined ? '' : item.placa,
+    }));
+    console.log('essa é a newdata', newData)
+    for ( let i = 0; i < newData.length; i++) {
+      if(newData[i].tipo === 'credito'){
+        newData[i].debito = 'S'
+      } else if(newData[i].tipo === 'Acréscimo de crédito'){
+        newData[i].debito = 'S'
+      }
+    }
+      setResposta(newData);
+    } else {
+      setResposta([]);
+      setEstadoLoading(false)
+      setEstado(true);
+      setMensagem(response.data.msg.msg);
+    }
+}).catch((error) => {
+    console.log(error)
+  })
+}
 
   
   return (  
     <div>
         <p className="mx-3 text-start fs-4 fw-bold">Histórico financeiro:</p>
-        <div className="row">
-        <div className="col-5"> 
-      <select className="mx-3 form-select form-select-sm mb-3" defaultValue="1" aria-label=".form-select-lg example" id="filtroSelect2"
-      onChange={() => {filtragem()}}>   
-        <option disabled  value='1' id="filtro">Filtro</option>
-        <option value="selectData">Data</option>
-        <option value="selectTipo">Tipo</option>
-        </select>
-        </div>
-    <div className="col-6 text-end mb-3">
-          <FaCoins/> Saldo do caixa ‎ R${saldo}
+        <div className="row mb-3">
+        <div className="col-5 mx-2"> 
+      <Filtro nome={"HistoricoFinanceiroParceiro"} onConsultaSelected={handleConsulta} onLoading={estadoLoading} />
     </div>
-
+    <div className="col-6 text-end mt-1">
+      <Badge variant="gradient" fz="sm"
+      w={ window.innerWidth < 768 ? 150 : 200 } h={30} 
+      gradient={{ from: 'teal', to: 'blue', deg: 210 }} 
+      leftSection={<IconCash />}>
+        R${saldo}
+      </Badge>
+    </div>
     </div>
     <div id="kkk" className="mb-3">
     {resposta.map((item, index) => (
@@ -191,7 +248,7 @@ const HistoricoFinanceiroParceiro = () => {
         {item.tipo === 'regularizacao' && window.innerWidth > 1110 ? ` - ${item.placa}` :
         item.tipo === 'credito' && window.innerWidth > 1110 ? ` - ${item.placa}` :
         item.tipo === 'tolerancia' && window.innerWidth > 1110 ? ` - ${item.placa}` :
-        item.tipo === 'Acréscimo de crédito' && window.innerWidth > 1110 ? ` - ${item.cnpj === '' ?  item.cpf : item.cnpj}` : 
+        item.tipo === 'Acrescimo de credito' && window.innerWidth > 1110 ? ` - ${item.cnpj === '' ?  item.cpf : item.cnpj}` : 
         null}
         </div>
         </div>
@@ -207,7 +264,7 @@ const HistoricoFinanceiroParceiro = () => {
         {item.tipo === 'regularizacao' && window.innerWidth <= 1110 ? `${item.placa}` :
         item.tipo === 'credito' && window.innerWidth <= 1110 ? `${item.placa}` :
         item.tipo === 'tolerancia' && window.innerWidth <= 1110 ? `${item.placa}` :
-        item.tipo === 'Acréscimo de crédito' && window.innerWidth <= 1110 ? `${item.cnpj === '' ?  item.cpf : item.cnpj}` : 
+        item.tipo === 'Acrescimo de credito' && window.innerWidth <= 1110 ? `${item.cnpj === '' ?  item.cpf : item.cnpj}` : 
         null}
         </div>
       </div>
