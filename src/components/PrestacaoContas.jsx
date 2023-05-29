@@ -7,12 +7,18 @@ import VoltarComponente from '../util/VoltarComponente';
 import { FaPowerOff } from 'react-icons/fa';
 import { AiFillPrinter } from 'react-icons/ai';
 import CarroLoading from '../components/Carregamento';
+import Filtro from '../util/Filtro';
 
 const PrestacaoContas = () => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
   const [estado, setEstado] = useState(false);
+  const [estado2, setEstado2] = useState(false);
+  const [estadoLoading, setEstadoLoading] = useState(false);
+  const [mensagem, setMensagem] = useState('');
+
+
   const formatNumero = (numero) => {
     if (Number.isInteger(numero)) {
       return numero + ',00';
@@ -510,27 +516,180 @@ const PrestacaoContas = () => {
   }).catch((err) => {
     console.log(err);
   });
-
-
   }, []);
+
+  const handleConsulta = (consulta) => {
+    console.log(consulta)
+    setEstado2(false);
+    setEstadoLoading(true);
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+          'token': token,
+          'id_usuario': user2.id_usuario,
+          'perfil_usuario': "admin"
+      }
+  });
+  const base64 = btoa(consulta)
+  requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
+    console.log(res)
+    if(res.data.msg.resultado){
+    setEstadoLoading(false);
+    setEstado(true);
+    setData(res.data.data);
+    let newData = res.data.data[0].monitor.map((item) => {
+      if (item) {
+        if (item.total) {
+        const perfil = 'Total';
+        const nome = '';
+        const totalRegularizacao = item.total.Regularizacao.TotalValor;
+        const totalEstacionamento = item.total.estacionamento.TotalValor;
+        const totalRecarga = item.total.creditosInseridos.TotalValor;
+        const finalTotal = item.total.finalTotal.TotalValor;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+        }
+        const perfil = 'Monitor';
+        const nome = item.nome || '';
+        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
+        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
+        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
+        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+      }
+    });
+    const newData2 = res.data.data[0].parceiro.map((item) => {
+      if (item) {
+         if (item.total) {
+          const perfil = 'Total';
+        const nome = '';
+        const totalRegularizacao = item.total.Regularizacao.TotalValor;
+        const totalEstacionamento = item.total.estacionamento.TotalValor;
+        const totalRecarga = item.total.creditosInseridos.TotalValor;
+        const finalTotal = item.total.finalTotal.TotalValor;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+        }
+        const perfil = 'Parceiro';
+        const nome = item.nome || '';
+        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
+        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
+        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
+        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+      }
+    });
+
+    const newData3 = res.data.data[0].aplicativo.map((item) => {
+      if (item) {
+         if (item.total) {
+        const perfil = 'Total';
+        const nome = '';
+        const totalRegularizacao = item.total.Regularizacao.TotalValor;
+        const totalEstacionamento = item.total.estacionamento.TotalValor;
+        const totalRecarga = item.total.creditosInseridos.TotalValor;
+        const finalTotal = item.total.finalTotal.TotalValor;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+        }
+        const perfil = 'Aplicativo';
+        const nome = '';
+        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
+        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
+        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
+        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+      }
+    });
+
+    const iParceiro = res.data.data[0].parceiro.length - 1;
+    const iMonitor = res.data.data[0].monitor.length - 1;
+    const iAplicativo = res.data.data[0].aplicativo.length - 1;
+
+    const newData4 = {
+        nome : '',
+        perfil : 'Total geral',
+        totalRegularizacao : res.data.data[0].parceiro[iParceiro].total.Regularizacao.TotalValor + res.data.data[0].monitor[iMonitor].total.Regularizacao.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.Regularizacao.TotalValor,
+        totalEstacionamento : res.data.data[0].parceiro[iParceiro].total.estacionamento.TotalValor + res.data.data[0].monitor[iMonitor].total.estacionamento.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.estacionamento.TotalValor,
+        totalRecarga : res.data.data[0].parceiro[iParceiro].total.creditosInseridos.TotalValor + res.data.data[0].monitor[iMonitor].total.creditosInseridos.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor,
+        finalTotal : res.data.data[0].parceiro[iParceiro].total.finalTotal.TotalValor + res.data.data[0].monitor[iMonitor].total.finalTotal.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor,
+    };
+    newData = newData.concat(newData2, newData3, newData4);
+    setData2(newData);
+    console.log(data2)
+  }
+  else{
+    setData([]);
+    setEstadoLoading(false)
+    setEstado(true);
+    setEstado2(true);
+    setMensagem(res.data.msg.msg);
+  }
+  }).catch((err) => {
+    console.log(err);
+  });
+  }
 
   return (
   <div className="dashboard-container mb-5">
   <div className="row">
   <div className="col-7">
-  <h6 className="text-start mx-4">Prestação de contas</h6>
+  <h6 className="text-start mx-4 mb-3">Prestação de contas</h6>
   </div>
       <div className="col-12 col-xl-8">
           <div className="row">
               <div className="col-12 mb-4">
-                  <div className="row mx-2 mb-4">
-                    <div className="col-8">
+                  <div className="row mx-2 mb-3">
+                    <div className="col-7">
+                      <Filtro nome={"PrestacaoContas"} onConsultaSelected={handleConsulta} onLoading={estadoLoading} />
                     </div>
-                      <div className="col-4">
+                      <div className="col-5">
                         {estado ?
-                          <button className="btn3 botao p-0 m-0 w-100 h-100 mt-2" type="button" onClick={()=>{gerarPdf()}}><AiFillPrinter  size={21}/></button>
+                          <button className="btn3 botao p-0 m-0 w-100 h-100" type="button" onClick={()=>{gerarPdf()}}><AiFillPrinter  size={21}/></button>
                           : 
-                          <button className="btn2 botao p-0 m-0 w-100 h-100 mt-2" disabled type="button"><AiFillPrinter  size={21}/></button>
+                          <button className="btn2 botao p-0 m-0 w-100 h-100" disabled type="button"><AiFillPrinter  size={21}/></button>
                           }
                        
                       </div>
@@ -575,6 +734,9 @@ const PrestacaoContas = () => {
                     <CarroLoading />
                   </div>
                   ) : null}
+                  </div>
+                  <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado2 ? 'block' : 'none' }}>
+                    {mensagem}
                   </div>
               </div>
           </div>
