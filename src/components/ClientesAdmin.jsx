@@ -6,8 +6,8 @@ import Swal from 'sweetalert2'
 import { BsCashCoin, BsPaintBucket } from 'react-icons/bs'
 import { AiFillPrinter, AiOutlineInfoCircle } from 'react-icons/ai'
 import RelatoriosPDF from '../util/RelatoriosPDF'
-import { Modal, Select, Group, Stepper, Button, Input } from '@mantine/core'
-import { IconClipboardList, IconCoin, IconMail, IconPhoneCall, IconUser } from '@tabler/icons-react';
+import { Modal, Select, Group, Stepper, Button, Input, Grid, ActionIcon } from '@mantine/core'
+import { IconClipboardList, IconCoin, IconMail, IconPhoneCall, IconSearch, IconUser, IconUserCircle } from '@tabler/icons-react';
 import Filtro from '../util/Filtro'
 import { useDisclosure } from '@mantine/hooks'
 import { RxLapTimer } from 'react-icons/rx'
@@ -40,6 +40,7 @@ const ClientesAdmin = () => {
     const [estado , setEstado] = useState("")
     const [mensagem , setMensagem] = useState("")
     const [readyTransfer , setReadyTransfer] = useState(false);
+    const [estadoLoading, setEstadoLoading] = useState(false);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -80,16 +81,6 @@ const ClientesAdmin = () => {
         } 
     }, [step])
 
-
-    useEffect(() => {
-    const newData = data2.filter((item) => {
-       if(item.nome.toLowerCase().includes(nome.toLowerCase())){
-           return item
-       }
-    })
-    setData(newData)
-    }, [nome])
-
         const AtualizaFunc = async () => {
             const requisicao = axios.create({
                 baseURL: process.env.REACT_APP_HOST,
@@ -98,8 +89,9 @@ const ClientesAdmin = () => {
                     'id_usuario': user2.id_usuario,
                     'perfil_usuario': "admin"
                 }
-            })
-            requisicao.get('/usuario/listar?query=e3doZXJlOntwZXJmaWw6Y2xpZW50ZX19').then(
+            }) 
+            
+            requisicao.get('/usuario/listar/?query=eyJ3aGVyZSI6IFt7ICJmaWVsZCI6ICJwZXJmaWwiLCAib3BlcmF0b3IiOiAiPSIsICJ2YWx1ZSI6ICJjbGllbnRlIn1dfQ==').then(
                 response => {
                         const newData = response.data.data.map((item) => ({
                             id_usuario: item.id_usuario,
@@ -215,7 +207,6 @@ const ClientesAdmin = () => {
     }
 
     useEffect(() => {
-      console.log('a')
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -227,8 +218,7 @@ const ClientesAdmin = () => {
     requisicao.get(`/veiculo/${selectedOption}`)
     .then((response) => {
         console.log(response.data)
-        if (response.data.msg.resultado === false && response.data.msg.msg !== "Dados encontrados") {
-            
+        if (response.data.msg.resultado === false && response.data.msg.msg !== "Dados encontrados") { 
         }
         else{
             const newData = response?.data.data.map((item) => ({
@@ -245,11 +235,12 @@ const ClientesAdmin = () => {
                 temporestante: item.estacionado[0].temporestante,
                 estado: false
               }));
-            setDetalhesVeiculo(newData)
-        }
+            
+              setDetalhesVeiculo(newData)
+                }
     })
     .catch((error) => {
-                    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
     || error?.response?.data?.msg === "Token inválido!" 
     || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
         localStorage.removeItem("user")
@@ -304,7 +295,15 @@ const ClientesAdmin = () => {
             setEstadoInfoDestinatario(false)
         }
         }).catch((error) => {
-            console.log(error)
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
         })
     }
 
@@ -343,7 +342,15 @@ const ClientesAdmin = () => {
                 }, 4000)
             }
         }).catch((error) => {
-            console.log(error)
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
         })
         }else if(campo === "Destinatariocnpj") {
             requisicao.post(`/financeiro/credito/transferir`, {
@@ -365,16 +372,21 @@ const ClientesAdmin = () => {
                 }
 
             }).catch((error) => {
-                console.log(error)
+                if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                || error?.response?.data?.msg === "Token inválido!" 
+                || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+                localStorage.removeItem("token")
+                localStorage.removeItem("perfil");
+                } else {
+                    console.log(error)
+                }
             }
             )
     } else {
 
     }
 }
-
-    
-
 
     const informacoesVeiculos = (item) => {
        setVeiculos(item.placa.map((veiculo) => veiculo))
@@ -388,6 +400,7 @@ const ClientesAdmin = () => {
         setMensagemStep(false)
         setInfoDestinatario('')
         setInfoDestinatarioValor(null)
+        setSelectedOption(null)
         AtualizaFunc()
     }
 
@@ -417,12 +430,101 @@ const ClientesAdmin = () => {
         FuncTrocaComp( 'HistoricoVeiculo')
     }
 
+    const handleConsultaSelected = (consulta) => {
+    setEstadoLoading(true)
+    console.log(consulta)
+    const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+      const base64 = btoa(consulta)
+      requisicao.get(`/usuario/listar/?query=${base64}`).then(
+        response => {
+            setEstadoLoading(false)
+            console.log(response)
+                const newData = response.data.data.map((item) => ({
+                    id_usuario: item.id_usuario,
+                    nome: item.nome,
+                    email: item.email,
+                    telefone: item.telefone,
+                    cpf: item.cpf,
+                    cnpj: item.cnpj,
+                    ativo: item.ativo,
+                    perfil: 'cliente',
+                    placa: item.veiculos ? item.veiculos.map((veiculo) => veiculo.placa) : [],
+                    saldo: item.saldo
+                }))
+                setData(newData)
+                setData2(newData)
+                }).catch(function (error) {
+                    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+        || error?.response?.data?.msg === "Token inválido!" 
+        || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+            localStorage.removeItem("user")
+        localStorage.removeItem("token")
+        localStorage.removeItem("perfil");
+        } else {
+            console.log(error)
+        }
+    }
+    );
+    }
+
+    const pesquisarUsuario = () => {
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+              token: token,
+              id_usuario: user2.id_usuario,
+              perfil_usuario: user2.perfil[0],
+            },
+          });
+          const consulta = `{"where": [{ "field": "prefil", "operator": "=", "value": "cliente" },{ "field": "nome", "operator": "LIKE", "value": "%${nome}%" }]}`
+          const base64 = btoa(consulta)
+          requisicao.get(`/usuario/listar/?query=${base64}`).then(
+            response => {
+                setEstadoLoading(false)
+                console.log(response)
+                    const newData = response.data.data.map((item) => ({
+                        id_usuario: item.id_usuario,
+                        nome: item.nome,
+                        email: item.email,
+                        telefone: item.telefone,
+                        cpf: item.cpf,
+                        cnpj: item.cnpj,
+                        ativo: item.ativo,
+                        perfil: 'cliente',
+                        placa: item.veiculos ? item.veiculos.map((veiculo) => veiculo.placa) : [],
+                        saldo: item.saldo
+                    }))
+                    setData(newData)
+                    setData2(newData)
+                    }).catch(function (error) {
+                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
+        }
+        );
+    }
+
   return (
     <div className="dashboard-container mb-5">
       <Modal opened={opened} onClose={() => { closeHandle(); close(); }} title="Informações dos veículos" centered>
       <Select label="Selecione uma opção" data={veiculos} style={{ marginTop: '16px' }} 
       value={selectedOption} onChange={handleOptionChange} />
                     <div className="card-body4">
+                        {selectedOption !== null ?
+                        <div>
                          {detalhesVeiculo.map((link, index) => (
                             <div className="card border-0 mt-2" key={index} >
                                 <div className="card-body7">
@@ -503,6 +605,8 @@ const ClientesAdmin = () => {
                                 </div>
                             </div>
                         ))}
+                        </div>
+                    : null}
                     </div >
       </Modal>
 
@@ -603,16 +707,26 @@ const ClientesAdmin = () => {
             <div className="row">
                 <div className="col-12 mb-4">
                     <div className="row mx-2 mb-4">
-                    <div className="col-6 input-group w-50 h-25 mt-2 pt-1">
-                    <span className="input-group-text bg-blue-50 text-white" id="basic-addon1"><FaSearch /></span>
-                    <input className="form-control bg-white rounded-end border-bottom-0" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite o nome" aria-describedby="basic-addon1" />
+                    <div className="col-6 text-start mt-2">
+                        <Input icon={<IconUserCircle size="1rem" />} placeholder="Usuário" value={nome} 
+                        onChange={(e) => setNome(e.target.value)}
+                        className="p-0"
+                        rightSection={
+                            <ActionIcon onClick={() => pesquisarUsuario()} 
+                            variant="filled"
+                            color="indigo"
+                            >
+                            <IconSearch size="1.125rem" />
+                            </ActionIcon>
+                        }
+                        />
                     </div>
-                        <div className="col-4 align-middle mt-2">
-                        <Filtro />
-                        </div>
-                        <div className="col-2">
-                          <button className="btn3 botao p-0 m-0 w-100 h-75 mt-2" type="button" onClick={()=>{imprimir()}}><AiFillPrinter  size={21}/></button>
-                        </div>
+                    <div className="col-4 align-middle mt-2">
+                        <Filtro nome={"ClientesAdmin"} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
+                    </div>
+                    <div className="col-2">
+                        <button className="btn3 botao p-0 m-0 w-100 h-75 mt-2" type="button" onClick={()=>{imprimir()}}><AiFillPrinter  size={21}/></button>
+                    </div>
                 </div>
                     <div className="card border-0 shadow">
                         <div className="table-responsive">

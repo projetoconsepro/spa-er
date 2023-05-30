@@ -7,6 +7,7 @@ import CarroLoading from '../components/Carregamento'
 import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
+import Filtro from '../util/Filtro';
 
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
@@ -14,6 +15,7 @@ const VeiculosAdmin = () => {
   const [placa, setPlaca] = useState('')
   const [estado2, setEstado2] = useState(false)
   const [estado, setEstado] = useState(false)
+  const [estadoLoading, setEstadoLoading] = useState(false)
   const [mensagem, setMensagem] = useState('')
 
 
@@ -60,7 +62,15 @@ useEffect(() => {
 }, [placa])
 
 const Imprimir = () => {
-  const dataD = [];
+  const dataD = [
+    ...data.map((item) => [
+      item.placa,
+      item.fabricante,
+      item.modelo,
+      item.notificacao,
+      item.debito,
+    ]),
+  ];
   const nomeArquivo = 'Relatório de Veículos'
   const cabecalho = ['Placa', 'Fabricante', 'Modelo', 'Notificação', 'Débito']
   RelatoriosPDF(nomeArquivo, cabecalho, dataD)
@@ -100,34 +110,39 @@ const reload = () => {
   })
 }
 
-const filtroSelect = async () => {
-  const filtro = document.getElementById('filtroSelect').value
-  if(filtro === "selectPlaca"){
-    Swal.fire({
-      title: 'Digite a placa',
-      html: '<input type="text" id="placa4" class="swal2-input w-50">',
-      confirmButtonText: 'Buscar',
-      cancelButtonText: 'Cancelar',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const placa2 = document.getElementById('placa4').value
-          const newData = data2.filter((item) => item.placa.includes(placa2))
-          setData(newData)
-          if(newData.length === 0){
-            setEstado(true)
-            setMensagem("Nenhum veículo encontrado")
-            setTimeout(() => {
-              setEstado(false)
-              setMensagem("")
-            }, 3000);
-          }
-        } else {
-          
-        }
-      })
-  } else if (filtro === "selectDebito"){
-    
-  }
+const handleConsultaSelected = (consulta) => {
+    setEstadoLoading(true)
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+          'token': token,
+          'id_usuario': user2.id_usuario,
+          'perfil_usuario': user2.perfil[0]
+      }
+  })
+    const base64 = btoa(consulta)
+    requisicao.get(`/veiculo/listar/?query=${base64}`).then((response) => {
+      setEstadoLoading(false)
+      if (response.data.msg.resultado) {
+      setEstado2(false)
+      const newData = response.data.data.veiculos.map((item) => ({
+        placa: item.placa,
+        fabricante: item.modelo.fabricante.fabricante,
+        modelo: item.modelo.modelo,
+        notificacao: item.notificacao,
+        debito: item.debito === "S" ? "Ativado" : "Desativado",
+        id: item.id_veiculo,
+      }))
+      setData(newData)
+      setData2(newData)
+    } else {
+    }
+    }).catch((error) => {
+      console.log(error)
+    })
 }
 
 
@@ -140,22 +155,17 @@ const filtroSelect = async () => {
     <div className="col-5" id="adicionarUsuario">
     <AiOutlinePlusCircle id="iconeAddUsuario" color='#3a58c8'  size={23} />
     </div>
-
         <div className="col-12 col-xl-8">
-            <div className="row">
-                <div className="col-12 mb-4">
-                <div className="row">
-        <div className="col-12">
         <div className="row">
+        <div className="col-12 mb-4">
+        <div className="row">
+        <div className="col-12">
+        <div className="row mx-2 mb-3">
         <div className="col-7">
-        <select className="mx-3 form-select form-select-sm mb-3" defaultValue="1" onChange={() => {filtroSelect()}} aria-label=".form-select-lg example" id="filtroSelect">
-          <option disabled  value='1' id="filtro">Filtro</option>
-          <option value="selectPlaca">Placa</option>
-          <option value="selectDebito">Débito</option>
-          </select>
-          </div>
+          <Filtro nome={"VeiculosAdmin"} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading} />
+        </div>
           <div className="col-3 text-end">
-          <button className="btn3 botao p-0 w-75 h-75" type="button" onClick={()=>{Imprimir()}}><AiFillPrinter  size={21}/></button>
+          <button className="btn3 botao p-0 w-75 h-100" type="button" onClick={()=>{Imprimir()}}><AiFillPrinter  size={21}/></button>
           </div>
           <div className="col-1 text-end">
             <AiOutlineReload onClick={() => {reload()}}className="mt-1" size={21}/>
