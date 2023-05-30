@@ -8,6 +8,7 @@ const VoltarComponente = () => {
         const componenteProximo = localStorage.getItem('componenteAnterior')
         localStorage.setItem('componenteAnterior', componenteAnterior)
         localStorage.setItem('componente', componenteProximo)
+        console.log(estado)
     }, [estado])
 
   return (

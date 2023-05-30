@@ -13,9 +13,7 @@ const HistoricoVeiculo = () => {
   const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
+  const [user2, setUser2] = useState(null);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
   const [perfil, setPerfil] = useState("");
@@ -28,6 +26,10 @@ const HistoricoVeiculo = () => {
   }
 
   const reload = () => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    setUser2(user2);
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
@@ -159,6 +161,9 @@ const HistoricoVeiculo = () => {
   }
   
   const handleFiltro = (where) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
     setEstadoLoading(true)
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
@@ -210,7 +215,15 @@ const HistoricoVeiculo = () => {
         }, 5000);
       }
   }).catch((error) => {
-      console.log(error)
+    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+    || error?.response?.data?.msg === "Token inválido!" 
+    || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+    localStorage.removeItem("user")
+    localStorage.removeItem("token")
+    localStorage.removeItem("perfil");
+    } else {
+        console.log(error)
+    }
     })
   }
 
@@ -220,7 +233,13 @@ const HistoricoVeiculo = () => {
       <div>
       <div className="row mb-4">
         <div className="col-7">
-        <Filtro nome={'HistoricoVeiculo'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
+        <Filtro nome={
+          user2 !== null ?
+          user2.perfil[0] === 'cliente' ? 'HistoricoVeiculo' : 'HistoricoVeiculoAdmin' : null
+        } 
+          onConsultaSelected={handleConsultaSelected} 
+          onLoading={estadoLoading}
+        />
           </div>
           <div className="col-3 text-end">
             

@@ -19,6 +19,7 @@ const ListarNotificacoesAdmin = () => {
     const [dataImagem, setDataImagem] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState('')
+    const [estadoLoading, setEstadoLoading] = useState(false)
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -92,6 +93,15 @@ const ListarNotificacoesAdmin = () => {
                 }, 5000);
               }
             }).catch((error) => {
+              if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
             })
             }
             });
@@ -160,7 +170,15 @@ const ListarNotificacoesAdmin = () => {
           setMensagem("Não há notificações para exibir")
         }
     }).catch((error) => {
-        console.log(error)
+      if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
       })
   }
 
@@ -182,7 +200,15 @@ const ListarNotificacoesAdmin = () => {
         : undefined;
         setDataImagem(newData)
       }).catch((error) => {
-        console.log(error)
+        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
       })
 
       open()
@@ -236,7 +262,15 @@ const ListarNotificacoesAdmin = () => {
             setData(data)
             }
           }).catch((error) => {
-            console.log(error)
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
           })
         }
       });
@@ -247,6 +281,7 @@ const ListarNotificacoesAdmin = () => {
     }
 
     const handleFiltro = (where) => {
+      setEstadoLoading(true)
       setEstado(false)
       setMensagem("")
       const requisicao = axios.create({
@@ -259,6 +294,7 @@ const ListarNotificacoesAdmin = () => {
       });
       const base64 = btoa(where)
       requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
+        setEstadoLoading(false)
         console.log(response.data.msg.resultado)
         if (response.data.msg.resultado){
           setEstado(false)
@@ -286,12 +322,20 @@ const ListarNotificacoesAdmin = () => {
           setMensagem("Não há notificações para exibir")
         }
     }).catch((error) => {
-        console.log(error)
+      if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
       })
   }
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container mb-3">
        <Modal size="xl" opened={opened} onClose={() => close()} title="Ver imagens" centered >
        <Carousel slideSize="70%" slideGap="sm" loop>
        {dataImagem === undefined || dataImagem.length === 0 ?
@@ -315,7 +359,7 @@ const ListarNotificacoesAdmin = () => {
         <div className="col-12">
         <div className="row">
         <div className="col-7">
-        <Filtro nome={'ListarNotificacoesAdmin'} onConsultaSelected={handleConsultaSelected}/>
+        <Filtro nome={'ListarNotificacoesAdmin'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading} />
           </div>
           <div className="col-3 text-end">
             <button className="btn3 botao p-0 w-75 h-100" type="button" onClick={() => {createPDF()}}><AiFillPrinter  size={21}/></button>

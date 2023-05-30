@@ -11,6 +11,7 @@ const HistoricoCaixa = () => {
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState("")
     const [dataHoje, setDataHoje] = useState("")
+    const [estadoLoading, setEstadoLoading] = useState(false)
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -95,11 +96,20 @@ const HistoricoCaixa = () => {
                 setMensagem("")
             }
         }).catch((error) => {
-            console.log(error)
+          if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+          || error?.response?.data?.msg === "Token inválido!" 
+          || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+          localStorage.removeItem("user")
+          localStorage.removeItem("token")
+          localStorage.removeItem("perfil");
+          } else {
+              console.log(error)
+          }
         })
     }
 
     const handleConsultaSelected = (consulta) => {
+      setEstadoLoading(true)
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -110,6 +120,7 @@ const HistoricoCaixa = () => {
       });
       const base64 = btoa(consulta)
       requisicao.get(`/turno/caixa/admin/?query=${base64}`).then((response) => {
+        setEstadoLoading(false)
         const newData = response.data.data.map((item) => ({
           data: ArrumaHora(item.data),
           nome: item.nome,
@@ -128,7 +139,15 @@ const HistoricoCaixa = () => {
             setMensagem("")
         }
     }).catch((error) => {
-        console.log(error)
+      if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+      || error?.response?.data?.msg === "Token inválido!" 
+      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      localStorage.removeItem("perfil");
+      } else {
+          console.log(error)
+      }
     })
       
     };
@@ -140,7 +159,7 @@ const HistoricoCaixa = () => {
         <div className="row">
         <div className="col-7">
         <div className="w-50 mx-4">
-        <Filtro nome="HistoricoCaixa" onConsultaSelected={handleConsultaSelected}/>
+        <Filtro nome="HistoricoCaixa" onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading} />
         </div>
         </div>
           <div className="col-3 text-end">

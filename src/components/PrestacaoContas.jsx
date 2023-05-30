@@ -17,6 +17,7 @@ const PrestacaoContas = () => {
   const [estado2, setEstado2] = useState(false);
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [mensagem, setMensagem] = useState('');
+  const [dataHoje, setDataHoje] = useState('');
 
 
   const formatNumero = (numero) => {
@@ -381,6 +382,13 @@ const PrestacaoContas = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
+    const data = new Date();
+    const dia = data.getDate();
+    const mes = data.getMonth() + 1;
+    const ano = data.getFullYear();
+    const dataHoje = ano + "-" + mes + "-" + dia;
+    setDataHoje(dataHoje);
+
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -389,8 +397,9 @@ const PrestacaoContas = () => {
           'perfil_usuario': "admin"
       }
   });
-
-  requisicao.get('/financeiro/admin').then((res) => {
+  const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
+  const passar = btoa(idrequisicao)
+  requisicao.get(`/financeiro/admin/?query=${passar}`).then((res) => {
     setEstado(true);
     setData(res.data.data);
     let newData = res.data.data[0].monitor.map((item) => {
