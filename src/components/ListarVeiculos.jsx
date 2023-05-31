@@ -99,14 +99,14 @@ const ListarVeiculos = () => {
                         resposta[i].div = "card-body2";
                         resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
                         mostrardiv[i] = { "estado": false };
-                        resposta[i].notificacoesVaga = response.data.data[i].numero_notificacoes_pendentesVaga;
+                        resposta[i].notificacoesVaga = response.data.data[i].numero_notificacoes_pendentess;
                         resposta[i].vaga = response.data.data[i].numerovaga;
                         resposta[i].estacionado ="Estacionado - Vaga: " + response.data.data[i].numerovaga;
                         resposta[i].tempo = response.data.data[i].tempo;
                         resposta[i].chegada = response.data.data[i].chegada;
                         resposta[i].id_vaga_veiculo =  response.data.data[i].id_vaga_veiculo;
                         resposta[i].temporestante = response.data.data[i].temporestante;
-                        if (response.data.data[i].numero_notificacoes_pendentesVaga > 0) {
+                        if (response.data.data[i].numero_notificacoes_pendentess > 0) {
                             resposta[i].textoestacionado = "Clique aqui para regularizar";
                             resposta[i].temporestante = "00:00:00";
                         }

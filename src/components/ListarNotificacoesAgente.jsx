@@ -84,6 +84,7 @@ const ListarNotificacoesAgente = () => {
         },
       });
       requisicao.get('/notificacao').then((response) => {
+        console.log(response.data)
         if (response.data.msg.resultado){
           setEstado(false)
           const newData = response.data.data.map((item) => ({
@@ -97,6 +98,7 @@ const ListarNotificacoesAgente = () => {
             modelo: item.veiculo.modelo.nome,
             tipo: item.tipo_notificacao.nome,
             valor: item.valor,
+            cor : item.veiculo.cor,
             id_vaga_veiculo: item.id_vaga_veiculo,
             id_notificacao: item.id_notificacao,
             monitor: item.monitor.nome,
@@ -163,6 +165,7 @@ const ListarNotificacoesAgente = () => {
         modelo: item.veiculo.modelo.nome,
         tipo: item.tipo_notificacao.nome,
         valor: item.valor,
+        cor : item.veiculo.cor,
         id_vaga_veiculo: item.id_vaga_veiculo,
         id_notificacao: item.id_notificacao,
         monitor: item.monitor.nome,

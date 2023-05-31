@@ -79,7 +79,11 @@ const AutoInfracao = () => {
                 <div
                   className="h6 d-flex align-items-center fs-6"
                   id="bordaBaixo">
+                  {item.tipo === "Ocupando vaga de deficiente" ? 
+                  <h6> <FaClipboardList />‎ <small>Motivo: {item.tipo}</small></h6>
+                  :
                   <h6> <FaClipboardList />‎ Motivo: {item.tipo}</h6>
+                  }
                 </div>
 
               </div>

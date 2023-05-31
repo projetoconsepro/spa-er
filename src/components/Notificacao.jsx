@@ -418,7 +418,7 @@ const Notificacao = () => {
                                     <div>
                                         <div className="h6" onChange={getTipoNot}>
                                             <p className='text-start'>Tipo de notificação:</p>
-                                            <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="tiposNot">
+                                            <select className="form-select form-select-sm mb-3" aria-label=".form-select-sm example" id="tiposNot">
                                             {tiposNotificacao.map((link, index) => (
                                             <option value={link.id_tipo_notificacao} key={index}>{link.nome}</option>
                                             ))}

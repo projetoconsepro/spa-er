@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
 const VoltarComponente = () => {
-    const [estado, setEstado] = useState(false)
     const [componenteAnterior, setComponenteAnterior] = useState('')
     const [componenteProximo, setComponenteProximo] = useState('')
 
@@ -19,7 +18,7 @@ const VoltarComponente = () => {
 
   return (
         <button className="btn2 botao" type="button" onClick={() => {voltar()}}>Voltar</button>
-  )
+    )
 }
 
 export default VoltarComponente

@@ -26,6 +26,7 @@ const HistoricoVeiculo = () => {
   }
 
   const reload = () => {
+    setData([]);
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);

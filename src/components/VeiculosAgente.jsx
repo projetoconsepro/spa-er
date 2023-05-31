@@ -43,7 +43,6 @@ const VeiculosAgente = () => {
         await requisicao.get(`/vagas?setor=${setor}`
         ).then(
             response => {
-                console.log(response)
                 if (response.data.msg.resultado !== false) {
                     setEstado(false)
                     setMensagem('')
@@ -189,7 +188,7 @@ const VeiculosAgente = () => {
                                                 <tr key={index} className="card-list" data-vaga={vaga.numero_vaga}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.cor, color: vaga.cor }}>{vaga.numero_vaga}</th>
                                                     <td className="fw-bolder"> {vaga.placa} </td>
-                                                    <td className="fw-normal">{vaga.local} </td>
+                                                    <td className="fw-normal">{window.innerWidth < 768 ? vaga.local.substring(0, 19) + "..." : vaga.local } </td>
                                                     <td className="fw-normal" onClick={() => abrirMapa(vaga)}> <IconMapSearch size={18} /> </td>
                                                 </tr>
                                             ))}
