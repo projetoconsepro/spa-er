@@ -339,13 +339,21 @@ const Irregularidades = () => {
                   className="h6 d-flex align-items-center fs-6"
                   id="bordaBaixo"
                 >
+                  {link.tipo_notificacao === "Ocupando vaga de deficiente" ? 
+                  <h6> <FaClipboardList />‎ <small>Motivo: {link.tipo_notificacao}</small></h6>
+                  :
                   <h6> <FaClipboardList />‎ Motivo: {link.tipo_notificacao}</h6>
+                  }
                 </div>
                 ) : 
                 <div
                   className="h6 d-flex align-items-center fs-6"
                 >
+                  {link.tipo_notificacao === "Ocupando vaga de deficiente" ? 
+                  <h6> <FaClipboardList />‎ <small>Motivo: {link.tipo_notificacao}</small></h6>
+                  :
                   <h6> <FaClipboardList />‎ Motivo: {link.tipo_notificacao}</h6>
+                  }
                 </div>
                 }
               </div>
