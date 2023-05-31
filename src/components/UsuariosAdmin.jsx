@@ -208,26 +208,18 @@ const UsuariosAdmin = () => {
       },
       allowEnterKey: false,
       preOpen: () => {
-        // desabilita o botão de confirmação
         Swal.showLoading();
         Swal.getConfirmButton().disabled = true;
       },
       preClose: () => {
-        // reabilita o botão de confirmação
         Swal.hideLoading();
         Swal.getConfirmButton().disabled = false;
       },
     }).then((result) => {
-      if (result.value.success) {
+      console.log(result)
+      if (result.isConfirmed) {
         Swal.fire({
-          icon: "success",
-          title: result.value.message,
-          showConfirmButton: false,
-          timer: 2000,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
+          icon: result.value.message === "Usuário Cadastrado com Sucesso!" ? "success" : "error",
           title: result.value.message,
           showConfirmButton: false,
           timer: 2000,
@@ -870,7 +862,7 @@ const UsuariosAdmin = () => {
                                 item.ativo === "S" ? "#fff" : "#F8D7DA",
                             }}
                           >
-                            <div className="btn-group">
+                            <div>
                               <button
                                 className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
                                 data-bs-toggle="dropdown"
