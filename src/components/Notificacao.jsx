@@ -393,7 +393,7 @@ const Notificacao = () => {
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
-                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                        <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                             {dados ?
                                 <div>
                                     <div className="h5 mt-2 align-items-center">
@@ -504,7 +504,7 @@ const Notificacao = () => {
                                                 <p> <small>Vaga selecionada: {vaga}</small></p>
                                             </div>
                                             <div className="h6 mt-3">
-                                                <button type="submit" className="btn3 botao" onClick={() => { setDados(true) }}>Buscar dados</button>
+                                                <button type="submit" className="btn3 botao" onClick={() => { setDados(true) }}>Buscar</button>
                                             </div>
                                         </div>
                                         :
@@ -523,7 +523,7 @@ const Notificacao = () => {
                                             </div>
                                             <div className="pt-4 mb-6 gap-2 d-md-block">
                                                 <VoltarComponente />
-                                                <button type="submit" onClick={() => { SetdadosTrue() }} className="btn3 botao">Buscar dados</button>
+                                                <button type="submit" onClick={() => { SetdadosTrue() }} className="btn3 botao">Buscar</button>
                                             </div>
                                             
                                         </div>

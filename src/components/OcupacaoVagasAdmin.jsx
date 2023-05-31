@@ -14,6 +14,8 @@ const OcupacaoVagasAdmin = () => {
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState("");
+  const [dataHoje, setDataHoje] = useState("");
+  const [estadoLoading, setEstadoLoading] = useState(false);
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
@@ -25,6 +27,14 @@ const OcupacaoVagasAdmin = () => {
     const data3 = data2[0].split("-");
     const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
     return data4;
+  }
+
+  const imprimir = () => {
+    const dataD = [...data.map((item) => ([item.placa, item.data + ' - ' + item.chegada, 
+    item.vaga, item.saida, item.local, item.regularizacao === "S" ? "Regularizado": item.notificacao === "S" ? "Notificado": "Normal" ]))];
+    const nomeArquivo = 'Relatório ocupação de vagas'
+    const cabecalho = ['Placa', 'Chegada', 'Vaga', 'Saida', 'Local', 'Situação']
+    RelatoriosPDF(nomeArquivo, cabecalho, dataD)
   }
 
   const tirarOpcao = async () => {
@@ -279,7 +289,7 @@ const OcupacaoVagasAdmin = () => {
     }
   };
 
-  useEffect(() => {
+  const reload = () => {
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -288,10 +298,19 @@ const OcupacaoVagasAdmin = () => {
         perfil_usuario: `${user2.perfil[0]}`,
       },
     });
-      requisicao
-        .get(`/estacionamento/historico/admin`)
-        .then((response) => {
-            console.log(response)
+
+    const data = new Date();
+      const dia = data.getDate();
+      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+      const ano = data.getFullYear();
+      const dataHoje = ano + "-" + mes + "-" + dia;
+
+        setDataHoje(dataHoje);
+
+    const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
+    const passar = btoa(idrequisicao)
+      requisicao.get(`/veiculo/historico/?query=${passar}`).then((response) => {
+          console.log(response)
           if (response.data.msg.resultado) {
             setEstado2(false);
             setEstado2(false);
@@ -346,38 +365,97 @@ const OcupacaoVagasAdmin = () => {
             console.log(error);
           }
         });
+  }
+
+  useEffect(() => {
+    reload()
     }, []);
 
-    const imprimir = () => {
-      const dataD = [...data.map((item) => ([item.placa, item.data + ' - ' + item.chegada, 
-      item.vaga, item.saida, item.local, item.regularizacao === "S" ? "Regularizado": item.notificacao === "S" ? "Notificado": "Normal" ]))];
-      const nomeArquivo = 'Relatório ocupação de vagas'
-      const cabecalho = ['Placa', 'Chegada', 'Vaga', 'Saida', 'Local', 'Situação']
-      RelatoriosPDF(nomeArquivo, cabecalho, dataD)
+  const handleConsulta = (consulta) => {
+    setEstadoLoading(true)
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+          'token': token,
+          'id_usuario': user2.id_usuario,
+          'perfil_usuario': "admin"
+      }
+  })
+
+  const base64 = btoa(consulta)
+  requisicao.get(`/veiculo/historico/?query=${base64}`).then((response) => {
+    console.log(response)
+    setEstadoLoading(false)
+    if (response.data.msg.resultado) {
+      setEstado2(false);
+      setEstado2(false);
+      setEstado(false);
+      setMensagem("");
+      const arraySemNulos = response?.data.data.filter(
+        (valor) => valor !== null
+      );
+      const newData = arraySemNulos.map((item) => ({
+        vaga: item.numerovaga,
+        chegada:
+          item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+        horafinal:
+          item.horafinal[0] +
+          ":" +
+          item.horafinal[1] +
+          ":" +
+          item.horafinal[2],
+        saida: item.saida,
+        local: item.local,
+        data: ArrumaHora(item.data),
+        estado: false,
+        pago: item.pago,
+        placa: item.placa,
+        regularizacao: item.regularizacao,
+        notificacao: item.notificacao,
+        id_vaga_veiculo: item.id_vaga_veiculo,
+        tempo: item.tempo,
+      }));
+      setData(newData);
+    } else {
+      setEstado2(false);
+      setEstado(true);
+      setMensagem(response.data.msg.msg);
+      setTimeout(() => {
+        setEstado(false);
+        setMensagem("");
+      }, 5000);
     }
+  })
+  .catch((error) => {
+    if (
+      error?.response?.data?.msg === "Cabeçalho inválido!" ||
+      error?.response?.data?.msg === "Token inválido!" ||
+      error?.response?.data?.msg ===
+        "Usuário não possui o perfil mencionado!"
+    ) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("perfil");
+    } else {
+      console.log(error);
+    }
+  });
+  }
+    
 
   return (
     <div className="dashboard-container">
       <p className="mx-3 text-start fs-4 fw-bold">Histórico:</p>
-      <div
-        onChange={() => {
-          tirarOpcao();
-        }}
-      >
-
-      </div>
       <div className="row">
         <div className="col-12 col-xl-8 mb-4">
         <div className="row mx-2 mb-4">
-                    <div className="col-6 input-group w-50 h-25 mt-2 pt-1">
-                    <span className="input-group-text bg-blue-50 text-white" id="basic-addon1"><FaSearch /></span>
-                    <input className="form-control bg-white rounded-end border-bottom-0"  aria-describedby="basic-addon1" />
-                    </div>
-                        <div className="col-4 align-middle mt-2">
-                        <Filtro />
+                        <div className="col-6 align-middle mt-2">
+                        <Filtro nome={"OcupacaoVagasAdmin"} onConsultaSelected={handleConsulta} onLoading={estadoLoading}/>
                         </div>
                         <div className="col-2">
-                          <button className="btn3 botao p-0 m-0 w-100 h-75 mt-2" type="button" onClick={()=>{imprimir()}}><AiFillPrinter  size={21}/></button>
+                        </div>
+                        <div className="col-4 mt-1">
+                          <button className="btn3 botao p-0 m-0 w-100 h-100" type="button" onClick={()=>{imprimir()}}><AiFillPrinter  size={21}/></button>
                         </div>
                 </div>
           <div className="row">

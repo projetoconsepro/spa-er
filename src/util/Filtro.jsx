@@ -31,6 +31,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     const [radioDebito, setRadioDebito] = useState('');
     const [radioNotificacaoPendente, setRadioNotificacaoPendente] = useState('');
     const [placaCarro, setPlacaCarro] = useState('');
+    const [dataHoje, setDataHoje] = useState("");
 
     const FormatDate =  (date) => {
       const data = new Date(date);
@@ -256,6 +257,24 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       ]);
     }
 
+    else if (nome === 'OcupacaoVagasAdmin'){
+      const data = new Date();
+      const dia = data.getDate();
+      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+      const ano = data.getFullYear();
+      const dataHoje = ano + "-" + mes + "-" + dia;
+      setDataHoje(dataHoje);
+
+      setOptions([
+        { value: 'Placa', label: 'Placa' },
+        { value: 'Data', label: 'Data' },
+        { value: 'Periodo', label: 'Período' },
+        { value: 'Tipo', label: 'Tipo' },
+        { value: 'Vaga', label: 'Vaga' },
+      ]);
+
+    }
+
     else {
       setOptions([]);
     }
@@ -308,18 +327,28 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         }
         break;
       case 'Placa':
+         if(nome === 'OcupacaoVagasAdmin'){
+          consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" },{ "field": "placa", "operator": "=", "value": "${inputPlaca}" }]}`;
+        } else {
         consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${inputPlaca}" }]}`;
+        }
         break;
       case 'Vaga':
         if (nome === 'HistoricoVeiculoAdmin'){
-          consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`
-        } else {
+        consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`
+        } else if(nome === 'OcupacaoVagasAdmin'){
+          consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" },{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`;
+        }
+        else {
         consulta = `{"where": [{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`;
         }
         break;
       case 'Tipo':
         if(nome === 'HistoricoVeiculoAdmin'){
-          consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "tipo", "operator": "=", "value": "${radioTipo}" }]}`;
+        consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "tipo", "operator": "=", "value": "${radioTipo}" }]}`;
+        }
+        else if(nome === 'OcupacaoVagasAdmin'){
+        consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" },{ "field": "tipo", "operator": "=", "value": "${radioTipo}" }]}`;
         }
         else {
         consulta = `{"where": [{ "field": "tipo", "operator": "LIKE", "value": "${radioTipo}" }]}`;
@@ -482,10 +511,10 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
               <Radio.Group name="Escolha algum opção" onChange={(e) => setRadioTipo(e)}>
                   <Grid>
                   <Grid.Col span={12}>
-                  <Radio value='PAGO' label="Pago" />
+                  <Radio value="'S'" label="Notificado" />
                   </Grid.Col>
                   <Grid.Col span={12}>
-                  <Radio value='PENDENTE' label="Pendente" />
+                  <Radio value="'N'" label="Normal" />
                   </Grid.Col>
                   </Grid>
               </Radio.Group>
