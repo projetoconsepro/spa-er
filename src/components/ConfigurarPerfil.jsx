@@ -72,21 +72,47 @@ const ConfigurarPerfil = () => {
     <Card padding="lg" radius="md" withBorder>
       <Group position="apart" mt="md" mb="xs">
         <Text weight={500}>Olá, {user2}!</Text>
-        <Badge color="teal.8" variant="light">
+        <Badge color={perfil === 'parceiro' ? 'teal.8'
+        : perfil === 'cliente' ? 'blue.8'
+        : perfil === 'admin' ? 'red.8'
+        : perfil === 'agente' ? 'yellow.8'
+        : 'gray'
+        } variant="light">
           {perfil}
         </Badge>
       </Group>
+      {perfil === 'cliente'  ?
       <Group position="apart" mt="md" mb="xs">
           <Text size="lg" weight={500}>
               <IconCreditCard color="indigo"/> R$ {saldo}
           </Text>
       </Group>
+      : null }
       <Text size="sm" color="dimmed">
         Você está no menu de configurações do seu perfil. Aqui você pode alterar suas informações pessoais.
       </Text>
-      <Button variant="light" color="blue" fullWidth mt="md" radius="md">
+      {perfil === 'cliente' ?
+      <Button variant="light" color="blue" fullWidth mt="md" radius="md" onClick={()=>{FuncTrocaComp('ListarVeiculos')}}>
         Voltar aos meus veículos
       </Button>
+      : perfil === 'monitor' ?
+      <Button variant="light" color="blue" fullWidth mt="md" radius="md" onClick={()=>{FuncTrocaComp('ListarVagasMonitor')}}>
+        Voltar às vagas
+      </Button>
+      : perfil === 'parceiro' ?
+      <Button variant="light" color="blue" fullWidth mt="md" radius="md" onClick={()=>{FuncTrocaComp('RegistrarEstacionamentoParceiro')}}>
+        Voltar ao registro de estacionamento
+      </Button>
+      : perfil === 'admin' ?
+      <Button variant="light" color="blue" fullWidth mt="md" radius="md" onClick={()=>{FuncTrocaComp('Dashboard')}}>
+        Voltar ao dashboard
+      </Button>
+      : perfil === 'agente' ?
+      <Button variant="light" color="blue" fullWidth mt="md" radius="md" onClick={()=>{FuncTrocaComp('VeiculosAgente')}}>
+        Voltar aos veículos
+      </Button>
+      : null
+    }
     </Card>
     <Accordion variant="contained" styles={{  item: {backgroundColor: 'white'}}}>
     <Accordion.Item value="photos">
@@ -147,6 +173,7 @@ const ConfigurarPerfil = () => {
       <Accordion.Panel>Content</Accordion.Panel>
     </Accordion.Item>
 
+    {perfil === 'cliente' ? 
     <Accordion.Item value="camera">
       <Accordion.Control icon={<IconCar size={rem(20)} color='blue' />}>
         Alterar débito automático
@@ -159,6 +186,8 @@ const ConfigurarPerfil = () => {
       </Accordion.Panel>
 
     </Accordion.Item>
+    : null
+    }
   </Accordion>
   </div>
   )

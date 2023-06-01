@@ -42,6 +42,8 @@ import VeiculosAgente from '../../components/VeiculosAgente';
 import PrestacaoContas from '../../components/PrestacaoContas';
 import ConfigurarPerfil from '../../components/ConfigurarPerfil';
 import EditarParametroAdmin from '../../components/EditarParametroAdmin';
+import TransferenciaParceiro from '../../components/TransferenciaParceiro';
+import CartaoCredito from '../../components/CartaoCredito';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -168,6 +170,12 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "EditarParametroAdmin"){
             return <EditarParametroAdmin />
+        }
+        else if (Componente === "TransferenciaParceiro"){
+            return <TransferenciaParceiro />
+        }
+        else if (Componente === "CartaoCredito"){
+            return <CartaoCredito />
         }
         else {
             return <Error />
