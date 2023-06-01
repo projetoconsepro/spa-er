@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from 'react-router-dom';
 import sha256 from 'crypto-js/sha256';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 
