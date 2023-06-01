@@ -4,11 +4,13 @@ import { BsConeStriped, BsCashCoin, BsPersonCircle, BsCashStack } from "react-ic
 import { MdAddLocationAlt, MdOutlineContactSupport, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
 import { useState } from "react";
-import { BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
+import {HiBanknotes } from "react-icons/hi";
+import { BiCreditCard, BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
 import { AiFillEdit, AiFillPrinter, AiOutlineBarChart, AiOutlineFileSearch } from "react-icons/ai";
 import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { useEffect } from "react";
+import { FcMoneyTransfer } from "react-icons/fc";
 
 const Sidebar = () => {
         const nome = localStorage.getItem("user");
@@ -191,6 +193,12 @@ const Sidebar = () => {
             name: "‎ Cadastrar Novo Veículo",
             componente: "CadastrarVeiculo",
         })
+        links.push({
+            className: styles.className,
+            icon: <BiCreditCard />,
+            name: "‎ Cartão de Crédito",
+            componente: "CartaoCredito",
+        })
         }
     else if (teste.perfil[0] === "admin"){
         links.push({
@@ -267,6 +275,12 @@ const Sidebar = () => {
             icon: <BsCashStack />,
             name: "‎ Adicionar Créditos",
             componente: "AdicionarCreditos",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FcMoneyTransfer />,
+            name: "‎ Deposito Parceiro",
+            componente: "TransferenciaParceiro",
         })
         links.push({
             className: styles.className,

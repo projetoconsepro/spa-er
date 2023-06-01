@@ -276,7 +276,7 @@ const ListarVeiculos = () => {
 
     const resposta = await mexerValores();
 
-    if(saldoCredito < resposta){
+    if(parseFloat(saldoCredito) < parseFloat(resposta)){
         Swal.fire({
             icon: 'error',
             title: 'Saldo insuficiente',

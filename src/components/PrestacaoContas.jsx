@@ -280,7 +280,7 @@ const PrestacaoContas = () => {
       20: { cellWidth: 18 },
     };
 
-    const headStyles = {
+    let headStyles = {
       fillColor: [255, 255, 255], 
       textColor: [0, 0, 0], 
       fontStyle: 'bold', 
@@ -345,23 +345,67 @@ const PrestacaoContas = () => {
     
 
 
-    const startY = doc.lastAutoTable.finalY + 5;
-    doc.autoTable({ 
-      head: [resumoData[0]],
-       body: resumoData.slice(1),
-       useCss: true, 
-       startY: startY + 10,
-       margin: { left: 3.5, right: 3.5},
-       columnStyles: {
-        0: { cellWidth: 40 },
-        1: { cellWidth: 40 },
-        2: { cellWidth: 40 }, 
-        3: { cellWidth: 40 }, 
-        4: { cellWidth: 40 }, 
-      },
-      headStyles: headStyles,
-      theme: 'grid' 
-      });
+let startY = doc.lastAutoTable.finalY + 5;
+let tableWidth = 40; 
+const margin = { left: 3.5, right: 3.5 };
+
+doc.autoTable({ 
+  head: [resumoData[0]],
+  body: resumoData.slice(1),
+  useCss: true, 
+  startY: startY + 10,
+  margin: margin,
+  columnStyles: {
+    0: { cellWidth: tableWidth },
+    1: { cellWidth: tableWidth },
+    2: { cellWidth: tableWidth }, 
+    3: { cellWidth: tableWidth }, 
+    4: { cellWidth: tableWidth }, 
+  },
+  headStyles: headStyles,
+  theme: 'grid' 
+});
+
+////////////////////////////////////////////////////
+
+let resumoData2 = [
+  [{ content: 'Movimentos crédito aplicativo', colSpan: 2 }],
+  ['Tipo','Crédito'],
+  ];
+
+  resumoData2.push(
+    ['Estacionamento', formatNumero(data[0].aplicativo[0].estacionamento.credito)],
+    );
+  
+  resumoData2.push(
+    ['Regularização', formatNumero(data[0].aplicativo[0].Regularizacao.credito)],
+    );
+  resumoData2.push(
+    ['Total Geral', formatNumero(data[0].aplicativo[0].estacionamento.credito + data[0].aplicativo[0].Regularizacao.credito)],
+    );
+
+
+  const table1FinalY = doc.autoTable.previous.finalY;
+  const startX = 60;
+  tableWidth = 20; 
+
+  doc.autoTable({
+    head: [resumoData2[0]],
+    body: resumoData2.slice(1),
+    useCss: true,
+    startY: table1FinalY + 10,
+    startX: startX,
+    margin: { left: 3.5, right: 3.5 },
+    columnStyles: {
+      0: { cellWidth: 40 },
+      1: { cellWidth: 40 },
+      2: { cellWidth: 40 },
+      3: { cellWidth: 40 },
+      4: { cellWidth: 40 },
+    },
+    headStyles: headStyles,
+    theme: 'grid',
+  }); 
 
     const totalPages = doc.internal.getNumberOfPages(); // Obtém o total de páginas
     for (let i = 1; i <= totalPages; i++) {
@@ -383,11 +427,11 @@ const PrestacaoContas = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const data = new Date();
-    const dia = data.getDate();
-    const mes = data.getMonth() + 1;
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
     const ano = data.getFullYear();
     const dataHoje = ano + "-" + mes + "-" + dia;
-    setDataHoje(dataHoje);
+      setDataHoje(dataHoje);
 
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,

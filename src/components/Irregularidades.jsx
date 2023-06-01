@@ -38,9 +38,7 @@ const Irregularidades = () => {
       },
     });
 
-    console.log('saldo', saldoCredito)
-    console.log('valor', valorCobranca)
-    if(saldoCredito < valorCobranca){
+    if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
       Swal.fire({
           icon: 'error',
           title: 'Saldo insuficiente',
@@ -50,6 +48,7 @@ const Irregularidades = () => {
     const idVagaVeiculo = data[index].id_vaga_veiculo;
     requisicao.put('/notificacao/',{
         "id_vaga_veiculo": idVagaVeiculo,
+        "tipoPagamento": "credito",
     }).then((response) => {
       if(response.data.msg.resultado){
         Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
