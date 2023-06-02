@@ -1,206 +1,198 @@
 import React, { useState } from 'react';
 
 const CartaoCredito = () => {
-  const [numeroTarjeta, setNumeroTarjeta] = useState('#### #### #### ####');
-  const [nomeTarjeta, setnomeTarjeta] = useState('NOME');
+  const [cardNumber, setCardNumber] = useState('################');
+  const [cardHolder, setCardHolder] = useState('NOME');
+  const [expMonth, setExpMonth] = useState('mm');
+  const [expYear, setExpYear] = useState('yy');
+  const [cvv, setCvv] = useState('');
   const [logoMarca, setLogoMarca] = useState('');
-  const [firma, setFirma] = useState('');
-  const [mesExpiracion, setMesExpiracion] = useState('MM');
-  const [yearExpiracion, setYearExpiracion] = useState('AA');
-  const [ccv, setCCV] = useState('');
-  const [formularioAtivo, setFormularioAtivo] = useState(false);
 
-  const mostrarFrente = () => {
-    if (document.getElementById('tarjeta').classList.contains('active')) {
-      document.getElementById('tarjeta').classList.remove('active');
-    }
-  };
-
-  const mostrarAtras = () => {
-    const tarjeta = document.getElementById('tarjeta');
-    if (!tarjeta.classList.contains('active')) {
-      tarjeta.classList.add('active');
-    }
-  };
-
-  const handleTarjetaClick = () => {
-    document.getElementById('tarjeta').classList.toggle('active');
-  };
-
-  const handleFormularioClick = () => {
-    setFormularioAtivo(!formularioAtivo);
-  };
-
-  const handleNumeroTarjetaChange = (e) => {
+  const handleCardNumberChange = (e) => {
+    setCardNumber(e.target.value);
     let valorInput = e.target.value;
     let formattedValue = '';
 
-    // Remove qualquer caractere não numérico do valor digitado
     const numericValue = valorInput.replace(/\D/g, '');
 
-    // Adiciona os caracteres do número do cartão formatado
     for (let i = 0; i < 16; i++) {
       formattedValue += numericValue[i] || '#';
       if ((i + 1) % 4 === 0 && i !== 15) {
         formattedValue += ' ';
       }
     }
-
-    setNumeroTarjeta(formattedValue);
-  
-    setNumeroTarjeta(formattedValue);
+    
+    setCardNumber(formattedValue);
 
     if (valorInput === '') {
       setLogoMarca('');
-      setNumeroTarjeta('#### #### #### ####');
+      setCardNumber('#### #### #### ####');
     }
 
     if (valorInput[0] === '4') {
-      setLogoMarca("../../assets/img/cartaoCredito/logos/visa.png");
+      setLogoMarca("../../assets/img/cartaoCredito/visa.png");
     } else if (valorInput[0] === '5') {
-      setLogoMarca("../../assets/img/cartaoCredito/logos/mastercard.png");
+      setLogoMarca("../../assets/img/cartaoCredito/mastercard.png");
     }
+    
 
-    mostrarFrente();
+    handleCvvMouseLeave();
   };
 
-  const handlenomeTarjetaChange = (e) => {
+  const handleCardHolderChange = (e) => {
     let valorInput = e.target.value;
     valorInput = valorInput.replace(/[0-9]/g, '');
-    setnomeTarjeta(valorInput);
-    setFirma(valorInput);
 
     if (valorInput === '') {
-      setnomeTarjeta('NOME');
+      setCardHolder('');
     }
+    setCardHolder(valorInput);
 
-    mostrarFrente();
+    handleCvvMouseLeave();
   };
 
-  const handleMesExpiracionChange = (e) => {
-    setMesExpiracion(e.target.value);
-    mostrarFrente();
+  const handleExpMonthChange = (e) => {
+    setExpMonth(e.target.value);
+
+    handleCvvMouseLeave();
   };
 
-  const handleYearExpiracionChange = (e) => {
-    setYearExpiracion(e.target.value.slice(2));
-    mostrarFrente();
+  const handleExpYearChange = (e) => {
+    setExpYear(e.target.value);
+
+    handleCvvMouseLeave();
   };
 
-  const handleCCVChange = (e) => {
-    let valorInput = e.target.value;
-    valorInput = valorInput.replace(/\s/g, '').replace(/\D/g, '');
-    setCCV(valorInput);
-    mostrarAtras();
+  const handleCvvMouseEnter = () => {
+    document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
+    document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
   };
 
-  const yearActual = new Date().getFullYear();
+  const handleCvvMouseLeave = () => {
+    document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
+    document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
+  };
+
+  const handleCvvChange = (e) => {
+    setCvv(e.target.value);
+
+    handleCvvMouseEnter();
+  };
+
   return (
-    <div className="contenedor">
-       <section id="tarjeta" className="tarjeta mx-5" onClick={handleTarjetaClick}>
-       <div className="delantera mx-4">
-        <div className="row">
-        <div className="logo-banco col-6" id="logo-banco">
-            <h6 className='text-white mt-3 fs-4'>CONSEPRO</h6>
-        </div>
-          <div className="logo-marca col-6" id="logo-marca">
-            {logoMarca && <img src={logoMarca} alt="Logo" />}
-        </div>
-          </div>
-          <img src="../../assets/img/cartaoCredito/chip-tarjeta.png" className="chip" alt="hahaha" />
-          <div className="datos">
-            <div className="grupo" id="numero">
-              <p className="label text-start">Número Tarjeta</p>
-              <p className="numero text-start" >{numeroTarjeta}</p>
-            </div>
-            <div className="flexbox">
-              <div className="grupo" id="nombre">
-                <p className="label text-start">Nome</p>
-                <p className="nombre">{nomeTarjeta}</p>
-              </div>
 
-              <div className="grupo" id="expiracion">
-                <p className="label">Validade</p>
-                <p className="expiracion">
-                  <span className="mes">{mesExpiracion}</span> / <span className="year">{yearExpiracion}</span>
-                </p>
+    <div className="container text-start">
+      <div className="card-container mx-6">
+        <div className="front">
+          <div className="image">
+            <img src="../../assets/img/cartaoCredito/chip.png" alt="" />
+            {logoMarca && <img src={logoMarca} alt="" className="logo" />}
+          </div>
+          <div className="card-number-box">{cardNumber}</div>
+          <div className="flexbox">
+            <div className="box">
+              <span>NOME</span>
+              <div className="card-holder-name">{cardHolder}</div>
+            </div>
+            <div className="box">
+              <span>Validade</span>
+              <div className="expiration">
+                <span className="exp-month">{expMonth}/</span>
+                <span className="exp-year">{expYear}</span>
               </div>
             </div>
           </div>
         </div>
-        
-        <div className="trasera mx-4">
-          <div className="barra-magnetica"></div>
-          <div className="datos">
-            <div className="grupo" id="firma">
-              <p className="label">Firma</p>
-              <div className="firma">
-                <p>{firma}</p>
-              </div>
-            </div>
-            <div className="grupo" id="ccv">
-              <p className="label">CCV</p>
-              <p className="ccv">{ccv}</p>
-            </div>
+        <div className="back">
+          <div className="stripe"></div>
+          <div className="box">
+            <span>CVV</span>
+            <div className="cvv-box">{cvv}</div>
+            {logoMarca && <img src={logoMarca} alt="" className="logo" />}
           </div>
-          <a href="#" className="link-banco">
-            CONSEPRO
-          </a>
         </div>
-      </section>
-
-      <div className="contenedor-btn">
-        <button className={`btn-abrir-formulario ${formularioAtivo ? 'active' : ''}`} id="btn-abrir-formulario" onClick={handleFormularioClick}>
-          <i className="fas fa-plus"></i>
-        </button>
       </div>
-
-      <form action="" id="formulario-tarjeta" className={`formulario-tarjeta ${formularioAtivo ? 'active' : ''}`}>
-        <div className="grupo">
-          <label htmlFor="inputNumero" className='text-start'>Número do cartão</label>
-          <input type="text" id="inputNumero" maxLength="19" autoComplete="off" onChange={handleNumeroTarjetaChange} />
+      <form action="">
+        <div className="inputBox">
+          <span>Número do cartão</span>
+          <input
+          
+            type="text"
+            maxLength="16"
+            className="card-number-input"
+            onChange={handleCardNumberChange}
+          />
         </div>
-        <div className="grupo">
-          <label htmlFor="inputNombre" className='text-start'>Nome</label>
-          <input type="text" id="inputNombre" maxLength="19" autoComplete="off" onChange={handlenomeTarjetaChange} />
+        <div className="inputBox">
+          <span>Nome do titular</span>
+          <input
+            type="text"
+            className="card-holder-input"
+            onChange={handleCardHolderChange}
+          />
         </div>
         <div className="flexbox">
-          <div className="grupo expira">
-            <label htmlFor="selectMes">Validade</label>
-            <div className="flexbox">
-              <div className="grupo-select">
-                <select name="mes" id="selectMes" onChange={handleMesExpiracionChange}>
-                  <option disabled selected>Mês</option>
-                  {[...Array(12)].map((_, index) => (
-                    <option key={index} value={index + 1}>
-                      {index + 1}
-                    </option>
-                  ))}
-                </select>
-                <i className="fas fa-angle-down"></i>
-              </div>
-              <div className="grupo-select">
-                <select name="year" id="selectYear" onChange={handleYearExpiracionChange}>
-                  <option disabled selected>Ano</option>
-                  {[...Array(8)].map((_, index) => (
-                    <option key={index} value={yearActual + index}>
-                      {yearActual + index}
-                    </option>
-                  ))}
-                </select>
-                <i className="fas fa-angle-down"></i>
-              </div>
-            </div>
+          <div className="inputBox">
+            <span>Mês da validade</span>
+            <select
+              name=""
+              id=""
+              className="month-input"
+              onChange={handleExpMonthChange}
+            >
+              <option value="month" selected disabled>
+                mês
+              </option>
+              <option value="01">01</option>
+              <option value="02">02</option>
+              <option value="03">03</option>
+              <option value="04">04</option>
+              <option value="05">05</option>
+              <option value="06">06</option>
+              <option value="07">07</option>
+              <option value="08">08</option>
+              <option value="09">09</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
           </div>
-
-          <div className="grupo ccv">
-            <label htmlFor="inputCCV">CVV</label>
-            <input type="number" id="inputCCV" maxLength="3" onChange={handleCCVChange} />
+          <div className="inputBox">
+            <span>Ano da validade</span>
+            <select
+              name=""
+              id=""
+              className="year-input"
+              onChange={handleExpYearChange}
+            >
+              <option value="year" selected disabled>
+                ano
+              </option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
+            </select>
+          </div>
+          <div className="inputBox">
+            <span>CVV</span>
+            <input
+              type="text"
+              maxLength="4"
+              className="cvv-input"
+              onMouseEnter={handleCvvMouseEnter}
+              onMouseLeave={handleCvvMouseLeave}
+              onChange={handleCvvChange}
+            />
           </div>
         </div>
-        <button type="submit" className="btn-enviar">
-          Enviar
-        </button>
+        <input  value="Salvar" className="submit-btn" />
       </form>
     </div>
   );

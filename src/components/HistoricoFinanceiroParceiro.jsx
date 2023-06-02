@@ -241,7 +241,7 @@ const handleConsulta = (where) => {
     <div className="row">
       <div className="col-2">
         <div className="icon-container">
-          <BsCashCoin size={25} color={item.tipo === 'Acréscimo de crédito' || 'Estacionamento' ? '#3DAE30' : '#3DAE30'} className="icon mt-1" />
+          <BsCashCoin size={25} color={item.tipo === 'Transferencia' ? 'red' : '#3DAE30'} className="icon mt-1" />
           {resposta[index + 1] === undefined || null
           ? null : <div className="line"> </div>}
           <div className="spacer"></div>
@@ -251,11 +251,13 @@ const handleConsulta = (where) => {
         <div className="titulo text-start">
           {item.tipo === 'credito' ? 'Estacionamento' : 
           item.tipo === 'tolerancia' ? 'Estacionamento' : 
+          item.tipo === "Transferencia" ? "Transferência" :
           item.tipo === 'regularizacao' ? 'Regularizacao'  : 'Acréscimo de crédito'
           } 
         {item.tipo === 'regularizacao' && window.innerWidth > 1110 ? ` - ${item.placa}` :
         item.tipo === 'credito' && window.innerWidth > 1110 ? ` - ${item.placa}` :
         item.tipo === 'tolerancia' && window.innerWidth > 1110 ? ` - ${item.placa}` :
+        item.tipo === 'Transferencia' && window.innerWidth > 1110 ? ` - ${item.cnpj === '' ?  item.cpf : item.cnpj}` :
         item.tipo === 'Acrescimo de credito' && window.innerWidth > 1110 ? ` - ${item.cnpj === '' ?  item.cpf : item.cnpj}` : 
         null}
         </div>
@@ -272,6 +274,7 @@ const handleConsulta = (where) => {
         {item.tipo === 'regularizacao' && window.innerWidth <= 1110 ? `${item.placa}` :
         item.tipo === 'credito' && window.innerWidth <= 1110 ? `${item.placa}` :
         item.tipo === 'tolerancia' && window.innerWidth <= 1110 ? `${item.placa}` :
+        item.tipo === 'Transferencia' && window.innerWidth <= 1110 ? `${item.cnpj === '' ?  item.cpf : item.cnpj}` :
         item.tipo === 'Acrescimo de credito' && window.innerWidth <= 1110 ? `${item.cnpj === '' ?  item.cpf : item.cnpj}` : 
         null}
         </div>
