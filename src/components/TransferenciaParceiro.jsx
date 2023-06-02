@@ -7,6 +7,8 @@ const TransferenciaParceiro = () => {
     const [cnpj, setCnpj] = useState('');
     const [valor, setValor] = useState('');
 
+
+    
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder> 
         {window.innerWidth < 768 ? 
