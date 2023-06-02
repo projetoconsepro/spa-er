@@ -5,7 +5,7 @@ import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import { FaEllipsisH, FaEye, FaImages, FaPowerOff } from 'react-icons/fa'
 import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF';
-import { Modal } from '@mantine/core';
+import { Loader, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Carousel } from '@mantine/carousel';
 import VoltarComponente from '../util/VoltarComponente';
@@ -18,6 +18,7 @@ const ListarNotificacoesAdmin = () => {
     const [data3, setData3] = useState([])
     const [dataImagem, setDataImagem] = useState([])
     const [estado, setEstado] = useState(false)
+    const [estado2, setEstado2] = useState(false)
     const [mensagem, setMensagem] = useState('')
     const [estadoLoading, setEstadoLoading] = useState(false)
     const token = localStorage.getItem('token');
@@ -144,6 +145,7 @@ const ListarNotificacoesAdmin = () => {
         },
       });
       requisicao.get('/notificacao').then((response) => {
+        setEstado2(true)
         if (response.data.msg.resultado){
           setEstado(false)
           const newData = response.data.data.map((item) => ({
@@ -374,6 +376,7 @@ const ListarNotificacoesAdmin = () => {
           <div className="col-12">
             <div className="row">
               <div className="col-12 mb-4">
+                {estado2 ? 
                 <div className="card border-0 shadow">
                   <div className="table-responsive">
                     <table className="table align-items-center table-flush">
@@ -451,6 +454,10 @@ const ListarNotificacoesAdmin = () => {
                         {mensagem}
                     </div>
                 </div>
+                : 
+                <div className="col-12 text-center mt-4 mb-4">
+                <Loader />
+                </div> }
               </div>
             </div>
           </div>

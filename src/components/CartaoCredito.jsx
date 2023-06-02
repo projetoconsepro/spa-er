@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const CartaoCredito = () => {
   const [cardNumber, setCardNumber] = useState('################');
-  const [cardHolder, setCardHolder] = useState('NOME');
+  const [cardHolder, setCardHolder] = useState('');
   const [expMonth, setExpMonth] = useState('mm');
   const [expYear, setExpYear] = useState('yy');
   const [cvv, setCvv] = useState('');
@@ -21,7 +22,7 @@ const CartaoCredito = () => {
         formattedValue += ' ';
       }
     }
-    
+
     setCardNumber(formattedValue);
 
     if (valorInput === '') {
@@ -92,7 +93,15 @@ const CartaoCredito = () => {
           <div className="flexbox">
             <div className="box">
               <span>NOME</span>
-              <div className="card-holder-name">{cardHolder}</div>
+              <div className="card-holder-name">
+              <TransitionGroup>
+              {cardHolder.split('').map((digit, index) => (
+            <CSSTransition key={index} classNames="fade" timeout={300}>
+              <span className="card-holder">{digit}</span>
+            </CSSTransition>
+          ))}
+        </TransitionGroup>
+              </div>
             </div>
             <div className="box">
               <span>Validade</span>
@@ -116,8 +125,7 @@ const CartaoCredito = () => {
         <div className="inputBox">
           <span>Número do cartão</span>
           <input
-          
-            type="text"
+            type="number"
             maxLength="16"
             className="card-number-input"
             onChange={handleCardNumberChange}
@@ -192,7 +200,7 @@ const CartaoCredito = () => {
             />
           </div>
         </div>
-        <input  value="Salvar" className="submit-btn" />
+        <input value="Salvar" className="submit-btn" />
       </form>
     </div>
   );

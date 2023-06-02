@@ -8,11 +8,13 @@ import { FaSearch } from "react-icons/fa";
 import RelatoriosPDF from "../util/RelatoriosPDF";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
+import { Loader } from "@mantine/core";
 
 const OcupacaoVagasAdmin = () => {
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
+  const [estado3, setEstado3] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [dataHoje, setDataHoje] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
@@ -36,115 +38,6 @@ const OcupacaoVagasAdmin = () => {
     const cabecalho = ['Placa', 'Chegada', 'Vaga', 'Saida', 'Local', 'Situação']
     RelatoriosPDF(nomeArquivo, cabecalho, dataD)
   }
-
-  const tirarOpcao = async () => {
-    const select = document.getElementById("filtroSelect").value;
-    if (cont === 0) {
-      let select = document.getElementById("filtro");
-      select.remove();
-    }
-    setCont(cont + 1);
-
-    let text = "";
-    let type = "";
-    let input = "";
-
-    if (select === "selectPlaca") {
-      text = "Digite a placa desejada";
-      type = "text";
-      input = "placa";
-    } else if (select === "selectData") {
-      text = "Selecione a data desejada";
-      type = "date";
-      input = "data";
-    } else if (select === "selectVaga") {
-      text = "Digite a vaga desejada";
-      type = "number";
-      input = "vaga";
-    } else if (select === "selectTipo") {
-      text = "Digite o tipo de notificação";
-      type = "text";
-      input = "tipo";
-    } else if (select === "selectStatus") {
-      text = "Digite o status da notificação";
-      type = "text";
-      input = "status";
-    }
-
-    if (select !== "selectData" && select !== "selectTipo") {
-      if (select === "selectStatus") {
-        const inputOptions = new Promise((resolve) => {
-          setTimeout(() => {
-            resolve({
-              S: "Com irregularidades",
-              N: "Sem irregularidades",
-            });
-          }, 1000);
-        });
-
-        const { value: color } = await Swal.fire({
-          title: "Selecione o status",
-          input: "radio",
-          inputOptions: inputOptions,
-          inputValidator: (value) => {
-            if (!value) {
-              return "Você deve selecionar um status de notificação!";
-            }
-          },
-        });
-
-        if (color) {
-          if (color === "S") {
-            setFiltro(`Filtrado por movimentos: Com irregularidades`);
-          } else {
-            setFiltro(`Filtrado por movimentos: Sem irregularidades`);
-          }
-          respostaPopup(color);
-        }
-      } else {
-        Swal.fire({
-          title: text,
-          input: type,
-          inputAttributes: {
-            autocapitalize: "on",
-          },
-          showCancelButton: true,
-          confirmButtonText: "Filtrar",
-          confirmButtonColor: "#3a58c8",
-          cancelButtonText: "Voltar",
-          showLoaderOnConfirm: true,
-          preConfirm: (resposta) => {
-            if (resposta === "") {
-              Swal.showValidationMessage(`Digite uma ${input} válida`);
-              setFiltro("");
-            } else {
-              respostaPopup(resposta);
-              setFiltro(`Filtrado pela ${input}: ${resposta}`);
-            }
-          },
-        }).then((result) => {});
-      }
-    } else {
-      Swal.fire({
-        title: text,
-        html: `<input type="date" id="date" class="swal2-input">`,
-        showCancelButton: true,
-        confirmButtonText: "Filtrar",
-        confirmButtonColor: "#3a58c8",
-        cancelButtonText: "Voltar",
-        showLoaderOnConfirm: true,
-        preConfirm: () => {
-          const resposta = document.getElementById("date").value;
-          if (resposta === "" || resposta === null) {
-            Swal.showValidationMessage(`Digite uma ${input} válida`);
-          } else {
-            setFiltro(`Filtrado pela ${input}: ${resposta}`);
-            respostaPopup(resposta);
-          }
-        },
-      }).then((result) => {});
-    }
-  };
 
   const chamarPopup = (index) => {
     if (data[index].notificacao === "S") {
@@ -311,6 +204,7 @@ const OcupacaoVagasAdmin = () => {
     const passar = btoa(idrequisicao)
       requisicao.get(`/veiculo/historico/?query=${passar}`).then((response) => {
           console.log(response)
+          setEstado3(true)
           if (response.data.msg.resultado) {
             setEstado2(false);
             setEstado2(false);
@@ -460,6 +354,7 @@ const OcupacaoVagasAdmin = () => {
                 </div>
           <div className="row">
             <div className="col-12 mb-4">
+              {estado3 ? 
               <div className="card border-0 shadow">
                 <div className="table-responsive">
                   <table className="table align-items-center table-flush">
@@ -623,6 +518,10 @@ const OcupacaoVagasAdmin = () => {
                   {mensagem}
                 </div>
               </div>
+              : 
+              <div className="col-12 text-center mt-4 mb-4">
+              <Loader />
+              </div>}
             </div>
           </div>
           <VoltarComponente />

@@ -15,13 +15,14 @@ import { AiFillEdit, AiFillPrinter } from "react-icons/ai";
 import RelatoriosPDF from "../util/RelatoriosPDF";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
-import { ActionIcon, Input } from "@mantine/core";
+import { ActionIcon, Input, Loader } from "@mantine/core";
 import { IconSearch, IconUserCircle } from "@tabler/icons-react";
 
 const UsuariosAdmin = () => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
+  const [estado2, setEstado2] = useState(false);
   const [nome, setNome] = useState("");
   const [senhaParam, setSenhaParam] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
@@ -55,6 +56,7 @@ const UsuariosAdmin = () => {
   
   requisicao.get('/usuario/listar/?query=eyJ3aGVyZSI6IFt7ICJmaWVsZCI6ICJwZXJmaWwiLCAib3BlcmF0b3IiOiAiPSIsICJ2YWx1ZSI6ICJhZG1pbiJ9XX0=').then(
       response => {
+        setEstado2(true)
         const newData = response.data.data.map((item) => ({
           nome: item.nome,
           placa: item.veiculos
@@ -744,6 +746,7 @@ const UsuariosAdmin = () => {
                   </button>
                 </div>
               </div>
+              {estado2 ?
               <div className="card border-0 shadow">
                 <div className="table-responsive">
                   <table className="table align-items-center table-flush">
@@ -922,11 +925,15 @@ const UsuariosAdmin = () => {
                             </div>
                           </td>
                         </tr>
-                      ))}
+                      ))} 
                     </tbody>
                   </table>
                 </div>
               </div>
+              : 
+              <div className="col-12 text-center mt-4 mb-4">
+              <Loader />
+              </div> }
             </div>
           </div>
           <VoltarComponente />
