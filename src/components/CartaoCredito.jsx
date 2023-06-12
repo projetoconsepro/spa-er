@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const CartaoCredito = () => {
-  const [cardNumber, setCardNumber] = useState('################');
+  const [cardNumber, setCardNumber] = useState('#### #### #### ####');
   const [cardHolder, setCardHolder] = useState('');
   const [expMonth, setExpMonth] = useState('mm');
   const [expYear, setExpYear] = useState('yy');
@@ -47,7 +47,11 @@ const CartaoCredito = () => {
     if (valorInput === '') {
       setCardHolder('');
     }
-    setCardHolder(valorInput);
+
+    const UpperCase = valorInput.toUpperCase();
+
+    setCardHolder(UpperCase);
+
 
     handleCvvMouseLeave();
   };
@@ -74,6 +78,16 @@ const CartaoCredito = () => {
     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
   };
 
+  const handleOnclick = () => {
+    if (document.querySelector('.front').style.transform === 'perspective(1000px) rotateY(0deg)') {
+      document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
+      document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
+    } else {
+      document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
+      document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
+    }
+  };
+
   const handleCvvChange = (e) => {
     setCvv(e.target.value);
 
@@ -83,7 +97,8 @@ const CartaoCredito = () => {
   return (
 
     <div className="container text-start">
-      <div className="card-container mx-6">
+      <div className="d-flex justify-content-center">
+      <div className="card-container mt-5" onClick={()=>{handleOnclick()}}>
         <div className="front">
           <div className="image">
             <img src="../../assets/img/cartaoCredito/chip.png" alt="" />
@@ -120,6 +135,7 @@ const CartaoCredito = () => {
             {logoMarca && <img src={logoMarca} alt="" className="logo" />}
           </div>
         </div>
+        </div>
       </div>
       <form action="">
         <div className="inputBox">
@@ -137,18 +153,35 @@ const CartaoCredito = () => {
             type="text"
             className="card-holder-input"
             onChange={handleCardHolderChange}
+            value={cardHolder}
+            maxLength={26}
           />
         </div>
-        <div className="flexbox">
+
+          <div className="row">
+          <div className="col-12">
+            <div className="row mt-3 inputBox">
+              <div className="col-4">
+                <span>Mês da validade</span>
+              </div>
+              <div className="col-4">
+                <span>Ano da validade</span>
+              </div>
+              <div className="col-4">
+                <span>CVV</span>
+              </div>
+            </div>
+            <div className="row">
+            <div className="col-4">
           <div className="inputBox">
-            <span>Mês da validade</span>
             <select
               name=""
               id=""
               className="month-input"
               onChange={handleExpMonthChange}
+              defaultValue='month'
             >
-              <option value="month" selected disabled>
+              <option value="month"  disabled>
                 mês
               </option>
               <option value="01">01</option>
@@ -165,15 +198,17 @@ const CartaoCredito = () => {
               <option value="12">12</option>
             </select>
           </div>
+          </div>
+          <div className="col-4">
           <div className="inputBox">
-            <span>Ano da validade</span>
             <select
               name=""
               id=""
               className="year-input"
               onChange={handleExpYearChange}
+              defaultValue={'ano'}
             >
-              <option value="year" selected disabled>
+              <option value="ano" disabled>
                 ano
               </option>
               <option value="2021">2021</option>
@@ -188,8 +223,9 @@ const CartaoCredito = () => {
               <option value="2030">2030</option>
             </select>
           </div>
+          </div>
+          <div className="col-4">
           <div className="inputBox">
-            <span>CVV</span>
             <input
               type="text"
               maxLength="4"
@@ -199,8 +235,17 @@ const CartaoCredito = () => {
               onChange={handleCvvChange}
             />
           </div>
+          </div>
+          </div>
+          </div>
+          </div>
+        <div>
+          <div className="row">
+                <div className="col-12 d-flex justify-content-center mt-4">
+        <button className="btn3 botao">Salvar</button>
         </div>
-        <input value="Salvar" className="submit-btn" />
+        </div>
+        </div>
       </form>
     </div>
   );

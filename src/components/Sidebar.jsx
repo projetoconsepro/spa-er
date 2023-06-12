@@ -140,7 +140,7 @@ const Sidebar = () => {
                     className: styles.className,
                     icon: <BsCashCoin />,
                     name: "‎ Adicionar Créditos",
-                    componente: "AdicionarCreditosCliente",
+                    componente: "InserirCreditos",
                 },
                 {
                     className: styles.className,

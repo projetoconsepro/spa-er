@@ -44,6 +44,7 @@ import ConfigurarPerfil from '../../components/ConfigurarPerfil';
 import EditarParametroAdmin from '../../components/EditarParametroAdmin';
 import TransferenciaParceiro from '../../components/TransferenciaParceiro';
 import CartaoCredito from '../../components/CartaoCredito';
+import InserirCreditos from '../../components/InserirCreditos';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -176,6 +177,9 @@ export default function Veiculos({Componente}) {
         }
         else if (Componente === "CartaoCredito"){
             return <CartaoCredito />
+        }
+        else if (Componente === "InserirCreditos"){
+            return <InserirCreditos />
         }
         else {
             return <Error />
