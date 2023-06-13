@@ -29333,12 +29333,7 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     border-radius: 5px;
     box-shadow: 0 10px 15px rgba(0,0,0,.1);
     padding: 20px;
-    width: 600px;
     padding-top: 160px;
-}
-
-.container form .inputBox{
-    margin-top: 20px;
 }
 
 .container form .inputBox span{
@@ -29366,8 +29361,8 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
 }
 
 .container form .submit-btn{
-    width: 100%;
-    background:linear-gradient(45deg, blueviolet, deeppink);
+    width: 80%;
+    background:linear-gradient(45deg, blue, blue);
     margin-top: 20px;
     padding: 10px;
     font-size: 20px;
@@ -29375,6 +29370,11 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     border-radius: 10px;
     cursor: pointer;
     transition: .2s linear;
+}
+
+#teste5{
+    position: relative !important;
+    z-index: 2 !important;
 }
 
 .container form .submit-btn:hover{
@@ -29386,7 +29386,26 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     margin-bottom: -150px;
     position: relative;
     height: 250px;
-    width: 400px;
+}
+
+@media (max-width: 768px){
+    .container .card-container{
+        margin: 0 !important;
+        margin-bottom: -150px !important;
+        width: 100%;
+    }
+    .container form {
+        width: 100%;
+    }
+}
+
+@media (min-width: 768px){
+    .container form {
+        width: 100% !important;
+    }
+    .container .card-container{
+        width: 60% !important;
+    }
 }
 
 .container .card-container .front{
@@ -29394,7 +29413,7 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     height: 100%;
     width: 100%;
     top: 0; left: 0;
-    background:linear-gradient(45deg, blueviolet, deeppink);
+    background:linear-gradient(45deg, blue, blueviolet);
     border-radius: 5px;
     backface-visibility: hidden;
     box-shadow: 0 15px 25px rgba(0,0,0,.2);
@@ -29438,7 +29457,7 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     top:0; left: 0;
     height: 100%;
     width: 100%;
-    background:linear-gradient(45deg, blueviolet, deeppink);
+    background:linear-gradient(45deg, blue, blueviolet);
     border-radius: 5px;
     padding: 20px 0;
     text-align: right;
