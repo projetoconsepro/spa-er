@@ -29515,3 +29515,14 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     opacity: 0;
     transition: opacity 300ms ease;
   }
+
+#borderimg{ 
+    padding: 10%;
+    background:
+      linear-gradient(to right, #3a58c8 4px, transparent 4px) 0 0,
+      linear-gradient(to left, #3a58c8 4px, transparent 4px) 100% 100%,
+      linear-gradient(to bottom, #3a58c8 4px, transparent 4px) 0 0,
+      linear-gradient(to top, #3a58c8 4px, transparent 4px) 100% 100%;
+    background-repeat: no-repeat;
+    background-size: 250px 250px;
+}
