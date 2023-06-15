@@ -37,9 +37,13 @@ const ListarNotificacoes = () => {
       },
     });
     const idVagaVeiculo = data[index].id_vaga_veiculo;
+    const pagamento = document.getElementById(`pagamentos`).value;
+    console.log(idVagaVeiculo)
     requisicao.put('/notificacao/',{
-        "id_vaga_veiculo": idVagaVeiculo,
+        id_vaga_veiculo: idVagaVeiculo,
+        tipoPagamento: pagamento,
     }).then((response) => {
+      console.log(response)
       if(response.data.msg.resultado){
         Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
         data[index].pago = 'S';
@@ -84,27 +88,29 @@ const ListarNotificacoes = () => {
           perfil_usuario: user2.perfil[0],
         },
       });
-      const idrequisicao= `{where:{vaga_veiculo='${localVagaVeiculo}'}}`
+      const idrequisicao= `{"where": [{ "field": "vaga_veiculo", "operator": "=", "value": "${localVagaVeiculo}" }]}`
       const passar = btoa(idrequisicao)
       
       await requisicao
         .get(`/notificacao/?query=${passar}`)
         .then((response) => {
+          console.log(response, 'response')
           if (response.data.msg.resultado) {
-          const newData = response?.data.data.map((item) => ({
-            data: ArrumaHora(item.data),
-            id_notificacao: item.id_notificacao,
-            id_vaga_veiculo: item.id_vaga_veiculo,
-            tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
-            vaga: item.vaga,
-            modelo: item.veiculo.modelo.nome,
-            valor: item.valor,
-            placa: item.veiculo.placa,
-            estado: false,
-            pago: item.pago,
-          }));
+            const newData = response?.data.data.map((item) => ({
+              data: ArrumaHora(item.data),
+              id_notificacao: item.id_notificacao,
+              id_vaga_veiculo: item.id_vaga_veiculo,
+              tipo_notificacao: item.tipo_notificacao.nome,
+              monitor: item.monitor.nome,
+              vaga: item.vaga,
+              modelo: item.veiculo.modelo.nome,
+              valor: item.valor,
+              placa: item.veiculo.placa,
+              estado: false,
+              pago: item.pago,
+            }));
           setData(newData);
+          setEstado2(true);
         } else {
           setEstado(true);
           setMensagem(response.data.msg.msg);
@@ -419,8 +425,8 @@ const handleFiltro = (where) => {
                     id="pagamentos"
                     defaultValue="01:00:00"
                   >
-                    <option value="00:30:00">PIX</option>
-                    <option value="01:00:00">
+                    <option value="pix">PIX</option>
+                    <option value="dinheiro">
                       Dinheiro
                     </option>
                   </select>

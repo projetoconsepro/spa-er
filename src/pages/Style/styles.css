@@ -29318,7 +29318,7 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
 
 #dadawdadawdwadwa
 
-.container{
+.container2{
     min-height: 100vh;
     background: #eee;
     display: flex;
@@ -29328,7 +29328,7 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     padding-bottom: 60px;
 }
 
-.container form{
+.container2 form{
     background: #fff;
     border-radius: 5px;
     box-shadow: 0 10px 15px rgba(0,0,0,.1);
@@ -29336,14 +29336,14 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     padding-top: 160px;
 }
 
-.container form .inputBox span{
+.container2 form .inputBox span{
     display: block;
     color:#999;
     padding-bottom: 5px;
 }
 
-.container form .inputBox input,
-.container form .inputBox select{
+.container2 form .inputBox input,
+.container2 form .inputBox select{
     width: 100%;
     padding: 10px;
     border-radius: 10px;
@@ -29351,16 +29351,16 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     color:#444;
 }
 
-.container form .flexbox{
+.container2 form .flexbox{
     display: flex;
     gap:15px;
 }
 
-.container form .flexbox .inputBox{
+.container2 form .flexbox .inputBox{
     flex:1 1 150px;
 }
 
-.container form .submit-btn{
+.container2 form .submit-btn{
     width: 80%;
     background:linear-gradient(45deg, blue, blue);
     margin-top: 20px;
@@ -29377,38 +29377,38 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     z-index: 2 !important;
 }
 
-.container form .submit-btn:hover{
+.container2 form .submit-btn:hover{
     letter-spacing: 2px;
     opacity: .8;
 }
 
-.container .card-container{
+.container2 .card-container{
     margin-bottom: -150px;
     position: relative;
     height: 250px;
 }
 
 @media (max-width: 768px){
-    .container .card-container{
+    .container2 .card-container{
         margin: 0 !important;
         margin-bottom: -150px !important;
         width: 100%;
     }
-    .container form {
+    .container2 form {
         width: 100%;
     }
 }
 
 @media (min-width: 768px){
-    .container form {
+    .container2 form {
         width: 100% !important;
     }
-    .container .card-container{
+    .container2 .card-container{
         width: 60% !important;
     }
 }
 
-.container .card-container .front{
+.container2 .card-container .front{
     position: absolute;
     height: 100%;
     width: 100%;
@@ -29422,37 +29422,37 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     transition:transform .4s ease-out;
 }
 
-.container .card-container .front .image{
+.container2 .card-container .front .image{
     display: flex;
     align-items:center;
     justify-content: space-between;
     padding-top: 10px;
 }
 
-.container .card-container .front .image img{
+.container2 .card-container .front .image img{
     height: 50px;
 }
 
-.container .card-container .front .card-number-box{
+.container2 .card-container .front .card-number-box{
     padding:30px 0;
     font-size: 22px;
     color:#fff;
 }
 
-.container .card-container .front .flexbox{
+.container2 .card-container .front .flexbox{
     display: flex;
 }
 
-.container .card-container .front .flexbox .box:nth-child(1){
+.container2 .card-container .front .flexbox .box:nth-child(1){
     margin-right: auto;
 }
 
-.container .card-container .front .flexbox .box{
+.container2 .card-container .front .flexbox .box{
     font-size: 15px;
     color:#fff;
 }
 
-.container .card-container .back{
+.container2 .card-container .back{
     position: absolute;
     top:0; left: 0;
     height: 100%;
@@ -29467,23 +29467,23 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     transition:transform .4s ease-out;
 }
 
-.container .card-container .back .stripe{
+.container2 .card-container .back .stripe{
     background: #000;
     width: 100%;
     margin: 10px 0;
     height: 50px;
 }
 
-.container .card-container .back .box{
+.container2 .card-container .back .box{
     padding: 0 20px;
 }
 
-.container .card-container .back .box span{
+.container2 .card-container .back .box span{
     color:#fff;
     font-size: 15px;
 }
 
-.container .card-container .back .box .cvv-box{
+.container2 .card-container .back .box .cvv-box{
     height: 50px;
     padding: 10px;
     margin-top: 5px;
@@ -29493,7 +29493,7 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     width: 100%;
 }
 
-.container .card-container .back .box img{
+.container2 .card-container .back .box img{
     margin-top: 30px;
     height: 30px;
 }

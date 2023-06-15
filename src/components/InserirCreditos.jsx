@@ -2,11 +2,14 @@ import { Group, Text, Card, Button, Radio, Image, Input, Modal, Grid, ActionIcon
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowRight, IconCash, IconCheck, IconCopy, IconKey, IconX } from "@tabler/icons-react";
 import axios from "axios";
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import QRCode from "react-qr-code";
+import FuncTrocaComp from "../util/FuncTrocaComp";
+import ModalPix from "./ModalPix";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
+  const socketRef = useRef(null);
   const [valor, setValor] = useState("");
   const [valor2, setValor2] = useState("");  
   const [data, setData] = useState([]);
@@ -14,21 +17,74 @@ const InserirCreditos = () => {
   const [tabsValue, setTabsValue] = useState("Meios de pagamento");
   const [metodo, setMetodo] = useState(null);
   const [divAvancar, setDivAvancar] = useState(false);
+  const [pixExpirado, setPixExpirado] = useState("Sucesso!");
+  const [txid, setTxId] = useState(null);
+  const [onOpen, setOnOpen] = useState(false);
 
-  const TestePix = (valor) => {
+  const inserirCreditos = (valor) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+    baseURL: process.env.REACT_APP_HOST,
+    headers: {
+      token: token,
+      id_usuario: user2.id_usuario,
+      perfil_usuario: user2.perfil[0],
+    },
+  });
+
+  if(valor === "outro"){
+    valor = valor2
+  }
+
+  valor = parseFloat(valor.replace(",", ".")).toFixed(2);
+
+  requisicao.post("/usuario/saldo", {
+    valor: valor,
+    pagamento: metodo,
+  })
+  .then((resposta) => {
+    if (resposta.data.msg.resultado) {
+      FuncTrocaComp("MeusVeiculos")
+    } else {
+      console.log(resposta);
+    }
+  }
+  ).catch((err) => {
+    console.log(err)
+  });
+}
+
+  const fazerPix = (valor) => {
+    setOnOpen(true)
     if(valor === "outro"){
       valor = valor2
     }
 
     valor = parseFloat(valor.replace(",", ".")).toFixed(2);
     console.log(valor)
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
 
-    axios.post("https://localhost:3001/gerarcobranca", {
+    requisicao.post("https://localhost:3001/gerarcobranca", {
         valor: valor,
       })
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
+          console.log(resposta.data.data);
+          console.log(resposta.data.data.txid);
           setData(resposta.data.data);
+          setTxId(resposta.data.data.txid);
           open();
         } else {
           console.log("n abriu nkk");
@@ -41,58 +97,33 @@ const InserirCreditos = () => {
 
   useEffect(() => {
     // Crie uma conexão WebSocket com o servidor
-    const socket = new WebSocket("ws://localhost:8080/websocket");
+    socketRef.current = new WebSocket("ws://localhost:8080/websocket");
 
     // Quando a conexão é estabelecida
-    socket.onopen = () => {
-      socket.send("Conexão estabelecida");
+    socketRef.current.onopen = () => {
+      socketRef.current.send("Conexão estabelecida");
 
       // Envie uma mensagem para o servidor
-      socket.send("Olá, servidor!");
+      socketRef.current.send("Olá, servidor!");
     };
 
     // Quando uma mensagem é recebida do servidor
-    socket.onmessage = (event) => {
-      console.log(data.txid);
-      if (data.txid !== undefined) {
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
-      requisicao.get(`/verificarcobranca/${data.txid}`)
-        .then((resposta) => {
-          console.log(resposta.data)
-          if (resposta.data.msg.resultado) {
-            setNotification(false);
-            setTimeout(() => {
-              close();
-              setTimeout(() => {
-                setNotification(true);
-              }, 1000);
-            }, 2000);
-          } else {
-            console.log("nao");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      }
+    socketRef.current.onmessage = (event) => {
+      funcPix();
     };
-
 
     // Cleanup da conexão WebSocket ao desmontar o componente
     return () => {
-      socket.close();
+      socketRef.current.close();
     };
-  }, []);
+  }, [txid]);
+
+  // Função para fechar a conexão em outro lugar
+  const closeSocketConnection = () => {
+    if (socketRef.current) {
+      socketRef.current.close();
+    }
+  };
 
   const handleTabs = () => {
     if(metodo !== null){
@@ -106,6 +137,45 @@ const InserirCreditos = () => {
     }
   };
 
+
+  const funcPix = () => {
+    if (txid !== undefined) {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    requisicao.get(`/verificarcobranca/${txid}`)
+      .then((resposta) => {
+        console.log(resposta.data)
+        if (resposta.data.msg.resultado) {
+          closeSocketConnection();
+          inserirCreditos(valor);
+          setNotification(false);
+          setTimeout(() => {
+            close();
+            setTimeout(() => {
+              setNotification(true);
+            }, 1000);
+          }, 2000);
+
+        } else {
+          console.log('deu 5 min')
+          setNotification(false)
+          setPixExpirado("Pix expirado")
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  };
   return (
     <div>
       <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -231,7 +301,7 @@ const InserirCreditos = () => {
             mt="md"
             radius="md"
             onClick={() => {
-              TestePix(valor);
+              fazerPix(valor);
             }}
           >
             Registrar transferência ‎
@@ -240,68 +310,8 @@ const InserirCreditos = () => {
         </Card>
         </Tabs.Panel>
 
-        <div>
-          <Modal opened={opened} onClose={close} centered size="xl">
-            <div id="borderimg">
-              <Group position="center" mt="md" mb="xs">
-                <QRCode value={data.brcode === undefined ? "a" : data.brcode} />
-              </Group>
-              <Input.Wrapper label="Pix Copia e Cola:" className="mx-2">
-                <Grid>
-                  <Grid.Col span={10}>
-                    <Input
-                      icon={<IconKey size="1.1rem" />}
-                      placeholder={data.brcode}
-                      disabled
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={2} className="mt-1">
-                    <CopyButton value={data.brcode} timeout={2000}>
-                      {({ copied, copy }) => (
-                        <Tooltip
-                          label={copied ? "Copied" : "Copy"}
-                          withArrow
-                          position="right"
-                        >
-                          <ActionIcon
-                            color={copied ? "teal" : "gray"}
-                            onClick={copy}
-                          >
-                            {copied ? (
-                              <IconCheck size="1.2rem" />
-                            ) : (
-                              <IconCopy size="1.2rem" />
-                            )}
-                          </ActionIcon>
-                        </Tooltip>
-                      )}
-                    </CopyButton>
-                  </Grid.Col>
-                </Grid>
-              </Input.Wrapper>
-              <div className="mt-3">
-                {notification ? (
-                  <Notification
-                    loading
-                    color="green"
-                    title="Aguardando pagamento"
-                    withCloseButton={false}
-                  >
-                    Por favor abra o aplicativo do seu banco e pague.
-                  </Notification>
-                ) : (
-                  <Notification
-                    icon={<IconCheck size="1.1rem" />}
-                    color="teal"
-                    title="Sucesso!"
-                  >
-                    Sucesso!
-                  </Notification>
-                )}
-              </div>
-            </div>
-          </Modal>
-        </div>
+        <ModalPix qrCode={data.brcode} status={notification} mensagemPix={pixExpirado} onOpen={onOpen} />
+
       </Tabs>
       </Card>
     </div>

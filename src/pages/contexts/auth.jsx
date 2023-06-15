@@ -57,6 +57,10 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('id_usuario', response.data.dados.usuario.id_usuario);
             localStorage.setItem('SenhaDefault', true)
             FuncTrocaComp( 'NewPassword');
+            return {
+                auth: response.data.msg.resultado,
+                message: response.data.msg.msg
+            };
         } else {
         if (response.data.msg.resultado === true && response.data.dados.usuario.perfil.length === 1) {
         let loggedUser = response.data.dados.usuario;
