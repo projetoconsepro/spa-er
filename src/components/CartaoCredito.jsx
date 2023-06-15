@@ -96,7 +96,7 @@ const CartaoCredito = () => {
 
   return (
 
-    <div className="container text-start">
+    <div className="container2 text-start">
       <div className="d-flex justify-content-center">
       <div className="card-container mt-5" onClick={()=>{handleOnclick()}}>
         <div className="front">

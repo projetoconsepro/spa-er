@@ -67,6 +67,7 @@ const Notificacao = () => {
             "cor": getcor,
     }).then(
             response => {
+                console.log(response, 'olha só em')
             }
         ).catch(function (error) {
             localStorage.removeItem("user")
@@ -94,6 +95,9 @@ const Notificacao = () => {
             },
             "cor": cor2,
         }).then(
+            response => {
+            console.log(response, 'olha só em2')
+        }
         ).catch(function (error) {
             localStorage.removeItem("user")
             localStorage.removeItem("token")
