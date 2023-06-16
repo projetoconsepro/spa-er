@@ -1,13 +1,18 @@
 import axios from 'axios';
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useRef } from 'react'
 import { FaUserInjured, FaWheelchair } from 'react-icons/fa';
 import Swal from 'sweetalert2'
 import '../pages/Style/styles.css';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
+import { useDisclosure } from '@mantine/hooks';
+import ModalPix from './ModalPix';
 
 const RegistrarVagaMonitor = () => {
+    const [opened, { open, close }] = useDisclosure(false);
+    const socketRef = useRef(null);
     const [mensagem, setMensagem] = useState("");
+    const [data, setData] = useState([]);
     const [estado, setEstado] = useState(false);
     const [placaVeiculo, setPlacaVeiculo] = useState("");
     const [tempo, setTempo] = useState("00:10:00");
@@ -20,98 +25,130 @@ const RegistrarVagaMonitor = () => {
     const [visible , setVisible] = useState(false);
     const [limite, setLimite] = useState(7);
     const [tipoVaga, setTipoVaga] = useState("");
+    const [notification, setNotification] = useState(true);
+    const [pixExpirado, setPixExpirado] = useState("");
+    const [txid, setTxId] = useState("");
+    const [onOpen, setOnOpen] = useState(false);
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
+    const fazerPix = () => {
+        const valor = valorcobranca2.toString()
+        const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
+        console.log(valor2)
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
+        const user2 = JSON.parse(user);
+        const requisicao = axios.create({
+          baseURL: process.env.REACT_APP_HOST,
+          headers: {
+            token: token,
+            id_usuario: user2.id_usuario,
+            perfil_usuario: user2.perfil[0],
+          },
+        });
+    
+        requisicao.post("/gerarcobranca", {
+            valor: valor2,
+          })
+          .then((resposta) => {
+            if (resposta.data.msg.resultado) {
+              console.log(resposta.data.data);
+              console.log(resposta.data.data.txid);
+              setData(resposta.data.data);
+              setTxId(resposta.data.data.txid);
+              setOnOpen(true)
+              open();
+            } else {
+              console.log("n abriu nkk");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
+    useEffect(() => {
+
+        // Crie uma conexão WebSocket com o servidor
+        socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
+        
+    
+        // Quando a conexão é estabelecida
+        socketRef.current.onopen = () => {
+          
+          socketRef.current.send("Conexão estabelecida");
+    
+          // Envie uma mensagem para o servidor
+          socketRef.current.send("Olá, servidor!");
+        };
+    
+        // Quando uma mensagem é recebida do servidor
+        socketRef.current.onmessage = (event) => {
+          funcPix(event);
+        };
+    
+        // Cleanup da conexão WebSocket ao desmontar o componente
+        return () => {
+          socketRef.current.close();
+        };
+      }, [txid]);
+
+      const closeSocketConnection = () => {
+        if (socketRef.current) {
+          socketRef.current.close();
+        }
+      };
+
+      const funcPix = (event) => {
+        console.log(txid, 'txid')
+        const json = JSON.parse(event.data)
+        if (txid !== undefined && json.txid === txid) {
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
+        const user2 = JSON.parse(user);
+        const requisicao = axios.create({
+          baseURL: process.env.REACT_APP_HOST,
+          headers: {
+            token: token,
+            id_usuario: user2.id_usuario,
+            perfil_usuario: user2.perfil[0],
+          },
+        });
+        requisicao.get(`/verificarcobranca/${txid}`)
+          .then((resposta) => {
+            console.log(resposta.data)
+            if (resposta.data.msg.resultado) {
+              closeSocketConnection();
+              setNotification(false);
+              registrarEstacionamento();
+              setTimeout(() => {
+                close();
+                setTimeout(() => {
+                  setNotification(true);
+                }, 2000);
+              }, 3000);
+              
+    
+            } else {
+              console.log('deu 5 min')
+              setNotification(false)
+              setPixExpirado("Pix expirado")
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        }
+      };
+
     const parametros = axios.create({
         baseURL: process.env.REACT_APP_HOST,
     })
 
-    const param = async () => {
-        await parametros.get('/parametros').then(
-            response => {
-                setValorCobranca(response.data.data.param.estacionamento.valorHora)
-            }
-        ).catch(function (error) {
-            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-        });
-
-        setVaga(localStorage.getItem('vaga'));
-    }
-
-
-    const atualizafunc = () => {
-        const tempoo = document.getElementById('tempos').value;
-        const valorr = document.getElementById('pagamentos').value;
-        setTempo(tempoo);
-        setValor(valorr);
-        if(tempoo === "00:10:00"){
-        SetMostrapag(false)
-        setValor("");
-        }
-        else{
-        SetMostrapag(true)
-        }
-
-        if(tempoo === "02:00:00"){
-            setValorCobranca2(valorCobranca*2);
-        }
-        else if(tempoo === "01:00:00"){
-            setValorCobranca2(valorCobranca);
-        }
-        else if(tempoo === "00:30:00"){
-            setValorCobranca2(valorCobranca/2);
-        }
-        else if(tempoo === "00:10:00"){
-            setValorCobranca2(valorCobranca*0);
-        }
-        else{
-            if (placaVeiculo !== "") {
-                const placaString = placaVeiculo.toString()
-                const placaMaiuscula = placaString.toUpperCase();
-                localStorage.setItem('placa',`${placaMaiuscula}`)
-                FuncTrocaComp('Notificacao')
-                
-                }
-                else{
-                    setEstado(true);
-                    setMensagem("Preencha o campo placa");
-                    setTimeout(() => {
-                        setEstado(false);
-                        setMensagem("");
-                    }, 4000);
-            }
-        }
-    }
-
-    const HangleBack = () => {
-        localStorage.removeItem('vaga');
-        localStorage.removeItem('popup');
-        localStorage.removeItem('id_vagaveiculo');
-    }
-        
-    function validarPlaca(placa) {
-        const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-        const regexPlacaNova = /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
-      
-        if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-
-    const handleSubmit = async  () => {
+    const registrarEstacionamento = () => {
         const estacionamento = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -191,7 +228,7 @@ const RegistrarVagaMonitor = () => {
         
      }
      else {
-     await estacionamento.post('/estacionamento', {
+        estacionamento.post('/estacionamento', {
         placa: placaMaiuscula,
         numero_vaga: vagaa,
         tempo: tempo,
@@ -225,7 +262,99 @@ const RegistrarVagaMonitor = () => {
         }
     )
     }
-}
+    }
+
+    const param = async () => {
+        await parametros.get('/parametros').then(
+            response => {
+                setValorCobranca(response.data.data.param.estacionamento.valorHora)
+            }
+        ).catch(function (error) {
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            || error?.response?.data?.msg === "Token inválido!" 
+            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+            } else {
+                console.log(error)
+            }
+        });
+
+        setVaga(localStorage.getItem('vaga'));
+    }
+
+
+    const atualizafunc = () => {
+        const tempoo = document.getElementById('tempos').value;
+        const valorr = document.getElementById('pagamentos').value;
+        setTempo(tempoo);
+        setValor(valorr);
+        if(tempoo === "00:10:00"){
+        SetMostrapag(false)
+        setValor("");
+        }
+        else{
+        SetMostrapag(true)
+        }
+
+        if(tempoo === "02:00:00"){
+            setValorCobranca2(valorCobranca*2);
+        }
+        else if(tempoo === "01:00:00"){
+            setValorCobranca2(valorCobranca);
+        }
+        else if(tempoo === "00:30:00"){
+            setValorCobranca2(0.02);
+        }
+        else if(tempoo === "00:10:00"){
+            setValorCobranca2(valorCobranca*0);
+        }
+        else{
+            if (placaVeiculo !== "") {
+                const placaString = placaVeiculo.toString()
+                const placaMaiuscula = placaString.toUpperCase();
+                localStorage.setItem('placa',`${placaMaiuscula}`)
+                FuncTrocaComp('Notificacao')
+                
+                }
+                else{
+                    setEstado(true);
+                    setMensagem("Preencha o campo placa");
+                    setTimeout(() => {
+                        setEstado(false);
+                        setMensagem("");
+                    }, 4000);
+            }
+        }
+    }
+
+    const HangleBack = () => {
+        localStorage.removeItem('vaga');
+        localStorage.removeItem('popup');
+        localStorage.removeItem('id_vagaveiculo');
+    }
+        
+    function validarPlaca(placa) {
+        const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
+        const regexPlacaNova = /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+      
+        if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+    const handleSubmit = async  () => {
+        const select = document.getElementById('pagamentos').value;
+
+        if(select === "pix"){
+            fazerPix()
+        }else{
+            registrarEstacionamento()
+        }
+    }
 
     useEffect(() => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
@@ -325,6 +454,7 @@ const RegistrarVagaMonitor = () => {
                         </div>
                     </div>
                 </div>
+                <ModalPix qrCode={data.brcode} status={notification} mensagemPix={pixExpirado} onOpen={onOpen} />
             </div>
         </section>
     )

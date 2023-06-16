@@ -64,31 +64,31 @@ const ListarVeiculos = () => {
                 }
                 for (let i = 0; i < response?.data?.data.length; i++) {
                     resposta[i] = {};
-                    resposta[i].div = "card-body";
+                    resposta[i].div = "card-body mb-2";
                     notificacao[i] = {"estado": true};
                     mostrar2[i] = { "estado": false };
                     mostrardiv[i] = { "estado": true };
                     nofityvar[i] = { "notifi": "notify" };
                     resposta[i].placa = response.data.data[i].usuario;
                     if (response.data.data[i].estacionado === 'N') {
-                        resposta[i].div = "card-body";
+                        resposta[i].div = "card-body mb-2";
                         resposta[i].textoestacionado = "Clique aqui para estacionar";
                         resposta[i].estacionado = "Não estacionado"
                         resposta[i].temporestante = "";
                         notificacao[i] = {"estado": true};
                         if (response.data.data[i].numero_notificacoes_pendentes === 0) {
-                            resposta[i].div = "card-body";
+                            resposta[i].div = "card-body mb-2";
                             resposta[i].numero_notificacoes_pendentes = "Sem notificações";
                             notificacao[i] = {"estado": true};
                         }
                         else if (response.data.data[i].numero_notificacoes_pendentes === 1) {
-                            resposta[i].div = "card-body2";
+                            resposta[i].div = "card-body2 mb-2";
                             notificacao[i] = {"estado": false};
                             resposta[i].numero_notificacoes_pendentes = "Uma notificação"
                             nofityvar[i] = { "notifi": "notify2" };
                         }
                         else {
-                            resposta[i].div = "card-body2";
+                            resposta[i].div = "card-body2 mb-2";
                             resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
                             nofityvar[i] = { "notifi": "notify2" };
                             notificacao[i] = {"estado": false};
@@ -96,7 +96,7 @@ const ListarVeiculos = () => {
                         
                     }
                     else {
-                        resposta[i].div = "card-body2";
+                        resposta[i].div = "card-body2 mb-2";
                         resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
                         mostrardiv[i] = { "estado": false };
                         resposta[i].notificacoesVaga = response.data.data[i].numero_notificacoes_pendentess;

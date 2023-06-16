@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
 import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
 import { BsCalendarDate, BsCashCoin} from "react-icons/bs";
@@ -9,26 +9,64 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import { IconReload } from "@tabler/icons-react";
+import ModalPix from "./ModalPix";
+import { useDisclosure } from "@mantine/hooks";
 
 
 const Irregularidades = () => {
+  const [opened, { open, close }] = useDisclosure(false);
   const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
   const [estado, setEstado ] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
+  const socketRef = useRef(null);
   const [saldoCredito, setSaldoCredito] = useState(0);
   const [valorCobranca, setValorCobranca] = useState(0);
-  const [cont, setCont] = useState(0);
-  const [filtro, setFiltro] = useState("");
+  const [loading, setOnLoading] = useState(false);
+  const [notification, setNotification] = useState(true);
+  const [pixExpirado, setPixExpirado] = useState("");
+  const [txid, setTxId] = useState("");
+  const [onOpen, setOnOpen] = useState(false);
+  const [vaga, setVaga] = useState("");
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
 
+  const closeSocketConnection = () => {
+    if (socketRef.current) {
+      socketRef.current.close();
+    }
+  };
+
+  useEffect(() => {
+    console.log('setou', txid)
+  }, [txid])
+
   const regularizar = (index) => {
+
+    const select = document.getElementById("pagamentos").value;
+
+    if (select.value === "credito") {
+    if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
+      Swal.fire({
+          icon: 'error',
+          title: 'Saldo insuficiente',
+          footer: '<a href="">Clique aqui para adicionar crédito.</a>'
+        })
+    }else{
+      FuncRegularizao(index);
+    }
+  }else{
+    const valor = data[index].valor.toString()
+    const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -37,46 +75,85 @@ const Irregularidades = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-
-    if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
-      Swal.fire({
-          icon: 'error',
-          title: 'Saldo insuficiente',
-          footer: '<a href="">Clique aqui para adicionar crédito.</a>'
-        })
-    }else{
-    const idVagaVeiculo = data[index].id_vaga_veiculo;
-    requisicao.put('/notificacao/',{
-        "id_vaga_veiculo": idVagaVeiculo,
-        "tipoPagamento": "credito",
-    }).then((response) => {
-      if(response.data.msg.resultado){
-        Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
-        data[index].pago = 'S';
-        setData([...data]);
-      }
-      else {
-        setEstado(true);
-        setMensagem(response.data.msg.msg);
-        setTimeout(() => {
-          setEstado(false);
-          setMensagem("")
-        }, 5000);
-      }
-    }).catch((error) => {
-      if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-      || error?.response?.data?.msg === "Token inválido!" 
-      || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-      localStorage.removeItem("user")
-      localStorage.removeItem("token")
-      localStorage.removeItem("perfil");
+    requisicao.post("/gerarcobranca", {
+      valor: valor2,
+    })
+    .then((resposta) => {
+      if (resposta.data.msg.resultado) {
+        setOnOpen(true)
+        setData2(resposta.data.data);
+        setTxId(resposta.data.data.txid);
+        console.log('SETOU MANO', resposta.data.data.txid);
+        open();
       } else {
-          console.log(error)
+        console.log("n abriu nkk");
       }
     })
-    }
+    .catch((err) => {
+      console.log(err);
+    });
+  }
   }
 
+  useEffect(() => {
+
+    const url = process.env.REACT_APP_WS
+    socketRef.current = new WebSocket(`${url}/websocket`);
+    socketRef.current.onopen = () => {
+      socketRef.current.send("Conexão estabelecida");
+      socketRef.current.send("Olá, servidor!");
+    };
+
+    socketRef.current.onmessage = (event) => {
+      funcPix(event);
+    };
+
+    return () => {
+      socketRef.current.close();
+    };
+  }, [txid]);
+
+  const funcPix = (event, index) => {
+    console.log(txid)
+    const json = JSON.parse(event.data)
+    console.log(json)
+    if (txid !== undefined && json.txid === txid) {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    requisicao.get(`/verificarcobranca/${json.txid}`)
+      .then((resposta) => {
+        console.log(resposta.data)
+        if (resposta.data.msg.resultado) {
+          closeSocketConnection();
+          FuncRegularizao(index);
+          setNotification(false);
+          setTimeout(() => {
+            close();
+            setTimeout(() => {
+              setNotification(true);
+            }, 1000);
+          }, 2000);
+
+        } else {
+          console.log('deu 5 min')
+          setNotification(false)
+          setPixExpirado("Pix expirado")
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+  };
     function ArrumaHora(data) {
     const data2 = data.split("T");
     const data3 = data2[0].split("-");
@@ -85,6 +162,50 @@ const Irregularidades = () => {
     const data5 = data4 + " " + (data6[0]-3) + ":" + data6[1];
     return data5;
     }
+
+    const FuncRegularizao = async (index) => {
+      const select = document.getElementById("pagamentos").value;
+      const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+          token: token,
+          id_usuario: user2.id_usuario,
+          perfil_usuario: user2.perfil[0],
+        },
+      });
+
+      const idVagaVeiculo = data[index].id_vaga_veiculo;
+      requisicao.put('/notificacao/',{
+          "id_vaga_veiculo": idVagaVeiculo,
+          "tipoPagamento": select,
+      }).then((response) => {
+        if(response.data.msg.resultado){
+          Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
+          data[index].pago = 'S';
+          setData([...data]);
+        }
+        else {
+          setEstado(true);
+          setMensagem(response.data.msg.msg);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("")
+          }, 5000);
+        }
+      }).catch((error) => {
+        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+        || error?.response?.data?.msg === "Token inválido!" 
+        || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+        localStorage.removeItem("user")
+        localStorage.removeItem("token")
+        localStorage.removeItem("perfil");
+        } else {
+            console.log(error)
+        }
+      })
+    }
+
+
 
     const startNotificao = async () => {
       const requisicao = axios.create({
@@ -248,6 +369,7 @@ const Irregularidades = () => {
   }
 
   const handleFiltro = (consulta) => {
+    setOnLoading(true)
     setEstado(false)
     setMensagem("")
     const requisicao = axios.create({
@@ -260,6 +382,7 @@ const Irregularidades = () => {
     });
     const base64 = btoa(consulta)
     requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
+      setOnLoading(false)
       if (response.data.msg.resultado){
       setEstado(false)
       const newData = response.data.data.map((item) => ({
@@ -302,7 +425,7 @@ const Irregularidades = () => {
         <div className="col-12">
         <div className="row">
         <div className="col-7">
-        <Filtro nome={'Irregularidades'} onConsultaSelected={handleConsultaSelected}/>
+        <Filtro nome={'Irregularidades'} onConsultaSelected={handleConsultaSelected} onLoading={loading}/>
           </div>
           <div className="col-3 text-end">
             
@@ -397,11 +520,11 @@ const Irregularidades = () => {
                     className="form-select form-select-lg mb-1"
                     aria-label=".form-select-lg example"
                     id="pagamentos"
-                    defaultValue="01:00:00"
+                    defaultValue="saldo"
                   >
-                    <option value="00:30:00">PIX</option>
-                    <option value="01:00:00">
-                      Dinheiro
+                    <option value="pix">PIX</option>
+                    <option value="credito">
+                      Saldo
                     </option>
                   </select>
                   <div className="pt-3 gap-6 d-md-block">
@@ -422,6 +545,9 @@ const Irregularidades = () => {
             {mensagem}
         </div>
         <VoltarComponente />
+
+        <ModalPix qrCode={data2.brcode} status={notification} mensagemPix={pixExpirado} onOpen={onOpen} />
+    
     </div>
   );
 };
