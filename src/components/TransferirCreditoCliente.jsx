@@ -13,6 +13,7 @@ import VoltarComponente from "../util/VoltarComponente";
 
 const TransferirCreditoCliente = () => {
   const [opened, { open, close }] = useDisclosure(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [step, setStep] = useState(0);
   const [mensagemStep, setMensagemStep] = useState(false);
   const [infoDestinatario, setInfoDestinatario] = useState("");
@@ -37,17 +38,14 @@ const TransferirCreditoCliente = () => {
 
   useEffect(() => {
     if (step >= 1 && step <= 4) {
-      console.log(step);
       setTimeout(() => {
         nextStep();
         setStep(step + 1);
       }, 1000);
     }
     if (step === 4) {
-      console.log("chegou");
       setMensagemStep(true);
     } else if (step === 0) {
-      console.log(step);
       for (let i = 0; i < 3; i++) {
         setTimeout(() => {
           prevStep();
@@ -119,6 +117,13 @@ const TransferirCreditoCliente = () => {
   };
 
   const handleTransfer = async () => {
+    setIsButtonDisabled(true);
+    setTimeout(() => {
+      // Habilitar o botão após o atraso
+      setIsButtonDisabled(false);
+    }, 2000);
+
+
     const cpf = extrairNumeros(infoDestinatario);
     let campo = "";
     if (cpf.length === 11) {
@@ -164,7 +169,6 @@ const TransferirCreditoCliente = () => {
           valor: infoDestinatarioValor,
         })
         .then((response) => {
-          console.log(response);
           if (response.data.msg.resultado) {
             open();
             setReadyTransfer(true);
@@ -345,6 +349,7 @@ const TransferirCreditoCliente = () => {
                       onClick={() => {
                         handleTransfer();
                       }}
+                      disabled={isButtonDisabled}
                     >
                       Confirmar
                     </Button>

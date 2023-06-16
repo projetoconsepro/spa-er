@@ -17,6 +17,7 @@ const InserirCreditos = () => {
   const [tabsValue, setTabsValue] = useState("Meios de pagamento");
   const [metodo, setMetodo] = useState(null);
   const [divAvancar, setDivAvancar] = useState(false);
+  const [divAvancar2, setDivAvancar2] = useState(false);
   const [pixExpirado, setPixExpirado] = useState("Sucesso!");
   const [txid, setTxId] = useState(null);
   const [onOpen, setOnOpen] = useState(false);
@@ -33,12 +34,6 @@ const InserirCreditos = () => {
       perfil_usuario: user2.perfil[0],
     },
   });
-
-  if(valor === "outro"){
-    valor = valor2
-  }
-
-  valor = parseFloat(valor.replace(",", ".")).toFixed(2);
 
   requisicao.post("/usuario/saldo", {
     valor: valor,
@@ -63,7 +58,14 @@ const InserirCreditos = () => {
     }
 
     valor = parseFloat(valor.replace(",", ".")).toFixed(2);
-    console.log(valor)
+    console.log(valor, 'valor1')
+    if(valor <= 0 || valor == 'NAN'){
+      setDivAvancar2(true)
+      setTimeout(() => {
+        setDivAvancar2(false)
+      }, 3000);
+    }
+    else{
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -76,7 +78,7 @@ const InserirCreditos = () => {
       },
     });
 
-    requisicao.post("https://localhost:3001/gerarcobranca", {
+    requisicao.post("/gerarcobranca", {
         valor: valor,
       })
       .then((resposta) => {
@@ -93,14 +95,18 @@ const InserirCreditos = () => {
       .catch((err) => {
         console.log(err);
       });
-  };
+  }
+}
 
   useEffect(() => {
+
     // Crie uma conexão WebSocket com o servidor
-    socketRef.current = new WebSocket("ws://localhost:8080/websocket");
+    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
+    
 
     // Quando a conexão é estabelecida
     socketRef.current.onopen = () => {
+      
       socketRef.current.send("Conexão estabelecida");
 
       // Envie uma mensagem para o servidor
@@ -109,7 +115,7 @@ const InserirCreditos = () => {
 
     // Quando uma mensagem é recebida do servidor
     socketRef.current.onmessage = (event) => {
-      funcPix();
+      funcPix(event);
     };
 
     // Cleanup da conexão WebSocket ao desmontar o componente
@@ -138,8 +144,10 @@ const InserirCreditos = () => {
   };
 
 
-  const funcPix = () => {
-    if (txid !== undefined) {
+  const funcPix = (event) => {
+    console.log(txid, 'txid')
+    const json = JSON.parse(event.data)
+    if (txid !== undefined && json.txid === txid) {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -156,14 +164,14 @@ const InserirCreditos = () => {
         console.log(resposta.data)
         if (resposta.data.msg.resultado) {
           closeSocketConnection();
-          inserirCreditos(valor);
+          inserirCreditos(json.valor);
           setNotification(false);
           setTimeout(() => {
             close();
             setTimeout(() => {
               setNotification(true);
-            }, 1000);
-          }, 2000);
+            }, 2000);
+          }, 3000);
 
         } else {
           console.log('deu 5 min')
@@ -307,6 +315,11 @@ const InserirCreditos = () => {
             Registrar transferência ‎
             <IconCheck size="1.125rem" />
           </Button>
+          {divAvancar2 ?
+            <Notification className="mt-3" icon={<IconX size="1.1rem" />} color="red" withBorder={false}>
+            {valor !== "" ? 'Você precisa selecionar um valor acima de R$ 2,00!' : 'Você precisa selecionar algum valor!'}
+            </Notification>
+            : null}
         </Card>
         </Tabs.Panel>
 

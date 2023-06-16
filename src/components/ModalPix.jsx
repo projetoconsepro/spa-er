@@ -10,9 +10,7 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen }) => {
     const [opened, { open, close }] = useDisclosure(false);
 
     useEffect(() => {
-        console.log(onOpen)
         if (onOpen) {
-            console.log('fdppwefgespog')
             open();
         }
     }, [qrCode]);

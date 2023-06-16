@@ -262,7 +262,11 @@ const HistoricoFinanceiro = () => {
         <div className="col-2">
         </div>
         <div className="col-5 p-0">
-        <div className="preco text-start">{`R$ ${item.valor}`},00</div>
+        <div className="preco text-start">
+        {typeof item.valor === 'number' && item.valor.toString()[0] === '0'
+    ? `R$ ${item.valor.toString().replace('.', ',')}`
+    : `R$ ${item.valor},00`}
+        </div>
         </div>
       </div>
     </div>
