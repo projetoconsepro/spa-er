@@ -31,6 +31,7 @@ const Irregularidades = () => {
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [vaga, setVaga] = useState("");
+  const [idVagaVeiculo, setIdVagaVeiculo] = useState("");
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -43,25 +44,23 @@ const Irregularidades = () => {
     }
   };
 
-  useEffect(() => {
-    console.log('setou', txid)
-  }, [txid])
-
   const regularizar = (index) => {
-
+    setIdVagaVeiculo(data[index].id_vaga_veiculo);
     const select = document.getElementById("pagamentos").value;
-
-    if (select.value === "credito") {
-    if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
-      Swal.fire({
-          icon: 'error',
-          title: 'Saldo insuficiente',
-          footer: '<a href="">Clique aqui para adicionar crédito.</a>'
-        })
-    }else{
-      FuncRegularizao(index);
-    }
-  }else{
+    console.log(select, 'select')
+    if (select === "credito") {
+      if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Saldo insuficiente',
+            footer: '<a href="">Clique aqui para adicionar crédito.</a>'
+          })
+      } else {
+        console.log('entrou')
+        FuncRegularizao(index);
+      }
+  } else {
+    console.log('entrou2')
     const valor = data[index].valor.toString()
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
     const token = localStorage.getItem("token");
@@ -83,7 +82,6 @@ const Irregularidades = () => {
         setOnOpen(true)
         setData2(resposta.data.data);
         setTxId(resposta.data.data.txid);
-        console.log('SETOU MANO', resposta.data.data.txid);
         open();
       } else {
         console.log("n abriu nkk");
@@ -114,7 +112,6 @@ const Irregularidades = () => {
   }, [txid]);
 
   const funcPix = (event, index) => {
-    console.log(txid)
     const json = JSON.parse(event.data)
     console.log(json)
     if (txid !== undefined && json.txid === txid) {
@@ -131,10 +128,10 @@ const Irregularidades = () => {
     });
     requisicao.get(`/verificarcobranca/${json.txid}`)
       .then((resposta) => {
-        console.log(resposta.data)
         if (resposta.data.msg.resultado) {
           closeSocketConnection();
           FuncRegularizao(index);
+          setOnOpen(false);
           setNotification(false);
           setTimeout(() => {
             close();
@@ -144,7 +141,6 @@ const Irregularidades = () => {
           }, 2000);
 
         } else {
-          console.log('deu 5 min')
           setNotification(false)
           setPixExpirado("Pix expirado")
         }
@@ -165,6 +161,7 @@ const Irregularidades = () => {
 
     const FuncRegularizao = async (index) => {
       const select = document.getElementById("pagamentos").value;
+      console.log(select)
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -174,13 +171,17 @@ const Irregularidades = () => {
         },
       });
 
-      const idVagaVeiculo = data[index].id_vaga_veiculo;
-      requisicao.put('/notificacao/',{
-          "id_vaga_veiculo": idVagaVeiculo,
+      requisicao.put('/notificacao/', {
+          "id_vaga_veiculo": data[index].id_vaga_veiculo,
           "tipoPagamento": select,
       }).then((response) => {
         if(response.data.msg.resultado){
-          Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
+          Swal.fire({
+            title: "Regularizado!", 
+            text: "A notificação foi regularizada.", 
+            icon: "success",
+            timer: 2000
+          });
           data[index].pago = 'S';
           setData([...data]);
         }
@@ -520,7 +521,7 @@ const Irregularidades = () => {
                     className="form-select form-select-lg mb-1"
                     aria-label=".form-select-lg example"
                     id="pagamentos"
-                    defaultValue="saldo"
+                    defaultValue="pix"
                   >
                     <option value="pix">PIX</option>
                     <option value="credito">

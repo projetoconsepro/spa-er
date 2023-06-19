@@ -146,10 +146,10 @@ function validarPlaca(placa) {
                     }
                 }
                 ).catch(function (error) {
-                              if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
             || error?.response?.data?.msg === "Token inválido!" 
             || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
+            localStorage.removeItem("user")
             localStorage.removeItem("token")
             localStorage.removeItem("perfil");
             } else {
@@ -158,10 +158,8 @@ function validarPlaca(placa) {
                 }
               );
             
-
-                  
-              }else {
-                console.log(vagaa) 
+              } else {
+                console.log('entrou') 
                   requisicao.post('/estacionamento', {
                   placa: placaMaiuscula,
                   numero_vaga: vagaa,
