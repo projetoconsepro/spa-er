@@ -95,8 +95,11 @@ const Irregularidades = () => {
 
   useEffect(() => {
 
-    const url = process.env.REACT_APP_WS
-    socketRef.current = new WebSocket(`${url}/websocket`);
+    const host = process.env.WDS_SOCKET_HOST;
+    const port = process.env.WDS_SOCKET_PORT;
+    const url = `wss://${host}:${port}/websocket`;
+    // Crie uma conexão WebSocket com o servidor
+    socketRef.current = new WebSocket(url);
     socketRef.current.onopen = () => {
       socketRef.current.send("Conexão estabelecida");
       socketRef.current.send("Olá, servidor!");
