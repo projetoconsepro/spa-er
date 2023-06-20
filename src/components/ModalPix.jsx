@@ -12,8 +12,10 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen }) => {
     useEffect(() => {
         if (onOpen) {
             open();
+        } else {
+            close();
         }
-    }, [qrCode]);
+    }, [qrCode, onOpen]);
     
   return (
     <div>

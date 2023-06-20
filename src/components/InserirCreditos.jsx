@@ -22,7 +22,7 @@ const InserirCreditos = () => {
   const [txid, setTxId] = useState(null);
   const [onOpen, setOnOpen] = useState(false);
 
-  const inserirCreditos = (valor) => {
+  const inserirCreditos = (campo) => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -36,7 +36,7 @@ const InserirCreditos = () => {
   });
 
   requisicao.post("/usuario/saldo", {
-    valor: valor,
+    valor: campo,
     pagamento: metodo,
   })
   .then((resposta) => {
@@ -53,13 +53,13 @@ const InserirCreditos = () => {
 
   const fazerPix = (valor) => {
     setOnOpen(true)
-    if(valor === "outro"){
+    if(valor === "outro") {
       valor = valor2
     }
 
     valor = parseFloat(valor.replace(",", ".")).toFixed(2);
     console.log(valor, 'valor1')
-    if(valor <= 0 || valor == 'NAN'){
+    if (valor <= 0 || valor == 'NAN') {
       setDivAvancar2(true)
       setTimeout(() => {
         setDivAvancar2(false)
@@ -80,6 +80,7 @@ const InserirCreditos = () => {
 
     requisicao.post("/gerarcobranca", {
         valor: valor,
+        campo: valor
       })
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
@@ -164,7 +165,7 @@ const InserirCreditos = () => {
         console.log(resposta.data)
         if (resposta.data.msg.resultado) {
           closeSocketConnection();
-          inserirCreditos(json.valor);
+          inserirCreditos(json.campo);
           setNotification(false);
           setTimeout(() => {
             close();

@@ -340,7 +340,7 @@ const ListarVeiculos = () => {
                         </div>
                         <div>
                             <div className="d-flex align-items-center fw-bold">
-                                <FcPlus size={40} />
+                                <FcPlus size={40}  onClick={()=>{FuncTrocaComp('InserirCreditos')}}/>
                             </div>
                         </div>
                     </div>

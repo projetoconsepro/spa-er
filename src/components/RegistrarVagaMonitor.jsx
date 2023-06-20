@@ -78,7 +78,6 @@ const RegistrarVagaMonitor = () => {
     
         // Quando a conexão é estabelecida
         socketRef.current.onopen = () => {
-          
           socketRef.current.send("Conexão estabelecida");
     
           // Envie uma mensagem para o servidor

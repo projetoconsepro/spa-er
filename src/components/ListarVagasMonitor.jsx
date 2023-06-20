@@ -263,7 +263,51 @@ const ListarVagasMonitor = () => {
             }
         })
         if (tempo === '00:00:00') {
-            if(debito === "S"){
+            if ( notificacoes !== 0 || notificacoess !== 0) {
+                Swal.fire({
+                    title: 'Deseja liberar esta vaga?',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonText: 'Liberar',
+                    denyButtonText: `Regularizar`,
+                    denyButtonColor: '#3A58C8',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        requisicao.post(`/estacionamento/saida`, {
+                            idvagaVeiculo: id_vaga
+                        }).then(
+                            response => {
+                                if (response.data.msg.resultado) {
+                                    Swal.fire('Vaga liberada', '', 'success')
+                                    setTimeout(() => {
+                                        getVagas(salvaSetor);
+                                    }, 1000);
+                                } else {
+                                    Swal.fire(`${response.data.msg.msg}`, '', 'error')
+                                }
+                            }
+                        ).catch(function (error) {
+                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                            || error?.response?.data?.msg === "Token inválido!" 
+                            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                                localStorage.removeItem("user")
+            localStorage.removeItem("token")
+            localStorage.removeItem("perfil");
+                            } else {
+                                console.log(error)
+                            }
+                        }
+                        );
+                    }
+                    else if (result.isDenied) {
+                        localStorage.setItem('VagaVeiculoId', id_vaga);
+                        FuncTrocaComp( 'ListarNotificacoes');
+                        
+                }
+                });
+            }
+            else if(debito === "S"){
                 Swal.fire({
                     title: 'Deseja liberar esta vaga?',
                     showDenyButton: true,
@@ -372,50 +416,6 @@ const ListarVagasMonitor = () => {
                     
     
                 })
-            }
-            else if ( notificacoes !== 0 || notificacoess !== 0) {
-                Swal.fire({
-                    title: 'Deseja liberar esta vaga?',
-                    showCancelButton: true,
-                    showDenyButton: true,
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonText: 'Liberar',
-                    denyButtonText: `Regularizar`,
-                    denyButtonColor: '#3A58C8',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        requisicao.post(`/estacionamento/saida`, {
-                            idvagaVeiculo: id_vaga
-                        }).then(
-                            response => {
-                                if (response.data.msg.resultado) {
-                                    Swal.fire('Vaga liberada', '', 'success')
-                                    setTimeout(() => {
-                                        getVagas(salvaSetor);
-                                    }, 1000);
-                                } else {
-                                    Swal.fire(`${response.data.msg.msg}`, '', 'error')
-                                }
-                            }
-                        ).catch(function (error) {
-                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-                            || error?.response?.data?.msg === "Token inválido!" 
-                            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-                            } else {
-                                console.log(error)
-                            }
-                        }
-                        );
-                    }
-                    else if (result.isDenied) {
-                        localStorage.setItem('VagaVeiculoId', id_vaga);
-                        FuncTrocaComp( 'ListarNotificacoes');
-                        
-                }
-                });
             }
             else {
             Swal.fire({

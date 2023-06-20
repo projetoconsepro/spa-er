@@ -51,7 +51,7 @@ const Irregularidades = () => {
 
     const select = document.getElementById("pagamentos").value;
 
-    if (select.value === "credito") {
+    if (select === "credito") {
     if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
       Swal.fire({
           icon: 'error',
@@ -59,7 +59,7 @@ const Irregularidades = () => {
           footer: '<a href="">Clique aqui para adicionar crédito.</a>'
         })
     }else{
-      FuncRegularizao(index);
+      FuncRegularizao(data[index].id_vaga_veiculo, index);
     }
   }else{
     const valor = data[index].valor.toString()
@@ -77,6 +77,7 @@ const Irregularidades = () => {
     });
     requisicao.post("/gerarcobranca", {
       valor: valor2,
+      campo: data[index].id_vaga_veiculo,
     })
     .then((resposta) => {
       if (resposta.data.msg.resultado) {
@@ -96,9 +97,7 @@ const Irregularidades = () => {
   }
 
   useEffect(() => {
-
-    const url = process.env.REACT_APP_WS
-    socketRef.current = new WebSocket(`${url}/websocket`);
+    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
     socketRef.current.onopen = () => {
       socketRef.current.send("Conexão estabelecida");
       socketRef.current.send("Olá, servidor!");
@@ -113,10 +112,8 @@ const Irregularidades = () => {
     };
   }, [txid]);
 
-  const funcPix = (event, index) => {
-    console.log(txid)
+  const funcPix = (event) => {
     const json = JSON.parse(event.data)
-    console.log(json)
     if (txid !== undefined && json.txid === txid) {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
@@ -134,14 +131,11 @@ const Irregularidades = () => {
         console.log(resposta.data)
         if (resposta.data.msg.resultado) {
           closeSocketConnection();
-          FuncRegularizao(index);
+          FuncRegularizao(json.campo);
           setNotification(false);
-          setTimeout(() => {
-            close();
-            setTimeout(() => {
-              setNotification(true);
-            }, 1000);
-          }, 2000);
+          close();
+          setOnOpen(false);
+          setNotification(true);
 
         } else {
           console.log('deu 5 min')
@@ -163,7 +157,7 @@ const Irregularidades = () => {
     return data5;
     }
 
-    const FuncRegularizao = async (index) => {
+    const FuncRegularizao = async (idVagaVeiculo, index) => {
       const select = document.getElementById("pagamentos").value;
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
@@ -174,15 +168,24 @@ const Irregularidades = () => {
         },
       });
 
-      const idVagaVeiculo = data[index].id_vaga_veiculo;
+      console.log(idVagaVeiculo)
       requisicao.put('/notificacao/',{
           "id_vaga_veiculo": idVagaVeiculo,
           "tipoPagamento": select,
       }).then((response) => {
         if(response.data.msg.resultado){
-          Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
+          Swal.fire({
+            title: "Regularizado!", 
+            text: "A notificação foi regularizada.", 
+            icon: "success",
+          timer: 2000
+        });
+          if (index !== undefined) {
           data[index].pago = 'S';
           setData([...data]);
+          } else {
+            startNotificao();
+          }
         }
         else {
           setEstado(true);
@@ -208,6 +211,7 @@ const Irregularidades = () => {
 
 
     const startNotificao = async () => {
+      console.log('entroiu')
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
