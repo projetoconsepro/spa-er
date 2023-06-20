@@ -100,9 +100,11 @@ const InserirCreditos = () => {
 }
 
   useEffect(() => {
-
+    const host = process.env.WDS_SOCKET_HOST;
+    const port = process.env.WDS_SOCKET_PORT;
+    const url = `wss://${host}:${port}/websocket`;
     // Crie uma conexão WebSocket com o servidor
-    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
+    socketRef.current = new WebSocket(url);
     
 
     // Quando a conexão é estabelecida

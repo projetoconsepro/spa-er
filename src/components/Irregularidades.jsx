@@ -31,6 +31,7 @@ const Irregularidades = () => {
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [vaga, setVaga] = useState("");
+  const [idVagaVeiculo, setIdVagaVeiculo] = useState("");
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -43,14 +44,9 @@ const Irregularidades = () => {
     }
   };
 
-  useEffect(() => {
-    console.log('setou', txid)
-  }, [txid])
-
   const regularizar = (index) => {
-
+    setIdVagaVeiculo(data[index].id_vaga_veiculo);
     const select = document.getElementById("pagamentos").value;
-
     if (select === "credito") {
     if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
       Swal.fire({
@@ -84,7 +80,6 @@ const Irregularidades = () => {
         setOnOpen(true)
         setData2(resposta.data.data);
         setTxId(resposta.data.data.txid);
-        console.log('SETOU MANO', resposta.data.data.txid);
         open();
       } else {
         console.log("n abriu nkk");
@@ -128,7 +123,6 @@ const Irregularidades = () => {
     });
     requisicao.get(`/verificarcobranca/${json.txid}`)
       .then((resposta) => {
-        console.log(resposta.data)
         if (resposta.data.msg.resultado) {
           closeSocketConnection();
           FuncRegularizao(json.campo);
@@ -138,7 +132,6 @@ const Irregularidades = () => {
           setNotification(true);
 
         } else {
-          console.log('deu 5 min')
           setNotification(false)
           setPixExpirado("Pix expirado")
         }
@@ -159,6 +152,7 @@ const Irregularidades = () => {
 
     const FuncRegularizao = async (idVagaVeiculo, index) => {
       const select = document.getElementById("pagamentos").value;
+      console.log(select)
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -167,7 +161,6 @@ const Irregularidades = () => {
           perfil_usuario: user2.perfil[0],
         },
       });
-
       console.log(idVagaVeiculo)
       requisicao.put('/notificacao/',{
           "id_vaga_veiculo": idVagaVeiculo,
@@ -524,7 +517,7 @@ const Irregularidades = () => {
                     className="form-select form-select-lg mb-1"
                     aria-label=".form-select-lg example"
                     id="pagamentos"
-                    defaultValue="saldo"
+                    defaultValue="pix"
                   >
                     <option value="pix">PIX</option>
                     <option value="credito">
