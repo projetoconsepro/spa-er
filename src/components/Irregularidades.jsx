@@ -47,20 +47,17 @@ const Irregularidades = () => {
   const regularizar = (index) => {
     setIdVagaVeiculo(data[index].id_vaga_veiculo);
     const select = document.getElementById("pagamentos").value;
-    console.log(select, 'select')
     if (select === "credito") {
-      if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Saldo insuficiente',
-            footer: '<a href="">Clique aqui para adicionar crédito.</a>'
-          })
-      } else {
-        console.log('entrou')
-        FuncRegularizao(index);
-      }
-  } else {
-    console.log('entrou2')
+    if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
+      Swal.fire({
+          icon: 'error',
+          title: 'Saldo insuficiente',
+          footer: '<a href="">Clique aqui para adicionar crédito.</a>'
+        })
+    }else{
+      FuncRegularizao(data[index].id_vaga_veiculo, index);
+    }
+  }else{
     const valor = data[index].valor.toString()
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
     const token = localStorage.getItem("token");
@@ -76,6 +73,7 @@ const Irregularidades = () => {
     });
     requisicao.post("/gerarcobranca", {
       valor: valor2,
+      campo: data[index].id_vaga_veiculo,
     })
     .then((resposta) => {
       if (resposta.data.msg.resultado) {
@@ -94,12 +92,7 @@ const Irregularidades = () => {
   }
 
   useEffect(() => {
-
-    const host = process.env.WDS_SOCKET_HOST;
-    const port = process.env.WDS_SOCKET_PORT;
-    const url = `wss://${host}:${port}/websocket`;
-    // Crie uma conexão WebSocket com o servidor
-    socketRef.current = new WebSocket(url);
+    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
     socketRef.current.onopen = () => {
       socketRef.current.send("Conexão estabelecida");
       socketRef.current.send("Olá, servidor!");
@@ -114,9 +107,8 @@ const Irregularidades = () => {
     };
   }, [txid]);
 
-  const funcPix = (event, index) => {
+  const funcPix = (event) => {
     const json = JSON.parse(event.data)
-    console.log(json)
     if (txid !== undefined && json.txid === txid) {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
@@ -133,15 +125,11 @@ const Irregularidades = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           closeSocketConnection();
-          FuncRegularizao(index);
-          setOnOpen(false);
+          FuncRegularizao(json.campo);
           setNotification(false);
-          setTimeout(() => {
-            close();
-            setTimeout(() => {
-              setNotification(true);
-            }, 1000);
-          }, 2000);
+          close();
+          setOnOpen(false);
+          setNotification(true);
 
         } else {
           setNotification(false)
@@ -162,7 +150,7 @@ const Irregularidades = () => {
     return data5;
     }
 
-    const FuncRegularizao = async (index) => {
+    const FuncRegularizao = async (idVagaVeiculo, index) => {
       const select = document.getElementById("pagamentos").value;
       console.log(select)
       const requisicao = axios.create({
@@ -173,9 +161,9 @@ const Irregularidades = () => {
           perfil_usuario: user2.perfil[0],
         },
       });
-
-      requisicao.put('/notificacao/', {
-          "id_vaga_veiculo": data[index].id_vaga_veiculo,
+      console.log(idVagaVeiculo)
+      requisicao.put('/notificacao/',{
+          "id_vaga_veiculo": idVagaVeiculo,
           "tipoPagamento": select,
       }).then((response) => {
         if(response.data.msg.resultado){
@@ -183,10 +171,14 @@ const Irregularidades = () => {
             title: "Regularizado!", 
             text: "A notificação foi regularizada.", 
             icon: "success",
-            timer: 2000
-          });
+          timer: 2000
+        });
+          if (index !== undefined) {
           data[index].pago = 'S';
           setData([...data]);
+          } else {
+            startNotificao();
+          }
         }
         else {
           setEstado(true);
@@ -212,6 +204,7 @@ const Irregularidades = () => {
 
 
     const startNotificao = async () => {
+      console.log('entroiu')
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
