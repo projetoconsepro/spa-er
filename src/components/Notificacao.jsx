@@ -253,13 +253,35 @@ const Notificacao = () => {
 
 
     const SetdadosTrue = () => {
+        console.log('a')
         const placaString = placa.toString()
         const placaMaiuscula = placaString.toUpperCase();
-        setPlaca(placaMaiuscula);
-        setVaga(vaga);
-        localStorage.setItem("vaga" , vaga);
-        localStorage.setItem("placa", placaMaiuscula);
-        setDados(true);
+        const placaLimpa = placaMaiuscula.replace(/[^a-zA-Z0-9]/g, '');
+        const requisicao = axios.create({
+            baseURL: process.env.REACT_APP_HOST,
+            headers: {
+                'token': token,
+                'id_usuario': user2.id_usuario,
+                'perfil_usuario': "monitor"
+            }
+        });
+        requisicao.get(`/vagas/verifica/${vaga}`).then(
+            response => {
+                if(response.data.msg.resultado){
+                    setPlaca(placaLimpa);   
+                    setVaga(vaga);
+                    localStorage.setItem("vaga" , vaga);
+                    localStorage.setItem("placa", placaLimpa);
+                    setDados(true);
+                } else {
+                    setMensagem(response.data.msg.msg)
+                    setEstado(true)
+                    setTimeout(() => {
+                        setEstado(false);
+                        setMensagem("");
+                    }, 4000);
+                }
+            })
     }
 
     useEffect(() => {
@@ -528,6 +550,10 @@ const Notificacao = () => {
                                             <div className="pt-4 mb-6 gap-2 d-md-block">
                                                 <VoltarComponente />
                                                 <button type="submit" onClick={() => { SetdadosTrue() }} className="btn3 botao">Buscar</button>
+                                            </div>
+
+                                            <div className="alert alert-danger fs-6" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                                                {mensagem}
                                             </div>
                                             
                                         </div>

@@ -1,13 +1,16 @@
 import axios from 'axios';
+import sha256 from 'crypto-js/sha256';
 import { React, useState, useEffect } from 'react'
-import { IconCreditCard, IconUser, IconLock, IconBrandTwitter, IconUserCircle, IconMailbox, IconMail, IconSettings, IconEdit, IconTrash } from '@tabler/icons-react';
-import { Accordion, ActionIcon, Badge, Button, Card, Grid, Group, Input, Text, rem } from '@mantine/core';
+import { IconCreditCard, IconUser, IconLock, IconBrandTwitter, IconUserCircle, IconMailbox, IconMail, IconSettings, IconEdit, IconTrash, IconPhone, IconPassword } from '@tabler/icons-react';
+import { Accordion, ActionIcon, Badge, Button, Card, Grid, Group, Input, PasswordInput, Text, rem } from '@mantine/core';
 import { IconCar } from '@tabler/icons-react';
 import { IconAdjustments } from '@tabler/icons-react';
 import { IconAccessPoint } from '@tabler/icons-react';
 import { IconArrowForwardUpDouble } from '@tabler/icons-react';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { FaEllipsisH, FaEye } from 'react-icons/fa';
+import { IconLockCheck } from '@tabler/icons-react';
+import Swal from 'sweetalert2';
 
 const ConfigurarPerfil = () => {
   const [data, setData] = useState([]);
@@ -17,18 +20,31 @@ const ConfigurarPerfil = () => {
   const [perfil, setPerfil] = useState('');
   const [email, setEmail] = useState('');
   const [email2, setEmail2] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [telefone2, setTelefone2] = useState('');
+  const [senha, setSenha] = useState('');
+  const [senha2, setSenha2] = useState('');
+  const [token, setToken] = useState('');
+  const [idUsuario, setIdUsuario] = useState(null);
   const [isUsernameEnabled, setIsUsernameEnabled] = useState(false);
   const [isEmailEnabled, setIsEmailEnabled] = useState(false);
+  const [isTelefoneEnabled, setIsTelefoneEnabled] = useState(false);
+  const [estado, setEstado] = useState(false);
+  const [mensagem, setMensagem] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
+    setToken(token)
     setUser2(user2.nome);
     setUser(user2.nome);
+    setIdUsuario(user2.id_usuario);
     setPerfil(user2.perfil[0]);
     setEmail(user2.email);
     setEmail2(user2.email);
+    setTelefone(user2.telefone);
+    setTelefone2(user2.telefone);
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -53,16 +69,106 @@ const ConfigurarPerfil = () => {
     setIsEmailEnabled(!isEmailEnabled);
   };
 
+  const handleTelefoneIconClick = () => {
+    setIsTelefoneEnabled(!isTelefoneEnabled);
+  };
+
   const handleCancelClick = () => {
-    setUser('');
-    setEmail('');
+    setUser(user2);
+    setEmail(email2);
+    setTelefone(telefone2)
     setIsUsernameEnabled(false);
     setIsEmailEnabled(false);
+    setIsTelefoneEnabled(false);
   };
 
   const handleSaveClick = () => {
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: idUsuario,
+        perfil_usuario: perfil,
+      },
+    });
 
-  };
+    requisicao.put('/usuario', {
+      nome: user,
+      telefone: telefone,
+    }).then(response => {
+      console.log(response)
+        if (response.data.msg.resultado) {
+          setIsUsernameEnabled(false);
+          setIsTelefoneEnabled(false);
+          setUser(response.data.data.nome);
+          setUser2(response.data.data.nome);
+          setTelefone(response.data.data.telefone);
+          setTelefone2(response.data.data.telefone);
+
+          const userJSON = localStorage.getItem('user');
+          const user = JSON.parse(userJSON);
+
+          user.nome = response.data.data.nome;
+          user.telefone = response.data.data.telefone;
+
+          const updatedUserJSON = JSON.stringify(user);
+          localStorage.setItem('user', updatedUserJSON);
+        } else {
+            setEstado(true);
+            setMensagem(response.data.msg.msg);
+            setTimeout(() => {
+                setEstado(false);
+                setMensagem('');
+            }, 3000);
+        }
+      })
+  }
+
+  const handleCancelClickSenha = () => {
+    setSenha('')
+    setSenha2('')
+  }
+
+  const handleSaveClickSenha = () => {
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: idUsuario,
+        perfil_usuario: perfil,
+      },
+    });
+    if(senha.length >= 8 && !senha.match(/["']/) && senha === senha2){
+    const password = sha256(senha).toString();
+    requisicao.put('/usuario', {
+      senha: password,
+    }).then(response => {
+      console.log(response)
+        if (response.data.msg.resultado) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Senha alterada com sucesso!',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Não foi possível alterar sua senha.',
+            footer: 'Tente novamente!'
+          })
+        }
+      })
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Não foi possível alterar sua senha.',
+      footer: 'Tente novamente!'
+    })
+  }
+}
 
   const goDebito = () => {
     FuncTrocaComp('Configuracoes')
@@ -93,7 +199,7 @@ const ConfigurarPerfil = () => {
           Você está no menu de configurações do seu perfil. Aqui você pode alterar suas informações pessoais.
         </Text>
         {perfil === 'cliente' ?
-          <Button variant="light" color="blue" fullWidth mt="md" radius="md" onClick={() => { FuncTrocaComp('ListarVeiculos') }}>
+          <Button variant="light" color="blue" fullWidth mt="md" radius="md" onClick={() => { FuncTrocaComp('MeusVeiculos') }}>
             Voltar aos meus veículos
           </Button>
           : perfil === 'monitor' ?
@@ -136,7 +242,7 @@ const ConfigurarPerfil = () => {
                   </Grid.Col>
                 </Grid>
               </Input.Wrapper>
-              <Input.Wrapper label="Email:">
+              <Input.Wrapper label="Email:" className="mb-2">
                 <Grid>
                   <Grid.Col span={10}>
                     <Input icon={<IconMail size="1rem" />} placeholder={email} value={email}
@@ -150,10 +256,24 @@ const ConfigurarPerfil = () => {
                   </Grid.Col>
                 </Grid>
               </Input.Wrapper>
+              <Input.Wrapper label="Número de celular:">
+                <Grid>
+                  <Grid.Col span={10}>
+                    <Input icon={<IconPhone size="1rem" />} placeholder={telefone} value={telefone}
+                      onChange={(e) => setTelefone(e.target.value)} disabled={!isTelefoneEnabled}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={2}>
+                    <ActionIcon onClick={handleTelefoneIconClick}>
+                      <IconAdjustments size="1.125rem" />
+                    </ActionIcon>
+                  </Grid.Col>
+                </Grid>
+              </Input.Wrapper>
             </div>
 
             <div className="mt-4">
-              {(isUsernameEnabled || isEmailEnabled) && (user !== user2 || email !== email2) && (
+              {(isUsernameEnabled || isEmailEnabled || isTelefoneEnabled) && (user !== user2 || email !== email2 || telefone !== telefone2) && (
                 <Group position="center" spacing="sm" grow>
                   <Button color="gray" onClick={handleCancelClick}>
                     Cancelar
@@ -171,11 +291,43 @@ const ConfigurarPerfil = () => {
           <Accordion.Control icon={<IconLock size={rem(20)} color='red' />}>
             Alterar senha
           </Accordion.Control>
-          <Accordion.Panel>Content</Accordion.Panel>
+          <Accordion.Panel>
+          <div className="text-start">
+              <Input.Wrapper label="Nova senha:" className="mb-2">
+                <Grid>
+                  <Grid.Col span={12}>
+                    <PasswordInput icon={<IconLock size="1rem" />} placeholder="Digite sua nova senha" value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                    />
+                  </Grid.Col>
+                </Grid>
+              </Input.Wrapper>
+              <Input.Wrapper label="Confirmar nova senha:" className="mb-2">
+                <Grid>
+                  <Grid.Col span={12}>
+                    <PasswordInput icon={<IconLockCheck size="1rem" />} placeholder="Confirme sua nova senha" value={senha2}
+                      onChange={(e) => setSenha2(e.target.value)}
+                    />
+                  </Grid.Col>
+                </Grid>
+              </Input.Wrapper>
+            </div>
+            <div className="mt-4">
+              {senha.length >= 8 && senha2.length >= 8 ?
+                <Group position="center" spacing="sm" grow>
+                  <Button color="gray" onClick={handleCancelClickSenha}>
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleSaveClickSenha} loaderPosition="right">
+                    Salvar
+                  </Button>
+                </Group>
+              : null}
+            </div>
+          </Accordion.Panel>
         </Accordion.Item>
 
         {perfil === 'cliente' && 1 === 2 ?
-
           <Accordion.Item value="cartao">
             <Accordion.Control icon={<IconCreditCard size={rem(20)} />}>
               Meus cartões de crédito
@@ -223,6 +375,9 @@ const ConfigurarPerfil = () => {
           : null
         }
       </Accordion>
+      <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                    {mensagem}
+      </div>
     </div>
   )
 }

@@ -594,7 +594,6 @@ const UsuariosAdmin = () => {
         item.nome,
         item.telefone,
         item.email,
-        item.saldo,
         item.perfil,
         item.ativo === "S" ? "Ativo" : "Inativo",
       ]),
@@ -604,7 +603,6 @@ const UsuariosAdmin = () => {
       "Nome",
       "Telefone",
       "Email",
-      "Saldo",
       "Perfil",
       "Status",
     ];

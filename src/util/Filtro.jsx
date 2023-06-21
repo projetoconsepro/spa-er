@@ -171,7 +171,6 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: 'Vaga', label: 'Vaga' },
         { value: 'Periodo', label: 'Período' },
         { value: 'Motivo', label: 'Motivo' },
-        { value: 'Tipo', label: 'Tipo' }
       ]);
     }
 

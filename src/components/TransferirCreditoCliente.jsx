@@ -359,7 +359,11 @@ const TransferirCreditoCliente = () => {
                 <div className="col-12">
                   <Group position="center" mt="xl">
                     <VoltarComponente />
-                    <Button className="bg-blue-50" onClick={() => getInfo()}>
+                    <Button 
+                    className="bg-blue-50"
+                    size="md"
+                    radius="md"
+                    onClick={() => getInfo()}>
                       Confirmar
                     </Button>
                   </Group>

@@ -414,7 +414,7 @@ const ClientesAdmin = () => {
     }
     
     const imprimir = () => {
-      const dataD = [...data.map((item) => ([item.nome, item.telefone, item.email, item.saldo, item.perfil, item.ativo === 'S' ? 'Ativo' : 'Inativo']))];
+      const dataD = [...data.map((item) => ([item.nome, item.telefone, item.email, `R$${item.saldo}`, item.perfil, item.ativo === 'S' ? 'Ativo' : 'Inativo']))];
       const nomeArquivo = 'Relatório de Clientes'
       const cabecalho = ['Nome', 'Telefone', 'Email', 'Saldo', 'Perfil', 'Status']
       RelatoriosPDF(nomeArquivo, cabecalho, dataD)

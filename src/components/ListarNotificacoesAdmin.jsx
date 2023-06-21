@@ -360,7 +360,7 @@ const ListarNotificacoesAdmin = () => {
         <div className="row mb-3">
         <div className="col-12">
         <div className="row">
-        <div className="col-7">
+        <div className="col-7 mx-2">
         <Filtro nome={'ListarNotificacoesAdmin'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading} />
           </div>
           <div className="col-3 text-end">

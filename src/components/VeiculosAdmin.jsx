@@ -153,7 +153,9 @@ const handleConsultaSelected = (consulta) => {
     <h6 className="text-start mx-4 mb-4">Listar de veículos</h6>
     </div>
     <div className="col-5" id="adicionarUsuario">
+      { 2 === 3 ?  
     <AiOutlinePlusCircle id="iconeAddUsuario" color='#3a58c8'  size={23} />
+    : null}
     </div>
         <div className="col-12 col-xl-8">
         <div className="row">
