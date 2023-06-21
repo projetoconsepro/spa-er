@@ -31,7 +31,6 @@ const Irregularidades = () => {
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [vaga, setVaga] = useState("");
-  const [idVagaVeiculo, setIdVagaVeiculo] = useState("");
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -44,9 +43,14 @@ const Irregularidades = () => {
     }
   };
 
+  useEffect(() => {
+    console.log('setou', txid)
+  }, [txid])
+
   const regularizar = (index) => {
-    setIdVagaVeiculo(data[index].id_vaga_veiculo);
+
     const select = document.getElementById("pagamentos").value;
+
     if (select === "credito") {
     if(parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
       Swal.fire({
@@ -55,7 +59,7 @@ const Irregularidades = () => {
           footer: '<a href="">Clique aqui para adicionar crédito.</a>'
         })
     }else{
-      FuncRegularizao(data[index].id_vaga_veiculo, index);
+      FuncRegularizao(data[index].id_vaga_veiculo, index, select);
     }
   }else{
     const valor = data[index].valor.toString()
@@ -80,6 +84,7 @@ const Irregularidades = () => {
         setOnOpen(true)
         setData2(resposta.data.data);
         setTxId(resposta.data.data.txid);
+        getInfoPix(resposta.data.data.txid, data[index].id_vaga_veiculo);
         open();
       } else {
         console.log("n abriu nkk");
@@ -91,25 +96,43 @@ const Irregularidades = () => {
   }
   }
 
-  useEffect(() => {
-    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
-    socketRef.current.onopen = () => {
-      socketRef.current.send("Conexão estabelecida");
-      socketRef.current.send("Olá, servidor!");
-    };
+  async function getInfoPix(TxId, campo) {
+    const startTime = Date.now();
+    const endTime = startTime + 5 * 60 * 1000;
+  
+    let res = { status: 'ATIVA' };
+  
+    while (Date.now() < endTime && res.status !== 'CONCLUIDA') {
+      const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    res = requisicao.get(`/verificarcobranca/${TxId}`)
+      .then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          res = { status: 'CONCLUIDA' }
+        } else {
+          res = { status: 'ATIVA' }
+        }
+      }
+      ).catch((err) => {
+        console.log(err)
+      });
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
 
-    socketRef.current.onmessage = (event) => {
-      funcPix(event);
-    };
+    funcPix(TxId, campo);
+  }
 
-    return () => {
-      socketRef.current.close();
-    };
-  }, [txid]);
 
-  const funcPix = (event) => {
-    const json = JSON.parse(event.data)
-    if (txid !== undefined && json.txid === txid) {
+  const funcPix = (TxId, campo) => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -121,17 +144,19 @@ const Irregularidades = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-    requisicao.get(`/verificarcobranca/${json.txid}`)
+    requisicao.get(`/verificarcobranca/${TxId}`)
       .then((resposta) => {
+        console.log(resposta.data)
         if (resposta.data.msg.resultado) {
           closeSocketConnection();
-          FuncRegularizao(json.campo);
+          FuncRegularizao(campo, undefined, "pix");
           setNotification(false);
           close();
           setOnOpen(false);
           setNotification(true);
 
         } else {
+          console.log('deu 5 min')
           setNotification(false)
           setPixExpirado("Pix expirado")
         }
@@ -139,7 +164,6 @@ const Irregularidades = () => {
       .catch((err) => {
         console.log(err);
       });
-    }
   };
     function ArrumaHora(data) {
     const data2 = data.split("T");
@@ -150,9 +174,7 @@ const Irregularidades = () => {
     return data5;
     }
 
-    const FuncRegularizao = async (idVagaVeiculo, index) => {
-      const select = document.getElementById("pagamentos").value;
-      console.log(select)
+    const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -161,10 +183,11 @@ const Irregularidades = () => {
           perfil_usuario: user2.perfil[0],
         },
       });
+
       console.log(idVagaVeiculo)
       requisicao.put('/notificacao/',{
           "id_vaga_veiculo": idVagaVeiculo,
-          "tipoPagamento": select,
+          "tipoPagamento": pagamento,
       }).then((response) => {
         if(response.data.msg.resultado){
           Swal.fire({
@@ -204,7 +227,6 @@ const Irregularidades = () => {
 
 
     const startNotificao = async () => {
-      console.log('entroiu')
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -508,7 +530,7 @@ const Irregularidades = () => {
                   className="h6 align-items-start text-start px-4"
                   id="estacionadocarroo"
                 >
-                  <h6> <BsCashCoin />‎ Valor: R${link.valor},00</h6>
+                  <h6> <BsCashCoin />‎ Valor: R${link.valor}</h6>
                 </div>
 
                 {link.pago === "S" ?  (null) : (
@@ -517,7 +539,7 @@ const Irregularidades = () => {
                     className="form-select form-select-lg mb-1"
                     aria-label=".form-select-lg example"
                     id="pagamentos"
-                    defaultValue="pix"
+                    defaultValue="saldo"
                   >
                     <option value="pix">PIX</option>
                     <option value="credito">

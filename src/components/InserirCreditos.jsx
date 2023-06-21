@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import { Group, Text, Card, Button, Radio, Image, Input, Modal, Grid, ActionIcon, CopyButton, Tooltip, Notification, Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowRight, IconCash, IconCheck, IconCopy, IconKey, IconX } from "@tabler/icons-react";
@@ -58,7 +59,7 @@ const InserirCreditos = () => {
     }
 
     valor = parseFloat(valor.replace(",", ".")).toFixed(2);
-    console.log(valor, 'valor1')
+
     if (valor <= 0 || valor == 'NAN') {
       setDivAvancar2(true)
       setTimeout(() => {
@@ -88,6 +89,7 @@ const InserirCreditos = () => {
           console.log(resposta.data.data.txid);
           setData(resposta.data.data);
           setTxId(resposta.data.data.txid);
+          getInfoPix(resposta.data.data.txid, valor);
           open();
         } else {
           console.log("n abriu nkk");
@@ -98,34 +100,6 @@ const InserirCreditos = () => {
       });
   }
 }
-
-  useEffect(() => {
-    const host = process.env.WDS_SOCKET_HOST;
-    const port = process.env.WDS_SOCKET_PORT;
-    const url = `wss://${host}:${port}/websocket`;
-    // Crie uma conexão WebSocket com o servidor
-    socketRef.current = new WebSocket(url);
-    
-
-    // Quando a conexão é estabelecida
-    socketRef.current.onopen = () => {
-      
-      socketRef.current.send("Conexão estabelecida");
-
-      // Envie uma mensagem para o servidor
-      socketRef.current.send("Olá, servidor!");
-    };
-
-    // Quando uma mensagem é recebida do servidor
-    socketRef.current.onmessage = (event) => {
-      funcPix(event);
-    };
-
-    // Cleanup da conexão WebSocket ao desmontar o componente
-    return () => {
-      socketRef.current.close();
-    };
-  }, [txid]);
 
   // Função para fechar a conexão em outro lugar
   const closeSocketConnection = () => {
@@ -146,11 +120,13 @@ const InserirCreditos = () => {
     }
   };
 
-
-  const funcPix = (event) => {
-    console.log(txid, 'txid')
-    const json = JSON.parse(event.data)
-    if (txid !== undefined && json.txid === txid) {
+  async function getInfoPix(TxId, campo) {
+    const startTime = Date.now();
+    const endTime = startTime + 5 * 60 * 1000;
+  
+    let res = { status: 'ATIVA' };
+  
+    while (Date.now() < endTime && res.status !== 'CONCLUIDA') {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -162,12 +138,42 @@ const InserirCreditos = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-    requisicao.get(`/verificarcobranca/${txid}`)
+    res = requisicao.get(`/verificarcobranca/${TxId}`)
+      .then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          res = { status: 'CONCLUIDA' }
+        } else {
+          res = { status: 'ATIVA' }
+        }
+      }
+      ).catch((err) => {
+        console.log(err)
+      });
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+
+    funcPix(TxId, campo);
+  }
+
+
+  const funcPix = (TxId, campo) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    requisicao.get(`/verificarcobranca/${TxId}`)
       .then((resposta) => {
         console.log(resposta.data)
         if (resposta.data.msg.resultado) {
           closeSocketConnection();
-          inserirCreditos(json.campo);
+          inserirCreditos(campo);
           setNotification(false);
           setTimeout(() => {
             close();
@@ -186,7 +192,7 @@ const InserirCreditos = () => {
         console.log(err);
       });
     }
-  };
+
   return (
     <div>
       <Card shadow="sm" padding="lg" radius="md" withBorder>
