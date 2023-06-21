@@ -16,6 +16,7 @@ const ListarNotificacoes = () => {
   const [estado2, setEstado2] = useState(false);
   const [placaSetada, setPlacaSetada] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const [estadoLoading, setEstadoLoading] = useState(false);
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
@@ -263,7 +264,7 @@ const handleConsultaSelected = (consulta) => {
 }
 
 const handleFiltro = (where) => {
-  setEstado2(false)
+  setEstadoLoading(true)
   const requisicao = axios.create({
     baseURL: process.env.REACT_APP_HOST,
     headers: {
@@ -275,7 +276,7 @@ const handleFiltro = (where) => {
   const base64 = btoa(where)
   requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
     console.log(response.data.msg.resultado)
-    setEstado2(true)
+    setEstadoLoading(false)
     if (response.data.msg.resultado){
       setEstado(false)
       const newData = response.data.data.map((item) => ({
@@ -320,7 +321,7 @@ const handleFiltro = (where) => {
         <div className="col-12">
         <div className="row">
         <div className="col-7">
-        <Filtro nome={'ListarNotificacoesAdmin'} onConsultaSelected={handleConsultaSelected}/>
+        <Filtro nome={'ListarNotificacoesAdmin'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
           </div>
           <div className="col-3 text-end">
             

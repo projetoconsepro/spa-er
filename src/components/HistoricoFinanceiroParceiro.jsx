@@ -268,7 +268,7 @@ const handleConsulta = (where) => {
         <div className="col-2">
         </div>
         <div className="col-5 p-0">
-        <div className="preco text-start">{`R$ ${item.valor}`},00</div>
+        <div className="preco text-start">{`R$ ${item.valor}`}</div>
         </div>
         <div className="col-5 text-end">
         {item.tipo === 'regularizacao' && window.innerWidth <= 1110 ? `${item.placa}` :

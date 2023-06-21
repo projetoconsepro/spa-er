@@ -246,7 +246,7 @@ const RegistrarEstacionamentoParceiro = () => {
               setMensagem("");
             }, 3000);
           } else {
-            setMensagem("Erro ao registrar estacionamento");
+            setMensagem(response.data.msg.msg);
             setEstado(true);
             setTimeout(() => {
               setEstado(false);
@@ -330,7 +330,7 @@ const RegistrarEstacionamentoParceiro = () => {
                         setMensagem("");
                       }, 3000);
                     } else {
-                      setMensagem("Erro ao registrar estacionamento");
+                      setMensagem(response.data.msg.msg);
                       setEstado(true);
                       setTimeout(() => {
                         setEstado(false);
@@ -371,7 +371,7 @@ const RegistrarEstacionamentoParceiro = () => {
                         setMensagem("");
                       }, 3000);
                     } else {
-                      setMensagem("Erro ao registrar estacionamento");
+                      setMensagem(response.data.msg.msg);
                       setEstado(true);
                       setTimeout(() => {
                         setEstado(false);
@@ -413,7 +413,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       setMensagem("");
                     }, 3000);
                   } else {
-                    setMensagem("Erro ao registrar estacionamento");
+                    setMensagem(response.data.msg.msg);
                     setEstado(true);
                     setTimeout(() => {
                       setEstado(false);
@@ -534,7 +534,7 @@ const RegistrarEstacionamentoParceiro = () => {
               
     
             } else {
-              console.log('deu 5 min')
+              
               setNotification(false)
               setPixExpirado("Pix expirado")
             }

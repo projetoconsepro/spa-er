@@ -14,6 +14,7 @@ const ListarNotificacoesAgente = () => {
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState('')
     const [sortAsc, setSortAsc] = useState(true);
+    const [estadoLoading, setEstadoLoading] = useState(false)
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -45,7 +46,7 @@ const ListarNotificacoesAgente = () => {
             title: 'Informações da notificação',
             html: `<p><b>Data:</b> ${item.data}</p>
                    <p><b>Placa:</b> ${item.placa}</p>
-                   <p><b>Estado:</b> ${item.pendente === 'N' ? 'Pendente' : 'Quitado'}</p>
+                   <p><b>Estado:</b> ${item.pendente === 'Pendente' ? 'Pendente' : 'Quitado'}</p>
                    <p><b>Modelo:</b> ${item.modelo}</p>
                    <p><b>Fabricante:</b> ${item.fabricante}</p>
                    <p><b>Cor do veículo:</b> ${item.cor}</p>
@@ -141,6 +142,7 @@ const ListarNotificacoesAgente = () => {
 
   const handleFiltro = (where) => {
     setEstado(false)
+    setEstadoLoading(true)
     setMensagem("")
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
@@ -152,7 +154,9 @@ const ListarNotificacoesAgente = () => {
     });
     const base64 = btoa(where)
     requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
-      if (response.data.msg.resultado){
+      if (response.data.data.length !== 0){
+      console.log(response)
+      setEstadoLoading(false)
       setEstado(false)
       const newData = response.data.data.map((item) => ({
         data: ArrumaHora(item.data),
@@ -174,6 +178,8 @@ const ListarNotificacoesAgente = () => {
       setData(newData)
     }
     else {
+      console.log(response)
+      setEstadoLoading(false)
       setData([])
       setEstado(true)
       setMensagem("Não há notificações para exibir")
@@ -199,8 +205,8 @@ const ListarNotificacoesAgente = () => {
         <div className="row mb-3">
         <div className="col-12">
         <div className="row">
-        <div className="col-7">
-        <Filtro nome={'ListarNotificacoesAgente'} onConsultaSelected={handleConsultaSelected} />
+        <div className="col-7 mx-2">
+        <Filtro nome={'ListarNotificacoesAgente'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
           </div>
           <div className="col-3 text-end">
           </div>

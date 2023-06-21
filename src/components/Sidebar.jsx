@@ -171,9 +171,15 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <FaMapMarkerAlt />,
-            name: "‎ Vagas Livres",
-            componente: "VagasLivres",
+            icon: <RiSettings5Fill />,
+            name: "‎ Débito automático",
+            componente: "Configuracoes",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaCarAlt />,
+            name: "‎ Cadastrar Novo Veículo",
+            componente: "CadastrarVeiculo",
         })
         links.push({
             className: styles.className,
@@ -183,15 +189,9 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <RiSettings5Fill />,
-            name: "‎ Configurar veículos",
-            componente: "Configuracoes",
-        })
-        links.push({
-            className: styles.className,
-            icon: <FaCarAlt />,
-            name: "‎ Cadastrar Novo Veículo",
-            componente: "CadastrarVeiculo",
+            icon: <FaMapMarkerAlt />,
+            name: "‎ Vagas Livres",
+            componente: "VagasLivres",
         })
         }
     else if (teste.perfil[0] === "admin"){

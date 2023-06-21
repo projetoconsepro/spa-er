@@ -110,6 +110,7 @@ const RegistrarVagaMonitor = () => {
               console.log(resposta.data.data.txid);
               setData(resposta.data.data);
               setTxId(resposta.data.data.txid);
+              getInfoPix(resposta.data.data.txid, campo)
               setOnOpen(true)
               open();
             } else {
@@ -121,40 +122,14 @@ const RegistrarVagaMonitor = () => {
           });
       }
 
- useEffect(() => {
-    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
-            
-        // Quando a conexão é estabelecida
-        socketRef.current.onopen = () => {
-          
-          socketRef.current.send("Conexão estabelecida");
-    
-          // Envie uma mensagem para o servidor
-          socketRef.current.send("Olá, servidor!");
-        };
-    
-        // Quando uma mensagem é recebida do servidor
-        socketRef.current.onmessage = (event) => {
-          funcPix(event);
-        };
-    
-        // Cleanup da conexão WebSocket ao desmontar o componente
-        return () => {
-          socketRef.current.close();
-        };
-      }, [txid]);
 
-      const closeSocketConnection = () => {
-        if (socketRef.current) {
-          socketRef.current.close();
-        }
-      };
-
-      const funcPix = (event) => {
-        console.log(event.data, 'event.data')
-        const json = JSON.parse(event.data)
-        console.log('json', json)
-        if (txid !== undefined && json.txid === txid) {
+      async function getInfoPix(TxId, campo) {
+        const startTime = Date.now();
+        const endTime = startTime + 5 * 60 * 1000;
+      
+        let res = { status: 'ATIVA' };
+      
+        while (Date.now() < endTime && res.status !== 'CONCLUIDA') {
         const token = localStorage.getItem("token");
         const user = localStorage.getItem("user");
         const user2 = JSON.parse(user);
@@ -166,24 +141,55 @@ const RegistrarVagaMonitor = () => {
             perfil_usuario: user2.perfil[0],
           },
         });
-        requisicao.get(`/verificarcobranca/${txid}`)
+        res = requisicao.get(`/verificarcobranca/${TxId}`)
+          .then((resposta) => {
+            if (resposta.data.msg.resultado) {
+              res = { status: 'CONCLUIDA' }
+            } else {
+              res = { status: 'ATIVA' }
+            }
+          }
+          ).catch((err) => {
+            console.log(err)
+          });
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+        }
+    
+        funcPix(TxId, campo);
+      }
+
+      const closeSocketConnection = () => {
+        if (socketRef.current) {
+          socketRef.current.close();
+        }
+      };
+
+      const funcPix = (Txid, campo) => {
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
+        const user2 = JSON.parse(user);
+        const requisicao = axios.create({
+          baseURL: process.env.REACT_APP_HOST,
+          headers: {
+            token: token,
+            id_usuario: user2.id_usuario,
+            perfil_usuario: user2.perfil[0],
+          },
+        });
+        requisicao.get(`/verificarcobranca/${Txid}`)
           .then((resposta) => {
             console.log(resposta.data)
             if (resposta.data.msg.resultado) {
               closeSocketConnection();
               setNotification(false);
-              console.log(json.campo)
-              registrarEstacionamento(json.campo);
+              registrarEstacionamento(campo);
               setTimeout(() => {
                 close();
                 setTimeout(() => {
                   setNotification(true);
                 }, 2000);
               }, 3000);
-              
-    
             } else {
-              console.log('deu 5 min')
               setNotification(false)
               setPixExpirado("Pix expirado")
             }
@@ -191,7 +197,6 @@ const RegistrarVagaMonitor = () => {
           .catch((err) => {
             console.log(err);
           });
-        }
       };
 
     const parametros = axios.create({
@@ -208,7 +213,6 @@ const RegistrarVagaMonitor = () => {
             }
         })
         if(campo !== undefined){
-            console.log(campo)
             estacionamento.post('/estacionamento', campo ).then(
                 response => {
                     if (response.data.msg.resultado === true) {

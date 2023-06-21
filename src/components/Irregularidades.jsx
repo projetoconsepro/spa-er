@@ -156,7 +156,7 @@ const Irregularidades = () => {
           setNotification(true);
 
         } else {
-          console.log('deu 5 min')
+          
           setNotification(false)
           setPixExpirado("Pix expirado")
         }
