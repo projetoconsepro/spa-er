@@ -174,7 +174,8 @@ const ConfigurarPerfil = () => {
           <Accordion.Panel>Content</Accordion.Panel>
         </Accordion.Item>
 
-        {perfil === 'cliente' ?
+        {perfil === 'cliente' && 1 === 2 ?
+
           <Accordion.Item value="cartao">
             <Accordion.Control icon={<IconCreditCard size={rem(20)} />}>
               Meus cartões de crédito

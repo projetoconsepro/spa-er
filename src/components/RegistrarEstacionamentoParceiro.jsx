@@ -96,6 +96,29 @@ const RegistrarEstacionamentoParceiro = () => {
       },
     });
 
+    let estado;
+
+    await requisicao.get(`/vagas/verifica/${vaga}`) 
+    .then((response) => {
+      if (!response.data.msg.resultado) {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("");
+        }, 4000);
+        estado = true;
+        return;
+      }
+      else {
+        estado = false;
+      }
+    })
+  
+    if (estado) {
+      return;
+    }
+
     const formaPagamentoo = document.getElementById("pagamentos").value;
 
     if (vaga === "") {
@@ -134,24 +157,20 @@ const RegistrarEstacionamentoParceiro = () => {
 
     let campo;
 
-    console.log("a", placaMaiuscula);
     await requisicao
       .get(`/veiculo/${placaMaiuscula}`)
       .then((response) => {
-        console.log("b", response);
         if (response.data.msg.msg === "Dados encontrados") {
           if (response.data.data[0].estacionado[0].estacionado === "S") {
-            console.log("c", response.data);
             campo = {
               placa: placaMaiuscula,
               pagamento: formaPagamentoo,
               numero_vaga: vagaa,
               tempo: tempo,
               id_vaga_veiculo:
-                response.data.data[0].estacionado[0].id_vaga_veiculo,
+              response.data.data[0].estacionado[0].id_vaga_veiculo,
             };
           } else {
-            console.log("D", response.data);
             campo = {
               placa: placaMaiuscula,
               pagamento: formaPagamentoo,
@@ -185,6 +204,7 @@ const RegistrarEstacionamentoParceiro = () => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
           setTxId(resposta.data.data.txid);
+          getInfoPix(resposta.data.data.txid, campo)
           setOnOpen(true);
           open();
         } else {
@@ -452,40 +472,43 @@ const RegistrarEstacionamentoParceiro = () => {
     }
   };
 
-  useEffect(() => {
-    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
-            
-        // Quando a conexão é estabelecida
-        socketRef.current.onopen = () => {
-          
-          socketRef.current.send("Conexão estabelecida");
-    
-          // Envie uma mensagem para o servidor
-          socketRef.current.send("Olá, servidor!");
-        };
-    
-        // Quando uma mensagem é recebida do servidor
-        socketRef.current.onmessage = (event) => {
-          funcPix(event);
-        };
-    
-        // Cleanup da conexão WebSocket ao desmontar o componente
-        return () => {
-          socketRef.current.close();
-        };
-      }, [txid]);
-
-      const closeSocketConnection = () => {
-        if (socketRef.current) {
-          socketRef.current.close();
+  async function getInfoPix(TxId, campo) {
+    const startTime = Date.now();
+    const endTime = startTime + 5 * 60 * 1000;
+  
+    let res = { status: 'ATIVA' };
+  
+    while (Date.now() < endTime && res.status !== 'CONCLUIDA') {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    res = requisicao.get(`/verificarcobranca/${TxId}`)
+      .then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          res = { status: 'CONCLUIDA' }
+        } else {
+          res = { status: 'ATIVA' }
         }
-      };
+      }
+      ).catch((err) => {
+        console.log(err)
+      });
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
 
-      const funcPix = (event) => {
-        console.log(event.data, 'event.data')
-        const json = JSON.parse(event.data)
-        console.log('json', json)
-        if (txid !== undefined && json.txid === txid) {
+    funcPix(TxId, campo);
+  }
+
+
+      const funcPix = (TxId, campo) => {
         const token = localStorage.getItem("token");
         const user = localStorage.getItem("user");
         const user2 = JSON.parse(user);
@@ -497,13 +520,11 @@ const RegistrarEstacionamentoParceiro = () => {
             perfil_usuario: user2.perfil[0],
           },
         });
-        requisicao.get(`/verificarcobranca/${txid}`)
+        requisicao.get(`/verificarcobranca/${TxId}`)
           .then((resposta) => {
             if (resposta.data.msg.resultado) {
-              closeSocketConnection();
               setNotification(false);
-              console.log(json.campo)
-              handleRegistrar(json.campo);
+              handleRegistrar(campo);
               setTimeout(() => {
                 close();
                 setTimeout(() => {
@@ -521,7 +542,6 @@ const RegistrarEstacionamentoParceiro = () => {
           .catch((err) => {
             console.log(err);
           });
-        }
       };
 
   useEffect(() => {

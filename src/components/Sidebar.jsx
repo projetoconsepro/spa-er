@@ -193,12 +193,6 @@ const Sidebar = () => {
             name: "‎ Cadastrar Novo Veículo",
             componente: "CadastrarVeiculo",
         })
-        links.push({
-            className: styles.className,
-            icon: <BiCreditCard />,
-            name: "‎ Cartão de Crédito",
-            componente: "CartaoCredito",
-        })
         }
     else if (teste.perfil[0] === "admin"){
         links.push({
