@@ -1,10 +1,15 @@
 import axios from "axios";
-import React from "react";
+import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import { useDisclosure } from "@mantine/hooks";
+import ModalPix from "./ModalPix";
 
 const RegistrarEstacionamentoParceiro = () => {
+  const [opened, { open, close }] = useDisclosure(false);
+  const socketRef = useRef(null);
+  const [data, setData] = useState([]);
   const [placa, setPlaca] = useState("placa");
   const [textoPlaca, setTextoPlaca] = useState("");
   const [limite, setLimite] = useState(8);
@@ -20,32 +25,48 @@ const RegistrarEstacionamentoParceiro = () => {
   const [valorcobranca2, setValorCobranca2] = useState(0);
   const [token, setToken] = useState("");
   const [user2, setUser2] = useState("");
+  const [notification, setNotification] = useState(true);
+  const [pixExpirado, setPixExpirado] = useState("");
+  const [txid, setTxId] = useState("");
+  const [onOpen, setOnOpen] = useState(false);
 
   const param = async () => {
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
-    })
-    await requisicao.get('/parametros').then(
-        response => {
-            setValorCobranca(response.data.data.param.estacionamento.valorHora)
-        }
-    ).catch(function (error) {
-      localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
     });
-}
+    await requisicao
+      .get("/parametros")
+      .then((response) => {
+        setValorCobranca(response.data.data.param.estacionamento.valorHora);
+      })
+      .catch(function (error) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("perfil");
+      });
+  };
 
-function validarPlaca(placa) {
-  const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-  const regexPlacaNova = /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+  const ValidaFormato = () => {
+    const clicado = document.getElementById("pagamentos").value;
 
-  if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
-    return true;
-  } else {
-    return false;
+    if (clicado === "pix") {
+      fazerPix();
+    } else {
+      handleRegistrar();
+    }
+  };
+
+  function validarPlaca(placa) {
+    const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
+    const regexPlacaNova =
+      /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+
+    if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
+      return true;
+    } else {
+      return false;
+    }
   }
-}
 
   const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
@@ -60,20 +81,22 @@ function validarPlaca(placa) {
     }
   };
 
-  const handleRegistrar = async () => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+  const fazerPix = async () => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
-          'token': token,
-          'id_usuario': user2.id_usuario,
-          'perfil_usuario': user2.perfil[0],
-      }
-    })
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+
+    const formaPagamentoo = document.getElementById("pagamentos").value;
 
     if (vaga === "") {
       setVaga(0);
@@ -86,47 +109,198 @@ function validarPlaca(placa) {
         setEstado(false);
         setMensagem("");
       }, 3000);
+      return;
     }
 
-    const sim = document.getElementById("flexSwitchCheckDefault").checked
-        if (!sim) {
-            if(!validarPlaca(placaMaiuscula)){
-                setEstado(true);
-                setMensagem("Placa inválida");
-                setTimeout(() => {
-                    setEstado(false);
-                    setMensagem("");
-                }, 4000);
-                return;
-            }
-        }
+    const sim = document.getElementById("flexSwitchCheckDefault").checked;
+    if (!sim) {
+      if (!validarPlaca(placaMaiuscula)) {
+        setEstado(true);
+        setMensagem("Placa inválida");
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("");
+        }, 4000);
+        return;
+      }
+    }
 
-    if (textoPlaca.length >= 7) {
-      const vagaa = []
-      if(vaga === ""){
+    const vagaa = [];
+    if (vaga === "") {
       vagaa[0] = 0;
-      }else{
+    } else {
       vagaa[0] = vaga;
+    }
+
+    let campo;
+
+    console.log("a", placaMaiuscula);
+    await requisicao
+      .get(`/veiculo/${placaMaiuscula}`)
+      .then((response) => {
+        console.log("b", response);
+        if (response.data.msg.msg === "Dados encontrados") {
+          if (response.data.data[0].estacionado[0].estacionado === "S") {
+            console.log("c", response.data);
+            campo = {
+              placa: placaMaiuscula,
+              pagamento: formaPagamentoo,
+              numero_vaga: vagaa,
+              tempo: tempo,
+              id_vaga_veiculo:
+                response.data.data[0].estacionado[0].id_vaga_veiculo,
+            };
+          } else {
+            console.log("D", response.data);
+            campo = {
+              placa: placaMaiuscula,
+              pagamento: formaPagamentoo,
+              numero_vaga: vagaa,
+              tempo: tempo,
+            };
+          }
+        } else {
+          campo = {
+            placa: placaMaiuscula,
+            pagamento: formaPagamentoo,
+            numero_vaga: vagaa,
+            tempo: tempo,
+          };
+        }
+      })
+      .catch(function (error) {
+        console.log("a", error);
+      });
+
+    const valor = valorcobranca2.toString();
+    const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
+    console.log(valor2);
+
+    requisicao
+      .post("/gerarcobranca", {
+        valor: valor2,
+        campo: JSON.stringify(campo),
+      })
+      .then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          setData(resposta.data.data);
+          setTxId(resposta.data.data.txid);
+          setOnOpen(true);
+          open();
+        } else {
+          console.log("n abriu nkk");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleRegistrar = async (campo) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const tirarTraco = textoPlaca.split("-").join("");
+    const placaMaiuscula = tirarTraco.toUpperCase();
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+
+    const formaPagamentoo = document.getElementById("pagamentos").value;
+    if (campo !== undefined) {
+      requisicao
+        .post("/estacionamento", campo)
+        .then((response) => {
+          if (response.data.msg.resultado) {
+            setVaga("");
+            setTextoPlaca("");
+            setMensagem("Estacionamento registrado com sucesso");
+            setSuccess(true);
+            setTimeout(() => {
+              setSuccess(false);
+              setMensagem("");
+            }, 3000);
+          } else {
+            setMensagem("Erro ao registrar estacionamento");
+            setEstado(true);
+            setTimeout(() => {
+              setEstado(false);
+              setMensagem("");
+            }, 3000);
+          }
+        })
+        .catch(function (error) {
+          if (
+            error?.response?.data?.msg === "Cabeçalho inválido!" ||
+            error?.response?.data?.msg === "Token inválido!" ||
+            error?.response?.data?.msg ===
+              "Usuário não possui o perfil mencionado!"
+          ) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+            localStorage.removeItem("perfil");
+          } else {
+            console.log(error);
+          }
+        });
+    } else {
+      if (vaga === "") {
+        setVaga(0);
       }
 
-      const formaPagamentoo = document.getElementById("pagamentos").value;
-      console.log(formaPagamentoo)
-      await requisicao.get(`/veiculo/${placaMaiuscula}`).then(
-          response => {
-            console.log('b', response)
-            if(response.data.msg.msg === "Dados encontrados"){
+      if (placaMaiuscula === "" || placaMaiuscula.length < 7) {
+        setMensagem("Preencha o campo placa");
+        setEstado(true);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("");
+        }, 3000);
+      }
+
+      const sim = document.getElementById("flexSwitchCheckDefault").checked;
+      if (!sim) {
+        if (!validarPlaca(placaMaiuscula)) {
+          setEstado(true);
+          setMensagem("Placa inválida");
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("");
+          }, 4000);
+          return;
+        }
+      }
+
+      if (textoPlaca.length >= 7) {
+        const vagaa = [];
+        if (vaga === "") {
+          vagaa[0] = 0;
+        } else {
+          vagaa[0] = vaga;
+        }
+        await requisicao
+          .get(`/veiculo/${placaMaiuscula}`)
+          .then((response) => {
+            console.log("b", response);
+            if (response.data.msg.msg === "Dados encontrados") {
               if (response.data.data[0].estacionado[0].estacionado === "S") {
-                console.log(vagaa)
-                requisicao.post('/estacionamento', {
-                  placa: placaMaiuscula,
-                  numero_vaga: vagaa,
-                  tempo: tempo,
-                  pagamento: formaPagamentoo,
-                  id_vaga_veiculo: response.data.data[0].estacionado[0].id_vaga_veiculo
-                }).then(
-                  response => {
-                    console.log('a', response)
-                    if(response.data.msg.resultado){
+                console.log(vagaa);
+                requisicao
+                  .post("/estacionamento", {
+                    placa: placaMaiuscula,
+                    numero_vaga: vagaa,
+                    tempo: tempo,
+                    pagamento: formaPagamentoo,
+                    id_vaga_veiculo:
+                      response.data.data[0].estacionado[0].id_vaga_veiculo,
+                  })
+                  .then((response) => {
+                    console.log("a", response);
+                    if (response.data.msg.resultado) {
                       setVaga("");
                       setTextoPlaca("");
                       setMensagem("Estacionamento registrado com sucesso");
@@ -135,8 +309,7 @@ function validarPlaca(placa) {
                         setSuccess(false);
                         setMensagem("");
                       }, 3000);
-                    }
-                    else{
+                    } else {
                       setMensagem("Erro ao registrar estacionamento");
                       setEstado(true);
                       setTimeout(() => {
@@ -144,70 +317,30 @@ function validarPlaca(placa) {
                         setMensagem("");
                       }, 3000);
                     }
-                }
-                ).catch(function (error) {
-            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-            localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-                }
-              );
-            
-              } else {
-                console.log('entrou') 
-                  requisicao.post('/estacionamento', {
-                  placa: placaMaiuscula,
-                  numero_vaga: vagaa,
-                  tempo: tempo,
-                  pagamento: formaPagamentoo
-                }).then(
-                    response => {
-                      console.log(response)
-                      if (response.data.msg.resultado) {
-                        setMensagem("Estacionamento registrado com sucesso");
-                        setSuccess(true);
-                        setVaga("");
-                        setTextoPlaca("");
-                        setTimeout(() => {
-                          setSuccess(false);
-                          setMensagem("");
-                        }, 3000);
-                      } else {
-                        setMensagem("Erro ao registrar estacionamento");
-                        setEstado(true);
-                        setTimeout(() => {
-                          setEstado(false);
-                          setMensagem("");
-                        }, 3000);
-                      }
+                  })
+                  .catch(function (error) {
+                    if (
+                      error?.response?.data?.msg === "Cabeçalho inválido!" ||
+                      error?.response?.data?.msg === "Token inválido!" ||
+                      error?.response?.data?.msg ===
+                        "Usuário não possui o perfil mencionado!"
+                    ) {
+                      localStorage.removeItem("user");
+                      localStorage.removeItem("token");
+                      localStorage.removeItem("perfil");
+                    } else {
+                      console.log(error);
                     }
-                ).catch(function (error) {
-                              if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-                }
-              );
-              }
-            } else{
-                requisicao.post('/estacionamento', {
-                placa: placaMaiuscula,
-                numero_vaga: vagaa,
-                tempo: tempo,
-                pagamento: formaPagamentoo
-              }).then(
-                  response => {
-                    console.log(response)
+                  });
+              } else {
+                console.log(vagaa);
+                requisicao.post("/estacionamento", {
+                    placa: placaMaiuscula,
+                    numero_vaga: vagaa,
+                    tempo: tempo,
+                    pagamento: formaPagamentoo,
+                  })
+                  .then((response) => {
                     if (response.data.msg.resultado) {
                       setMensagem("Estacionamento registrado com sucesso");
                       setSuccess(true);
@@ -225,58 +358,171 @@ function validarPlaca(placa) {
                         setMensagem("");
                       }, 3000);
                     }
-                  }
-              ).catch(function (error) {
-                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
+                  })
+                  .catch(function (error) {
+                    if (
+                      error?.response?.data?.msg === "Cabeçalho inválido!" ||
+                      error?.response?.data?.msg === "Token inválido!" ||
+                      error?.response?.data?.msg ===
+                        "Usuário não possui o perfil mencionado!"
+                    ) {
+                      localStorage.removeItem("user");
+                      localStorage.removeItem("token");
+                      localStorage.removeItem("perfil");
+                    } else {
+                      console.log(error);
+                    }
+                  });
               }
-            );
-            }
-          }
-      ).catch(function (error) {
-                    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
             } else {
-                console.log(error)
+              requisicao
+                .post("/estacionamento", {
+                  placa: placaMaiuscula,
+                  numero_vaga: vagaa,
+                  tempo: tempo,
+                  pagamento: formaPagamentoo,
+                })
+                .then((response) => {
+                  if (response.data.msg.resultado) {
+                    setMensagem("Estacionamento registrado com sucesso");
+                    setSuccess(true);
+                    setVaga("");
+                    setTextoPlaca("");
+                    setTimeout(() => {
+                      setSuccess(false);
+                      setMensagem("");
+                    }, 3000);
+                  } else {
+                    setMensagem("Erro ao registrar estacionamento");
+                    setEstado(true);
+                    setTimeout(() => {
+                      setEstado(false);
+                      setMensagem("");
+                    }, 3000);
+                  }
+                })
+                .catch(function (error) {
+                  if (
+                    error?.response?.data?.msg === "Cabeçalho inválido!" ||
+                    error?.response?.data?.msg === "Token inválido!" ||
+                    error?.response?.data?.msg ===
+                      "Usuário não possui o perfil mencionado!"
+                  ) {
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("perfil");
+                  } else {
+                    console.log(error);
+                  }
+                });
             }
+          })
+          .catch(function (error) {
+            if (
+              error?.response?.data?.msg === "Cabeçalho inválido!" ||
+              error?.response?.data?.msg === "Token inválido!" ||
+              error?.response?.data?.msg ===
+                "Usuário não possui o perfil mencionado!"
+            ) {
+              localStorage.removeItem("user");
+              localStorage.removeItem("token");
+              localStorage.removeItem("perfil");
+            } else {
+              console.log(error);
+            }
+          });
       }
-      );
-    }else{
-      console.log('sim')
     }
   };
 
   const atualiza = () => {
-    const tempoo = document.getElementById('tempos').value;
-        setTempo(tempoo);
+    const tempoo = document.getElementById("tempos").value;
+    setTempo(tempoo);
 
-        if(tempoo === "02:00:00"){
-            setValorCobranca2(valorCobranca*2);
+    if (tempoo === "02:00:00") {
+      setValorCobranca2(valorCobranca * 2);
+    } else if (tempoo === "01:00:00") {
+      setValorCobranca2(valorCobranca);
+    } else if (tempoo === "00:30:00") {
+      setValorCobranca2(0.02);
+    } else if (tempoo === "00:10:00") {
+      setValorCobranca2(valorCobranca * 0);
+    } else {
+      setValorCobranca2(valorCobranca * 0);
+    }
+  };
+
+  useEffect(() => {
+    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
+            
+        // Quando a conexão é estabelecida
+        socketRef.current.onopen = () => {
+          
+          socketRef.current.send("Conexão estabelecida");
+    
+          // Envie uma mensagem para o servidor
+          socketRef.current.send("Olá, servidor!");
+        };
+    
+        // Quando uma mensagem é recebida do servidor
+        socketRef.current.onmessage = (event) => {
+          funcPix(event);
+        };
+    
+        // Cleanup da conexão WebSocket ao desmontar o componente
+        return () => {
+          socketRef.current.close();
+        };
+      }, [txid]);
+
+      const closeSocketConnection = () => {
+        if (socketRef.current) {
+          socketRef.current.close();
         }
-        else if(tempoo === "01:00:00"){
-            setValorCobranca2(valorCobranca);
+      };
+
+      const funcPix = (event) => {
+        console.log(event.data, 'event.data')
+        const json = JSON.parse(event.data)
+        console.log('json', json)
+        if (txid !== undefined && json.txid === txid) {
+        const token = localStorage.getItem("token");
+        const user = localStorage.getItem("user");
+        const user2 = JSON.parse(user);
+        const requisicao = axios.create({
+          baseURL: process.env.REACT_APP_HOST,
+          headers: {
+            token: token,
+            id_usuario: user2.id_usuario,
+            perfil_usuario: user2.perfil[0],
+          },
+        });
+        requisicao.get(`/verificarcobranca/${txid}`)
+          .then((resposta) => {
+            if (resposta.data.msg.resultado) {
+              closeSocketConnection();
+              setNotification(false);
+              console.log(json.campo)
+              handleRegistrar(json.campo);
+              setTimeout(() => {
+                close();
+                setTimeout(() => {
+                  setNotification(true);
+                }, 2000);
+              }, 3000);
+              
+    
+            } else {
+              console.log('deu 5 min')
+              setNotification(false)
+              setPixExpirado("Pix expirado")
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         }
-        else if(tempoo === "00:30:00"){
-            setValorCobranca2(valorCobranca/2);
-        }
-        else if(tempoo === "00:10:00"){
-            setValorCobranca2(valorCobranca*0);
-        }
-        else{
-            setValorCobranca2(valorCobranca*0);
-        }
-}
+      };
 
   useEffect(() => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
@@ -316,31 +562,33 @@ function validarPlaca(placa) {
   }, [textoPlaca]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     setToken(token);
     setUser2(user2.perfil[0]);
-    console.log(user2)
-   if(localStorage.getItem('turno') !== 'true' && user2.perfil[0] === "monitor") {
+    console.log(user2);
+    if (
+      localStorage.getItem("turno") !== "true" &&
+      user2.perfil[0] === "monitor"
+    ) {
       FuncTrocaComp("FecharTurno");
-  }
-  localStorage.removeItem("placaCarro");
+    }
+    localStorage.removeItem("placaCarro");
     param();
     setValorCobranca2(1);
     setTempo("00:30:00");
   }, []);
 
   const jae = () => {
-    const sim = document.getElementById("flexSwitchCheckDefault").checked
-    console.log(sim)
+    const sim = document.getElementById("flexSwitchCheckDefault").checked;
+    console.log(sim);
     if (sim === true) {
-        setLimite(10);
+      setLimite(10);
+    } else {
+      setLimite(8);
     }
-    else{
-        setLimite(8);
-    }
-}
+  };
 
   return (
     <div className="container">
@@ -355,7 +603,7 @@ function validarPlaca(placa) {
             </div>
             <div className="row">
               <div className="col-9 px-3 mt-4 pt-2">
-                <h6 >Placa estrangeira/Outra</h6>
+                <h6>Placa estrangeira/Outra</h6>
               </div>
               <div className="col-3 px-3">
                 <div className="form-check form-switch gap-2 d-md-block">
@@ -365,7 +613,9 @@ function validarPlaca(placa) {
                     role="switch"
                     onClick={handlePlaca}
                     id="flexSwitchCheckDefault"
-                    onChange={() => {jae()}}
+                    onChange={() => {
+                      jae();
+                    }}
                   />
                 </div>
               </div>
@@ -393,37 +643,57 @@ function validarPlaca(placa) {
                 />
               </div>
             </div>
-            <div className="text-start mt-3 mb-1 px-2" onChange={() => {atualiza()}}>
+            <div
+              className="text-start mt-3 mb-1 px-2"
+              onChange={() => {
+                atualiza();
+              }}
+            >
               <h6>Selecione o tempo:</h6>
               <select
                 className="form-select form-select-lg mb-2"
                 aria-label=".form-select-lg example"
-                id="tempos" defaultValue="00:30:00"
+                id="tempos"
+                defaultValue="00:30:00"
               >
                 {user2 === "monitor" ? (
                   <option value="00:10:00">Tolerância</option>
-                ) : ( null ) }
+                ) : null}
                 <option value="00:30:00">30 Minutos</option>
                 <option value="01:00:00">60 Minutos</option>
                 <option value="02:00:00">120 Minutos</option>
-                </select>
-                <p id="tempoCusto" className="text-end"> Valor a ser cobrado: R$ {valorcobranca2},00 </p>
+              </select>
+              <p id="tempoCusto" className="text-end">
+                {" "}
+                Valor a ser cobrado: R$ {valorcobranca2},00{" "}
+              </p>
             </div>
 
-            <div className="h6 mt-1 mb-4" >
-                 <p className='text-start'>Forma de pagamento:</p>
-                 <select className="form-select form-select-lg mb-3" defaultValue="dinheiro" aria-label=".form-select-lg example" id="pagamentos">
-                 <option value="dinheiro">Dinheiro</option>
-                 <option value="pix">PIX</option>
-                 {user2 === "monitor" ? (
+            <div className="h6 mt-1 mb-4">
+              <p className="text-start">Forma de pagamento:</p>
+              <select
+                className="form-select form-select-lg mb-3"
+                defaultValue="dinheiro"
+                aria-label=".form-select-lg example"
+                id="pagamentos"
+              >
+                <option value="dinheiro">Dinheiro</option>
+                <option value="pix">PIX</option>
+                {user2 === "monitor" ? (
                   <option value="parkimetro">Parkimetro</option>
-                ) : ( null ) }
-                 </select>
+                ) : null}
+              </select>
             </div>
 
             <div className="mb-2 mt-3 gap-2 d-md-block">
               <VoltarComponente />
-              <button type="submit" onClick={() => {handleRegistrar();}} className="btn3 botao">
+              <button
+                type="submit"
+                onClick={() => {
+                  ValidaFormato();
+                }}
+                className="btn3 botao"
+              >
                 Registrar
               </button>
             </div>
@@ -431,7 +701,7 @@ function validarPlaca(placa) {
               className="alert alert-danger mt-4"
               role="alert"
               style={{ display: estado ? "block" : "none" }}
-              >
+            >
               {mensagem}
             </div>
             <div
@@ -444,7 +714,9 @@ function validarPlaca(placa) {
           </div>
         </div>
       </div>
+      <ModalPix qrCode={data.brcode} status={notification} mensagemPix={pixExpirado} onOpen={onOpen} />
     </div>
   );
 };
+
 export default RegistrarEstacionamentoParceiro;

@@ -35,6 +35,35 @@ const RegistrarVagaMonitor = () => {
     const user2 = JSON.parse(user);
 
     const fazerPix = () => {
+        const placaString = placaVeiculo.toString()
+        const placaMaiuscula = placaString.toUpperCase();
+        const vagaa = [];
+        vagaa[0] = localStorage.getItem('vaga');
+        if(placaVeiculo === ""){
+            setInputPlaca("form-control fs-5 is-invalid");
+            setEstado(true); 
+            setMensagem("Preencha o campo placa");
+            setTimeout(() => {
+                setInputPlaca("form-control fs-5");
+                setEstado(false);
+                setMensagem("");
+            }, 4000);
+            return;
+        }
+        const sim = document.getElementById("flexSwitchCheckDefault").checked
+        if (!sim) {
+            if(!validarPlaca(placaMaiuscula)){
+                setInputPlaca("form-control fs-5 is-invalid");
+                setEstado(true);
+                setMensagem("Placa inválida");
+                setTimeout(() => {
+                    setInputPlaca("form-control fs-5");
+                    setEstado(false);
+                    setMensagem("");
+                }, 4000);
+                return;
+            }
+        }
         const valor = valorcobranca2.toString()
         const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
         console.log(valor2)
@@ -49,9 +78,31 @@ const RegistrarVagaMonitor = () => {
             perfil_usuario: user2.perfil[0],
           },
         });
+
+        let campo = "";
+
+        if (localStorage.getItem('popup')) {
+            const idvaga = localStorage.getItem('id_vagaveiculo');
+            campo = {
+                "placa": placaMaiuscula,
+                "numero_vaga": vagaa,
+                "tempo": tempo,
+                "pagamento": 'pix',
+                "id_vaga_veiculo": idvaga
+            };
+        }
+        else {
+            campo = {
+                "placa": placaMaiuscula,
+                "numero_vaga": vagaa,
+                "tempo": tempo,
+                "pagamento": 'pix'
+            };
+        }
     
         requisicao.post("/gerarcobranca", {
             valor: valor2,
+            campo: JSON.stringify(campo),
           })
           .then((resposta) => {
             if (resposta.data.msg.resultado) {
@@ -70,17 +121,12 @@ const RegistrarVagaMonitor = () => {
           });
       }
 
-    useEffect(() => {
-
-        const host = process.env.WDS_SOCKET_HOST;
-        const port = process.env.WDS_SOCKET_PORT;
-        const url = `wss://${host}:${port}/websocket`;
-        // Crie uma conexão WebSocket com o servidor
-        socketRef.current = new WebSocket(url);
+ useEffect(() => {
+    socketRef.current = new WebSocket(`${process.env.REACT_APP_WS}/websocket`);
             
-    
         // Quando a conexão é estabelecida
         socketRef.current.onopen = () => {
+          
           socketRef.current.send("Conexão estabelecida");
     
           // Envie uma mensagem para o servidor
@@ -105,8 +151,9 @@ const RegistrarVagaMonitor = () => {
       };
 
       const funcPix = (event) => {
-        console.log(txid, 'txid')
+        console.log(event.data, 'event.data')
         const json = JSON.parse(event.data)
+        console.log('json', json)
         if (txid !== undefined && json.txid === txid) {
         const token = localStorage.getItem("token");
         const user = localStorage.getItem("user");
@@ -125,7 +172,8 @@ const RegistrarVagaMonitor = () => {
             if (resposta.data.msg.resultado) {
               closeSocketConnection();
               setNotification(false);
-              registrarEstacionamento();
+              console.log(json.campo)
+              registrarEstacionamento(json.campo);
               setTimeout(() => {
                 close();
                 setTimeout(() => {
@@ -150,7 +198,7 @@ const RegistrarVagaMonitor = () => {
         baseURL: process.env.REACT_APP_HOST,
     })
 
-    const registrarEstacionamento = () => {
+    const registrarEstacionamento = (campo) => {
         const estacionamento = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -159,6 +207,42 @@ const RegistrarVagaMonitor = () => {
                 'perfil_usuario': "monitor"
             }
         })
+        if(campo !== undefined){
+            console.log(campo)
+            estacionamento.post('/estacionamento', campo ).then(
+                response => {
+                    if (response.data.msg.resultado === true) {
+                        localStorage.removeItem('vaga');
+                        localStorage.removeItem('popup');
+                        localStorage.removeItem('id_vagaveiculo');
+                        FuncTrocaComp( 'ListarVagasMonitor')
+                        
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.data.msg.msg,
+                            footer: '<a href="">Por favor, tente novamente.</a>'
+                          })
+    
+                    }
+                }
+            ).catch(function (error) {
+                if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                || error?.response?.data?.msg === "Token inválido!" 
+                || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+                    localStorage.removeItem("user")
+                localStorage.removeItem("token")
+                localStorage.removeItem("perfil");
+                } else {
+                    console.log(error)
+                }
+            });
+
+
+        }
+        else {
         const placaString = placaVeiculo.toString()
         const placaMaiuscula = placaString.toUpperCase();
         const vagaa = [];
@@ -263,6 +347,7 @@ const RegistrarVagaMonitor = () => {
             }
         }
     )
+    }
     }
     }
 
@@ -374,7 +459,6 @@ const RegistrarVagaMonitor = () => {
         }
         else {
             setVisible(false);
-
         }  
     }, [])
 
