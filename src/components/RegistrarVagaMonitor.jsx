@@ -7,6 +7,7 @@ import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { useDisclosure } from '@mantine/hooks';
 import ModalPix from './ModalPix';
+import { Loader } from '@mantine/core';
 
 const RegistrarVagaMonitor = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -16,7 +17,7 @@ const RegistrarVagaMonitor = () => {
     const [estado, setEstado] = useState(false);
     const [placaVeiculo, setPlacaVeiculo] = useState("");
     const [tempo, setTempo] = useState("00:10:00");
-    const [valor, setValor] = useState("");
+    const [valor, setValor] = useState("dinheiro");
     const [mostrapag, SetMostrapag] = useState(false);
     const [valorCobranca, setValorCobranca] = useState(0);
     const [valorcobranca2, setValorCobranca2] = useState(0);
@@ -29,6 +30,7 @@ const RegistrarVagaMonitor = () => {
     const [pixExpirado, setPixExpirado] = useState("");
     const [txid, setTxId] = useState("");
     const [onOpen, setOnOpen] = useState(false);
+    const [estado2, setEstado2] = useState(false);
 
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -203,6 +205,12 @@ const RegistrarVagaMonitor = () => {
         baseURL: process.env.REACT_APP_HOST,
     })
 
+    useEffect(() => {
+        if(estado2){
+            console.log('as fsafsdf')
+        }
+    }, [estado2])
+
     const registrarEstacionamento = (campo) => {
         const estacionamento = axios.create({
             baseURL: process.env.REACT_APP_HOST,
@@ -213,9 +221,12 @@ const RegistrarVagaMonitor = () => {
             }
         })
         if(campo !== undefined){
+            setEstado2(true)
             estacionamento.post('/estacionamento', campo ).then(
                 response => {
+                    setEstado2(true)
                     if (response.data.msg.resultado === true) {
+                        setEstado2(false)
                         localStorage.removeItem('vaga');
                         localStorage.removeItem('popup');
                         localStorage.removeItem('id_vagaveiculo');
@@ -223,6 +234,7 @@ const RegistrarVagaMonitor = () => {
                         
                     }
                     else {
+                        setEstado2(false)
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
@@ -277,7 +289,8 @@ const RegistrarVagaMonitor = () => {
             }
         }
 
-     if (localStorage.getItem('popup')) {
+        if (localStorage.getItem('popup') == 'true' ){
+        setEstado2(true)
         const idvaga = localStorage.getItem('id_vagaveiculo');
         estacionamento.post('/estacionamento', {
             placa: placaMaiuscula,
@@ -288,6 +301,7 @@ const RegistrarVagaMonitor = () => {
         }).then(
             response => {
                 if (response.data.msg.resultado === true) {
+                    setEstado2(false)
                     localStorage.removeItem('vaga');
                     localStorage.removeItem('popup');
                     localStorage.removeItem('id_vagaveiculo');
@@ -295,6 +309,7 @@ const RegistrarVagaMonitor = () => {
                     
                 }
                 else {
+                    setEstado2(false)
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
@@ -318,6 +333,7 @@ const RegistrarVagaMonitor = () => {
         
      }
      else {
+        setEstado2(true)
         estacionamento.post('/estacionamento', {
         placa: placaMaiuscula,
         numero_vaga: vagaa,
@@ -326,11 +342,12 @@ const RegistrarVagaMonitor = () => {
         }).then(
             response => {
               if(response.data.msg.resultado === true){
+                setEstado2(false)
                 localStorage.removeItem('vaga');
                 FuncTrocaComp('ListarVagasMonitor')
-                
               }
               else {
+                setEstado2(false)
                 setEstado(true);
                 setMensagem(response.data.msg.msg);
                 setTimeout(() => {
@@ -407,7 +424,6 @@ const RegistrarVagaMonitor = () => {
                 const placaMaiuscula = placaString.toUpperCase();
                 localStorage.setItem('placa',`${placaMaiuscula}`)
                 FuncTrocaComp('Notificacao')
-                
                 }
                 else{
                     setEstado(true);
@@ -453,7 +469,7 @@ const RegistrarVagaMonitor = () => {
         }
         setTipoVaga(localStorage.getItem('tipoVaga'))
         param();
-        if (localStorage.getItem('popup')) {
+        if (localStorage.getItem('popup') == 'true' ){
             setPlacaVeiculo(localStorage.getItem('placa'))
             setVisible(true);
             setValorCobranca2(1);
@@ -464,6 +480,8 @@ const RegistrarVagaMonitor = () => {
         else {
             setVisible(false);
         }  
+
+        
     }, [])
 
     const jae = () => {
@@ -516,9 +534,15 @@ const RegistrarVagaMonitor = () => {
                                     :
                                     <select className="form-select form-select-lg mb-3" defaultValue="00:10:00" aria-label=".form-select-lg example" id="tempos">
                                     <option value="00:10:00">Tolerância</option>
-                                    <option value="00:30:00">30</option>
-                                    <option value="01:00:00">60</option>
-                                    <option value="02:00:00">120</option>
+                                    {tipoVaga === "cadeirante" || tipoVaga === "idoso" ? null : 
+                                        <option value="00:30:00">30</option>
+                                    }
+                                    {tipoVaga === "cadeirante" || tipoVaga === "idoso" ? null : 
+                                        <option value="01:00:00">60</option>
+                                    }
+                                    {tipoVaga === "cadeirante" || tipoVaga === "idoso" ? null : 
+                                        <option value="02:00:00">120</option>
+                                    }
                                     <option value="notificacao">Notificação</option>
                                     </select>
                                     }
@@ -534,15 +558,19 @@ const RegistrarVagaMonitor = () => {
                                 </select>
                             </div>
 
-                            <div className="pt-4 mb-6 gap-2 d-md-block">
+                            <div className="pt-4 mb-4 gap-2 d-md-block">
                                 <VoltarComponente onClick={() => HangleBack()} />
                                 <button type="submit" onClick={handleSubmit} className="btn3 botao">Confirmar</button>
                             </div>
-                            <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                            <div className="alert alert-danger mt-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
+                            </div>
+                            <div style={{ display: estado2 ? 'block' : 'none'}}>
+                                <Loader />
                             </div>
                         </div>
                     </div>
+                    
                 </div>
                 <ModalPix qrCode={data.brcode} status={notification} mensagemPix={pixExpirado} onOpen={onOpen} />
             </div>

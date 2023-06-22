@@ -5,6 +5,7 @@ import { FaCarAlt, FaEdit } from 'react-icons/fa';
 import arrayCores from '../services/cores';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
+import { Button, Loader } from '@mantine/core';
 
 const Notificacao = () => {
     const token = localStorage.getItem('token');
@@ -30,10 +31,20 @@ const Notificacao = () => {
     const [tipoNot, setTipoNot] = useState("1");
     const [tiposNotificacao, setTiposNot] = useState([]);
     const [outro, setOutro] = useState (true);
+    const [estado2, setEstado2] = useState(false);
     let [cont, setCont] = useState(0);
 
-
     const submit = async () => {
+        setEstado2(true)
+        if(imagens.length === 0){
+                setEstado2(false)
+                setMensagem("Necessário retirar fotos do veículo")
+                setEstado(true)
+                setTimeout(() => {
+                    setEstado(false);
+                    setMensagem("");
+                }, 4000);
+        } else {
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -42,10 +53,10 @@ const Notificacao = () => {
                 'perfil_usuario': "monitor"
             }
         });
-        if (infoBanco === false) {
+        if (!infoBanco) {
                 const getmodelo = document.getElementById("selectModelos").value;
                 const getfabricante = document.getElementById("selectFabricantes").value;
-            if (outro === true){
+            if (outro === true) {
                 const getcor = document.getElementById("selectCores").value;
                 if (getmodelo === "" || getfabricante === "" || getcor === "") {
                     setMensagem("Necessário selecionar modelo, fabricante e cor")
@@ -113,6 +124,7 @@ const Notificacao = () => {
             "imagens": imagens,
     }).then(
             response => {
+                setEstado2(false)
                 if(response.data.msg.resultado === true){
                     FuncTrocaComp( "ListarVagasMonitor");
                     localStorage.removeItem("vaga");
@@ -144,6 +156,7 @@ const Notificacao = () => {
             "imagens": imagens,
     }).then(
             response => {
+                setEstado2(false)
                 if(response.data.msg.resultado === true){
                     FuncTrocaComp( "ListarVagasMonitor");
                     localStorage.removeItem("vaga");
@@ -176,6 +189,7 @@ const Notificacao = () => {
         setMensagem("");
     }, 4000);
  }
+}
 }
 
     const back = () => {
@@ -253,7 +267,8 @@ const Notificacao = () => {
 
 
     const SetdadosTrue = () => {
-        console.log('a')
+        setEstado2(true)
+        let vaga2 = vaga;
         const placaString = placa.toString()
         const placaMaiuscula = placaString.toUpperCase();
         const placaLimpa = placaMaiuscula.replace(/[^a-zA-Z0-9]/g, '');
@@ -265,15 +280,21 @@ const Notificacao = () => {
                 'perfil_usuario': "monitor"
             }
         });
-        requisicao.get(`/vagas/verifica/${vaga}`).then(
+        if(vaga.length === 0){
+            vaga2[0] = [0]
+        }
+        console.log(vaga)
+        requisicao.get(`/vagas/verifica/${vaga2}`).then(
             response => {
                 if(response.data.msg.resultado){
+                    setEstado2(false)
                     setPlaca(placaLimpa);   
                     setVaga(vaga);
                     localStorage.setItem("vaga" , vaga);
                     localStorage.setItem("placa", placaLimpa);
                     setDados(true);
                 } else {
+                    setEstado2(false)
                     setMensagem(response.data.msg.msg)
                     setEstado(true)
                     setTimeout(() => {
@@ -549,19 +570,32 @@ const Notificacao = () => {
                                             </div>
                                             <div className="pt-4 mb-6 gap-2 d-md-block">
                                                 <VoltarComponente />
-                                                <button type="submit" onClick={() => { SetdadosTrue() }} className="btn3 botao">Buscar</button>
+                                                <Button 
+                                                loading={estado2} 
+                                                onClick={() => { SetdadosTrue() }}
+                                                loaderPosition="right"
+                                                className="bg-blue-50"
+                                                size="md"
+                                                radius="md"
+                                                >
+                                                    Buscar
+                                                </Button>
                                             </div>
 
                                             <div className="alert alert-danger fs-6" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                                 {mensagem}
                                             </div>
-                                            
                                         </div>
                                     }
                                 </div>
                             }
+                            <div style={{ display: estado2 ? 'block' : 'none'}}>
+                                <Loader />
+                            </div>
                         </div>
+                        
                     </div>
+                    
                 </div>
             </div>
         </section>
