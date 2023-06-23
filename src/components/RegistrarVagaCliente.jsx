@@ -118,6 +118,9 @@ const RegistrarVagaCliente = () => {
         else if(tempo1 === "01:00:00"){
             setValorCobranca2(valorcobranca);
         }
+        else if (tempo1 === "01:30:00"){
+            setValorCobranca2(valorcobranca*1.5);
+        }
         else if(tempo1 === "00:30:00"){
             setValorCobranca2(valorcobranca/2);
         }
@@ -207,6 +210,7 @@ const RegistrarVagaCliente = () => {
                                 <select className="form-select form-select-lg mb-1"  defaultValue="01:00:00" aria-label=".form-select-lg example" id="tempos">
                                     <option value="00:30:00">30 Minutos</option>
                                     <option value="01:00:00">60 Minutos</option>
+                                    <option value="01:30:00">90 Minutos</option>
                                     <option value="02:00:00">120 Minutos</option>
                                 </select>
                                 <p id="tempoCusto" className="text-end">Esse tempo ira custar: R$ {valorcobranca2},00 </p>

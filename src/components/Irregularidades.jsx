@@ -328,7 +328,7 @@ const Irregularidades = () => {
       });
       setTimeout(() => {
         localStorage.removeItem("placaCarro");
-      }, 2000);
+      }, 4000);
     } 
 
   useEffect(() => {
