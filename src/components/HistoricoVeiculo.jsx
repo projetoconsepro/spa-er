@@ -72,7 +72,7 @@ const HistoricoVeiculo = () => {
             const newData = arraySemNulos.map((item) => ({
               vaga: item.numerovaga,
               chegada:
-                item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+                item.chegada,
               horafinal:
                 item.horafinal[0] +
                 ":" +
@@ -183,7 +183,7 @@ const HistoricoVeiculo = () => {
         const newData = arraySemNulos.map((item) => ({
           vaga: item.numerovaga,
           chegada:
-            item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+            item.chegada,
           horafinal:
             item.horafinal[0] +
             ":" +

@@ -105,6 +105,9 @@ const RegistrarVagaCliente = () => {
         else if(tempo1 === "01:00:00"){
             return valorcobranca;
         }
+        else if (tempo1 === "01:30:00"){
+            return valorcobranca*1.5;
+        }
         else if(tempo1 === "00:30:00"){
             return valorcobranca/2;
         }

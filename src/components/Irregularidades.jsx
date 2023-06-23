@@ -37,11 +37,6 @@ const Irregularidades = () => {
     setData([...data]);
   };
 
-  const closeSocketConnection = () => {
-    if (socketRef.current) {
-      socketRef.current.close();
-    }
-  };
 
   useEffect(() => {
     console.log('setou', txid)
@@ -148,7 +143,6 @@ const Irregularidades = () => {
       .then((resposta) => {
         console.log(resposta.data)
         if (resposta.data.msg.resultado) {
-          closeSocketConnection();
           FuncRegularizao(campo, undefined, "pix");
           setNotification(false);
           close();
@@ -184,7 +178,6 @@ const Irregularidades = () => {
         },
       });
 
-      console.log(idVagaVeiculo)
       requisicao.put('/notificacao/',{
           "id_vaga_veiculo": idVagaVeiculo,
           "tipoPagamento": pagamento,
