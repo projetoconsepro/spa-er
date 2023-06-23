@@ -24,7 +24,6 @@ const AdicionarCreditos = () => {
     const [estado2, setEstado2] = useState(false);
         
     async function getInfoPix(TxId, campo) {
-        console.log('txid', TxId)
         const startTime = Date.now();
         const endTime = startTime + 5 * 60 * 1000;
       

@@ -83,7 +83,7 @@ const RegistrarVagaMonitor = () => {
 
     let campo = "";
 
-    if (localStorage.getItem("popup")) {
+    if (localStorage.getItem("popup") == "true") {
       const idvaga = localStorage.getItem("id_vagaveiculo");
       campo = {
         placa: placaMaiuscula,
@@ -416,8 +416,7 @@ const RegistrarVagaMonitor = () => {
       setValorCobranca2(valorCobranca/2);
     } else if (tempoo === "01:30:00"){
         setValorCobranca2(valorCobranca*1.5);
-    }
-    else if (tempoo === "00:10:00") {
+    } else if (tempoo === "00:10:00") {
       setValorCobranca2(valorCobranca * 0);
     } else {
       if (placaVeiculo !== "") {

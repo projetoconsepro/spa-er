@@ -9,8 +9,11 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import { Loader } from '@mantine/core';
+import ModalPix from "./ModalPix";
+import { useDisclosure } from "@mantine/hooks";
 
 const ListarNotificacoes = () => {
+  const [opened, { open, close }] = useDisclosure(false);
   const [data, setData] = useState([]);
   const [estado, setEstado ] = useState(false);
   const [estado2, setEstado2] = useState(false);
@@ -22,13 +25,125 @@ const ListarNotificacoes = () => {
   const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
+  const [data2, setData2] = useState([]);
+  const [onOpen, setOnOpen] = useState(false);
+  const [notification, setNotification] = useState(true);
+  const [pixExpirado, setPixExpirado] = useState("");
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
 
-  const regularizar = (index) => {
+
+  const pagamento = (index) => {
+    const select = document.getElementById("pagamentos").value;
+
+    if (select === "dinheiro") {
+      regularizar(data[index].id_vaga_veiculo, index, select);
+  }else{
+    const valor = data[index].valor.toString()
+    const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    requisicao.post("/gerarcobranca", {
+      valor: valor2,
+      campo: data[index].id_vaga_veiculo,
+    })
+    .then((resposta) => {
+      if (resposta.data.msg.resultado) {
+        setOnOpen(true)
+        setData2(resposta.data.data);
+        getInfoPix(resposta.data.data.txid, data[index].id_vaga_veiculo);
+        open();
+      } else {
+        console.log("n abriu nkk");
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+  }
+
+  async function getInfoPix(TxId, campo) {
+    const startTime = Date.now();
+    const endTime = startTime + 5 * 60 * 1000;
+  
+    let res = { status: 'ATIVA' };
+  
+    while (Date.now() < endTime && res.status !== 'CONCLUIDA') {
+      const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    res = requisicao.get(`/verificarcobranca/${TxId}`)
+      .then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          res = { status: 'CONCLUIDA' }
+        } else {
+          res = { status: 'ATIVA' }
+        }
+      }
+      ).catch((err) => {
+        console.log(err)
+      });
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+
+    funcPix(TxId, campo);
+  }
+
+  const funcPix = (TxId, campo) => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: user2.perfil[0],
+      },
+    });
+    requisicao.get(`/verificarcobranca/${TxId}`)
+      .then((resposta) => {
+        console.log(resposta.data)
+        if (resposta.data.msg.resultado) {
+          regularizar(campo, undefined, "pix");
+          setNotification(false);
+          close();
+          setOnOpen(false);
+          setNotification(true);
+
+        } else {
+          
+          setNotification(false)
+          setPixExpirado("Pix expirado")
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const regularizar =  async(idVagaVeiculo, index, pagamento ) => {
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -37,8 +152,6 @@ const ListarNotificacoes = () => {
         perfil_usuario: user2.perfil[0]
       },
     });
-    const idVagaVeiculo = data[index].id_vaga_veiculo;
-    const pagamento = document.getElementById(`pagamentos`).value;
     console.log(idVagaVeiculo)
     requisicao.put('/notificacao/',{
         id_vaga_veiculo: idVagaVeiculo,
@@ -46,9 +159,18 @@ const ListarNotificacoes = () => {
     }).then((response) => {
       console.log(response)
       if(response.data.msg.resultado){
-        Swal.fire("Regularizado!", "A notificação foi regularizada.", "success");
-        data[index].pago = 'S';
-        setData([...data]);
+        Swal.fire({
+          title:"Regularizado!",
+          text:"A notificação foi regularizada.", 
+          icon:"success",
+          timer: 2000
+      });
+        if (index !== undefined) {
+          data[index].pago = 'S';
+          setData([...data]);
+          } else {
+            startNotificao();
+          }
       }
       else {
         setEstado(true);
@@ -415,7 +537,7 @@ const handleFiltro = (where) => {
                   className="h6 align-items-start text-start px-4"
                   id="estacionadocarroo"
                 >
-                  <h6> <BsCashCoin />‎ Valor: R${link.valor},00</h6>
+                  <h6> <BsCashCoin />‎ Valor: R${link.valor}</h6>
                 </div>
 
                 {link.pago === "S" ?  (null) : (
@@ -434,7 +556,7 @@ const handleFiltro = (where) => {
                   <div className="pt-3 gap-6 d-md-block">
                     <div className="row">
                       <div className="col-10">
-                      <button type="submit" className="btn5 botao align-itens-center fs-6" onClick={()=>{regularizar(index)}}>Regularizar</button>
+                      <button type="submit" className="btn5 botao align-itens-center fs-6" onClick={()=>{pagamento(index)}}>Regularizar</button>
                       </div>
                       <div className="col-2 pt-2">
                       <span className=""> <AiFillPrinter size={25}/> </span>
@@ -458,6 +580,7 @@ const handleFiltro = (where) => {
             {mensagem}
         </div>
         <VoltarComponente />
+        <ModalPix qrCode={data2.brcode} status={notification} mensagemPix={pixExpirado} onOpen={onOpen} />
     </div>
   );
 };

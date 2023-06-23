@@ -52,21 +52,24 @@ const InserirCreditos = () => {
   });
 }
 
-  const fazerPix = (valor) => {
-    setOnOpen(true)
-    if(valor === "outro") {
-      valor = valor2
+  const fazerPix = () => {
+
+    let ValorFinal  = valor;
+    
+    if(ValorFinal === "outro") {
+      ValorFinal = valor2
     }
 
-    valor = parseFloat(valor.replace(",", ".")).toFixed(2);
+    ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
 
-    if (valor <= 0 || valor == 'NAN') {
+    if (ValorFinal < 2 || ValorFinal == "" || ValorFinal == '' || ValorFinal == null || ValorFinal == undefined || isNaN(ValorFinal)) {
+      console.log('toma')
       setDivAvancar2(true)
       setTimeout(() => {
         setDivAvancar2(false)
       }, 3000);
-    }
-    else{
+      return;
+    } else {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -78,10 +81,10 @@ const InserirCreditos = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-
+    
     requisicao.post("/gerarcobranca", {
-        valor: valor,
-        campo: valor
+        valor: ValorFinal,
+        campo: ValorFinal
       })
       .then((resposta) => {
         console.log(resposta)
@@ -90,7 +93,8 @@ const InserirCreditos = () => {
           console.log(resposta.data.data.txid);
           setData(resposta.data.data);
           setTxId(resposta.data.data.txid);
-          getInfoPix(resposta.data.data.txid, valor);
+          getInfoPix(resposta.data.data.txid, ValorFinal);
+          setOnOpen(true);
           open();
         } else {
           console.log("n abriu nkk");
@@ -319,7 +323,7 @@ const InserirCreditos = () => {
             mt="md"
             radius="md"
             onClick={() => {
-              fazerPix(valor);
+              fazerPix();
             }}
           >
             Registrar transferência ‎
