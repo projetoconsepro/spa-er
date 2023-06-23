@@ -14,8 +14,6 @@ const HistoricoVeiculo = () => {
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [user2, setUser2] = useState(null);
-  const [cont, setCont] = useState(0);
-  const [filtro, setFiltro] = useState("");
   const [perfil, setPerfil] = useState("");
 
   function ArrumaHora(data, hora) {
@@ -62,7 +60,8 @@ const HistoricoVeiculo = () => {
       requisicao
         .get(`/veiculo/historico/?query=${passar}`)
         .then((response) => {
-          if (response.data.msg.resultado) {
+          console.log(response)
+          if (response.data.data.length > 0) {
             setEstado2(false);
             setEstado2(false);
             setEstado(false);
@@ -94,11 +93,7 @@ const HistoricoVeiculo = () => {
           } else {
             setEstado2(false);
             setEstado(true);
-            setMensagem(response.data.msg.msg);
-            setTimeout(() => {
-              setEstado(false);
-              setMensagem("");
-            }, 5000);
+            setMensagem("Não há registros do veículo!")
           }
         })
         .catch((error) => {
@@ -176,8 +171,8 @@ const HistoricoVeiculo = () => {
     });
     const base64 = btoa(where)
     requisicao.get(`veiculo/historico/?query=${base64}`).then((response) => {
-      if (response.data.msg.resultado) {
-        console.log('aacabou')
+      console.log(response)
+      if (response.data.data.length > 0) {
         setEstadoLoading(false)
         setEstado2(false);
         setEstado(false);
@@ -207,13 +202,10 @@ const HistoricoVeiculo = () => {
         }));
         setData(newData);
       } else {
+        setEstadoLoading(false)
         setEstado2(false);
         setEstado(true);
-        setMensagem(response.data.msg.msg);
-        setTimeout(() => {
-          setEstado(false);
-          setMensagem("");
-        }, 5000);
+        setMensagem("Não há registros do veículo!")
       }
   }).catch((error) => {
     if(error?.response?.data?.msg === "Cabeçalho inválido!" 
@@ -233,7 +225,7 @@ const HistoricoVeiculo = () => {
       <p className="mx-3 text-start fs-4 fw-bold">Histórico:</p>
       <div>
       <div className="row mb-4">
-        <div className="col-7">
+        <div className="col-7 mx-2">
         <Filtro nome={
           user2 !== null ?
           user2.perfil[0] === 'cliente' ? 'HistoricoVeiculo' : 'HistoricoVeiculoAdmin' : null

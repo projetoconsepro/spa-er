@@ -215,7 +215,7 @@ const RegistrarVagaCliente = () => {
                             <div className="form-group mb-4 mt-4">
                                 <p className='text-start'>Numero da vaga:</p>
                                 <div className="input-group">
-                                    <input className={inputVaga} value={vaga} onChange={(e) => setVaga([e.target.value])} placeholder="Exemplo: 003" />
+                                    <input className={inputVaga} type='number' value={vaga} onChange={(e) => setVaga([e.target.value])} placeholder="Exemplo: 3" />
                                 </div>
                             </div>
 

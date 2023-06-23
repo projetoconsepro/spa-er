@@ -7,6 +7,7 @@ import Cronometro from './Cronometro';
 import { RxLapTimer } from 'react-icons/rx';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
+import { Button } from '@mantine/core';
 
 
 const BuscarVeiculo = () => {
@@ -16,6 +17,7 @@ const BuscarVeiculo = () => {
     const [inputVazio, setInputVazio] = useState("inputvazio3")
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
+    const [estado2, setEstado2] = useState(false);
     const [cont, setCont] = useState(0);
     const [div , setDiv] = useState(false)
     const [data, setData] = useState([])
@@ -78,8 +80,19 @@ const BuscarVeiculo = () => {
         }
     
         },[textoPlaca])
+
+        const goEstacionar = (link) => {
+            const tirarTraco = textoPlaca.split("-").join("");
+            const upperCase = tirarTraco.toUpperCase();
+            localStorage.setItem('popup', true)
+            localStorage.setItem('placa', upperCase)
+            localStorage.setItem('id_vagaveiculo', link.id_vaga_veiculo)
+            localStorage.setItem('vaga', link.vaga)
+            FuncTrocaComp('RegistrarVagaMonitor')
+        }
         
         const hangleRequisicao = () => {
+            setEstado2(true)
             const requisicao = axios.create({
                 baseURL: process.env.REACT_APP_HOST,
                 headers: {
@@ -92,7 +105,7 @@ const BuscarVeiculo = () => {
             const upperCase = tirarTraco.toUpperCase();
             requisicao.get(`/veiculo/${upperCase}`)
             .then((response) => {
-                console.log(response.data)
+                setEstado2(false)
                 if (response.data.msg.resultado === false && response.data.msg.msg !== "Dados encontrados") {
                     setDiv(false)
                     setEstado(true)
@@ -107,6 +120,8 @@ const BuscarVeiculo = () => {
                     setMensagem("")
                     setDiv(true)
 
+                    console.log(response.data.data)
+
                     const newData = response?.data.data.map((item) => ({
                         placa: item.placa,
                         modelo: item.modelo.modelo,
@@ -119,6 +134,7 @@ const BuscarVeiculo = () => {
                         tempo: item.estacionado[0].tempo,
                         chegada: item.estacionado[0].chegada,
                         temporestante: item.estacionado[0].temporestante,
+                        id_vaga_veiculo: item.estacionado[0].id_vaga_veiculo,
                         estado: false
                       }));
                     setData(newData)
@@ -144,9 +160,6 @@ const BuscarVeiculo = () => {
             FuncTrocaComp('ListarNotificacoes')
             
         }
-            
-
-
 
   return (
     <div className="container">
@@ -171,8 +184,17 @@ const BuscarVeiculo = () => {
                                 <input type="text" id={inputVazio} className='mt-5 fs-1 justify-content-center align-items-center text-align-center' value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
                             </div>
                             <div className="mb-2 mt-3 gap-2 d-md-block">
-                                    <VoltarComponente />
-                                    <button type="submit" onClick={()=>{hangleRequisicao()}}  className="btn3 botao">Buscar</button>
+                            <VoltarComponente />
+                                    <Button 
+                                    loading={estado2} 
+                                    onClick={()=>{hangleRequisicao()}}
+                                    loaderPosition="right"
+                                    className="bg-blue-50"
+                                    size="md"
+                                    radius="md"
+                                    >
+                                        Buscar
+                                    </Button>
                                 </div>
                                 <div className="alert alert-danger mt-4" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
@@ -181,7 +203,7 @@ const BuscarVeiculo = () => {
                         <div>
                          {data.map((link, index) => (
                             <div className="card border-0 shadow mt-5" key={index} >
-                                <div className="card-body4">
+                                <div className={link.numero_notificacoes_pendentes !== 0 && link.estacionado === 'S' ? 'card-body4 h-75' : 'card-body4'}>
                                     <div className="d-flex align-items-center justify-content-between pb-3">
                                         <div>
                                             <div className="h2 mb-0 d-flex align-items-center">
@@ -250,10 +272,15 @@ const BuscarVeiculo = () => {
                                     </div>
                                     <div className=" mb-5 gap-2 d-md-block justify-content-between w-100">
                                     {link.numero_notificacoes_pendentes === 0  ?
-                                            null
-                                            :
-                                            <button type="submit" className="btn4 mb-2 bg-danger botao" onClick={()=>{notificacoes()}}>Notificações</button>
-                                            }
+                                        null
+                                        :
+                                        <button type="submit" className="btn4 mb-2 bg-danger botao" onClick={()=>{notificacoes()}}>Notificações</button>
+                                    }
+                                    {link.estacionado === 'S' ?
+                                        <button type="submit" className="btn4 mb-2 botao" onClick={() => {goEstacionar(link)}}>Adicionar tempo</button>
+                                        :
+                                        null
+                                    }
                                         <button type="submit" className="btn4 bg-gray-400 botao" onClick={() => {goHistorico()}}>Histórico</button>
                                     </div>
                                 </div>

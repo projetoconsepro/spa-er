@@ -6,6 +6,7 @@ import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import ModalPix from './ModalPix';
 import { useDisclosure } from '@mantine/hooks';
+import { Button, Loader } from '@mantine/core';
 
 const AdicionarCreditos = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -20,6 +21,7 @@ const AdicionarCreditos = () => {
     const [notification, setNotification] = useState(true);
     const [pixExpirado, setPixExpirado] = useState("");
     const [txid, setTxId] = useState("");
+    const [estado2, setEstado2] = useState(false);
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
@@ -155,6 +157,7 @@ const AdicionarCreditos = () => {
       };
 
     const handleRegistrar = (campo) => {
+        setEstado2(true);
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -166,7 +169,7 @@ const AdicionarCreditos = () => {
         if(campo !== undefined){
             requisicao.post('usuario/credito', campo).then(
                 response => {
-                    console.log(response)
+                    setEstado2(false);
                     if (response.data.msg.resultado) {
                             Swal.fire({
                                 title: 'Sucesso!',
@@ -182,16 +185,16 @@ const AdicionarCreditos = () => {
                             setOnOpen(false);
                         }, 3000);
                     } else {
-                    Swal.fire({
-                        title: 'Erro!',
-                        text: ` ${response.data.msg.msg}`,
-                        icon: 'error',
-                        confirmButtonText: 'Ok'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            
-                        }
-                    })
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: ` ${response.data.msg.msg}`,
+                            icon: 'error',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                
+                            }
+                        })
                 }
             }
             ).catch(function (error) {
@@ -228,6 +231,7 @@ const AdicionarCreditos = () => {
             }
         })
         if(cpf !== "" && valor[0] !== '0'){
+            setEstado2(true);
             requisicao.post('usuario/credito', {
                 user: cpf,
                 valor: valor,
@@ -237,6 +241,7 @@ const AdicionarCreditos = () => {
                 response => {
                     console.log(response)
                     if (response.data.msg.resultado) {
+                        setEstado2(false);
                     Swal.fire({
                         title: 'Sucesso!',
                         text: 'Créditos adicionados com sucesso!',
@@ -248,6 +253,7 @@ const AdicionarCreditos = () => {
                     })
                 }
                 else {
+                    setEstado2(false);
                     Swal.fire({
                         title: 'Erro!',
                         text: ` ${response.data.msg.msg}`,
@@ -357,10 +363,22 @@ const AdicionarCreditos = () => {
 
                             <div className="pt-4 mb-6 gap-2 d-md-block">
                                 <VoltarComponente />
-                                <button type="submit" onClick={handleSubmit} className="btn3 botao">Confirmar</button>
+                                <Button 
+                                    loading={estado2} 
+                                    onClick={handleSubmit}
+                                    loaderPosition="right"
+                                    className="bg-blue-50"
+                                    size="md"
+                                    radius="md"
+                                    >
+                                        Confirmar
+                                    </Button>
                             </div>
                             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}
+                            </div>
+                            <div style={{ display: estado2 ? 'block' : 'none'}}>
+                                <Loader />
                             </div>
                         </div>
                     </div>
