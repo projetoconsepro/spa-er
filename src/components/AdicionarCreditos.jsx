@@ -13,7 +13,7 @@ const AdicionarCreditos = () => {
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
     const [cpf, setCPF] = useState("");
-    const [valor, setValor] = useState(0);
+    const [valor, setValor] = useState([]);
     const [InputPlaca, setInputPlaca] = useState("form-control fs-6");
     const [pagamentos, setPagamento] = useState("dinheiro");
     const [data, setData] = useState([]);
@@ -22,11 +22,9 @@ const AdicionarCreditos = () => {
     const [pixExpirado, setPixExpirado] = useState("");
     const [txid, setTxId] = useState("");
     const [estado2, setEstado2] = useState(false);
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
         
     async function getInfoPix(TxId, campo) {
+        console.log('txid', TxId)
         const startTime = Date.now();
         const endTime = startTime + 5 * 60 * 1000;
       
@@ -97,6 +95,10 @@ const AdicionarCreditos = () => {
           });
       };
 
+      useEffect(() => {
+      console.log(valor)
+    }, [valor])
+
     const fazerPix = async () => {
         const token = localStorage.getItem("token");
         const user = localStorage.getItem("user");
@@ -116,19 +118,24 @@ const AdicionarCreditos = () => {
         } else {
         cpf2 = `/verificar?cpf=${cpf}`
         }
+        console.log(valor[0])
+        valor[0] = parseFloat(valor[0].replace(",", ".")).toFixed(2);
+
         requisicao.get(cpf2).then((resposta) => {
             console.log(resposta)
             if (resposta.data.msg.resultado) {
+            console.log(resposta)
             campo = {
                 user: cpf,
                 valor: valor,
-                pagamento: pagamentos
+                pagamento: pagamentos,
             };
             requisicao.post("/gerarcobranca", {
-            valor: valor,
-            campo: JSON.stringify(campo),
+            valor: valor[0],
+            campo: campo,
           }).then((resposta) => {
             if (resposta.data.msg.resultado) {
+              console.log(resposta)
               setData(resposta.data.data);
               setTxId(resposta.data.data.txid);
               getInfoPix(resposta.data.data.txid, campo)
@@ -157,6 +164,9 @@ const AdicionarCreditos = () => {
       };
 
     const handleRegistrar = (campo) => {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        const user2 = JSON.parse(user);
         setEstado2(true);
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
@@ -222,6 +232,9 @@ const AdicionarCreditos = () => {
     }
 
      const transferencia = async () => {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        const user2 = JSON.parse(user);
         const requisicao = axios.create({
             baseURL: process.env.REACT_APP_HOST,
             headers: {
@@ -309,6 +322,9 @@ const AdicionarCreditos = () => {
     }
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        const user2 = JSON.parse(user);
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
             FuncTrocaComp("FecharTurno");
         }
@@ -326,16 +342,16 @@ const AdicionarCreditos = () => {
                             </div>
                             <div className="row align-items-center pt-2">
                                 <div className="col-3">
-                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor(10)}>10</button>
+                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor([10])}>10</button>
                                 </div> 
                                 <div className="col-3">
-                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor(20)}>20</button>
+                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor([20])}>20</button>
                                 </div> 
                                 <div className="col-3">
-                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor(30)}>30</button>
+                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor([30])}>30</button>
                                 </div> 
                                 <div className="col-3">
-                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor(50)}>50</button>
+                                    <button type="button" className="btn btn-info w-100" onClick={() => setValor([50])}>50</button>
                                 </div>
                             </div>
                             <div className="form-group mb-4 mt-4">
@@ -350,7 +366,6 @@ const AdicionarCreditos = () => {
                                 <div className="input-group w-25">
                                     <span className="mt-3">R$ ‎</span>
                                     <input className="form-control pt-3"  id="inputParceiro" value={valor} onChange={(e) => setValor([e.target.value])} type="number"/>
-                                    <span className="mt-3">,00</span>
                                 </div>
                             </div>
                             <div className="h6 mt-3" onChange={() => {atualiza()}}>
