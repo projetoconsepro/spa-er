@@ -592,7 +592,7 @@ const RegistrarVagaMonitor = () => {
                 )}
                 <p id="tempoCusto" className="text-end">
                   {" "}
-                  Valor a ser cobrado: R$ {valorcobranca2},00{" "}
+                  Valor a ser cobrado: R$ {valorcobranca2}{" "}
                 </p>
               </div>
 

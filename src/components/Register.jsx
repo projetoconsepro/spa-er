@@ -233,8 +233,8 @@ const RegisterPage = () => {
                             <p className="pt-2"><strong>Preencha os dados abaixo e clique em avançar.</strong></p>
                             <form className="mt-4">
                                 <div className="form-group mb-4 text-start">
-                                <Input.Wrapper label="Login:">                        
-                                    <Input icon={<IconUser size={18}/>} placeholder="Digite seu login CPF/CNPJ ou Email"
+                                <Input.Wrapper label="Nome:">                        
+                                    <Input icon={<IconUser size={18}/>} placeholder="Digite seu nome"
                                     id="nome" value={nome} onChange={(e) => setNome(e.target.value)}
                                     error={errorNome}
                                     />
