@@ -216,7 +216,7 @@ const RegistrarVagaCliente = () => {
                                     <option value="01:30:00">90 Minutos</option>
                                     <option value="02:00:00">120 Minutos</option>
                                 </select>
-                                <p id="tempoCusto" className="text-end">Esse tempo ira custar: R$ {valorcobranca2},00 </p>
+                                <p id="tempoCusto" className="text-end">Esse tempo ira custar: R$ {valorcobranca2} </p>
                             </div>
 
                             <div className="form-group mb-4 mt-4">

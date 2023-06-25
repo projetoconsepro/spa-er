@@ -327,7 +327,7 @@ const TransferirCreditoCliente = () => {
                             >
                               <h6>
                                 <IconCoin size={17} />‎ R$
-                                {infoDestinatarioValor},00
+                                {infoDestinatarioValor}
                               </h6>
                             </div>
                           </div>

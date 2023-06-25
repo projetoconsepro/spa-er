@@ -676,7 +676,7 @@ const ClientesAdmin = () => {
                              </div>
                              Valor a ser transferido: 
                              <div className="h6 mt-2 d-flex align-items-center fs-6" id="estacionadocarroo">
-                             <h6><IconCoin size={17}/>‎ R${infoDestinatarioValor},00</h6>
+                             <h6><IconCoin size={17}/>‎ R${infoDestinatarioValor}</h6>
                               </div>
 
                         </div>
