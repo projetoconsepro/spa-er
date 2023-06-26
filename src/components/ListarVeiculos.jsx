@@ -509,7 +509,7 @@ const ListarVeiculos = () => {
                     <option value="02:00:00">120 Minutos</option>
                   </select>
                   <p id="tempoCusto" className="text-end">
-                    Esse tempo irá custar: R$ {valorcobranca2},00{" "}
+                    Esse tempo irá custar: R$ {valorcobranca2}{" "}
                   </p>
                   <div className="form-group mb-4 mt-4">
                     <p className="text-start" id="vagaInput">
@@ -562,7 +562,7 @@ const ListarVeiculos = () => {
                     <option value="02:00:00">120 Minutos</option>
                   </select>
                   <p id="tempoCusto" className="text-end">
-                    Esse tempo irá custar: R$ {valorcobranca2},00{" "}
+                    Esse tempo irá custar: R$ {valorcobranca2}{" "}
                   </p>
                   <p className="text-start" id="horarioChegada">
                     Horário chegada: {link.chegada}{" "}
