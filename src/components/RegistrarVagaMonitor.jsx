@@ -4,6 +4,7 @@ import { FaUserInjured, FaWheelchair } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../pages/Style/styles.css";
 import VoltarComponente from "../util/VoltarComponente";
+import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
@@ -206,12 +207,6 @@ const RegistrarVagaMonitor = () => {
     baseURL: process.env.REACT_APP_HOST,
   });
 
-  useEffect(() => {
-    if (estado2) {
-      console.log("as fsafsdf");
-    }
-  }, [estado2]);
-
   const registrarEstacionamento = (campo) => {
     const estacionamento = axios.create({
       baseURL: process.env.REACT_APP_HOST,
@@ -332,8 +327,7 @@ const RegistrarVagaMonitor = () => {
           });
       } else {
         setEstado2(true);
-        estacionamento
-          .post("/estacionamento", {
+        estacionamento.post("/estacionamento", {
             placa: placaMaiuscula,
             numero_vaga: vagaa,
             tempo: tempo,
@@ -341,6 +335,7 @@ const RegistrarVagaMonitor = () => {
           })
           .then((response) => {
             if (response.data.msg.resultado === true) {
+              ImpressaoTicketEstacionamento(tempo, response.config.headers.id_usuario, vagaa, placaMaiuscula, valor)
               setEstado2(false);
               localStorage.removeItem("vaga");
               FuncTrocaComp("ListarVagasMonitor");

@@ -6,6 +6,7 @@ import arrayCores from '../services/cores';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Loader } from '@mantine/core';
+import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
 
 const Notificacao = () => {
     const token = localStorage.getItem('token');
@@ -158,6 +159,7 @@ const Notificacao = () => {
             response => {
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
+                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, )
                     FuncTrocaComp( "ListarVagasMonitor");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
