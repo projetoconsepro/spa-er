@@ -10,7 +10,7 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen }) => {
     const [opened, { open, close }] = useDisclosure(false);
 
     useEffect(() => {
-        if (onOpen) {
+        if (onOpen) { 
             open();
         } else {
             close();

@@ -45,6 +45,7 @@ import EditarParametroAdmin from '../../components/EditarParametroAdmin';
 import TransferenciaParceiro from '../../components/TransferenciaParceiro';
 import CartaoCredito from '../../components/CartaoCredito';
 import InserirCreditos from '../../components/InserirCreditos';
+import CameraTicketNotificacao from '../../components/CameraTicketNotificacao';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -180,6 +181,9 @@ export default function Veiculos({Componente}) {
         }
         else if (Componente === "InserirCreditos"){
             return <InserirCreditos />
+        }
+        else if (Componente === "CameraTicketNotificacao"){
+            return <CameraTicketNotificacao />
         }
         else {
             return <Error />

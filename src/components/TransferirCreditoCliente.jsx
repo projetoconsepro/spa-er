@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Group, Input, Button, Modal, Stepper } from "@mantine/core";
 import {
+  IconCash,
   IconClipboardList,
   IconCoin,
   IconMail,
@@ -116,12 +117,35 @@ const TransferirCreditoCliente = () => {
       });
   };
 
+
+  const FuncArrumaInput = (e) => {
+    let valor = e.target.value;
+
+    if (valor.length === 1 && valor !== '0') {
+      valor = `0,0${valor}`;
+    } else if (valor.length > 1) {
+      valor = valor.replace(/\D/g, "");
+      valor = valor.replace(/^0+/, "");
+  
+      if (valor.length < 3) {
+        valor = `0,${valor}`;
+      } else {
+        valor = valor.replace(/(\d{2})$/, ',$1');
+      }
+  
+      valor = valor.replace(/(?=(\d{3})+(\D))\B/g, ".");
+    }
+
+    setInfoDestinatarioValor(valor);
+  };
+
   const handleTransfer = async () => {
     setIsButtonDisabled(true);
     setTimeout(() => {
       // Habilitar o botão após o atraso
       setIsButtonDisabled(false);
     }, 2000);
+    
 
 
     const cpf = extrairNumeros(infoDestinatario);
@@ -277,12 +301,11 @@ const TransferirCreditoCliente = () => {
                   className="mt-2"
                 >
                   <Input
-                    icon={<IconCoin />}
-                    placeholder="..."
-                    value={infoDestinatarioValor}
-                    onChange={(e) => setInfoDestinatarioValor(e.target.value)}
-                    type="number"
-                  />
+                      icon={<IconCash />}
+                      placeholder="R$ 0,00"
+                      value={infoDestinatarioValor}
+                      onChange={(e) => FuncArrumaInput(e)}
+                    />
                 </Input.Wrapper>
               </div>
               {estadoInfoDestinatario ? (

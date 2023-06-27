@@ -325,7 +325,12 @@ const ListarVagasMonitor = () => {
               })
               .then((response) => {
                 if (response.data.msg.resultado) {
-                  Swal.fire("Vaga liberada", "", "success");
+                  Swal.fire({
+                    text:"Vaga liberada", 
+                    title:"", 
+                    icon:"success",
+                    timer: 2000,
+                  });
                   setTimeout(() => {
                     getVagas(salvaSetor);
                   }, 1000);
