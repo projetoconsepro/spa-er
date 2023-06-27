@@ -127,7 +127,10 @@ const Notificacao = () => {
             response => {
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
-                    FuncTrocaComp( "ListarVagasMonitor");
+                    FuncTrocaComp( "CameraTicketNotificacao");
+                    console.log(response)
+                    console.log(response.data.data.id_notificacao, 'ué')
+                    localStorage.setItem('id_notificacao', response.data.data.id_notificacao)
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
                     localStorage.removeItem("placa");
@@ -159,8 +162,12 @@ const Notificacao = () => {
             response => {
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
+                    console.log(response)
+                    console.log(response.data.data.id_notificacao, 'ué')
+                    localStorage.setItem('id_notificacao', response.data.data.id_notificacao)
                     ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, )
-                    FuncTrocaComp( "ListarVagasMonitor");
+                    FuncTrocaComp("CameraTicketNotificacao");
+                    localStorage.setItem('id_notificacao', response.data.id_notificacao)
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
                     localStorage.removeItem("placa");
@@ -206,8 +213,7 @@ const Notificacao = () => {
     }
 
     const renderCamera = () => {
-        FuncTrocaComp( "Camera");
-        
+        FuncTrocaComp( "Camera");  
     }
 
     const pegarFotos = async () => {

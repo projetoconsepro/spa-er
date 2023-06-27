@@ -5,12 +5,22 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
 import { Button, Card } from "@mantine/core";
 import { IconCamera, IconCheck } from "@tabler/icons-react";
+import axios from "axios";
 
-function Camera() {
-  const videoRef = useRef(null);
-  const [photos, setPhotos] = useState([]);
-  const [cont, setCont] = useState(0);
-  const [cont2, setCont2] = useState(0);
+function CameraTicketNotificacao() {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    const user2 = JSON.parse(user);
+    const videoRef = useRef(null);
+    const [photos, setPhotos] = useState([]);
+    const [cont, setCont] = useState(0);
+    const [cont2, setCont2] = useState(0);
+    const [idNotificacao, setIdNotificacao] = useState("");
+
+    useEffect(() => {
+    const id = localStorage.getItem('id_notificacao');
+    setIdNotificacao(id)
+    }, []);
 
   const getVideo = async () => {
     try {
@@ -105,18 +115,34 @@ function Camera() {
   };
 
   const savePhotosToLocalStorage = () => {
-    if (photos.length < 4) {
+    const requisicao = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+        headers: {
+            'token': token,
+            'id_usuario': user2.id_usuario,
+            'perfil_usuario': "monitor"
+        }
+    });
+    if (photos.length > 1) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Mínimo de 4 fotos!',
-        footer: '<a href>Tire no mínimo 4 fotos, por favor.</a>'
+        text: 'Você só pode tirar 1 foto.',
+        footer: '<a href>Tire apenas uma foto, por favor.</a>'
       });
     } else {
-      for (let i = 0; i < photos.length; i++) {
-        localStorage.setItem(`foto${i}`, photos[i].photo);
+      console.log(photos)
+      requisicao.post('/notificacao/ticket', {
+      id_notificacao: idNotificacao,
+      foto: photos[0].photo
+      }).then((response) => {
+        if(response.data.msg.resultado){
+          FuncTrocaComp("ListarVagasMonitor")
+        console.log(response.data);
       }
-      FuncTrocaComp("Notificacao");
+      }).catch((error) => {
+        console.log(error);
+      });
     }
   };
 
@@ -149,7 +175,7 @@ function Camera() {
             onClick={takePicture}
             >Tirar foto
             </Button>
-            {photos.length > 3 && (
+            {photos.length === 1 && (
             <Button
             className="mx-2" 
             variant="gradient"
@@ -167,4 +193,4 @@ function Camera() {
   );
 }
 
-export default Camera;
+export default CameraTicketNotificacao;
