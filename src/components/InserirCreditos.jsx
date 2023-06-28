@@ -27,7 +27,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import axios from "axios";
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useRef } from "react";
 import QRCode from "react-qr-code";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";

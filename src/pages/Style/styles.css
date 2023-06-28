@@ -19,6 +19,7 @@
 	margin-top: 6px;
 	cursor: pointer;
 }
+
 .text-dark{
 	font-weight: bold;
 	margin-top: 8px;
@@ -28949,6 +28950,90 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.container3 {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .div1, .div2, .div3 {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+  }
+
+  .div1, .div3 {
+    background-color: #fff;
+    display: flex;
+    padding-right: 10%;
+  }
+
+  .image-container {
+    margin-right: 20px;
+    align-self: flex-end; 
+  }
+
+  .image-container img {
+    width: 100%;
+    max-width: 200px; 
+    height: auto;
+  }
+
+  .image-container2 {
+    align-self: flex-end; 
+  }
+
+    .image-container2 img {
+        width: 200px;
+        max-width: 200px; 
+        height: 200px;
+        position: relative;
+    }
+
+    .image-container3 {
+        margin-left: 10px;
+        margin-right: 20px;
+        align-self: flex-end;  
+    }
+
+        .image-container3 img {
+            width: 100%;
+            max-width: 200px; 
+            height: auto;
+        }
+
+  .content2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: 28px; 
+    color: #000;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 20px;
+    color: #000;
+  }
+
+  .div1 {
+    background-color: #fff !important;
+  }
+
+  .div2 {
+    background-color: #94e3ff !important;
+  }
+
+  .div3 {
+    background-color: rgb(163, 255, 169) !important;
+  }
 
 /**
  * = Timelines
