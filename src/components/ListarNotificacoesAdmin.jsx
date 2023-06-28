@@ -42,8 +42,20 @@ const ListarNotificacoesAdmin = () => {
 
       const createPDF = () => {
         const nomeArquivo = 'Relatório de irregularidades'
+        const dataD = data.map((item) => { 
+          return [
+            item.data,
+            item.placa,
+            item.vaga,
+            item.pendente,
+            item.fabricante,
+            item.modelo,
+            item.tipo,
+            item.valor,
+          ]
+        })
         const cabecalho = ['Data', 'Placa', 'Vaga', 'Estado', 'Fabricante', 'Modelo', 'Tipo', 'Valor'];
-        RelatoriosPDF(nomeArquivo, cabecalho, data)
+        RelatoriosPDF(nomeArquivo, cabecalho, dataD)
       }
 
       const mostrar = async (item, index) => {
@@ -154,7 +166,10 @@ const ListarNotificacoesAdmin = () => {
             cancelada: item.cancelada,
             cancelada_motivo: item.cancelada_motivo,
             vaga: item.vaga,
-            pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
+            pendente: item.pago === 'S' ? 'Quitado' : 
+            item.cancelada === 'S' ? 'Cancelado' : 
+            item.infracao === 'S' ? 'Infração' :
+            'Pendente',
             fabricante: item.veiculo.modelo.fabricante.nome,
             modelo: item.veiculo.modelo.nome,
             tipo: item.tipo_notificacao.nome,
@@ -306,7 +321,10 @@ const ListarNotificacoesAdmin = () => {
             cancelada: item.cancelada,
             cancelada_motivo: item.cancelada_motivo,
             vaga: item.vaga,
-            pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
+            pendente: item.pago === 'S' ? 'Quitado' : 
+            item.cancelada === 'S' ? 'Cancelado' : 
+            item.infracao === 'S' ? 'Infração' :
+            'Pendente',
             fabricante: item.veiculo.modelo.fabricante.nome,
             modelo: item.veiculo.modelo.nome,
             tipo: item.tipo_notificacao.nome,

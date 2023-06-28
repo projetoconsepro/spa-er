@@ -282,10 +282,12 @@ const ListarVagasMonitor = () => {
     localStorage.removeItem("idVagaVeiculo");
     localStorage.removeItem("placa");
     localStorage.removeItem("vaga");
-    localStorage.removeItem("foto6");
-    localStorage.removeItem("foto7");
     localStorage.removeItem("placaCarro");
     localStorage.removeItem("tipoVaga");
+    localStorage.removeItem("id_notificacao");
+    for (let i = 0; i < 8; i++) {
+      localStorage.removeItem(`foto${i}`);
+    }
   }, []);
 
   const estaciona = (
@@ -617,10 +619,10 @@ const ListarVagasMonitor = () => {
                 </div>
               </div>
               <div>
-                <div class="row px-3">
-                  <div class="col-4 beetwen text-start"> <small><small>Livres: {vagasLivres}</small> </small></div>
-                  <div class="col-4 beetwen"><small><small>Ocupadas: {vagasOcupadas}</small> </small></div>
-                  <div class="col-4 beetwen text-end"> <small><small>Tempo : {vagasVencidas}</small> </small></div>
+                <div className="row px-3">
+                  <div className="col-4 beetwen text-start"> <small><small>Livres: {vagasLivres}</small> </small></div>
+                  <div className="col-4 beetwen"><small><small>Ocupadas: {vagasOcupadas}</small> </small></div>
+                  <div className="col-4 beetwen text-end"> <small><small>Tempo : {vagasVencidas}</small> </small></div>
                 </div>
               </div>
 

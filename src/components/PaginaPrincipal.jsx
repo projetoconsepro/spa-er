@@ -11,22 +11,22 @@ const PaginaPrincipal = () => {
       <img src="../../assets/img/consepro11.png" alt="Exemplo de imagem" />
     </div>
     <div className="content2 w-50">
-      <h1>ESTACIONE PELO SITE</h1>
-      <p>Crie sua conta e estacione pelo site, clique no botão abaixo!</p>
+      <h2>ESTACIONE COM CRÉDITO</h2>
+      <p>Crie sua conta e estacione com crédito, clique no botão abaixo!</p>
       <Button
         variant="gradient"
         size="md"
         gradient={{ from: 'indigo', to: 'cyan' }}
         rightIcon={<IconArrowBearRight />}
       >
-        Ir para o site
+        Acessar o app ‎ ‎
       </Button>
     </div>
   </div>
   <div className="div2">
     <div className="content">
-      <h1>ESTACIONE PELO SITE</h1>
-      <p>Crie sua conta e estacione pelo site, clique no botão abaixo!</p>
+      <h2>ESTACIONE RÁPIDO</h2>
+      <p>Realize um estacionamento de forma simples e rápida.</p>
       <Button
         variant="gradient"
         size="md"
@@ -45,15 +45,15 @@ const PaginaPrincipal = () => {
       <img src="../../assets/img/whatsconsepro5.png" alt="Exemplo de imagem" />
     </div>
     <div className="content2 w-50">
-      <h1>ESTACIONE PELO SITE</h1>
-      <p>Crie sua conta e estacione pelo site, clique no botão abaixo!</p>
+      <h2>ESTACIONE POR WHATS</h2>
+      <p>Estacione utilizando o whatsapp, clique no botão abaixo e confira.</p>
       <Button
         variant="gradient"
         size="md"
         gradient={{ from: 'cyan', to: 'indigo' }}
         rightIcon={<IconArrowBearRight />}
       >
-        Ir para o site
+        Acessar o chat
       </Button>
     </div>
   </div>
