@@ -1,6 +1,7 @@
+import { Button } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 
-const VoltarComponente = () => {
+const VoltarComponente = ({ space }) => {
     const [componenteAnterior, setComponenteAnterior] = useState('')
     const [componenteProximo, setComponenteProximo] = useState('')
 
@@ -17,7 +18,8 @@ const VoltarComponente = () => {
     }
 
   return (
-        <button className="btn2 botao" type="button" onClick={() => {voltar()}}>Voltar</button>
+
+        <Button className={space ? "bg-gray-500 mx-2" : "bg-gray-500" } size="md" radius="md" onClick={() => {voltar()}}>Voltar</Button>
     )
 }
 

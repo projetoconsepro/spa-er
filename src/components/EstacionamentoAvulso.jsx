@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import VoltarComponente from '../util/VoltarComponente';
 import ModalPix from './ModalPix';
 import SidebarAvulso from './SidebarAvulso';
+import { Button } from '@mantine/core';
 
 const EstacionamentoAvulso = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -15,9 +16,9 @@ const EstacionamentoAvulso = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [tempo, setTempo] = useState("");
+  const [tempo, setTempo] = useState("01:00:00");
   const [valorCobranca, setValorCobranca] = useState(0);
-  const [valorcobranca2, setValorCobranca2] = useState(0);
+  const [valorcobranca2, setValorCobranca2] = useState(2.00);
   const [user2, setUser2] = useState("");
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
@@ -25,6 +26,18 @@ const EstacionamentoAvulso = () => {
   const [onOpen, setOnOpen] = useState(false);
   const [cont, setCont] = useState(0);
   const [teste, setTeste] = useState("");
+
+  function validarPlaca(placa) {
+    const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
+    const regexPlacaNova =
+      /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+
+    if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   const param = async () => {
     const requisicao = axios.create({
@@ -42,16 +55,6 @@ const EstacionamentoAvulso = () => {
       });
   };
 
-  const ValidaFormato = () => {
-    const clicado = document.getElementById("pagamentos").value;
-
-    if (clicado === "pix") {
-      
-    } else {
-      
-    }
-  };
-
   const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
     if (clicado === true) {
@@ -67,12 +70,13 @@ const EstacionamentoAvulso = () => {
 
   const atualiza = () => {
     const tempoo = document.getElementById("tempos").value;
+
     setTempo(tempoo);
     console.log(valorCobranca)
     if (tempoo === "02:00:00") {
       setValorCobranca2(valorCobranca * 2);
     } else if (tempoo === "01:00:00") {
-      setValorCobranca2(valorCobranca);
+      setValorCobranca2(0.01);
     } else if (tempoo === "01:30:00"){
       setValorCobranca2(valorCobranca*1.5);
     }
@@ -136,6 +140,95 @@ const EstacionamentoAvulso = () => {
     }
   }, [textoPlaca]);
 
+  const fazerPix = async () => {
+    console.log(valorcobranca2)
+    const placaString = textoPlaca.toString();
+    const placaMaiuscula = placaString.toUpperCase();
+    const placaFinal = placaMaiuscula.split("-").join("");
+    console.log(placaFinal)
+    if (textoPlaca === "") {
+      setEstado(true);
+      setMensagem("Preencha o campo placa");
+      setTimeout(() => {
+        setEstado(false);
+        setMensagem("");
+      }, 4000);
+      return;
+    }
+    const sim = document.getElementById("flexSwitchCheckDefault").checked;
+    if (!sim) {
+      if (!validarPlaca(placaFinal)) {
+        setEstado(true);
+        setMensagem("Placa inválida");
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("");
+        }, 4000);
+        return;
+      }
+    }
+    const valor = valorcobranca2.toString();
+    const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
+    console.log(valor2);
+    const campo = {
+      placa: placaFinal,
+      tempo: tempo,
+    };
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST
+    })
+    requisicao.post('/gerarcobranca/estacionamento', {
+      valor: valor2,
+      campo: JSON.stringify(campo),
+    }).then((resposta) => {
+      console.log(resposta)
+      if (resposta.data.msg.resultado) {
+        console.log(resposta.data.data);
+        console.log(resposta.data.data.txid);
+        setData(resposta.data.data);
+        setTxId(resposta.data.data.txid);
+        registrarEstacionamento(resposta.data.data.txid);
+        setOnOpen(true);
+        open();
+      } else {
+
+      }
+  }).catch((error) => {
+    console.log(error)})
+}
+
+  const registrarEstacionamento = async (Txid) => {
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+    });
+    requisicao.post('/estacionamento/avulso', {
+      txid: Txid,
+    }).then((resposta) => {
+      console.log(resposta)
+      if(resposta.data.msg.resultado){
+        setNotification(false);
+        setEstado(false);
+        setTimeout(() => {
+          setOnOpen(false);
+          close();
+          setTimeout(() => {
+            setNotification(true);
+          }, 2000);
+        }, 3000);
+        setTextoPlaca("");
+        setSuccess(true);
+        setMensagem("Estacionamento registrado com sucesso");
+
+      } else {
+        setSuccess(false);
+        setEstado(true);
+        setMensagem("Erro ao registrar estacionamento");
+      }
+    }).catch((error) => {
+      console.log(error)}
+    )
+  }
+
   return (
     <>
     <SidebarAvulso />
@@ -190,7 +283,7 @@ const EstacionamentoAvulso = () => {
                 className="form-select form-select-lg mb-2"
                 aria-label=".form-select-lg example"
                 id="tempos"
-                defaultValue="00:30:00"
+                defaultValue="01:00:00"
               >
                 {user2 === "monitor" ? (
                   <option value="00:10:00">Tolerância</option>
@@ -202,37 +295,22 @@ const EstacionamentoAvulso = () => {
               </select>
               <p id="tempoCusto" className="text-end">
                 {" "}
-                Valor a ser cobrado: R$ {valorcobranca2},00{" "}
+                Valor a ser cobrado: R$ {valorcobranca2}{" "}
               </p>
             </div>
 
-            <div className="h6 mt-1 mb-4">
-              <p className="text-start">Forma de pagamento:</p>
-              <select
-                className="form-select form-select-lg mb-3"
-                defaultValue="dinheiro"
-                aria-label=".form-select-lg example"
-                id="pagamentos"
-              >
-                <option value="dinheiro">Dinheiro</option>
-                <option value="pix">PIX</option>
-                {user2 === "monitor" ? (
-                  <option value="parkimetro">Parkimetro</option>
-                ) : null}
-              </select>
-            </div>
-
             <div className="mb-2 mt-3 gap-2 d-md-block">
-              <VoltarComponente />
-              <button
-                type="submit"
+              <VoltarComponente space={true}/>
+              <Button
                 onClick={() => {
-                  ValidaFormato();
+                  fazerPix();
                 }}
-                className="btn3 botao"
+                className="bg-blue-50"
+                size="md"
+                radius="md"
               >
                 Registrar
-              </button>
+              </Button>
             </div>
             <div
               className="alert alert-danger mt-4"

@@ -72,7 +72,11 @@ const HistoricoVeiculo = () => {
             const newData = arraySemNulos.map((item) => ({
               vaga: item.numerovaga,
               chegada:
-                item.chegada,
+                item.chegada[0]
+                +
+                item.chegada[1]
+                +
+                item.chegada[2],
               horafinal:
                 item.horafinal[0] +
                 ":" +
@@ -122,8 +126,12 @@ const HistoricoVeiculo = () => {
       let tipo = "Sim";
       Swal.fire({
         title: data[index].placa,
-        html: `Data: ${data[index].data} </br></br> Horário chegada: ${data[index].chegada} </br></br> Horário saída: ${data[index].saida} </br></br>
-    Vaga: ${data[index].vaga} </br></br> Houve irregularidades: ${tipo} </br></br> Endereço: ${data[index].local} </br>`,
+        html: `Data: ${data[index].data} </br></br> 
+        Horário chegada: ${data[index].chegada} </br></br> 
+        Horário saída: ${data[index].saida} </br></br>
+        Vaga: ${data[index].vaga} </br></br> 
+        Houve irregularidades: ${tipo} </br></br> 
+        Endereço: ${data[index].local} </br>`,
         showCancelButton: true,
         confirmButtonText: "Notificações",
         confirmButtonColor: "#3a58c8",

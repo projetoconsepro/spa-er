@@ -184,12 +184,12 @@ const BuscarVeiculo = () => {
                                 <input type="text" id={inputVazio} className='mt-5 fs-1 justify-content-center align-items-center text-align-center' value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
                             </div>
                             <div className="mb-2 mt-3 gap-2 d-md-block">
-                            <VoltarComponente />
+                            <VoltarComponente space={true} />
                                     <Button 
                                     loading={estado2} 
                                     onClick={()=>{hangleRequisicao()}}
                                     loaderPosition="right"
-                                    className="bg-blue-50"
+                                    className="bg-blue-50 mx-1"
                                     size="md"
                                     radius="md"
                                     >
