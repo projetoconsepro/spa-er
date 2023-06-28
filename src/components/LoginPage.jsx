@@ -114,7 +114,7 @@ const LoginPage = () => {
                             />
                             </Input.Wrapper>
                             </div>
-                            <div className="form-group mb-4 text-start">
+                            <div className="form-group mb-2 text-start">
                             <PasswordInput
                             icon={<IconLock size={18} />}
                             placeholder="Digite sua senha"
@@ -125,6 +125,7 @@ const LoginPage = () => {
                             />
                             </div>
                                 <p className="esqueciSenha"><small onClick={() => {recuperar()}} className="color-primary"><u>Esqueci minha senha</u></small></p>
+                            {1 == 2 ?
                             <div>
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
@@ -133,7 +134,7 @@ const LoginPage = () => {
                                     </span>
                                 </div>
                             </div>
-
+                            : null}
                             <div className="mt-5 mb-4 text-center">
                                 <button type="submit" className="btn botao" onClick={handleSubmit}>Acessar  <span className='align-self-end'>➜</span></button>
                                 <p className='text-muted'> <small>Ainda não possui uma conta?</small> <small className="color-primary" onClick={() => {registrado()}}><u>Clique aqui!</u></small></p>

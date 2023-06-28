@@ -220,27 +220,30 @@ const RegisterPage = () => {
     const telefoneRef = useRef(null)
 
     return (
-        <section className="vh-lg-150 bg-soft mt-5 mt-lg-5 d-flex align-items-center">
+        <section className="vh-lg-150 mt-5 mt-lg-5 d-flex align-items-center">
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
-                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
-                            <div className="text-center text-md-center mb-3 pt-3 mt-4mt-md-0">
-                                <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
+                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500 mb-4">
+                            <div className="text-center text-md-center mb-2 mt-1 mt-md-0">
+                                <img src="../../assets/img/logoconseproof2.png" alt="logo" />
                             </div>
-                            <small className="text-left">O cadastro online é a forma mais conveniente e econômica de efetuar seus pagamentos do dia a dia. </small>
+                            <div>
+                            <h6 className="pt-2"><strong>Preencha os dados abaixo e clique em acessar.</strong></h6>
+                            <small id="modalTexto">O cadastro online é a forma mais conveniente e econômica de efetuar seus pagamentos do dia a dia. </small>
                             <small onClick={popup} className="pointer-cursor"><ins>Veja mais</ins></small>
-                            <p className="pt-2"><strong>Preencha os dados abaixo e clique em avançar.</strong></p>
-                            <form className="mt-4">
-                                <div className="form-group mb-4 text-start">
+                            </div>
+                            <form className="mt-2">
+                                <div className="form-group mb-2 text-start">
                                 <Input.Wrapper label="Nome:">                        
                                     <Input icon={<IconUser size={18}/>} placeholder="Digite seu nome"
                                     id="nome" value={nome} onChange={(e) => setNome(e.target.value)}
                                     error={errorNome}
+                                    withAsterisk
                                     />
                                 </Input.Wrapper>
                                 </div>
-                                <div className="form-group mb-4 text-start">
+                                <div className="form-group mb-2 text-start">
                                 <Input.Wrapper label="Email:">                        
                                     <Input icon={<IconMail size={18}/>} placeholder="Digite seu endereço de email (não obrigatório)"
                                     id="email" value={mail} onChange={(e) => setMail(e.target.value)}
@@ -248,25 +251,27 @@ const RegisterPage = () => {
                                     />
                                 </Input.Wrapper>
                                 </div>
-                                <div className="form-group mb-4 text-start">
+                                <div className="form-group mb-2 text-start">
                                 <Input.Wrapper label="CPF/CNPJ:">                        
                                     <Input icon={<IconClipboardText size={18}/>} placeholder="Digite seu CPF p/ pessoa física ou CNPJ p/ jurídica"
                                     id="cpf" value={cpff} onChange={(e) => setCpff(e.target.value)}
                                     error={errorCpf}
+                                    withAsterisk
                                     />
                                 </Input.Wrapper>
                                 </div>
-                                <div className="form-group mb-4 text-start">
+                                <div className="form-group mb-2 text-start">
                                 <Input.Wrapper label="Telefone:">                        
                                     <Input icon={<IconPhone size={18}/>} component={InputMask} mask={'(99) 99999-9999'} ref={telefoneRef} 
                                     id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} 
                                     placeholder="Digite seu número de telefone"
                                     error={errorTelefone}
+                                    withAsterisk
                                     />
                                 </Input.Wrapper>
                                 </div>
                                 <div className="form-group text-start">
-                                    <div className="form-group mb-4">
+                                    <div className="form-group mb-2">
                                         <PasswordInput
                                             icon={<IconLock size={18} />}
                                             placeholder="Digite sua senha"
@@ -276,16 +281,17 @@ const RegisterPage = () => {
                                             withAsterisk
                                         />
                                     </div>
-                                    <div className="form-group mb-4">
+                                    <div className="form-group mb-2">
                                     <Input.Wrapper label="Confirme a senha:">                        
                                         <Input icon={<IconLockCheck size={18}/>} type="password" placeholder="Digite sua senha novamente"
                                         id="password" value={senha2} onChange={(e) => setSenha2(e.target.value)}
                                         error={errorSenha2}
+                                        withAsterisk
                                         />
                                     </Input.Wrapper>
                                     </div>
                                     <div>
-                                        <div className="form-check">
+                                        <div className="form-check pt-2 mt-0">
                                             <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
                                             <span className="form-check-label">
                                                 <small>Aceito os <a data-bs-toggle="modal" data-bs-target="#exampleModal"><u className="color-primary">termos de uso</u></a> e <a data-bs-toggle="modal" data-bs-target="#exampleModal"><u className="color-primary">política de privacidade.</u></a></small>
@@ -367,7 +373,7 @@ const RegisterPage = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-5 mb-5 gap-2 d-md-block">
+                                <div className="pt-5 gap-2 d-md-block">
                                     <button type="submit" className="btn2 botao" onClick={() => {voltarLogin()}}><span className='align-self-start'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
                                         <path d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
                                     </svg></span>Voltar</button>

@@ -577,7 +577,7 @@ const Notificacao = () => {
                                                 </div>
                                             </div>
                                             <div className="pt-4 mb-6 gap-2 d-md-block">
-                                                <VoltarComponente />
+                                                <VoltarComponente space={true} />
                                                 <Button 
                                                 loading={estado2} 
                                                 onClick={() => { SetdadosTrue() }}

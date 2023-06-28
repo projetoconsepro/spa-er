@@ -74,114 +74,6 @@ const OcupacaoVagasAdmin = () => {
     }
   };
 
-  const respostaPopup = (resposta) => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: `${user2.perfil[0]}`,
-      },
-    });
-    const plaquinha = localStorage.getItem("placaCarro");
-    setEstado2(true);
-    for (let i = 0; i < data.length; i++) {
-      delete data[i];
-    }
-    const select = document.getElementById("filtroSelect").value;
-    let idrequisicao = "";
-    let passar = "";
-    if (user2.perfil[0] === "monitor" || user2.perfil[0] === "admin") {
-      if (select === "selectData") {
-        idrequisicao = `{where:{placa='${plaquinha}', hora='%${resposta}%'}}`;
-        passar = btoa(idrequisicao);
-      } else if (select === "selectVaga") {
-        idrequisicao = `{where:{placa='${plaquinha}', vaga='${resposta}'}}`;
-        passar = btoa(idrequisicao);
-      } else if (select === "selectStatus") {
-        idrequisicao = `{where:{placa='${plaquinha}', tipo='${resposta}'}}`;
-        passar = btoa(idrequisicao);
-      }
-    } else {
-      if (select === "selectData") {
-        idrequisicao = `{where:{hora=${resposta}}}`;
-        passar = btoa(idrequisicao);
-      } else if (select === "selectVaga") {
-        idrequisicao = `{where:{vaga='${resposta}'}}`;
-        passar = btoa(idrequisicao);
-      } else if (select === "selectStatus") {
-        idrequisicao = `{where:{tipo='${resposta}'}}`;
-        passar = btoa(idrequisicao);
-      } else if (select === "selectPlaca") {
-        idrequisicao = `{where:{placa='${resposta}'}}`;
-        passar = btoa(idrequisicao);
-      }
-    }
-
-    if (idrequisicao !== "" && passar !== "") {
-      requisicao
-        .get(`/veiculo/historico/?query=${passar}`)
-        .then((response) => {
-          if (response.data.msg.resultado) {
-            setEstado2(false);
-            setEstado(false);
-            setMensagem("");
-            const arraySemNulos = response?.data.data.filter(
-              (valor) => valor !== null
-            );
-            const newData = arraySemNulos.map((item) => ({
-              vaga: item.numerovaga,
-              chegada:
-                item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
-              horafinal:
-                item.horafinal[0] +
-                ":" +
-                item.horafinal[1] +
-                ":" +
-                item.horafinal[2],
-              saida: item.saida,
-              local: item.local,
-              data: ArrumaHora(item.data),
-              estado: false,
-              pago: item.pago,
-              placa: item.placa,
-              notificacao: item.notificacao,
-              regularizacao: item.regularizacao,
-              id_vaga_veiculo: item.id_vaga_veiculo,
-            }));
-            setData(newData);
-          } else {
-            setEstado2(false);
-            for (let i = 0; i < data.length; i++) {
-              delete data[i];
-            }
-            const resposta3 = data.filter((el) => el !== null);
-            setData(resposta3);
-            setEstado(true);
-            setMensagem(response.data.msg.msg);
-            setTimeout(() => {
-              setEstado(false);
-              setMensagem("");
-            }, 5000);
-          }
-        })
-        .catch((error) => {
-          if (
-            error?.response?.data?.msg === "Cabeçalho inválido!" ||
-            error?.response?.data?.msg === "Token inválido!" ||
-            error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
-          ) {
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            localStorage.removeItem("perfil");
-          } else {
-            console.log(error);
-          }
-        });
-    }
-  };
-
   const reload = () => {
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
@@ -227,7 +119,6 @@ const OcupacaoVagasAdmin = () => {
               local: item.local,
               data: ArrumaHora(item.data),
               estado: false,
-              pago: item.pago,
               placa: item.placa,
               regularizacao: item.regularizacao,
               notificacao: item.notificacao,
@@ -302,7 +193,6 @@ const OcupacaoVagasAdmin = () => {
         local: item.local,
         data: ArrumaHora(item.data),
         estado: false,
-        pago: item.pago,
         placa: item.placa,
         regularizacao: item.regularizacao,
         notificacao: item.notificacao,
@@ -310,6 +200,7 @@ const OcupacaoVagasAdmin = () => {
         tempo: item.tempo,
       }));
       setData(newData);
+      console.log('nerwdatra', newData)
     } else {
       setEstado2(false);
       setEstado(true);

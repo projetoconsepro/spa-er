@@ -437,7 +437,7 @@ const handleFiltro = (where) => {
 
 
   return (
-    <div className="col-12 px-3">
+    <div className="col-12 px-3 mb-3">
       <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
       <div className="row mb-3">
         <div className="col-12">

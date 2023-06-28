@@ -1,12 +1,16 @@
-import { Group, Input, Modal, Grid, ActionIcon, CopyButton, Tooltip, Notification } from "@mantine/core";
+import { Group, Input, Modal, Grid, ActionIcon, CopyButton, Tooltip, Notification, Text, Button, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowRight, IconCash, IconCheck, IconCopy, IconKey, IconX } from "@tabler/icons-react";
+import { IconArrowRight, IconArrowsLeftRight, IconCash, IconCheck, IconCopy, IconHelp, IconHelpCircle, IconHelpCircleFilled, IconHelpSmall, IconKey, IconMessageCircle, IconPhoto, IconSettings, IconX } from "@tabler/icons-react";
 import axios from "axios";
 import { React, useState, useEffect } from "react";
 import QRCode from "react-qr-code";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import { IconSearch } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 
 const ModalPix = ({ qrCode, status, mensagemPix, onOpen }) => {
+
+    const user = JSON.parse(localStorage.getItem('user'))
     const [opened, { open, close }] = useDisclosure(false);
 
     useEffect(() => {
@@ -19,7 +23,26 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen }) => {
     
   return (
     <div>
-          <Modal opened={opened} onClose={() => {close()}} centered size="xl">
+          <Modal opened={opened} onClose={() => {close()}} centered size="xl" 
+          title={
+            <Menu shadow="md" width={200}>
+      <Menu.Target>
+        <Button
+        variant="outline"
+         sx={{ fontFamily: 'Greycliff CF, sans-serif' }}
+         >
+           ? </Button>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Label>Instruções:</Menu.Label>
+        <Text fz='sm' className="mx-2"><small>1º Clique no "<IconCopy size={10}/>" para copiar o código copia e cola;</small></Text>
+        <Text fz='sm' className="mx-2"><small>2º No app do seu banco escolha a opção pix copia e cola;</small></Text> 
+        <Text fz='sm' className="mx-2"><small>3º Cole o código no campo pix copia e cola;</small> </Text>
+        <Text fz='sm' className="mx-2"><small>4º Retorne ao app e aguarde a confirmação do pagamento!</small> </Text> 
+      </Menu.Dropdown>
+    </Menu>
+          }>
             <div id="borderimg">
               <Group position="center" mt="md" mb="xs">
                 <QRCode value={qrCode === undefined ? "a" : qrCode} />
@@ -65,7 +88,7 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen }) => {
                     title="Aguardando pagamento"
                     withCloseButton={false}
                   >
-                    Por favor abra o aplicativo do seu banco e pague.
+                    A confirmação do pagamento será automática.
                   </Notification>
                 ) : (
 
