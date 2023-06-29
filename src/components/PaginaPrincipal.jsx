@@ -2,11 +2,12 @@ import React from 'react'
 import "../pages/Style/styles.css";
 import { Button } from '@mantine/core';
 import { IconArrowBearRight } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 
 const PaginaPrincipal = () => {
   return (
     <div className="container3">
-  <div className="div1">
+  <div className="div1 text-black">
     <div className="image-container">
       <img src="../../assets/img/consepro11.png" alt="Exemplo de imagem" />
     </div>
@@ -23,7 +24,7 @@ const PaginaPrincipal = () => {
       </Button>
     </div>
   </div>
-  <div className="div2">
+  <div className="div2 text-black">
     <div className="content">
       <h2>ESTACIONE RÁPIDO</h2>
       <p>Realize um estacionamento de forma simples e rápida.</p>
@@ -40,7 +41,7 @@ const PaginaPrincipal = () => {
       <img src="../../assets/img/carroconsepro.png" alt="Exemplo de imagem" />
     </div>
   </div>
-  <div className="div1 div3">
+  <div className="div1 div3 text-black">
     <div className="image-container3">
       <img src="../../assets/img/whatsconsepro5.png" alt="Exemplo de imagem" />
     </div>

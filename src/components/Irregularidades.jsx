@@ -432,7 +432,7 @@ const Irregularidades = () => {
 
   return (
     <div className="col-12 px-3 mb-4">
-      <p className="text-start fs-2 fw-bold mt-3">Notificações:</p>
+      <p className="text-start fs-2 fw-bold mt-3"><VoltarComponente arrow={true} /> Notificações:</p>
       <div className="row mb-3">
         <div className="col-12">
         <div className="row">

@@ -116,17 +116,14 @@ const HistoricoFinanceiro = () => {
         perfil_usuario: `${user2.perfil[0]}`,
       },
     });
-
     requisicao.get('/financeiro/cliente')
     .then((response) => {
-      console.log(response);
       setSaldo(response?.data.dados.saldo)
       const newData = response?.data.dados.movimentos.map((item) => ({
         valor: Math.abs(item.valor),
         data: ArrumaHora(item.data),
         tipo: item.tipo,
       }));
-      console.log('essa é a newdata', newData)
       for ( let i = 0; i < newData.length; i++) {
         if(newData[i].tipo === 'credito'){
           newData[i].debito = 'S'
@@ -218,7 +215,7 @@ const HistoricoFinanceiro = () => {
   
   return (  
     <div className="mb-3">
-        <p className="mx-3 text-start fs-4 fw-bold">Histórico financeiro:</p>
+        <p className="mx-3 text-start fs-4 fw-bold"><VoltarComponente arrow={true} /> Histórico financeiro:</p>
         <div className="row mb-3">
         <div className="col-5 mx-2"> 
       <Filtro nome={"HistoricoFinanceiro"} onConsultaSelected={handleConsulta} onLoading={estadoLoading} />

@@ -46,6 +46,7 @@ import TransferenciaParceiro from '../../components/TransferenciaParceiro';
 import CartaoCredito from '../../components/CartaoCredito';
 import InserirCreditos from '../../components/InserirCreditos';
 import CameraTicketNotificacao from '../../components/CameraTicketNotificacao';
+import Suporte from '../../components/Suporte';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -184,6 +185,9 @@ export default function Veiculos({Componente}) {
         }
         else if (Componente === "CameraTicketNotificacao"){
             return <CameraTicketNotificacao />
+        }
+        else if (Componente === "Suporte"){
+            return <Suporte />
         }
         else {
             return <Error />

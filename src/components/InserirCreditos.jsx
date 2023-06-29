@@ -1,37 +1,10 @@
-/* eslint-disable no-loop-func */
-import {
-  Group,
-  Text,
-  Card,
-  Button,
-  Radio,
-  Image,
-  Input,
-  Modal,
-  Grid,
-  ActionIcon,
-  CopyButton,
-  Tooltip,
-  Notification,
-  Tabs,
-} from "@mantine/core";
+import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconArrowRight,
-  IconCash,
-  IconCheck,
-  IconCopy,
-  IconCreditCard,
-  IconCreditCardOff,
-  IconKey,
-  IconX,
-} from "@tabler/icons-react";
+import { IconArrowRight, IconCash, IconCheck, IconCreditCard, IconX } from "@tabler/icons-react";
 import axios from "axios";
 import { React, useState, useRef } from "react";
-import QRCode from "react-qr-code";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
-import { Icon } from "leaflet";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -48,7 +21,7 @@ const InserirCreditos = () => {
   const [txid, setTxId] = useState(null);
   const [onOpen, setOnOpen] = useState(false);
 
-  const inserirCreditos = (campo) => {
+  const inserirCreditos = (campo, valor) => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -62,9 +35,10 @@ const InserirCreditos = () => {
     });
 
     requisicao
-      .post("/usuario/saldo", {
-        valor: campo,
-        pagamento: metodo,
+      .post("/usuario/saldo/pix", {
+        txid: campo,
+        valor: valor,
+        pagamento: 'pix'
       })
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
@@ -88,7 +62,7 @@ const InserirCreditos = () => {
     ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
 
     if (
-      ValorFinal < 2 ||
+      ValorFinal <= 0 ||
       ValorFinal == "" ||
       ValorFinal == "" ||
       ValorFinal == null ||
@@ -126,7 +100,7 @@ const InserirCreditos = () => {
             console.log(resposta.data.data.txid);
             setData(resposta.data.data);
             setTxId(resposta.data.data.txid);
-            getInfoPix(resposta.data.data.txid, ValorFinal);
+            inserirCreditos(resposta.data.data.txid, ValorFinal)
             setOnOpen(true);
             setNotification(true)
             open();
@@ -140,13 +114,6 @@ const InserirCreditos = () => {
     }
   };
 
-  // Função para fechar a conexão em outro lugar
-  const closeSocketConnection = () => {
-    if (socketRef.current) {
-      socketRef.current.close();
-    }
-  };
-
   const handleTabs = () => {
     console.log(metodo);
     if (metodo === "pix") {
@@ -157,78 +124,6 @@ const InserirCreditos = () => {
         setDivAvancar(false);
       }, 5000);
     }
-  };
-
-  async function getInfoPix(TxId, campo) {
-    const startTime = Date.now();
-    const endTime = startTime + 5 * 60 * 1000;
-
-    let res = { status: "ATIVA" };
-
-    while (Date.now() < endTime && res.status !== "CONCLUIDA") {
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
-      res = requisicao
-        .get(`/verificarcobranca/${TxId}`)
-        .then((resposta) => {
-          if (resposta.data.msg.resultado) {
-            res = { status: "CONCLUIDA" };
-          } else {
-            res = { status: "ATIVA" };
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-    }
-
-    funcPix(TxId, campo);
-  }
-
-  const funcPix = (TxId, campo) => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
-    requisicao
-      .get(`/verificarcobranca/${TxId}`)
-      .then((resposta) => {
-        console.log(resposta.data);
-        if (resposta.data.msg.resultado) {
-          closeSocketConnection();
-          inserirCreditos(campo);
-          setNotification(false);
-          setTimeout(() => {
-            close();
-            setTimeout(() => {
-              setNotification(true);
-            }, 2000);
-          }, 3000);
-        } else {
-          setNotification(false);
-          setPixExpirado("Pix expirado");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const FuncArrumaInput = (e) => {

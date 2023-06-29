@@ -3,6 +3,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
+import { Button } from '@mantine/core'
 
 const RegistrarVeiculo = () => {
     const [placa, setPlaca] = useState("placa")
@@ -152,27 +153,34 @@ const RegistrarVeiculo = () => {
                             <div className="h5 mt-2 align-items-center">
                                 Registre seu veículo aqui
                             </div>
-                            <div className="row">
-                                <div className="col-9 px-3 mt-4 pt-1">
-                                    <h5 id="h5Placa">Placa estrangeira</h5>
-                                </div>
-                                <div className="col-3 px-3">
-                                    <div className="form-check form-switch gap-2 d-md-block">
-                                        <input className="form-check-input align-self-end" type="checkbox" 
-                                        role="switch" onClick={handlePlaca} id="flexSwitchCheckDefault"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-3 pt-1 mt-md-0 w-100 p-6" id={placa}>
-                                <input type="text" id={inputVazio} className='mt-6 pt-4 fs-1 justify-content-center align-items-center text-align-center' value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
-                            </div>
-                            <div className="mt-1 mb-6 gap-2 d-md-block">
-                                    <VoltarComponente />
-                                    <button type="submit" onClick={requisicao} className="btn3 botao">Cadastrar</button>
-                                </div>
-                                <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-                                {mensagem}
-                            </div>
+            <div className="row">
+                <div className="col-9 px-3 mt-4 pt-2">
+                    <h6>Placa estrangeira/Outra</h6>
+                </div>
+                <div className="col-3 px-3">
+                    <div className="form-check form-switch gap-2 d-md-block">
+                        <input
+                        className="form-check-input align-self-end"
+                        type="checkbox"
+                        role="switch"
+                        onClick={handlePlaca}
+                        id="flexSwitchCheckDefault"
+                        onChange={() => {
+                        }}
+                        />
+                    </div>
+                </div>
+            </div>
+                    <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
+                        <input type="text" id={inputVazio} className="mt-5 fs-1 justify-content-center align-items-center text-center" value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
+                    </div>
+                    <div className="mt-1 mb-6 gap-2 d-md-block">
+                        <VoltarComponente space={true}/>
+                        <Button onClick={requisicao} className="bg-blue-50" size="md" radius="md">Cadastrar</Button>
+                        </div>
+                        <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
+                            {mensagem}
+                        </div>
                         </div>
                     </div>
                 </div>

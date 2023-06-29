@@ -1,7 +1,8 @@
 import { Button } from '@mantine/core'
+import { IconArrowLeft } from '@tabler/icons-react'
 import React, { useEffect, useState } from 'react'
 
-const VoltarComponente = ({ space }) => {
+const VoltarComponente = ({ space, arrow }) => {
     const [componenteAnterior, setComponenteAnterior] = useState('')
     const [componenteProximo, setComponenteProximo] = useState('')
 
@@ -18,8 +19,13 @@ const VoltarComponente = ({ space }) => {
     }
 
   return (
-
-        <Button className={space ? "bg-gray-500 mx-2" : "bg-gray-500" } size="md" radius="md" onClick={() => {voltar()}}>Voltar</Button>
+    <>
+    {arrow ?
+        <IconArrowLeft className="mb-1" onClick={() => {voltar()}}/>
+        : 
+        <Button className={space ? "bg-gray-500 mx-2" : "bg-gray-500" } size="md" radius="md" onClick={() => {voltar()}}>Voltar</Button> 
+    }
+    </>
     )
 }
 
