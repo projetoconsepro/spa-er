@@ -444,6 +444,7 @@ let resumoData2 = [
   const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
   const passar = btoa(idrequisicao)
   requisicao.get(`/financeiro/admin/?query=${passar}`).then((res) => {
+    console.log(res)
     setEstado(true);
     setData(res.data.data);
     let newData = res.data.data[0].monitor.map((item) => {
@@ -565,7 +566,6 @@ let resumoData2 = [
 
     newData = newData.concat(newData2, newData3, newData4);
     setData2(newData);
-
   }).catch((err) => {
     console.log(err);
   });

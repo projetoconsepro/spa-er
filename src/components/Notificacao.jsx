@@ -127,10 +127,13 @@ const Notificacao = () => {
             response => {
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
-                    FuncTrocaComp( "CameraTicketNotificacao");
                     console.log(response)
-                    console.log(response.data.data.id_notificacao, 'ué')
-                    localStorage.setItem('id_notificacao', response.data.data.id_notificacao)
+                    if(response.data.data.id_notificacao !== undefined){
+                        const id = response.data.data.id_notificacao
+                        console.log('entrou', id)
+                        localStorage.setItem('id_notificacao', id)
+                    }
+                    FuncTrocaComp( "CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
                     localStorage.removeItem("placa");
@@ -163,11 +166,13 @@ const Notificacao = () => {
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
                     console.log(response)
-                    console.log(response.data.data.id_notificacao, 'ué')
-                    localStorage.setItem('id_notificacao', response.data.data.id_notificacao)
+                    if(response.data.data.id_notificacao !== undefined){
+                        const id = response.data.data.id_notificacao
+                        console.log('entrou', id)
+                        localStorage.setItem('id_notificacao', id)
+                    }
                     ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, )
                     FuncTrocaComp("CameraTicketNotificacao");
-                    localStorage.setItem('id_notificacao', response.data.id_notificacao)
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
                     localStorage.removeItem("placa");

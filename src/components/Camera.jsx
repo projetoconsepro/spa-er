@@ -8,9 +8,11 @@ import { IconCamera, IconCheck } from "@tabler/icons-react";
 
 function Camera() {
   const videoRef = useRef(null);
+  const mainDivRef = useRef(null);
   const [photos, setPhotos] = useState([]);
   const [cont, setCont] = useState(0);
   const [cont2, setCont2] = useState(0);
+  const [tamanho, setTamanho] = useState(90);
 
   const getVideo = async () => {
     try {
@@ -46,7 +48,6 @@ function Camera() {
       console.log("Erro ao capturar áudio e vídeo: " + error.message);
     }
   };
-  
 
   useEffect(() => {
     setTimeout(() => {
@@ -61,17 +62,15 @@ function Camera() {
     const video = videoRef.current;
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
     const photoDataUrl = canvas.toDataURL("image/png");
-
     const updatedPhotos = [...photos, { id: cont, photo: photoDataUrl }];
     setPhotos(updatedPhotos);
     setCont(cont + 1);
+    setTamanho(tamanho + 30)
+    mainDivRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
 
   const deletePhoto = (id) => {
@@ -121,7 +120,7 @@ function Camera() {
   };
 
   return (
-    <div>
+    <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
       {photos.length > 0 && (
       <Card shadow="sm" className="mt-3 mb-2">
       {photos.map((item) => (

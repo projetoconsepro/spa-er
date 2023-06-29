@@ -4455,6 +4455,7 @@ textarea.form-control-lg {
     width: 30rem   !important;
     max-width: 100% !important;
     text-align: center;
+    padding-right: 30px;
     justify-content: left;
     align-items: left;
     text-transform: uppercase !important;

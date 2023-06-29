@@ -38,7 +38,6 @@ const Configuracoes = () => {
     requisicao
       .get("/veiculo")
       .then((response) => {
-        console.log(response);
         const newData = response.data.data.map((item) => ({
           placa: item.usuario,
           id_veiculo: item.id_veiculo,
@@ -83,7 +82,6 @@ const Configuracoes = () => {
         debitoAutomatico: data[index].check ? "S" : "N",
       })
       .then((response) => {
-        console.log(response);
         if (response.data.msg.resultado) {
           Swal.fire(
             "Confirmado!",
@@ -166,7 +164,7 @@ const Configuracoes = () => {
 
   return (
     <div className="col-12 px-3 mb-3">
-      <p className="text-start fs-5 fw-bold">Débito automático</p>
+      <p className="text-start fs-5 fw-bold"><VoltarComponente arrow={true} /> Débito automático</p>
       {data.map((link, index) => (
         <div
           className="card border-0 shadow mt-5 mb-5"

@@ -3,6 +3,7 @@ import { React, useState, useEffect } from 'react'
 import '../pages/Style/styles.css';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
+import { Button } from '@mantine/core';
 
 const RegistrarVagaCliente = () => {
     const [mensagem, setMensagem] = useState("");
@@ -227,8 +228,8 @@ const RegistrarVagaCliente = () => {
                             </div>
 
                             <div className="mt-1 mb-5 gap-2 d-md-block">
-                                <VoltarComponente />
-                                <button type="submit" onClick={handleSubmit} className="btn3 botao">Confirmar</button>
+                                <VoltarComponente space={true}/>
+                                <Button onClick={handleSubmit} className="bg-blue-50" size="md" radius="md">Confirmar</Button>
                             </div>
                             <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                 {mensagem}

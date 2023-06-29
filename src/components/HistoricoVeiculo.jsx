@@ -230,7 +230,7 @@ const HistoricoVeiculo = () => {
 
   return (
     <div className="dashboard-container">
-      <p className="mx-3 text-start fs-4 fw-bold">Histórico:</p>
+      <p className="mx-3 text-start fs-4 fw-bold"><VoltarComponente arrow={true} /> Histórico:</p>
       <div>
       <div className="row mb-4">
         <div className="col-7 mx-2">

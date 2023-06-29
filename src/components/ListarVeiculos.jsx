@@ -3,7 +3,7 @@ import axios from "axios";
 import { FcPlus } from "react-icons/fc";
 import { FaBell, FaCarAlt, FaParking } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
-import { IoTrashSharp } from "react-icons/io5";
+import { IoChevronBack, IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { TbHandClick } from "react-icons/tb";
@@ -11,6 +11,10 @@ import "../pages/Style/styles.css";
 import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import { IconArrowBack, IconArrowBarToLeft, IconArrowForward } from "@tabler/icons-react";
+import { IconArrowBigLeft } from "@tabler/icons-react";
+import { IconArrowLeft } from "@tabler/icons-react";
+import VoltarComponente from "../util/VoltarComponente";
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -110,8 +114,6 @@ const ListarVeiculos = () => {
           mostrardiv[i] = { estado: true };
           nofityvar[i] = { notifi: "notify" };
           resposta[i].placa = response.data.data[i].usuario;
-          console.log(response.data.data[i]);
-          console.log(response.data.data[i].id_veiculo);
           resposta[i].id_veiculo = response.data.data[i].id_veiculo;
           if (response.data.data[i].estacionado === "N") {
             resposta[i].div = "card-body mb-2";
@@ -381,7 +383,7 @@ const ListarVeiculos = () => {
 
   return (
     <div className="col-12 px-3 mb-4">
-      <p className="text-start fs-2 fw-bold">Meus veículos</p>
+      <p className="text-start fs-2 fw-bold"><VoltarComponente arrow={true} /> Meus veículos</p>
       <div className="card border-0 shadow">
         <div className="card-body">
           <div className="d-flex align-items-center justify-content-between pb-3">
@@ -488,9 +490,11 @@ const ListarVeiculos = () => {
                     >
                       Regularizar
                     </button>
-                    <div>
+                    <div className="mt-4 text-end">
                       <span>
-                        <IoTrashSharp color="red" size={25} />
+                        <IoTrashSharp color="red" size={25} onClick={() => {
+                            removerVeiculo(link.id_veiculo);
+                          }}/>
                       </span>
                     </div>
                   </div>

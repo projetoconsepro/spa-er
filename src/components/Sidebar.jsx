@@ -1,32 +1,31 @@
 import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaClipboardList } from "react-icons/fa";
-import { RiFileAddFill } from "react-icons/ri";
-import { BsConeStriped, BsCashCoin, BsPersonCircle, BsCashStack } from "react-icons/bs";
-import { MdAddLocationAlt, MdOutlineContactSupport, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
-import { RiAlertFill, RiSettings5Fill } from "react-icons/ri";
-import { useState } from "react";
-import {HiBanknotes } from "react-icons/hi";
-import { BiCreditCard, BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
+import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
+import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
+import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
+import { useState, useEffect } from "react";
+import { BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
 import { AiFillEdit, AiFillPrinter, AiOutlineBarChart, AiOutlineFileSearch } from "react-icons/ai";
 import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
-import { useEffect } from "react";
 import { FcMoneyTransfer } from "react-icons/fc";
+import { IconHelpCircle } from "@tabler/icons-react";
 
 const Sidebar = () => {
-        const nome = localStorage.getItem("user");
-        const teste = JSON.parse(nome);
-        const [mostrarSidebar, setMostrarSidebar] = useState(true);
-        const [ariaExpanded, setAriaExpanded] = useState(false);
+    const nome = localStorage.getItem("user");
+    const teste = JSON.parse(nome);
+    const [mostrarSidebar, setMostrarSidebar] = useState(true);
+    const [ariaExpanded, setAriaExpanded] = useState(false);
 
-        const toggleSidebar = (componente) => {
+    const toggleSidebar = (componente) => {
             setAriaExpanded(false)
             FuncTrocaComp(componente)
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
             }, 1);
-        }
-        const componentefunc = (componente, index) =>{
+    }
+
+    const componentefunc = (componente, index) =>{
             if (links[index].subitem !== undefined) {
                 
             } else {
@@ -37,15 +36,15 @@ const Sidebar = () => {
                 setMostrarSidebar(true)
             }, 1);
             }
-        }
+    }
 
-        const handleLogout = () => {
+    const handleLogout = () => {
             localStorage.removeItem("user")
             localStorage.removeItem("token")
             localStorage.removeItem("perfil")
-        }
+    }
 
-        const displayOff = () => {
+    const displayOff = () => {
             const navbar = document.getElementById('nav');
               if (ariaExpanded) {
                 navbar.classList.remove('fixed-top');
@@ -54,18 +53,14 @@ const Sidebar = () => {
               }
     }
 
-
     useEffect(() => {
         displayOff()
     }, [ariaExpanded])
-
-
         
-        const styles = {
-        className: "nav-link d-flex align-items-center fs-6",
-        }
-        
-        const links = [{
+    const styles = {
+    className: "nav-link d-flex align-items-center fs-6",
+    }   
+    const links = [{
             className: styles.className,
             icon: <FaUser />,
             name: "‎ Meu perfil",
@@ -84,7 +79,6 @@ const Sidebar = () => {
                 },
             ]
     }]
-
     if(teste.perfil[0] === "parceiro"){
         links.push({
             className: styles.className,
@@ -116,8 +110,7 @@ const Sidebar = () => {
             name: "‎ Regularizar",
             componente: "Regularizacao",
         })
-    }
-    
+    } 
     if(teste.perfil[0] === "cliente"){
         links.push({
             className: styles.className,
@@ -193,7 +186,13 @@ const Sidebar = () => {
             name: "‎ Vagas Livres",
             componente: "VagasLivres",
         })
-        }
+        links.push({
+            className: styles.className,
+            icon: <IconHelpCircle />,
+            name: "‎ Suporte",
+            componente: "Suporte",
+        })
+    }
     else if (teste.perfil[0] === "admin"){
         links.push({
             className: styles.className,

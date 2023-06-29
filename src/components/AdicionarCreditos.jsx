@@ -14,7 +14,7 @@ const AdicionarCreditos = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [cpf, setCPF] = useState("");
-  const [valor, setValor] = useState([]);
+  const [valor, setValor] = useState('');
   const [InputPlaca, setInputPlaca] = useState("form-control fs-6");
   const [pagamentos, setPagamento] = useState("dinheiro");
   const [data, setData] = useState([]);
@@ -101,7 +101,7 @@ const AdicionarCreditos = () => {
 
 
   const FuncArrumaInput = (e) => {
-    let valor = e.target.value;
+    let valor = e;
 
     if (valor.length === 1 && valor !== '0') {
       valor = `0,0${valor}`;
@@ -365,10 +365,7 @@ const AdicionarCreditos = () => {
 
   return (
     <div className="container">
-      <div
-        className="row justify-content-center form-bg-image"
-        data-background-lg="../../assets/img/illustrations/signin.svg"
-      >
+      <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
         <div className="col-12 d-flex align-items-center justify-content-center">
           <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
             <div className="h5 mt-2 align-items-center">
@@ -379,7 +376,7 @@ const AdicionarCreditos = () => {
                 <button
                   type="button"
                   className="btn btn-info w-100"
-                  onClick={() => setValor([10])}
+                  onClick={() => FuncArrumaInput('1000')}
                 >
                   10
                 </button>
@@ -388,7 +385,7 @@ const AdicionarCreditos = () => {
                 <button
                   type="button"
                   className="btn btn-info w-100"
-                  onClick={() => setValor([20])}
+                  onClick={() => FuncArrumaInput('2000')}
                 >
                   20
                 </button>
@@ -397,7 +394,7 @@ const AdicionarCreditos = () => {
                 <button
                   type="button"
                   className="btn btn-info w-100"
-                  onClick={() => setValor([30])}
+                  onClick={() => FuncArrumaInput('3000')}
                 >
                   30
                 </button>
@@ -406,7 +403,7 @@ const AdicionarCreditos = () => {
                 <button
                   type="button"
                   className="btn btn-info w-100"
-                  onClick={() => setValor([50])}
+                  onClick={() => FuncArrumaInput('5000')}
                 >
                   50
                 </button>
@@ -425,14 +422,14 @@ const AdicionarCreditos = () => {
               </div>
             </div>
             <div className="form-group mb-4 mt-4">
-              <h6 className="text-start mb-0">Valor:</h6>
+              <h6 className="text-start mb-2">Valor:</h6>
 
-              <div className="input-group w-25">
+              <div className="input-group w-75">
                 <Input
                   icon={<IconCash />}
                   placeholder="R$ 0,00"
                   value={valor}
-                  onChange={(e) => FuncArrumaInput(e)}
+                  onChange={(e) => FuncArrumaInput(e.target.value)}
                 />
               </div>
             </div>
@@ -454,7 +451,7 @@ const AdicionarCreditos = () => {
             </div>
 
             <div className="pt-4 mb-6 gap-2 d-md-block">
-              <VoltarComponente />
+              <VoltarComponente space={true}/>
               <Button
                 loading={estado2}
                 onClick={handleSubmit}
@@ -474,7 +471,6 @@ const AdicionarCreditos = () => {
               {mensagem}
             </div>
             <div style={{ display: estado2 ? "block" : "none" }}>
-              <Loader />
             </div>
           </div>
         </div>

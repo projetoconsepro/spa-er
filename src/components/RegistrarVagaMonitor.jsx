@@ -7,7 +7,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Loader } from "@mantine/core";
+import { Button, Loader } from "@mantine/core";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -614,14 +614,14 @@ const RegistrarVagaMonitor = () => {
               </div>
 
               <div className="pt-4 mb-4 gap-2 d-md-block">
-                <VoltarComponente onClick={() => HangleBack()} />
-                <button
-                  type="submit"
+                <VoltarComponente space={true} onClick={() => HangleBack()} />
+                <Button
                   onClick={handleSubmit}
-                  className="btn3 botao"
+                  size="md" radius="md"
+                  className="bg-blue-50"
                 >
                   Confirmar
-                </button>
+                </Button>
               </div>
               <div
                 className="alert alert-danger mt-3"
