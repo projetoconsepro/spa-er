@@ -487,6 +487,9 @@ const ListarVagasMonitor = () => {
           cancelButtonText: "Cancelar",
           confirmButtonText: "Liberar",
           denyButtonText: `Notificar`,
+          footer: `<button class="btn3 botao bg-green-50" id="btnFooter">
+          Adicionar tempo
+          </button>`,
         }).then((result) => {
           if (result.isConfirmed) {
             requisicao
@@ -530,6 +533,17 @@ const ListarVagasMonitor = () => {
             FuncTrocaComp("Notificacao");
           }
         });
+
+        const btnFooter = document.getElementById('btnFooter');
+            btnFooter.addEventListener('click', function() {
+            localStorage.setItem("vaga", numero);
+            localStorage.setItem("id_vagaveiculo", id_vaga);
+            localStorage.setItem("placa", placa);
+            localStorage.setItem("popup", true);
+            FuncTrocaComp("RegistrarVagaMonitor");
+            Swal.close()
+        });
+
       }
     } else {
       if (placa === "") {
@@ -634,7 +648,7 @@ const ListarVagasMonitor = () => {
                 </div>
               </div>
               <div>
-                <div className="row px-3">
+                <div className="row px-2 mb-1">
                   <div className="col-4 beetwen text-start"> <small><small>Livres: {vagasLivres}</small> </small></div>
                   <div className="col-4 beetwen"><small><small>Ocupadas: {vagasOcupadas}</small> </small></div>
                   <div className="col-4 beetwen text-end"> <small><small>Tempo : {vagasVencidas}</small> </small></div>
