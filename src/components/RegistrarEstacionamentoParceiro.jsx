@@ -5,6 +5,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
+import { Button } from "@mantine/core";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -710,16 +711,10 @@ const RegistrarEstacionamentoParceiro = () => {
             </div>
 
             <div className="mb-2 mt-3 gap-2 d-md-block">
-              <VoltarComponente />
-              <button
-                type="submit"
-                onClick={() => {
-                  ValidaFormato();
-                }}
-                className="btn3 botao"
-              >
+              <VoltarComponente space={true} />
+              <Button className="bg-blue-50" size="md" radius="md" onClick={() => {ValidaFormato();}}>
                 Registrar
-              </button>
+              </Button>
             </div>
             <div
               className="alert alert-danger mt-4"

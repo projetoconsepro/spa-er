@@ -3,7 +3,7 @@ import { BsCameraFill } from "react-icons/bs";
 import Swal from 'sweetalert2'
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
-import { Button, Card } from "@mantine/core";
+import { Button, Card, Text } from "@mantine/core";
 import { IconCamera, IconCheck } from "@tabler/icons-react";
 
 function Camera() {
@@ -13,6 +13,7 @@ function Camera() {
   const [cont, setCont] = useState(0);
   const [cont2, setCont2] = useState(0);
   const [tamanho, setTamanho] = useState(90);
+  const [divErro, setDivErro] = useState(false);
 
   const getVideo = async () => {
     try {
@@ -40,11 +41,13 @@ function Camera() {
             }
           },
           function (error) {
+            setDivErro(true);
             console.log("Erro ao capturar vídeo: " + error.message);
           }
         );
       }
     } catch (error) {
+      setDivErro(true);
       console.log("Erro ao capturar áudio e vídeo: " + error.message);
     }
   };
@@ -135,7 +138,11 @@ function Camera() {
       </Card>
       )}
       <Card shadow="sm" className="mt-3 mb-2">
+      {divErro ?
+      <Text>Erro ao capturar vídeo, tente reiniciar a aplicação.</Text>
+      :
       <video ref={videoRef} className="w-100"></video>
+      }
       </Card>
       <div className="container" id="testeRolagem">
         <div className="mb-6">

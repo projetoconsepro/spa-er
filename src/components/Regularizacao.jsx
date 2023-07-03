@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from '../util/VoltarComponente';
+import { Button } from '@mantine/core';
 
 
 const Regularizacao = () => {
@@ -87,8 +88,8 @@ const Regularizacao = () => {
                                 <input type="text" id={inputVazio} className='mt-5 fs-1 justify-content-center align-items-center text-align-center' value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
                             </div>
                                 <div className="mb-2 mt-3 gap-2 d-md-block">
-                                    <VoltarComponente />
-                                    <button type="submit" onClick={()=>{handleRequisicao()}}  className="btn3 botao">Buscar</button>
+                                    <VoltarComponente space={true} />
+                                    <Button size="md" radius="md" className="bg-blue-50" onClick={()=>{handleRequisicao()}}>Buscar</Button>
                                 </div>
                                 <div className="alert alert-danger mt-4" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                     {mensagem}

@@ -65,6 +65,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     }
     
     else if (nome === 'ListarNotificacoesAdmin') {
+      setPlacaCarro(localStorage.getItem('placaCarro'));
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
         headers: {
@@ -309,7 +310,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     let consulta = ''
     switch (selectedOption.value) {
       case 'Data':
-        if (nome === 'HistoricoVeiculoAdmin'){
+        if (nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
           consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "data", "operator": "LIKE", "value": "%${FormatDate(value)}%" }]}`
         } else {
         consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${FormatDate(value)}%" }]}`;
@@ -319,7 +320,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         consulta = `{"where": [{ "field": "nome", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
         break;
       case 'Periodo':
-        if (nome === 'HistoricoVeiculoAdmin'){
+        if (nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
           consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${FormatDate(valuePeriodo[1])}"] }]}`
         } else {
         consulta = `{"where": [{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${FormatDate(valuePeriodo[1])}"] }]}`;
@@ -333,7 +334,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         }
         break;
       case 'Vaga':
-        if (nome === 'HistoricoVeiculoAdmin'){
+        if (nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
         consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`
         } else if(nome === 'OcupacaoVagasAdmin'){
           consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" },{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`;
@@ -343,7 +344,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         }
         break;
       case 'Tipo':
-        if(nome === 'HistoricoVeiculoAdmin'){
+        if(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
         consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "tipo", "operator": "=", "value": "${radioTipo}" }]}`;
         }
         else if(nome === 'OcupacaoVagasAdmin'){
@@ -417,14 +418,16 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             </div>
             { selectedOption.value === 'Data' ? (
               <div>
-              {nome === 'HistoricoVeiculoAdmin' ?
+              {(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin') ?
               <div className="fs-6">
                 Placa selecionada: ‎
                 <Badge variant="dot" 
                 size="md">
                   {placaCarro}
                   </Badge>
-              </div> : null}
+              </div> 
+              : null
+              }
 
               <div>
               <div className="mt-4 mb-1">
@@ -443,7 +446,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             ) :
             selectedOption.value === 'Periodo' ? (
               <div>
-              {nome === 'HistoricoVeiculoAdmin' ?
+              {(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin') ?
               <div className="fs-6">
                 Placa selecionada: ‎
                 <Badge variant="dot" 
@@ -477,7 +480,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             ) :
             selectedOption.value === 'Vaga' ? (
               <div>
-              {nome === 'HistoricoVeiculoAdmin' ?
+              {(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin') ?
               <div className="fs-6">
                 Placa selecionada: ‎
                 <Badge variant="dot" 
@@ -495,7 +498,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             ) :
             selectedOption.value === 'Tipo' ? (
               <div>
-              {nome === 'HistoricoVeiculoAdmin' ?
+              {(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin') ?
               <div className="fs-6">
                 Placa selecionada: ‎
                 <Badge variant="dot" 
@@ -508,6 +511,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                 Selecione o tipo:
               </div>
               <Radio.Group name="Escolha algum opção" onChange={(e) => setRadioTipo(e)}>
+                  {nome === 'HistoricoVeiculoAdmin' ?
                   <Grid>
                   <Grid.Col span={12}>
                   <Radio value="'S'" label="Notificado" />
@@ -516,6 +520,16 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                   <Radio value="'N'" label="Normal" />
                   </Grid.Col>
                   </Grid>
+                  : 
+                  <Grid>
+                  <Grid.Col span={12}>
+                  <Radio value="'PAGO'" label="Pago" />
+                  </Grid.Col>
+                  <Grid.Col span={12}>
+                  <Radio value="'PENDENTE'" label="Pendente" />
+                  </Grid.Col>
+                  </Grid>
+                  }
               </Radio.Group>
               </div>
               </div>
