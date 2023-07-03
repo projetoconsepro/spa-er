@@ -13106,6 +13106,10 @@ textarea.form-control-lg {
     background-color: #3a58c8 !important;
 }
 
+.bg-green-50 {
+    background-color: green !important;
+}
+
 .bg-gray-50 {
     background-color: #D9D9D9 !important;
 }
