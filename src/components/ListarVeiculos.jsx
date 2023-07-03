@@ -78,6 +78,7 @@ const ListarVeiculos = () => {
                 icon: "success",
                 timer: 2000,
               });
+              console.log('removeu')
               atualizacomp();
             } else {
               Swal.fire({
@@ -103,8 +104,12 @@ const ListarVeiculos = () => {
     await requisicao
       .get("/veiculo")
       .then((response) => {
+        console.log('response', response)
         if (response.data.msg.resultado === false) {
           FuncTrocaComp("CadastrarVeiculo");
+        }
+        for (let i = 0; i < resposta.length; i++) {
+            delete resposta[i];
         }
         for (let i = 0; i < response?.data?.data.length; i++) {
           resposta[i] = {};
@@ -114,6 +119,7 @@ const ListarVeiculos = () => {
           mostrardiv[i] = { estado: true };
           nofityvar[i] = { notifi: "notify" };
           resposta[i].placa = response.data.data[i].usuario;
+          console.log(resposta[i].placa)
           resposta[i].id_veiculo = response.data.data[i].id_veiculo;
           if (response.data.data[i].estacionado === "N") {
             resposta[i].div = "card-body mb-2";
@@ -167,14 +173,13 @@ const ListarVeiculos = () => {
               resposta[i].numero_notificacoes_pendentes = "Uma notificação";
               nofityvar[i] = { notifi: "notify2" };
             } else {
-              resposta[
-                i
-              ].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
+              resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
               nofityvar[i] = { notifi: "notify2" };
               notificacao[i] = { estado: false };
             }
           }
         }
+        console.log('resposta', resposta)
       })
       .catch(function (error) {
         if (

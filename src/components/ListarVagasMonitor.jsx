@@ -331,7 +331,7 @@ const ListarVagasMonitor = () => {
                     text:"Vaga liberada", 
                     title:"", 
                     icon:"success",
-                    timer: 2000,
+                    timer: 1200,
                   });
                   setTimeout(() => {
                     getVagas(salvaSetor);
@@ -370,13 +370,17 @@ const ListarVagasMonitor = () => {
           denyButtonColor: "green",
         }).then((result) => {
           if (result.isConfirmed) {
-            requisicao
-              .post(`/estacionamento/saida`, {
+            requisicao.post(`/estacionamento/saida`, {
                 idvagaVeiculo: id_vaga,
               })
               .then((response) => {
                 if (response.data.msg.resultado) {
-                  Swal.fire("Vaga liberada", "", "success");
+                  Swal.fire({
+                    text:"Vaga liberada", 
+                    title:"", 
+                    icon:"success",
+                    timer: 1200,
+                  });
                   setTimeout(() => {
                     getVagas(salvaSetor);
                   }, 1000);
@@ -399,14 +403,12 @@ const ListarVagasMonitor = () => {
                 }
               });
           } else if (result.isDenied) {
-            requisicao
-              .post("/estacionamento", {
+            requisicao.post("/estacionamento", {
                 placa: placa,
                 numero_vaga: numero,
                 tempo: tempo,
                 id_vaga_veiculo: id_vaga,
-              })
-              .then((response) => {
+              }).then((response) => {
                 if (response.data.msg.resultado === true) {
                   getVagas(salvaSetor);
                 } else {
@@ -419,13 +421,16 @@ const ListarVagasMonitor = () => {
                     denyButtonText: `Notificar`,
                   }).then((result) => {
                     if (result.isConfirmed) {
-                      requisicao
-                        .post(`/estacionamento/saida`, {
+                      requisicao.post(`/estacionamento/saida`, {
                           idvagaVeiculo: id_vaga,
-                        })
-                        .then((response) => {
+                        }).then((response) => {
                           if (response.data.msg.resultado) {
-                            Swal.fire("Vaga liberada", "", "success");
+                            Swal.fire({
+                              text:"Vaga liberada", 
+                              title:"", 
+                              icon:"success",
+                              timer: 1200,
+                            });
                             setTimeout(() => {
                               getVagas(salvaSetor);
                             }, 1000);
@@ -490,7 +495,12 @@ const ListarVagasMonitor = () => {
               })
               .then((response) => {
                 if (response.data.msg.resultado) {
-                  Swal.fire("Vaga liberada", "", "success");
+                  Swal.fire({
+                    text:"Vaga liberada", 
+                    title:"", 
+                    icon:"success",
+                    timer: 1200,
+                  });
                   setTimeout(() => {
                     getVagas(salvaSetor);
                   }, 1000);
@@ -544,7 +554,12 @@ const ListarVagasMonitor = () => {
               })
               .then((response) => {
                 if (response.data.msg.resultado) {
-                  Swal.fire("Vaga liberada", "", "success");
+                  Swal.fire({
+                    text:"Vaga liberada", 
+                    title:"", 
+                    icon:"success",
+                    timer: 1200,
+                  });
                   getVagas(salvaSetor);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");

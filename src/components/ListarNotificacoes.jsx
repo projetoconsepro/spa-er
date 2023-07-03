@@ -397,7 +397,6 @@ const handleFiltro = (where) => {
   });
   const base64 = btoa(where)
   requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
-    console.log(response.data.msg.resultado)
     setEstadoLoading(false)
     if (response.data.msg.resultado){
       setEstado(false)
