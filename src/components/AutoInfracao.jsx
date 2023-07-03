@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { React, useEffect, useState } from 'react'
-import { BsCalendarDate, BsCashCoin } from 'react-icons/bs';
-import { FaCarAlt, FaClipboardList, FaParking } from 'react-icons/fa';
+import { BsCalendarDate, BsPaintBucket } from 'react-icons/bs';
+import { FaCarAlt, FaClipboard, FaClipboardList, FaCode, FaParking } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import FuncTrocaComp from '../util/FuncTrocaComp';
+import { Button, Card, Divider, Group, Input, Text } from '@mantine/core';
+import { IconCamera, IconCodeCircle, IconCodeDots, IconFileCode, IconReceipt } from '@tabler/icons-react';
 
 const AutoInfracao = () => {
     const token = localStorage.getItem("token");
@@ -16,7 +18,6 @@ const AutoInfracao = () => {
         document.title = 'Auto de Infração'
         const infos = JSON.parse(localStorage.getItem('autoInfracao'))
         setData([infos])
-        console.log([infos])
     }, [])
 
     const confirmarInfracao = () => {
@@ -62,73 +63,47 @@ const AutoInfracao = () => {
       <p className="text-start fs-2 fw-bold">Auto de infração</p>
     
         {data.map((item, index) => (
-        <div className="card border-0 shadow mt-2" key={index}>
-          <div
-            className="card-body">
-            <div className="d-flex align-items-center justify-content-between pb-3">
-              <div>
-                <div className="h2 mb-0 d-flex align-items-center">
-                  {item.placa}
-                </div>
-                <div
-                  className="h6 mt-2 d-flex align-items-center fs-6"
-                  id="estacionadocarro">
-                  <h6> <BsCalendarDate />‎ {item.data}</h6>
-                </div>
-               
-                <div
-                  className="h6 d-flex align-items-center fs-6"
-                  id="bordaBaixo">
-                  {item.tipo === "Ocupando vaga de deficiente" ? 
-                  <h6> <FaClipboardList />‎ <small>Motivo: {item.tipo}</small></h6>
-                  :
-                  <h6> <FaClipboardList />‎ Motivo: {item.tipo}</h6>
-                  }
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-             <div className="justify-content-between pb-3 mb-1">
-                <div
-                  className="h6 align-items-start text-start px-4"
-                  id="estacionadocarroo"
-                >
-                  <h6> <FaParking />‎ Vaga: {item.vaga}</h6>
-                </div>
-                <div
-                  className="h6 align-items-start text-start px-4"
-                  id="estacionadocarroo"
-                >
-                  <h6> <FaCarAlt />‎ Modelo: {item.fabricante} ({item.modelo})</h6>
-                </div>
-                <div
-                  className="h6 align-items-start text-start px-4"
-                  id="estacionadocarroo"
-                >
-                  <h6> <BsCashCoin />‎ Cor: {item.cor}</h6>
-                </div>
-
-            </div>
-        </div>
+        <Card padding="lg" radius="md" withBorder key={index}>
+            <Group position="apart">
+              <Text size={30}> {item.placa} </Text>
+            </Group>
+            <Group position="apart">
+              <Text size={20}> <BsCalendarDate className="mb-1"/> {item.data} </Text>
+            </Group>
+            <Group position="apart">
+              <Text size={20}> <FaClipboardList className="mb-1"/> Motivo: {item.tipo} </Text>
+            </Group>
+            <Divider my="sm" size="md" variant="dashed" />
+            <Group position="apart">
+              <Text size={20}> <FaParking className="mb-1"/> Vaga: {item.vaga} </Text>
+            </Group>
+            <Group position="apart">
+              <Text size={20}> <FaCarAlt className="mb-1"/> Modelo: {item.fabricante} ({item.modelo}) </Text>
+            </Group>
+            <Group position="apart">
+              <Text size={20}> <BsPaintBucket /> Cor: {item.cor} </Text>
+            </Group>
+            
+            <Button variant="gradient" gradient={{ from: 'orange', to: 'red' }} fullWidth mt="md" radius="md">
+            REGISTRAR PROVA ‎ <IconReceipt size={18}/>
+            </Button>
+            <Button variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} fullWidth mt="md" radius="md">
+            VISUALIZAR FOTOS ‎ <IconCamera size={18}/>
+            </Button>
+        </Card>
     ))}
 
-        <div className="row">
-            <div className="col-12">
-                <button className="btn3 botao mt-4 w-50"> REGISTRAR PROVA </button>
-            </div>
-            <div className="col-12">
-                <button className="btn2 botao w-50 mt-3 mx-0"> VISUALIZAR FOTOS </button>
-            </div>
-            <div className="col-12 input-group mt-5">
-                <span className="input-group-text bg-blue-50 text-white" id="basic-addon1"><FaClipboardList /></span>
-                <input className="form-control bg-white rounded-end border-bottom-0" placeholder="Código do DETRAN" value={codigo} onChange={(e) => setCodigo(e.target.value)} aria-describedby="basic-addon1" />
-            </div>
-            <div className="col-12">
-                <button className="btn4 botao mt-3 mb-5 w-50" onClick={() => {confirmarInfracao()}}> CONFIRMAR AUTO DE INFRAÇÃO </button>
-            </div>
-        </div>
+    <Card padding="lg" radius="md" withBorder mt="md">
+      <Group position="apart" mb="md">
+      <Text> Informe o código para confirmar: </Text>
+      </Group>
+      <Group position="left">
+      <Input icon={<FaClipboard />} placeholder="Código do DETRAN:" value={codigo} onChange={(e) => setCodigo(e.target.value)} />
+      </Group>
+      <Button variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }} fullWidth mt="md" radius="md" onClick={() => confirmarInfracao()}>
+      CONFIRMAR AUTO DE INFRAÇÃO ‎ <IconReceipt size={18}/>
+      </Button>
+    </Card>
     </div>
   )
 }
