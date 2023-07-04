@@ -130,9 +130,10 @@ const Notificacao = () => {
                     console.log(response)
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
-                        console.log('entrou', id)
                         localStorage.setItem('id_notificacao', id)
                     }
+                    console.log('aaaaa')
+                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa)
                     FuncTrocaComp( "CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
@@ -161,17 +162,16 @@ const Notificacao = () => {
             "vaga": vaga,
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
-    }).then(
-            response => {
+    }).then(response => {
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
                     console.log(response)
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
-                        console.log('entrou', id)
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, )
+                    console.log('aaa')
+                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa)
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
@@ -256,6 +256,7 @@ const Notificacao = () => {
                     nome: item.nome,
                     id_modelo: item.id_modelo
                 }));
+                console.log('newdata2', newData)
                 setModelo(newData);
             }
         ).catch(function (error){
@@ -515,7 +516,7 @@ const Notificacao = () => {
                                             <h6 className='mx-4'><small>Modelo:</small></h6>
                                             <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectModelos">
                                             <option value="">Selecione um modelo</option>
-                                        {modelo.map((link, index) => (
+                                            {modelo.map((link, index) => (
                                             <option value={link.id_modelo} key={index}>{link.nome}</option>
                                         ))}
                                             </select>
