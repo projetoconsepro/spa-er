@@ -8,6 +8,8 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import { Button, Loader } from "@mantine/core";
+import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
+import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -341,6 +343,7 @@ const RegistrarVagaMonitor = () => {
           })
           .then((response) => {
             if (response.data.msg.resultado === true) {
+              ImpressaoTicketEstacionamento(tempo, response.config.headers.id_usuario, vagaa, placaMaiuscula, valor)
               setEstado2(false);
               localStorage.removeItem("vaga");
               FuncTrocaComp("ListarVagasMonitor");

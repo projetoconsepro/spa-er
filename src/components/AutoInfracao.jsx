@@ -20,6 +20,14 @@ const AutoInfracao = () => {
         setData([infos])
     }, [])
 
+    const registrarProva = () => {
+      FuncTrocaComp('CameraAutoInfracao')
+    }
+
+    const verFotos = () => {
+    
+    }
+
     const confirmarInfracao = () => {
       const requisicao = axios.create({
         baseURL: process.env.REACT_APP_HOST,
@@ -61,7 +69,7 @@ const AutoInfracao = () => {
   return (
     <div className="col-12 px-3">
       <p className="text-start fs-2 fw-bold">Auto de infração</p>
-    
+      
         {data.map((item, index) => (
         <Card padding="lg" radius="md" withBorder key={index}>
             <Group position="apart">
@@ -84,10 +92,12 @@ const AutoInfracao = () => {
               <Text size={20}> <BsPaintBucket /> Cor: {item.cor} </Text>
             </Group>
             
-            <Button variant="gradient" gradient={{ from: 'orange', to: 'red' }} fullWidth mt="md" radius="md">
+            <Button variant="gradient" gradient={{ from: 'orange', to: 'red' }} fullWidth mt="md" radius="md"
+            onClick={() => registrarProva()}>
             REGISTRAR PROVA ‎ <IconReceipt size={18}/>
             </Button>
-            <Button variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} fullWidth mt="md" radius="md">
+            <Button variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }} fullWidth mt="md" radius="md"
+            onClick={() => verFotos()}>
             VISUALIZAR FOTOS ‎ <IconCamera size={18}/>
             </Button>
         </Card>

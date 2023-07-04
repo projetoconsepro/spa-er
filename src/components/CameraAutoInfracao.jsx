@@ -3,24 +3,17 @@ import { BsCameraFill } from "react-icons/bs";
 import Swal from 'sweetalert2'
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
-import { Button, Card } from "@mantine/core";
+import { Button, Card, Text } from "@mantine/core";
 import { IconCamera, IconCheck } from "@tabler/icons-react";
-import axios from "axios";
 
-function CameraTicketNotificacao() {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
-    const videoRef = useRef(null);
-    const [photos, setPhotos] = useState([]);
-    const [cont, setCont] = useState(0);
-    const [cont2, setCont2] = useState(0);
-    const [idNotificacao, setIdNotificacao] = useState("");
-
-    useEffect(() => {
-    const id = localStorage.getItem('id_notificacao');
-    setIdNotificacao(id)
-    }, []);
+function CameraAutoInfracao() {
+  const videoRef = useRef(null);
+  const mainDivRef = useRef(null);
+  const [photos, setPhotos] = useState([]);
+  const [cont, setCont] = useState(0);
+  const [cont2, setCont2] = useState(0);
+  const [tamanho, setTamanho] = useState(90);
+  const [divErro, setDivErro] = useState(false);
 
   const getVideo = async () => {
     try {
@@ -48,15 +41,16 @@ function CameraTicketNotificacao() {
             }
           },
           function (error) {
+            setDivErro(true);
             console.log("Erro ao capturar vídeo: " + error.message);
           }
         );
       }
     } catch (error) {
+      setDivErro(true);
       console.log("Erro ao capturar áudio e vídeo: " + error.message);
     }
   };
-  
 
   useEffect(() => {
     setTimeout(() => {
@@ -71,17 +65,15 @@ function CameraTicketNotificacao() {
     const video = videoRef.current;
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
     const photoDataUrl = canvas.toDataURL("image/png");
-
     const updatedPhotos = [...photos, { id: cont, photo: photoDataUrl }];
     setPhotos(updatedPhotos);
     setCont(cont + 1);
+    setTamanho(tamanho + 30)
+    mainDivRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
 
   const deletePhoto = (id) => {
@@ -115,40 +107,23 @@ function CameraTicketNotificacao() {
   };
 
   const savePhotosToLocalStorage = () => {
-    const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "monitor"
-        }
-    });
-    if (photos.length > 1) {
+    if (photos.length < 4) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Você só pode tirar 1 foto.',
-        footer: '<a href>Tire apenas uma foto, por favor.</a>'
+        text: 'Mínimo de 4 fotos!',
+        footer: '<a href>Tire no mínimo 4 fotos, por favor.</a>'
       });
     } else {
-      console.log(photos)
-      requisicao.post('/notificacao/ticket', {
-      id_notificacao: idNotificacao,
-      foto: photos[0].photo
-      }).then((response) => {
-        if(response.data.msg.resultado){
-          
-          FuncTrocaComp("ListarVagasMonitor")
-        console.log(response.data);
+      for (let i = 0; i < photos.length; i++) {
+        localStorage.setItem(`foto${i}`, photos[i].photo);
       }
-      }).catch((error) => {
-        console.log(error);
-      });
+      FuncTrocaComp("AutoInfracao");
     }
   };
 
   return (
-    <div>
+    <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
       {photos.length > 0 && (
       <Card shadow="sm" className="mt-3 mb-2">
       {photos.map((item) => (
@@ -163,7 +138,11 @@ function CameraTicketNotificacao() {
       </Card>
       )}
       <Card shadow="sm" className="mt-3 mb-2">
+      {divErro ?
+      <Text>Erro ao capturar vídeo, tente reiniciar a aplicação.</Text>
+      :
       <video ref={videoRef} className="w-100"></video>
+      }
       </Card>
       <div className="container" id="testeRolagem">
         <div className="mb-6">
@@ -176,7 +155,7 @@ function CameraTicketNotificacao() {
             onClick={takePicture}
             >Tirar foto
             </Button>
-            {photos.length === 1 && (
+            {photos.length > 3 && (
             <Button
             className="mx-2" 
             variant="gradient"
@@ -194,4 +173,4 @@ function CameraTicketNotificacao() {
   );
 }
 
-export default CameraTicketNotificacao;
+export default CameraAutoInfracao;
