@@ -216,7 +216,7 @@ const RegistrarVagaMonitor = () => {
 
   const registrarEstacionamento = (campo) => {
     // Envia uma mensagem para o aplicativo React Native
-    window.ReactNativeWebView.postMessage(JSON.stringify({ action: 'imprimir', data: { texto: 'Texto para impressão' } }));
+    window.postMessage(JSON.stringify({ action: 'imprimir', data: { texto: 'Texto para impressão' } }));
     console.log('mandou mensagem pro webview')
     const estacionamento = axios.create({
       baseURL: process.env.REACT_APP_HOST,
