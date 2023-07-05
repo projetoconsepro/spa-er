@@ -4,20 +4,33 @@ import { BsCalendarDate, BsPaintBucket } from 'react-icons/bs';
 import { FaCarAlt, FaClipboard, FaClipboardList, FaCode, FaParking } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import FuncTrocaComp from '../util/FuncTrocaComp';
-import { Button, Card, Divider, Group, Input, Text } from '@mantine/core';
+import { Button, Card, Divider, Group, Input, Modal, Text } from '@mantine/core';
+import { Carousel } from '@mantine/carousel';
 import { IconCamera, IconCodeCircle, IconCodeDots, IconFileCode, IconReceipt } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 
 const AutoInfracao = () => {
+    const [opened, { open, close }] = useDisclosure(false);
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     const [data, setData] = useState([])
     const [codigo, setCodigo] = useState('')
+    const [dataImagem, setDataImagem] = useState([])
 
     useEffect(() => {
-        document.title = 'Auto de Infração'
         const infos = JSON.parse(localStorage.getItem('autoInfracao'))
         setData([infos])
+
+        if(dataImagem.length === 0 || dataImagem === undefined){
+        for (let i = 0; i < 4; i++) {
+          if(localStorage.getItem(`foto${i}`)){
+          dataImagem.push(localStorage.getItem(`foto${i}`))
+        }
+      }
+    }
+
+    console.log(dataImagem)
     }, [])
 
     const registrarProva = () => {
@@ -25,7 +38,7 @@ const AutoInfracao = () => {
     }
 
     const verFotos = () => {
-    
+      open()
     }
 
     const confirmarInfracao = () => {
@@ -51,7 +64,6 @@ const AutoInfracao = () => {
           }, 1000);
         } else {
           Swal.fire( 'Erro!', `${response.data.msg.msg}`, 'error')
-
         }
     }).catch((error) => {
       if(error?.response?.data?.msg === "Cabeçalho inválido!" 
@@ -64,13 +76,41 @@ const AutoInfracao = () => {
           console.log(error)
       }
     })
+    
+    requisicao.post('/notificacao/ticket', {
+      id_notificacao: data[0].id_notificacao,
+      foto: dataImagem
+      }).then((response) => {
+        if(response.data.msg.resultado){
+        console.log(response.data);
+      }
+      }).catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
     <div className="col-12 px-3">
+      <Modal size="xl" opened={opened} onClose={() => close()} title="Ver imagens" centered >
+       <Carousel slideSize="70%" slideGap="sm" loop>
+       {dataImagem === undefined ?
+          <Carousel.Slide>
+              <img src="../../assets/img/imagemError.png" alt="Imagem notificação" width="100%" />
+          </Carousel.Slide>
+          :
+        dataImagem.map((item, index) => (
+          <Carousel.Slide key={index}>
+            {item ?
+              <img src={item} alt="Imagem notificação" width="100%" />
+            :
+              <img src="../../assets/img/imagemError.png" alt="Imagem notificação" width="100%" />
+            }
+       </Carousel.Slide>
+       ))}
+        </Carousel>
+      </Modal>
       <p className="text-start fs-2 fw-bold">Auto de infração</p>
-      
-        {data.map((item, index) => (
+      {data.map((item, index) => (
         <Card padding="lg" radius="md" withBorder key={index}>
             <Group position="apart">
               <Text size={30}> {item.placa} </Text>
@@ -101,7 +141,7 @@ const AutoInfracao = () => {
             VISUALIZAR FOTOS ‎ <IconCamera size={18}/>
             </Button>
         </Card>
-    ))}
+      ))}
 
     <Card padding="lg" radius="md" withBorder mt="md">
       <Group position="apart" mb="md">

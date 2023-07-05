@@ -127,12 +127,10 @@ const Notificacao = () => {
             response => {
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
-                    console.log(response)
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    console.log('aaaaa')
                     ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa)
                     FuncTrocaComp( "CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
@@ -165,12 +163,10 @@ const Notificacao = () => {
     }).then(response => {
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
-                    console.log(response)
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    console.log('aaa')
                     ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa)
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
