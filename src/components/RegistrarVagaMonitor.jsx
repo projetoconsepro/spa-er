@@ -102,13 +102,12 @@ const RegistrarVagaMonitor = () => {
         pagamento: "pix",
       };
     }
-
-    requisicao
-      .post("/gerarcobranca", {
+    requisicao.post("/gerarcobranca", {
         valor: valor2,
         campo: JSON.stringify(campo),
       })
       .then((resposta) => {
+        console.log('sdflkdslf')
         if (resposta.data.msg.resultado) {
           console.log(resposta.data.data);
           console.log(resposta.data.data.txid);
@@ -488,6 +487,7 @@ const RegistrarVagaMonitor = () => {
     } else {
       setVisible(false);
     }
+
   }, []);
 
   const jae = () => {
