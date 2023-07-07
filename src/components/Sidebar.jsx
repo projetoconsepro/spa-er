@@ -370,11 +370,29 @@ const Sidebar = () => {
         })
     }
 
+    const chamarMenu = () => {
+    if (teste.perfil[0] === "cliente") {
+        FuncTrocaComp("MeusVeiculos")
+    }
+    else if (teste.perfil[0] === "parceiro") {
+        FuncTrocaComp("RegistrarEstacionamentoParceiro")
+    }
+    else if (teste.perfil[0] === "admin") {
+        FuncTrocaComp("Dashboard")
+    }
+    else if (teste.perfil[0] === "monitor") {
+        FuncTrocaComp("ListarVagasMonitor")
+    }
+    else if (teste.perfil[0] === "agente") {
+        FuncTrocaComp("ListarNotificacoesAgente")
+    }
+}
+
     return(
     <div className="header-container mb-4">
          <nav className="navbar navbar-dark fixed-top navbar-theme-primary px-4 col-12 d-lg-none bg-blue-50" id="nav">
                 <div className="d-flex align-items-center w-100 justify-content-between">
-                <img src="../../assets/img/logoconseproof3.png" alt="Rich Logo" className="w-25" />
+                <img src="../../assets/img/logoconseproof3.png" alt="Rich Logo" className="w-25" onClick={() => chamarMenu()}/>
                     <button className="navbar-toggler d-lg-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded={ariaExpanded} aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon" onClick={()=>{setAriaExpanded(true)}}></span>
                     </button>
