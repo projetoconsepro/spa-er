@@ -95,11 +95,6 @@ const AdicionarCreditos = () => {
       });
   };
 
-  useEffect(() => {
-    console.log(valor);
-  }, [valor]);
-
-
   const FuncArrumaInput = (e) => {
     let valor = e;
 
@@ -143,9 +138,7 @@ const AdicionarCreditos = () => {
     console.log(valor[0]);
     valor[0] = parseFloat(valor[0].replace(",", ".")).toFixed(2);
 
-    requisicao
-      .get(cpf2)
-      .then((resposta) => {
+    requisicao.get(cpf2).then((resposta) => {
         console.log(resposta);
         if (resposta.data.msg.resultado) {
           console.log(resposta);
@@ -367,7 +360,7 @@ const AdicionarCreditos = () => {
     <div className="container">
       <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
         <div className="col-12 d-flex align-items-center justify-content-center">
-          <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+          <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
             <div className="h5 mt-2 align-items-center">
               <small>Adicionar créditos</small>
             </div>

@@ -420,7 +420,13 @@ const Sidebar = () => {
                 <ul className="nav flex-column pt-md-0">
                 <a className="nav-link  pt-1 px-2">
                             <div className="media d-flex align-items-center border-bottom border-top  border-white pb-4 pt-4">
-                                <img className="avatar rounded-circle mb" alt="Image placeholder" src="assets/img/img_avatar.png" id="imagemPerfil"/>
+                                <img className="avatar rounded-circle mb" alt="Image placeholder" src={
+                                    teste.perfil[0] === "cliente" ? "assets/img/jumping.png" :
+                                    teste.perfil[0] === "parceiro" ? "assets/img/business.png" :
+                                    teste.perfil[0] === "admin" ? "assets/img/operator.png" :
+                                    teste.perfil[0] === "monitor" ? "assets/img/worker.png" :
+                                    teste.perfil[0] === "agente" ? "assets/img/business.png" : "assets/img/jumping.png"
+                                } id="imagemPerfil"/>
                                 <div className="media-body ms-3 text-white">
                                     <div className="row">
                                     <div className="col-12 text-start">
