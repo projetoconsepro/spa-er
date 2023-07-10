@@ -1,4 +1,17 @@
 
+.vertical-line {
+    width: 2px; /* Largura da linha */
+    height: 100%; /* Altura da linha */
+    background-color: transparent; /* Define a cor de fundo como transparente */
+    background-image: linear-gradient(to bottom, rgb(136, 136, 136) 50%, transparent 50%); /* Cria um gradiente vertical */
+    background-size: 100% 34px; /* Define o tamanho do gradiente, ajuste a altura do espaço em branco conforme necessário */
+    background-position: center; /* Centraliza o gradiente verticalmente */
+    margin: auto;
+}
+
+.divPers{
+    width: 20% !important;
+}
 
 .form-check-label{
     float: left;
@@ -13104,6 +13117,15 @@ textarea.form-control-lg {
 
 .bg-blue-50 {
     background-color: #3a58c8 !important;
+}
+
+.bg-blue-100 {
+    box-shadow: 0 8px 8px -4px lightblue;
+}
+
+.bg-blue-200 {
+    background: linear-gradient(120deg, #3a58c8 0%, #4ab4f5 70%);
+    box-shadow: 0 8px 8px -4px lightblue;
 }
 
 .bg-green-50 {

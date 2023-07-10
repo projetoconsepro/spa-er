@@ -39,6 +39,7 @@ const options = {
         stepSize: 5,
       },
       grid: {
+        display: false,
         borderDash: [2],
         borderDashOffset: [3],
         color: '#ddd',
@@ -48,6 +49,7 @@ const options = {
     },
     x: {
       grid: {
+        display: false,
         drawBorder: false,
         drawTicks: false,
       },
@@ -90,8 +92,8 @@ const options = {
 };
 
 const Grafico = () => (
-    <div className="w-50">
-        <h2 style={{ textAlign: 'center', margin: '1rem' }}>Vendas e Lucro Mensais</h2>
+    <div className="w-100">
+        <h2 style={{ textAlign: 'center', margin: '1rem' }}>Estacionamentos por mês:</h2>
         <Line data={data} options={options} />
     </div>
 )

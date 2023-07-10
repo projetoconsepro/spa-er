@@ -32,7 +32,7 @@ import HistoricoCaixa from '../../components/HistoricoCaixa';
 import ListarNotificacoesAdmin from '../../components/ListarNotificacoesAdmin';
 import ListarNotificacoesAgente from '../../components/ListarNotificacoesAgente';
 import AutoInfracao from '../../components/AutoInfracao';
-import Dashboard from '../../components/Dashboard';
+import Dashboard from '../../components/Dashboard/Dashboard';
 import VeiculosAdmin from '../../components/VeiculosAdmin';
 import ClientesAdmin from '../../components/ClientesAdmin';
 import OcupacaoVagasAdmin from '../../components/OcupacaoVagasAdmin';
