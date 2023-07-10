@@ -1,8 +1,6 @@
 import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
-import Swal from "sweetalert2";
-import { FaCoins } from "react-icons/fa";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { Badge } from "@mantine/core";
@@ -16,84 +14,6 @@ const HistoricoFinanceiroParceiro = () => {
   const [saldo, setSaldo] = useState(0);
   const [estadoLoading, setEstadoLoading] = useState(false);
 
-
-  function filtrar(filtro) {
-   const filtrado = resposta2.filter((item) => {
-      if(item.debito === filtro){
-        return item
-      }
-      else if(item.data.includes(filtro)){
-        return item
-      }
-      else{
-        setMensagem('Nenhum resultado encontrado')
-        setEstado(true)
-        setTimeout(() => {
-          setMensagem("")
-          setEstado(false)
-          setResposta(resposta2)
-        }, 3000);
-      }
-    })
-    setResposta(filtrado)
-  }
-
-  const filtragem = async () => {
-    const select = document.getElementById("filtroSelect2").value;
-    console.log(select)
-    if(select === 'selectData'){
-      Swal.fire({
-        title: 'Digite a data que deseja filtrar',
-        html : `<input type="date" id="date" class="swal2-input">`,
-        showCancelButton: true,
-        confirmButtonText: 'Filtrar',
-        confirmButtonColor: '#3a58c8',
-        cancelButtonText: 'Voltar',
-        showLoaderOnConfirm: true,
-        preConfirm: () => {
-            const resposta =document.getElementById('date').value
-            if (resposta === "" || resposta === null) {
-                Swal.showValidationMessage(
-                    `Digite uma data válida`
-                )
-            }
-            else {
-              const newResposta = resposta[8] + resposta[9] + "/" + resposta[5] + resposta[6] + "/" + resposta[0] + resposta[1] + resposta[2] + resposta[3]
-              console.log(newResposta)
-              filtrar(newResposta);
-            }
-        }
-        }).then((result) => {
-    
-        }
-        )
-    }
-    else if(select === 'selectTipo'){
-      const inputOptions = new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            'S': 'Acréscimo',
-            'N': 'Débito',
-          })
-        }, 1000)
-      })
-      
-      const { value: tipo } = await Swal.fire({
-        title: 'Selecione um tipo de movimento',
-        input: 'radio',
-        inputOptions: inputOptions,
-        inputValidator: (value) => {
-          if (!value) {
-            return 'Você precisa selecionar um tipo de movimento.'
-          }
-        }
-      })
-      
-      if (tipo) {
-        filtrar(tipo)
-      }
-    }
-  }
 
   function ArrumaHora(data) {
     const data2 = data.split("T");
