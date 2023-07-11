@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Grafico from './Grafico'
-import { Card, Divider, Grid, Group, Text } from '@mantine/core'
+import { BackgroundImage, Card, Divider, Grid, Group, Text } from '@mantine/core'
 import GraficoBola from './GraficoBola'
 import { Carousel } from '@mantine/carousel';
 import { IconLetterA } from '@tabler/icons-react';
@@ -74,18 +74,11 @@ const Dashboard = () => {
   return (
     <div>
        <div className="row">
-       <Carousel
-      withIndicators
-      height={200}
-      slideGap="md"
-      slideSize="33.333333%"
-      loop
-      align="start"
-      slidesToScroll={3}
-    >
+       <Carousel slideGap="md" height={200} slideSize="33.333333%" loop align="start" slidesToScroll={3}>
         {setores.map((item, index) => (
         <Carousel.Slide key={index}>
-                <Card padding="lg" radius="md" withBorder className="text-start bg-blue-100"> 
+                <Card padding="lg" radius="md" withBorder className="text-start bg-blue-100">
+                {window.innerWidth > 900 ?
                 <Grid>
                     <Grid.Col span={4}>
                     <Group position="center" mt="md">
@@ -102,15 +95,29 @@ const Dashboard = () => {
                         <Text size="sm" weight={500}><FaParking />‎ Último movimento: {item.ultimoMovimento}</Text>
                     </Grid.Col>
                 </Grid>
+                : 
+                <Grid>
+                    <Grid.Col span={12}>
+                    <Group position="center" mt="md">
+                    <Text fz="lg" weight={700}>Setor:</Text>
+                    </Group>
+                    <Group position="center" mt="md">
+                    <div className="icon-shape icon-shape bg-blue-200 rounded me-4 me-sm-0 align-center">
+                        <Text fz="lg" weight={700}>{item.nome}</Text>
+                    </div>
+                    </Group>
+                    </Grid.Col>
+                </Grid>
+                }
                 </Card>
         </Carousel.Slide>
         ))}
             </Carousel>
                 {window.innerWidth > 768 ? 
-                <div className="col-12 mb-4">
+                <div className="col-12 mb-4 mt-4">
                     <div className="row">
-                    <div className="card bg-white border-0 shadow w-50 mx-3">
-                        <div className="card-body8 p-2">
+                    <div className="card bg-white border-0 shadow w-50 mx-5">
+                        <div className={window.innerWidth > 1474 ? "card-body8 p-2" : "card-body4 p-2"}>
                             <div className="row">
                                 <div className="ct-chart-sales-value ct-double-octave ct-series-g">
                                     <Grafico />
@@ -118,28 +125,19 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="card bg-white border-0 divPers mx-3">
-                        <div className="card-body8 p-2">
+                    <div className="card bg-white border-0 shadow divPers mx-3">
+                        <div className={window.innerWidth > 1474 ? "card-body8 px-5" : "card-body4 p-2"}>
                             <div className="row">
-                            <div className="ct-chart-sales-value ct-double-octave ct-series-g">
-                            <GraficoBola />
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="card bg-white border-0 shadow w-25 mx-2">
-                        <div className="card-body8 p-2">
-                            <div className="row">
-                            <div className="ct-chart-sales-value ct-double-octave ct-series-g">
-                            <GraficoBola />
-                            </div>
+                                <div className="ct-chart-sales-value ct-double-octave ct-series-g">
+                                    <GraficoBola />
+                                </div>
                             </div>
                         </div>
                     </div>
                     </div>
                 </div>
                 : 
-                <div className="col-12 mb-4">
+                <div className="col-12 mb-4 mt-4">
                     <div className="row">
                     <div className="card bg-white border-0 shadow w-100">
                         <div className="card-body7 p-2">
@@ -152,22 +150,11 @@ const Dashboard = () => {
                     </div>
                     </div>
                     <div className="row mt-3">
-                    <div className="card bg-white border-0 w-100">
-                        <div className="card-body8 p-2">
-                            <div className="row">
-                            <div className="ct-chart-sales-value ct-double-octave ct-series-g">
-                            <GraficoBola />
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                    <div className="row mt-3">
                     <div className="card bg-white border-0 shadow w-100">
                         <div className="card-body8 p-2">
                             <div className="row">
                             <div className="ct-chart-sales-value ct-double-octave ct-series-g">
-                                <GraficoBola />
+                            <GraficoBola />
                             </div>
                             </div>
                         </div>
