@@ -9,6 +9,10 @@
     margin: auto;
 }
 
+.meusVeiculosTempo{
+    border: 1px solid black !important;
+}
+
 .divPers{
     width: 30% !important;
 }
@@ -13123,8 +13127,18 @@ textarea.form-control-lg {
     box-shadow: 0px 8px 8px -4px lightblue;
 }
 
+.bg-green-100 {
+    background: linear-gradient(120deg, hsl(280, 60%, 70%) 0%, hsl(280, 60%, 50%) 80%);
+    box-shadow: 0 8px 8px -4px lightpink;
+}
+
 .bg-blue-200 {
     background: linear-gradient(120deg, #3a58c8 0%, #4ab4f5 70%);
+    box-shadow: 0 8px 8px -4px lightblue;
+}
+
+.bg-blue-300 {
+    background: linear-gradient(120deg, hsl(226, 57%, 40%) 0%, hsl(197, 82%, 60%) 80%);
     box-shadow: 0 8px 8px -4px lightblue;
 }
 
