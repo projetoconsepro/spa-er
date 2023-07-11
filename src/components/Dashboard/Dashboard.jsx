@@ -91,7 +91,7 @@ const Dashboard = () => {
                         <Text size="lg" weight={500}>Setor: {item.nome}</Text>
                         <Text size="sm" weight={500} color="red"><AiOutlineInfoCircle />‎ N° de notificações: {item.notificacoes}</Text>
                         <Text size="sm" weight={500}><AiOutlineInfoCircle />‎ N° de ocupações: {item.ocupacao}</Text>
-                        <Text size="sm" weight={500}><FaParking />‎ N° de ocupações: {item.ocupacao}</Text>
+                        <Text size="sm" weight={500}><FaParking />‎ N° de tolerâncias: {item.tolerancia}</Text>
                         <Text size="sm" weight={500}><FaParking />‎ Último movimento: {item.ultimoMovimento}</Text>
                     </Grid.Col>
                 </Grid>

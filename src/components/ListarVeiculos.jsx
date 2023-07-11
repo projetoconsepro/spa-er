@@ -15,6 +15,7 @@ import { IconArrowBack, IconArrowBarToLeft, IconArrowForward } from "@tabler/ico
 import { IconArrowBigLeft } from "@tabler/icons-react";
 import { IconArrowLeft } from "@tabler/icons-react";
 import VoltarComponente from "../util/VoltarComponente";
+import { Grid, Group, Text } from "@mantine/core";
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -27,18 +28,11 @@ const ListarVeiculos = () => {
   const [saldoCredito, setSaldoCredito] = useState("");
   const [vaga, setVaga] = useState([]);
   const [notificacao, setNotificacao] = useState([]);
+  const [selectedButton, setSelectedButton] = useState("01:00:00");
 
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
-
-  const parametros = axios.create({
-    baseURL: process.env.REACT_APP_HOST,
-  });
-
-  const atualizafunc = () => {
-    const tempo1 = document.getElementById("tempos").value;
-
+  const handleButtonClick = (buttonIndex) => {
+    setSelectedButton(buttonIndex);
+    const tempo1 = buttonIndex;
     if (tempo1 === "02:00:00") {
       setValorCobranca2(valorcobranca * 2);
     } else if (tempo1 === "01:00:00") {
@@ -49,6 +43,14 @@ const ListarVeiculos = () => {
       setValorCobranca2(valorcobranca / 2);
     }
   };
+
+  const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
+  const user2 = JSON.parse(user);
+
+  const parametros = axios.create({
+    baseURL: process.env.REACT_APP_HOST,
+  });
 
   const removerVeiculo = (idVeiculo) => {
     Swal.fire({
@@ -242,7 +244,7 @@ const ListarVeiculos = () => {
   }, []);
 
   function mexerValores() {
-    const tempo1 = document.getElementById("tempos").value;
+    const tempo1 = selectedButton;
 
     if (tempo1 === "02:00:00") {
       return valorcobranca * 2;
@@ -270,7 +272,7 @@ const ListarVeiculos = () => {
         perfil_usuario: "cliente",
       },
     });
-    const tempo1 = document.getElementById("tempos").value;
+    const tempo1 = selectedButton
 
     const resposta = await mexerValores();
 
@@ -333,7 +335,7 @@ const ListarVeiculos = () => {
 
     vagaa[0] = vaga;
 
-    const tempo1 = document.getElementById("tempos").value;
+    const tempo1 = selectedButton;
 
     const resposta = await mexerValores();
 
@@ -505,18 +507,45 @@ const ListarVeiculos = () => {
                   </div>
                 </div>
               ) : mostrardiv[index].estado ? (
-                <div className="h6 mt-3 mx-5" onChange={atualizafunc}>
-                  <select
-                    className="form-select form-select-lg mb-1"
-                    defaultValue="01:00:00"
-                    aria-label=".form-select-lg example"
-                    id="tempos"
-                  >
-                    <option value="00:30:00">30 Minutos</option>
-                    <option value="01:00:00">60 Minutos</option>
-                    <option value="01:30:00">90 Minutos</option>
-                    <option value="02:00:00">120 Minutos</option>
-                  </select>
+                <div className="h6 mt-3 mx-4">
+                  <Group position="apart">
+                  <h6 className="mb-3"><small>Determine o tempo (minutos): </small></h6>
+                  </Group>
+                  <Grid>
+                    <Grid.Col span={3}>
+                      <button 
+                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
+                        selectedButton === "00:30:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        onClick={() => handleButtonClick("00:30:00")}>
+                        <Text fz="lg" weight={700}>30</Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                      <button
+                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
+                        selectedButton === "01:00:00" ? 'bg-green-100' : 'bg-blue-300'}`} 
+                        onClick={() => handleButtonClick("01:00:00")}>
+                        <Text fz="lg" weight={700}>60</Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                      <button
+                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
+                        selectedButton === "01:30:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        onClick={() => handleButtonClick("01:30:00")}>
+                        <Text fz="lg" weight={700}>90</Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                      <button
+                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
+                        selectedButton === "02:00:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        onClick={() => handleButtonClick("02:00:00")}>
+                        <Text fz="lg" weight={700}>120</Text>
+                      </button>
+                    </Grid.Col>
+                  </Grid>
+                  <div className="h6 mt-3 mx-2">
                   <p id="tempoCusto" className="text-end">
                     Esse tempo irá custar: R$ {valorcobranca2}{" "}
                   </p>
@@ -556,20 +585,48 @@ const ListarVeiculos = () => {
                       </span>
                     </div>
                   </div>
+                  </div>
                 </div>
               ) : (
-                <div className="h6 mx-5" onChange={atualizafunc}>
-                  <select
-                    className="form-select form-select-lg mb-1"
-                    defaultValue="01:00:00"
-                    aria-label=".form-select-lg example"
-                    id="tempos"
-                  >
-                    <option value="00:30:00">30 Minutos</option>
-                    <option value="01:00:00">60 Minutos</option>
-                    <option value="01:30:00">90 Minutos</option>
-                    <option value="02:00:00">120 Minutos</option>
-                  </select>
+                <div className="h6 mx-4">
+                  <Group position="apart">
+                  <h6 className="mb-3"><small>Determine o tempo (minutos): </small></h6>
+                  </Group>
+                  <Grid>
+                    <Grid.Col span={3}>
+                      <button 
+                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
+                        selectedButton === "00:30:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        onClick={() => handleButtonClick("00:30:00")}>
+                        <Text fz="lg" weight={700}>30</Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                      <button
+                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
+                        selectedButton === "01:00:00" ? 'bg-green-100' : 'bg-blue-300'}`} 
+                        onClick={() => handleButtonClick("01:00:00")}>
+                        <Text fz="lg" weight={700}>60</Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                      <button
+                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
+                        selectedButton === "01:30:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        onClick={() => handleButtonClick("01:30:00")}>
+                        <Text fz="lg" weight={700}>90</Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                      <button
+                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
+                        selectedButton === "02:00:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        onClick={() => handleButtonClick("02:00:00")}>
+                        <Text fz="lg" weight={700}>120</Text>
+                      </button>
+                    </Grid.Col>
+                  </Grid>
+                  <div className="h6 mx-2 mt-3">
                   <p id="tempoCusto" className="text-end">
                     Esse tempo irá custar: R$ {valorcobranca2}{" "}
                   </p>
@@ -606,6 +663,7 @@ const ListarVeiculos = () => {
                         />
                       </span>
                     </div>
+                  </div>
                   </div>
                 </div>
               )}
