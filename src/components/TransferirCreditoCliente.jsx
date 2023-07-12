@@ -288,7 +288,7 @@ const TransferirCreditoCliente = () => {
                 >
                   <Input
                     icon={<IconClipboardList />}
-                    placeholder="..."
+                    placeholder="CPF/CNPJ do usuário"
                     value={infoDestinatario}
                     onChange={(e) => setInfoDestinatario(e.target.value)}
                   />

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Grafico from './Grafico'
-import { BackgroundImage, Card, Divider, Grid, Group, Text } from '@mantine/core'
+import { Card, Grid, Group, Text } from '@mantine/core'
 import GraficoBola from './GraficoBola'
 import { Carousel } from '@mantine/carousel';
-import { IconLetterA } from '@tabler/icons-react';
 import axios from 'axios';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { FaParking } from 'react-icons/fa';

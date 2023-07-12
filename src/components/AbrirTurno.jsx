@@ -32,7 +32,6 @@ const AbrirTurno = () => {
     requisicao
       .get("/setores")
       .then((response) => {
-        console.log(response);
         for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
           resposta2[i] = {};
           resposta2[i].setores = response.data.data.setores[i].nome;

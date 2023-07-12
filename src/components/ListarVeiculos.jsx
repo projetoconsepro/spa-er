@@ -3,7 +3,7 @@ import axios from "axios";
 import { FcPlus } from "react-icons/fc";
 import { FaBell, FaCarAlt, FaParking } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
-import { IoChevronBack, IoTrashSharp } from "react-icons/io5";
+import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { TbHandClick } from "react-icons/tb";
@@ -11,9 +11,6 @@ import "../pages/Style/styles.css";
 import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
 import FuncTrocaComp from "../util/FuncTrocaComp";
-import { IconArrowBack, IconArrowBarToLeft, IconArrowForward } from "@tabler/icons-react";
-import { IconArrowBigLeft } from "@tabler/icons-react";
-import { IconArrowLeft } from "@tabler/icons-react";
 import VoltarComponente from "../util/VoltarComponente";
 import { Grid, Group, Text } from "@mantine/core";
 

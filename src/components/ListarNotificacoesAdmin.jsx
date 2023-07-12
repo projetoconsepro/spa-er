@@ -76,7 +76,7 @@ const ListarNotificacoesAdmin = () => {
                    <p><b>Modelo:</b> ${item.modelo}</p>
                    <p><b>Fabricante:</b> ${item.fabricante}</p>
                    <p><b>Tipo:</b> ${item.tipo}</p>
-                   <p><b>Valor:</b> R$${item.valor},00</p>
+                   <p><b>Valor:</b> R$${item.valor}</p>
                    <p><b>Monitor:</b> ${item.monitor}</p>
                    <p><b>Hora:</b> ${item.hora}</p>`,
             showCancelButton: true,
@@ -127,7 +127,7 @@ const ListarNotificacoesAdmin = () => {
                      <p><b>Modelo:</b> ${item.modelo}</p>
                      <p><b>Fabricante:</b> ${item.fabricante}</p>
                      <p><b>Tipo:</b> ${item.tipo}</p>
-                     <p><b>Valor:</b> R$${item.valor},00</p>
+                     <p><b>Valor:</b> R$${item.valor}</p>
                      <p><b>Monitor:</b> ${item.monitor}</p>
                      <p><b>Hora:</b> ${item.hora}</p>`,
               showCancelButton: true,

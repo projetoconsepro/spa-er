@@ -2,15 +2,15 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Group, Button, Input, Alert, Radio, Grid, Badge } from '@mantine/core';
-import { DateInput, DatePickerInput } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates';
 import Select from "react-select"
 import 'dayjs/locale/pt-br';
-import { IconAlertCircle, IconCloudCheck, IconParking, IconStatusChange, IconUser } from '@tabler/icons-react';
+import { IconAlertCircle, IconParking, IconUser } from '@tabler/icons-react';
 
 const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     const [opened, { open, close }] = useDisclosure(false);
     const [cardBody, setCardBody] = useState('');
-    const [estado, setEstado] = useState(false);
+    const [estado] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
     const [options, setOptions] = useState([]);
     const [value, setValue] = useState(new Date());
@@ -418,7 +418,9 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             </div>
             { selectedOption.value === 'Data' ? (
               <div>
+              
               {(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin') ?
+              placaCarro !== null ?
               <div className="fs-6">
                 Placa selecionada: ‎
                 <Badge variant="dot" 
@@ -426,6 +428,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                   {placaCarro}
                   </Badge>
               </div> 
+              : null 
               : null
               }
 
@@ -447,13 +450,14 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             selectedOption.value === 'Periodo' ? (
               <div>
               {(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin') ?
+              placaCarro !== null ?
               <div className="fs-6">
                 Placa selecionada: ‎
                 <Badge variant="dot" 
                 size="md">
                   {placaCarro}
                   </Badge>
-              </div> : null}
+              </div> : null : null}
               <div>
               <div className="mt-4 mb-1">
                 Selecione a data de inicio e fim:
@@ -481,13 +485,14 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             selectedOption.value === 'Vaga' ? (
               <div>
               {(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin') ?
+              placaCarro !== null ?
               <div className="fs-6">
                 Placa selecionada: ‎
                 <Badge variant="dot" 
                 size="md">
                   {placaCarro}
                   </Badge>
-              </div> : null}
+              </div> : null : null}
               <div>
               <div className="mt-4 mb-1">
                 Digite a vaga:
@@ -499,13 +504,14 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             selectedOption.value === 'Tipo' ? (
               <div>
               {(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin') ?
+              placaCarro !== null ?
               <div className="fs-6">
                 Placa selecionada: ‎
                 <Badge variant="dot" 
                 size="md">
                   {placaCarro}
                   </Badge>
-              </div> : null}
+              </div> : null : null}
               <div>
               <div className="mt-2 mb-3">
                 Selecione o tipo:

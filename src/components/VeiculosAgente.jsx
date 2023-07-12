@@ -7,7 +7,6 @@ import { Modal } from '@mantine/core'
 import { IconMapSearch } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
 import VoltarComponente from "../util/VoltarComponente";
-import FuncTrocaComp from "../util/FuncTrocaComp";
 
 const VeiculosAgente = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -129,11 +128,6 @@ const VeiculosAgente = () => {
         }
     }, []);
 
-    const autoInfracao = (item) => {
-        localStorage.setItem('autoInfracao', JSON.stringify(item))
-        FuncTrocaComp( 'AutoInfracao')
-    }
-
     const abrirMapa = (item) => {
     setEnderecoMapa(item.local)
     open()
@@ -180,7 +174,7 @@ const VeiculosAgente = () => {
                                                 <th className="border-bottom col-2" scope="col">Vaga</th>
                                                 <th className="border-bottom col-3" scope="col">Placa</th>
                                                 <th className="border-bottom col-5" scope="col">Endereço</th>
-                                                <th className="border-bottom col-2" scope="col">*</th>
+                                                <th className="border-bottom col-2" scope="col"> </th>
                                             </tr>
                                         </thead>
                                         <tbody>

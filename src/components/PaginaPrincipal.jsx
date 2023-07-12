@@ -2,7 +2,6 @@ import React from 'react'
 import "../pages/Style/styles.css";
 import { Button } from '@mantine/core';
 import { IconArrowBearRight } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
 
 const PaginaPrincipal = () => {
   return (

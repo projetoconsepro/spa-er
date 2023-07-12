@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BsCameraFill } from "react-icons/bs";
 import Swal from 'sweetalert2'
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
@@ -107,12 +106,12 @@ function CameraAutoInfracao() {
   };
 
   const savePhotosToLocalStorage = () => {
-    if (photos.length < 4) {
+    if (photos.length < 2) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Mínimo de 4 fotos!',
-        footer: '<a href>Tire no mínimo 4 fotos, por favor.</a>'
+        text: 'Você não pode tirar mais que uma foto!',
+        footer: '<a href>Caso queira tirar outra foto, apague e tire novamente.</a>'
       });
     } else {
       for (let i = 0; i < photos.length; i++) {
@@ -147,6 +146,7 @@ function CameraAutoInfracao() {
       <div className="container" id="testeRolagem">
         <div className="mb-6">
           <div className="text-middle mt-3">
+            {photos.length === 1 ? null :
             <Button
             variant="gradient"
             size="md"
@@ -155,7 +155,8 @@ function CameraAutoInfracao() {
             onClick={takePicture}
             >Tirar foto
             </Button>
-            {photos.length > 3 && (
+            }
+            {photos.length === 1 && (
             <Button
             className="mx-2" 
             variant="gradient"

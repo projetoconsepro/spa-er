@@ -6,7 +6,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Input, Loader } from "@mantine/core";
+import { Button, Input } from "@mantine/core";
 import { IconCash } from "@tabler/icons-react";
 
 const AdicionarCreditos = () => {
@@ -135,8 +135,7 @@ const AdicionarCreditos = () => {
     } else {
       cpf2 = `/verificar?cpf=${cpf}`;
     }
-    console.log(valor[0]);
-    valor[0] = parseFloat(valor[0].replace(",", ".")).toFixed(2);
+    const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
 
     requisicao.get(cpf2).then((resposta) => {
         console.log(resposta);
@@ -149,7 +148,7 @@ const AdicionarCreditos = () => {
           };
           requisicao
             .post("/gerarcobranca", {
-              valor: valor[0],
+              valor: Newvalor,
               campo: campo,
             })
             .then((resposta) => {
@@ -266,7 +265,7 @@ const AdicionarCreditos = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-    if (cpf !== "" && valor[0] !== "0") {
+    if (cpf !== "" && valor !== "0") {
       setEstado2(true);
       requisicao
         .post("usuario/credito", {

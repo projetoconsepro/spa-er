@@ -32,7 +32,7 @@ const ListarNotificacoesAgente = () => {
       const data5 = (data6[0]-3) + ":" + data6[1] + ":";
       const data7 = data5 + data6[2].split(".")[0];
       return data7;
-      }
+    }
 
     useEffect(() => {
         localStorage.removeItem('autoInfracao')
@@ -54,7 +54,7 @@ const ListarNotificacoesAgente = () => {
                    <p><b>Fabricante:</b> ${item.fabricante}</p>
                    <p><b>Cor do veículo:</b> ${item.cor}</p>
                    <p><b>Tipo:</b> ${item.tipo}</p>
-                   <p><b>Valor:</b> R$${item.valor},00</p>
+                   <p><b>Valor:</b> R$${item.valor}</p>
                    <p><b>Monitor:</b> ${item.monitor}</p>
                    <p><b>Hora:</b> ${item.hora}</p>`,
             showConfirmButton: true,

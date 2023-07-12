@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BsCameraFill } from "react-icons/bs";
 import Swal from 'sweetalert2'
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
@@ -157,7 +156,7 @@ function Camera() {
             </Button>
             {photos.length > 3 && (
             <Button
-            className="mx-2" 
+            className="mx-2"
             variant="gradient"
             size="md"
             gradient={{ from: 'teal', to: 'lime'}}
