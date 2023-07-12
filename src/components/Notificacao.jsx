@@ -5,7 +5,7 @@ import { FaCarAlt, FaEdit } from 'react-icons/fa';
 import arrayCores from '../services/cores';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
-import { Button, Loader } from '@mantine/core';
+import { Button, Loader, Select } from '@mantine/core';
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
 
 const Notificacao = () => {
@@ -34,6 +34,30 @@ const Notificacao = () => {
     const [outro, setOutro] = useState (true);
     const [estado2, setEstado2] = useState(false);
     let [cont, setCont] = useState(0);
+    const [fabricanteSelecionado, setFabricanteSelecionado] = useState('');
+    const [fabricanteCerto, setFabricanteCerto] = useState('');
+    const [modeloSelecionado, setModeloSelecionado] = useState('');
+    const [modeloCerto, setModeloCerto] = useState('');
+
+  const handleFabricanteChange = (value) => {
+    setFabricanteSelecionado(value);
+    setTimeout(() => {
+      getModelos(value);
+    }, 0);
+  };
+
+  const handleModeloChange = (value) => {
+    setModeloSelecionado(value);
+    setTimeout(() => {
+        getModelosOutro(value);
+    }, 0);
+}
+
+    const getModelosOutro = (value) => {
+        const modeloSelecionado = document.getElementById('selectModelos').value.toLowerCase();
+        const modeloEncontrado = modelo.find(item => item.label.toLowerCase() === modeloSelecionado);
+        setModeloCerto(modeloEncontrado.value);
+    }
 
     const submit = async () => {
         setEstado2(true)
@@ -55,8 +79,8 @@ const Notificacao = () => {
             }
         });
         if (!infoBanco) {
-                const getmodelo = document.getElementById("selectModelos").value;
-                const getfabricante = document.getElementById("selectFabricantes").value;
+                const getmodelo = modeloCerto;
+                const getfabricante = fabricanteCerto;
             if (outro === true) {
                 const getcor = document.getElementById("selectCores").value;
                 if (getmodelo === "" || getfabricante === "" || getcor === "") {
@@ -245,12 +269,18 @@ const Notificacao = () => {
                 'perfil_usuario': "monitor"
             }
         });
-        const fabricante = document.getElementById('selectFabricantes').value;
-        requisicao.get(`/veiculo/modelos/${fabricante}`).then(
+        
+        if(document.getElementById('selectFabricantes').value !== ""){
+        const fabricanteSelecionado = document.getElementById('selectFabricantes').value.toLowerCase();
+        const fabricanteEncontrado = fabricante.find(item => item.label.toLowerCase() === fabricanteSelecionado);
+        console.log(fabricanteEncontrado)
+        setFabricanteCerto(fabricanteEncontrado.value);
+
+        requisicao.get(`/veiculo/modelos/${fabricanteEncontrado.value}`).then(
             response => {
                 const newData = response?.data?.data?.modelos.map(item => ({
-                    nome: item.nome,
-                    id_modelo: item.id_modelo
+                    label: item.nome,
+                    value: item.id_modelo
                 }));
                 console.log('newdata2', newData)
                 setModelo(newData);
@@ -266,6 +296,7 @@ const Notificacao = () => {
                 console.log(error)
             }
         });
+        }
     }
 
     const getCor = () => {
@@ -394,8 +425,8 @@ const Notificacao = () => {
         requisicao.get('/veiculo/fabricantes').then(
             response => {
                 const newData = response?.data?.data?.fabricantes.map(item => ({
-                    nome: item.nome,
-                    id_fabricante_veiculo: item.id_fabricante_veiculo
+                    label: item.nome,
+                    value: item.id_fabricante_veiculo
                     }));
                 setFabricante(newData);
             }
@@ -414,8 +445,8 @@ const Notificacao = () => {
         requisicao.get(`/veiculo/modelos/1`).then(
             response => {
                 const newData = response?.data?.data?.modelos.map(item => ({
-                    nome: item.nome,
-                    id_modelo: item.id_modelo
+                    label: item.nome,
+                    value: item.id_modelo
                 }));
                 setModelo(newData);
             }
@@ -501,21 +532,27 @@ const Notificacao = () => {
                                         <div className="col-8">
                                             <div onChange={()=>{getModelos()}}>
                                             <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
-                                            <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectFabricantes">
-                                            <option value="">Selecione um fabricante</option>
-                                        {fabricante.map((link, index) => (
-                                            <option value={link.id_fabricante_veiculo} key={index}>{link.nome}</option>
-                                        ))}
-                                            </select>
+                                            <Select
+                                                className="mx-3 mb-3"
+                                                searchable
+                                                nothingFound="Sem resultados"
+                                                id="selectFabricantes"
+                                                data={fabricante}
+                                                value={fabricanteSelecionado}
+                                                onChange={(value) => handleFabricanteChange(value)}
+                                            />
                                             </div>
                                             <div>
                                             <h6 className='mx-4'><small>Modelo:</small></h6>
-                                            <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectModelos">
-                                            <option value="">Selecione um modelo</option>
-                                            {modelo.map((link, index) => (
-                                            <option value={link.id_modelo} key={index}>{link.nome}</option>
-                                        ))}
-                                            </select>
+                                            <Select
+                                                className="mx-3 mb-3"
+                                                searchable
+                                                nothingFound="Sem resultados"
+                                                id="selectModelos"
+                                                data={modelo}
+                                                value={modeloSelecionado}
+                                                onChange={(value) => handleModeloChange(value)}
+                                            />
                                             </div>
                                             {outro ?
                                             <div  onChange={()=>{attcor()}}>

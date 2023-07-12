@@ -8,7 +8,6 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import { Button, Loader } from "@mantine/core";
-import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 
 const RegistrarVagaMonitor = () => {
@@ -236,7 +235,13 @@ const RegistrarVagaMonitor = () => {
             localStorage.removeItem("vaga");
             localStorage.removeItem("popup");
             localStorage.removeItem("id_vagaveiculo");
+
+            if(user2.perfil[0] === "monitor"){
             FuncTrocaComp("ListarVagasMonitor");
+            } else if (user2.perfil[0] === "admin"){
+              FuncTrocaComp("Dashboard");
+            }
+
           } else {
             setEstado2(false);
             Swal.fire({
@@ -309,7 +314,13 @@ const RegistrarVagaMonitor = () => {
               localStorage.removeItem("vaga");
               localStorage.removeItem("popup");
               localStorage.removeItem("id_vagaveiculo");
-              FuncTrocaComp("ListarVagasMonitor");
+
+               if(user2.perfil[0] === "monitor"){
+            FuncTrocaComp("ListarVagasMonitor");
+            } else if (user2.perfil[0] === "admin"){
+              FuncTrocaComp("Dashboard");
+            }
+
             } else {
               setEstado2(false);
               Swal.fire({
@@ -348,7 +359,13 @@ const RegistrarVagaMonitor = () => {
               ImpressaoTicketEstacionamento(tempo, response.config.headers.id_usuario, vagaa, placaMaiuscula, valor)
               setEstado2(false);
               localStorage.removeItem("vaga");
-              FuncTrocaComp("ListarVagasMonitor");
+
+               if(user2.perfil[0] === "monitor"){
+            FuncTrocaComp("ListarVagasMonitor");
+            } else if (user2.perfil[0] === "admin"){
+              FuncTrocaComp("Dashboard");
+            }
+            
             } else {
               setEstado2(false);
               setEstado(true);

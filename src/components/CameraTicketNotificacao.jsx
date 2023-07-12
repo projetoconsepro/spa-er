@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BsCameraFill } from "react-icons/bs";
 import Swal from 'sweetalert2'
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
@@ -167,6 +166,7 @@ function CameraTicketNotificacao() {
       <div className="container" id="testeRolagem">
         <div className="mb-6">
           <div className="text-middle mt-3">
+            {photos.length === 1 ? null :
             <Button
             variant="gradient"
             size="md"
@@ -175,6 +175,7 @@ function CameraTicketNotificacao() {
             onClick={takePicture}
             >Tirar foto
             </Button>
+            }
             {photos.length === 1 && (
             <Button
             className="mx-2" 
