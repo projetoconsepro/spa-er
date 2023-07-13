@@ -12,7 +12,8 @@ import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
-import { Grid, Group, Text } from "@mantine/core";
+import { Grid, Group, Input, Text } from "@mantine/core";
+import { IconParking } from "@tabler/icons-react";
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -416,6 +417,7 @@ const ListarVeiculos = () => {
       {resposta.map((link, index) => (
         <div className="card border-0 shadow mt-5" key={index}>
           <div
+            id=""
             className={link.div}
             onClick={() => {
               handleClick(index);
@@ -506,37 +508,37 @@ const ListarVeiculos = () => {
               ) : mostrardiv[index].estado ? (
                 <div className="h6 mt-3 mx-4">
                   <Group position="apart">
-                  <h6 className="mb-3"><small>Determine o tempo (minutos): </small></h6>
+                  <p className='text-start mb-3'>Determine o tempo (minutos):</p>
                   </Group>
                   <Grid>
                     <Grid.Col span={3}>
                       <button 
-                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
-                        selectedButton === "00:30:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
+                        selectedButton === "00:30:00" ? 'corTempoSelecionado' : 'corTempo'}`}
                         onClick={() => handleButtonClick("00:30:00")}>
                         <Text fz="lg" weight={700}>30</Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
-                        selectedButton === "01:00:00" ? 'bg-green-100' : 'bg-blue-300'}`} 
+                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
+                        selectedButton === "01:00:00" ? 'corTempoSelecionado' : 'corTempo'}`} 
                         onClick={() => handleButtonClick("01:00:00")}>
                         <Text fz="lg" weight={700}>60</Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
-                        selectedButton === "01:30:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        type="button" className={`btn icon-shape icon-shape rounded align-center  ${
+                        selectedButton === "01:30:00" ? 'corTempoSelecionado' : 'corTempo'}`}
                         onClick={() => handleButtonClick("01:30:00")}>
                         <Text fz="lg" weight={700}>90</Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
-                        selectedButton === "02:00:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
+                        selectedButton === "02:00:00" ? 'corTempoSelecionado' : 'corTempo'}`}
                         onClick={() => handleButtonClick("02:00:00")}>
                         <Text fz="lg" weight={700}>120</Text>
                       </button>
@@ -547,18 +549,15 @@ const ListarVeiculos = () => {
                     Esse tempo irá custar: R$ {valorcobranca2}{" "}
                   </p>
                   <div className="form-group mb-4 mt-4">
-                    <p className="text-start" id="vagaInput">
-                      Numero da vaga:
-                    </p>
-                    <div className="input-group">
-                      <input
-                        className="form-control"
-                        value={vaga}
-                        onChange={(e) => setVaga([e.target.value])}
-                        placeholder="Exemplo: 3"
-                      />
-                    </div>
-                  </div>
+                                <p className='text-start m-0'>Número da vaga (opcional):</p>
+                                <Input
+                                icon={<IconParking />}
+                                placeholder="Exemplo: 3"
+                                mt="sm"
+                                value={vaga} 
+                                onChange={(e) => setVaga([e.target.value])}
+                                />
+                            </div>
                   <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
                     <div></div>
                     <button
@@ -587,37 +586,37 @@ const ListarVeiculos = () => {
               ) : (
                 <div className="h6 mx-4">
                   <Group position="apart">
-                  <h6 className="mb-3"><small>Determine o tempo (minutos): </small></h6>
+                  <p className='text-start mb-3'>Determine o tempo (minutos):</p>
                   </Group>
                   <Grid>
                     <Grid.Col span={3}>
                       <button 
-                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
-                        selectedButton === "00:30:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
+                        selectedButton === "00:30:00" ? 'corTempoSelecionado' : 'corTempo'}`}
                         onClick={() => handleButtonClick("00:30:00")}>
                         <Text fz="lg" weight={700}>30</Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
-                        selectedButton === "01:00:00" ? 'bg-green-100' : 'bg-blue-300'}`} 
+                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
+                        selectedButton === "01:00:00" ? 'corTempoSelecionado' : 'corTempo'}`} 
                         onClick={() => handleButtonClick("01:00:00")}>
                         <Text fz="lg" weight={700}>60</Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
-                        selectedButton === "01:30:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
+                        selectedButton === "01:30:00" ? 'corTempoSelecionado' : 'corTempo'}`}
                         onClick={() => handleButtonClick("01:30:00")}>
                         <Text fz="lg" weight={700}>90</Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center text-white ${
-                        selectedButton === "02:00:00" ? 'bg-green-100' : 'bg-blue-300'}`}
+                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
+                        selectedButton === "02:00:00" ? 'corTempoSelecionado' : 'corTempo'}`}
                         onClick={() => handleButtonClick("02:00:00")}>
                         <Text fz="lg" weight={700}>120</Text>
                       </button>

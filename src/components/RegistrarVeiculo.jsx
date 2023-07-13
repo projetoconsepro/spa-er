@@ -3,7 +3,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
-import { Button } from '@mantine/core'
+import { Button, Divider } from '@mantine/core'
 
 const RegistrarVeiculo = () => {
     const [placa, setPlaca] = useState("placa")
@@ -149,16 +149,17 @@ const RegistrarVeiculo = () => {
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
-                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                        <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                             <div className="h5 mt-2 align-items-center">
                                 Registre seu veículo aqui
                             </div>
+                            <Divider my="sm" size="md" variant="dashed" />
             <div className="row">
-                <div className="col-9 px-3 mt-4 pt-2">
+                <div className="col-9 px-3 pt-1">
                     <h6>Placa estrangeira/Outra</h6>
                 </div>
                 <div className="col-3 px-3">
-                    <div className="form-check form-switch gap-2 d-md-block">
+                    <div className="form-check3 form-switch gap-2 d-md-block">
                         <input
                         className="form-check-input align-self-end"
                         type="checkbox"
@@ -171,6 +172,7 @@ const RegistrarVeiculo = () => {
                     </div>
                 </div>
             </div>
+            
                     <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
                         <input type="text" id={inputVazio} className="mt-5 fs-1 justify-content-center align-items-center text-center" value={textoPlaca} onChange={(e) => setTextoPlaca(e.target.value)} maxLength={limite}/>
                     </div>
