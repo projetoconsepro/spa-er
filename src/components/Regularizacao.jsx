@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from '../util/VoltarComponente';
-import { Button } from '@mantine/core';
+import { Button, Divider } from '@mantine/core';
 
 
 const Regularizacao = () => {
@@ -69,16 +69,17 @@ const Regularizacao = () => {
     <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
-                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                        <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                             <div className="h6 mt-1 align-items-left text-start">
                                 Regularizar notificação
                             </div>
+                            <Divider my="sm" size="md" variant="dashed" />
                             <div className="row">
-                                <div className="col-9 px-3 mt-4 pt-1">
+                                <div className="col-9 px-3">
                                     <h5 id="h5Placa">Placa estrangeira</h5>
                                 </div>
                                 <div className="col-3 px-3">
-                                    <div className="form-check form-switch gap-2 d-md-block">
+                                    <div className="form-check3 form-switch gap-2 d-md-block">
                                         <input className="form-check-input align-self-end" type="checkbox" 
                                         role="switch" onClick={handlePlaca} id="flexSwitchCheckDefault"/>
                                     </div>

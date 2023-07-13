@@ -13128,7 +13128,7 @@ textarea.form-control-lg {
 }
 
 .bg-green-100 {
-    background: linear-gradient(120deg, hsl(280, 60%, 70%) 0%, hsl(280, 60%, 50%) 80%);
+    background: linear-gradient(120deg, hsl(280, 60%, 80%) 0%, hsl(280, 60%, 40%) 80%);
     box-shadow: 0 8px 8px -4px lightpink;
 }
 
@@ -13140,6 +13140,27 @@ textarea.form-control-lg {
 .bg-blue-300 {
     background: linear-gradient(120deg, hsl(226, 57%, 40%) 0%, hsl(197, 82%, 60%) 80%);
     box-shadow: 0 8px 8px -4px lightblue;
+}
+
+.bg-blue-400 {
+    border: 1px solid var(--bs-gray-800)
+}
+
+.bg-blue-500 {
+    background: linear-gradient(120deg, hsl(226, 57%, 80%) 0%, hsl(197, 82%, 90%) 80%);
+    border: 1px solid var(--bs-gray-800);
+}
+
+.corTempo {
+    background: #3a58c8 !important;
+    color: white;
+    border: 1px solid rgba(43, 135, 200, .80);
+}
+
+.corTempoSelecionado {
+    background: white !important;
+    color: black !important;
+    border: 2px solid green  !important;
 }
 
 .bg-green-50 {
