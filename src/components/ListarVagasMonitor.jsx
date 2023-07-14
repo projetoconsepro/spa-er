@@ -288,10 +288,6 @@ const ListarVagasMonitor = () => {
     for (let i = 0; i < 8; i++) {
       localStorage.removeItem(`foto${i}`);
     }
-
-    if(window.ReactNativeWebView) {     
-      window.ReactNativeWebView.postMessage('oioi')
-   }
   }, []);
 
   const estaciona = (
@@ -304,9 +300,7 @@ const ListarVagasMonitor = () => {
     tipo,
     debito
   ) => {
-    if(window.ReactNativeWebView) {     
-      window.ReactNativeWebView.postMessage('asdasdsadsa')
-   }
+
     localStorage.setItem("numero_vaga", numero);
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,

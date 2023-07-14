@@ -27,6 +27,7 @@ const ListarVeiculos = () => {
   const [vaga, setVaga] = useState([]);
   const [notificacao, setNotificacao] = useState([]);
   const [selectedButton, setSelectedButton] = useState("01:00:00");
+  const [botaoOff, setBotaoOff] = useState(false);
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -78,7 +79,6 @@ const ListarVeiculos = () => {
                 icon: "success",
                 timer: 2000,
               });
-              console.log('removeu')
               atualizacomp();
             } else {
               Swal.fire({
@@ -104,7 +104,6 @@ const ListarVeiculos = () => {
     await requisicao
       .get("/veiculo")
       .then((response) => {
-        console.log('response', response)
         if (response.data.msg.resultado === false) {
           FuncTrocaComp("CadastrarVeiculo");
         }
@@ -119,7 +118,6 @@ const ListarVeiculos = () => {
           mostrardiv[i] = { estado: true };
           nofityvar[i] = { notifi: "notify" };
           resposta[i].placa = response.data.data[i].usuario;
-          console.log(resposta[i].placa)
           resposta[i].id_veiculo = response.data.data[i].id_veiculo;
           if (response.data.data[i].estacionado === "N") {
             resposta[i].div = "card-body mb-2";
@@ -179,7 +177,6 @@ const ListarVeiculos = () => {
             }
           }
         }
-        console.log('resposta', resposta)
       })
       .catch(function (error) {
         if (
@@ -262,6 +259,10 @@ const ListarVeiculos = () => {
   }
 
   const hangleplaca = async (placa, index) => {
+    setBotaoOff(true)
+    setTimeout(() => {
+      setBotaoOff(false)
+    }, 2000);
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -321,6 +322,10 @@ const ListarVeiculos = () => {
     }
   };
   const AddTempo = async (placa, index, id_vaga_veiculo, vaga) => {
+    setBotaoOff(true);
+    setTimeout(() => {
+      setBotaoOff(false);
+    }, 2000);
     const requisicao = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -565,6 +570,7 @@ const ListarVeiculos = () => {
                       onClick={() => {
                         hangleplaca(link.placa, index);
                       }}
+                      disabled={botaoOff}
                       className="btn3 botao"
                     >
                       Ativar
@@ -645,6 +651,7 @@ const ListarVeiculos = () => {
                         );
                       }}
                       className="btn3 botao"
+                      disabled={botaoOff}
                     >
                       Ativar
                     </button>
