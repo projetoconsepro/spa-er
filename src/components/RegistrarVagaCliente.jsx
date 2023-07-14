@@ -261,7 +261,7 @@ const RegistrarVagaCliente = () => {
                         :
                         <Group position="apart">
                         {resposta2.map((item, index) => (
-                            <Grid>
+                            <Grid key={index}>
                             <Grid.Col span={12}>
                             <Card padding="xs" radius="lg" 
                                 className={placaSelecionada === item.placa ? 'bg-blue-500' : 'bg-blue-400'}

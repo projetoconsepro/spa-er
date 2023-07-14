@@ -18,7 +18,7 @@ const TransferirCreditoCliente = () => {
   const [step, setStep] = useState(0);
   const [mensagemStep, setMensagemStep] = useState(false);
   const [infoDestinatario, setInfoDestinatario] = useState("");
-  const [infoDestinatarioValor, setInfoDestinatarioValor] = useState(null);
+  const [infoDestinatarioValor, setInfoDestinatarioValor] = useState("");
   const [arrayDestinatario, setArrayDestinatario] = useState([]);
   const [estadoInfoDestinatario, setEstadoInfoDestinatario] = useState(false);
   const [estado, setEstado] = useState(false);
@@ -163,11 +163,13 @@ const TransferirCreditoCliente = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
+
+    const valor2 = parseFloat(infoDestinatarioValor.replace(",", ".")).toFixed(2);
     if (campo === "Destinatariocpf") {
       requisicao
         .post(`/financeiro/credito/transferir`, {
           Destinatariocpf: infoDestinatario,
-          valor: infoDestinatarioValor,
+          valor: valor2,
         })
         .then((response) => {
           console.log(response);
@@ -190,7 +192,7 @@ const TransferirCreditoCliente = () => {
       requisicao
         .post(`/financeiro/credito/transferir`, {
           Destinatariocnpj: infoDestinatario,
-          valor: infoDestinatarioValor,
+          valor: valor2,
         })
         .then((response) => {
           if (response.data.msg.resultado) {

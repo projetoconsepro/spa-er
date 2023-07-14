@@ -28,7 +28,7 @@ const ImpressaoTicketEstacionamento = (tempo, monitor, vaga, placa, valor) => {
             if(tempo === '00:10:00'){
                 tipo2 = 'TOLERANCIA'
             } else {
-                tipo2 = 'CCOMPRA DE PERIODOS'
+                tipo2 = 'COMPRA DE PERIODOS'
             }
             console.log(tipo2)
             return tipo2
@@ -51,19 +51,7 @@ const ImpressaoTicketEstacionamento = (tempo, monitor, vaga, placa, valor) => {
             return valor2
         }
 
-          const token = localStorage.getItem('token');
-          const user = localStorage.getItem('user');
-          const user2 = JSON.parse(user);
-          const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-              token: token,
-              id_usuario: user2.id_usuario,
-              perfil_usuario: user2.perfil[0],
-            },
-          });
-        
-          requisicao.post('/estacionamento/ticket', {
+          const json = {
                 tipo: tipoEstacionamento(),
                 horaInicio: horaInicio,
                 horaValidade: horaValidade,
@@ -71,13 +59,11 @@ const ImpressaoTicketEstacionamento = (tempo, monitor, vaga, placa, valor) => {
                 vaga: vaga[0],
                 placa: placa,
                 valor: valorTicket(),
-            })
-            .then((res) => {
-              console.log(res.data);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          }
+
+          if(window.ReactNativeWebView) {     
+            window.ReactNativeWebView.postMessage(JSON.stringify(json));
+         }
 
 }
 

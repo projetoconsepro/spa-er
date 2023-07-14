@@ -60,7 +60,6 @@ const HistoricoVeiculo = () => {
       requisicao
         .get(`/veiculo/historico/?query=${passar}`)
         .then((response) => {
-          console.log(response)
           if (response.data.data.length > 0) {
             setEstado2(false);
             setEstado2(false);
@@ -97,6 +96,7 @@ const HistoricoVeiculo = () => {
           } else {
             setEstado2(false);
             setEstado(true);
+            setData([]);
             setMensagem("Não há registros do veículo!")
           }
         })
@@ -147,8 +147,12 @@ const HistoricoVeiculo = () => {
       let tipo = "Não";
       Swal.fire({
         title: data[index].placa,
-        html: `Data: ${data[index].data} </br></br> Horário chegada: ${data[index].chegada} </br></br> Horário saída: ${data[index].saida} </br></br> 
-    Vaga: ${data[index].vaga} </br></br> Houve irregularidades: ${tipo} </br></br> Endereço: ${data[index].local} </br>`,
+        html: `Data: ${data[index].data} </br></br> 
+        Horário chegada: ${data[index].chegada} </br></br> 
+        Horário saída: ${data[index].saida} </br></br> 
+        Vaga: ${data[index].vaga} </br></br> 
+        Houve irregularidades: ${tipo} </br></br> 
+        Endereço: ${data[index].local} </br>`,
         showCancelButton: false,
         confirmButtonText: "Voltar",
         confirmButtonColor: "#3a58c8",
@@ -213,7 +217,8 @@ const HistoricoVeiculo = () => {
         setEstadoLoading(false)
         setEstado2(false);
         setEstado(true);
-        setMensagem("Não há registros do veículo!")
+        setData([]);
+        setMensagem("Não há registros encontrados!")
       }
   }).catch((error) => {
     if(error?.response?.data?.msg === "Cabeçalho inválido!" 

@@ -6,8 +6,8 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Input } from "@mantine/core";
-import { IconCash } from "@tabler/icons-react";
+import { Button, Divider, Input } from "@mantine/core";
+import { IconCash, IconUser } from "@tabler/icons-react";
 
 const AdicionarCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -360,9 +360,10 @@ const AdicionarCreditos = () => {
       <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
         <div className="col-12 d-flex align-items-center justify-content-center">
           <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
-            <div className="h5 mt-2 align-items-center">
+            <div className="h5 mt-2 align-items-center text-start">
               <small>Adicionar créditos</small>
             </div>
+            <Divider my="sm" size="md" variant="dashed" />
             <div className="row align-items-center pt-2">
               <div className="col-3">
                 <button
@@ -402,20 +403,19 @@ const AdicionarCreditos = () => {
               </div>
             </div>
             <div className="form-group mb-4 mt-4">
-              <h6 className="text-start mb-0">CPF ou CNPJ:</h6>
+              <h6 className="text-start mb-1">CPF ou CNPJ:</h6>
               <div className="input-group">
-                <input
+              <Input
                   type="number"
-                  className={InputPlaca}
+                  icon={<IconUser />}
+                  placeholder="Digite o CPF ou CNPJ"
                   value={cpf}
                   onChange={(e) => setCPF([e.target.value])}
-                  placeholder="Digite o CPF ou CNPJ"
                 />
               </div>
             </div>
             <div className="form-group mb-4 mt-4">
-              <h6 className="text-start mb-2">Valor:</h6>
-
+              <h6 className="text-start mb-1">Valor:</h6>
               <div className="input-group w-75">
                 <Input
                   icon={<IconCash />}

@@ -1,10 +1,11 @@
 import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowRight, IconCash, IconCheck, IconCreditCard, IconX } from "@tabler/icons-react";
+import { IconArrowRight, IconCash, IconCheck, IconX } from "@tabler/icons-react";
 import axios from "axios";
 import { React, useState, useRef } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
+import { BsCreditCard2Back } from "react-icons/bs";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -118,7 +119,13 @@ const InserirCreditos = () => {
     console.log(metodo);
     if (metodo === "pix") {
       setTabsValue("Valor");
-    } else {
+    } else if (metodo === "") {
+      setDivAvancar(true);
+      setTimeout(() => {
+        setDivAvancar(false);
+      }, 5000);
+    }
+    else {
       setDivAvancar(true);
       setTimeout(() => {
         setDivAvancar(false);
@@ -172,13 +179,13 @@ const InserirCreditos = () => {
               <Radio.Group>
                 <Group mt="xs">
                   <Radio
-                    value="cartao"
+                    value="cartaoCredito"
                     onClick={() => {
-                      setMetodo("cartao");
+                      setMetodo("cartaoCredito");
                     }}
                   />
-                  <IconCreditCard width={35} height={35} />
-                  <Text weight={200}> Cartão de crédito/débito</Text>
+                  <BsCreditCard2Back  className="mx-1" size={25}/>
+                  <Text weight={200}> Cartão de crédito</Text>
                 </Group>
                 <Group mt="xs">
                   <Radio
@@ -196,17 +203,13 @@ const InserirCreditos = () => {
                 </Group>
                 <Group mt="xs">
                   <Radio
-                    value="boleto"
+                    value="cartaoDebito"
                     onClick={() => {
-                      setMetodo("boleto");
+                      setMetodo("cartaoDebito");
                     }}
                   />
-                  <Image
-                    width={35}
-                    height={35}
-                    src="../../assets/img/cartaoCredito/boletoo.png"
-                  />
-                  <Text weight={200}> Boleto Bancário</Text>
+                  <BsCreditCard2Back className="mx-1" size={25}/>
+                  <Text weight={200}> Cartão de débito</Text>
                 </Group>
               </Radio.Group>
               <Button
@@ -228,8 +231,8 @@ const InserirCreditos = () => {
                   withBorder={false}
                 >
                   <Text weight={500} color="red">
-                    Método de pagamento ainda não implementado! Estamos
-                    trabalhando nisso.
+                    {metodo === null ? "Você precisa selecionar um método de pagamento!" :
+                    "Método de pagamento ainda não implementado! Estamos trabalhando nisso. "}
                   </Text>
                 </Notification>
               ) : null}

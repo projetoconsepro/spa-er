@@ -5,7 +5,8 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button } from "@mantine/core";
+import { Button, Divider, Input } from "@mantine/core";
+import { FaParking } from "react-icons/fa";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -18,7 +19,6 @@ const RegistrarEstacionamentoParceiro = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [cont, setCont] = useState(0);
-  const [teste, setTeste] = useState("");
   const [success, setSuccess] = useState(false);
   const [vaga, setVaga] = useState("");
   const [tempo, setTempo] = useState("");
@@ -306,10 +306,8 @@ const RegistrarEstacionamentoParceiro = () => {
         await requisicao
           .get(`/veiculo/${placaMaiuscula}`)
           .then((response) => {
-            console.log("b", response);
             if (response.data.msg.msg === "Dados encontrados") {
               if (response.data.data[0].estacionado[0].estacionado === "S") {
-                console.log(vagaa);
                 requisicao
                   .post("/estacionamento", {
                     placa: placaMaiuscula,
@@ -320,7 +318,6 @@ const RegistrarEstacionamentoParceiro = () => {
                       response.data.data[0].estacionado[0].id_vaga_veiculo,
                   })
                   .then((response) => {
-                    console.log("a", response);
                     if (response.data.msg.resultado) {
                       setVaga("");
                       setTextoPlaca("");
@@ -551,18 +548,10 @@ const RegistrarEstacionamentoParceiro = () => {
   useEffect(() => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
     if (clicado === false) {
-      if (
-        textoPlaca.at(4) === "1" ||
-        textoPlaca.at(4) === "2" ||
-        textoPlaca.at(4) === "3" ||
-        textoPlaca.at(4) === "4" ||
-        textoPlaca.at(4) === "5" ||
-        textoPlaca.at(4) === "6" ||
-        textoPlaca.at(4) === "7" ||
-        textoPlaca.at(4) === "8" ||
-        textoPlaca.at(4) === "9" ||
-        textoPlaca.at(4) === "0"
-      ) {
+      if (textoPlaca[4] === '1' || textoPlaca[4] === '2' ||
+      textoPlaca[4] === '3' || textoPlaca[4] === '4' || textoPlaca[4] === '5'||
+      textoPlaca[4] === '6' || textoPlaca[4] === '7' || textoPlaca[4] === '8'||
+      textoPlaca[4] === '9' || textoPlaca[4] === '0') {
         setPlaca("placa3");
         if (cont === 0) {
           const fim = textoPlaca.substring(3, textoPlaca.length);
@@ -581,7 +570,6 @@ const RegistrarEstacionamentoParceiro = () => {
         setPlaca("placa");
         setCont(0);
       }
-      setTeste(textoPlaca.replace("-", ""));
     }
   }, [textoPlaca]);
 
@@ -621,16 +609,17 @@ const RegistrarEstacionamentoParceiro = () => {
         data-background-lg="../../assets/img/illustrations/signin.svg"
       >
         <div className="col-12 d-flex align-items-center justify-content-center">
-          <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+          <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
             <div className="h6 mt-1 align-items-left text-start">
               Registrar estacionamento
             </div>
+            <Divider my="sm" size="md" variant="dashed" />
             <div className="row">
-              <div className="col-9 px-3 mt-4 pt-2">
+              <div className="col-9 px-3 pt-1">
                 <h6>Placa estrangeira/Outra</h6>
               </div>
               <div className="col-3 px-3">
-                <div className="form-check form-switch gap-2 d-md-block">
+                <div className="form-check3 form-switch gap-2 d-md-block">
                   <input
                     className="form-check-input align-self-end"
                     type="checkbox"
@@ -655,17 +644,16 @@ const RegistrarEstacionamentoParceiro = () => {
               />
             </div>
             <div className="text-start mt-3 px-2">
-              <h6>Número da vaga:</h6>
-              <div className="input-group">
-                <input
-                  className="form-control"
+              <h6>Número da vaga (opcional):</h6>
+                <Input
                   type="number"
                   value={vaga}
+                  icon={<FaParking />}
+
                   onChange={(e) => setVaga([e.target.value])}
                   maxLength={limite}
                   placeholder="Exemplo: 0 "
                 />
-              </div>
             </div>
             <div
               className="text-start mt-3 mb-1 px-2"
@@ -690,7 +678,7 @@ const RegistrarEstacionamentoParceiro = () => {
               </select>
               <p id="tempoCusto" className="text-end">
                 {" "}
-                Valor a ser cobrado: R$ {valorcobranca2},00{" "}
+                Valor a ser cobrado: R$ {valorcobranca2}{" "}
               </p>
             </div>
 

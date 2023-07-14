@@ -33,10 +33,10 @@ const Regularizacao = () => {
         useEffect(() => {
             const clicado = document.getElementById("flexSwitchCheckDefault").checked
             if(clicado === false){
-            if (textoPlaca.at(4) === '1' || textoPlaca.at(4) === '2' 
-            || textoPlaca.at(4) === '3' || textoPlaca.at(4) === '4' || textoPlaca.at(4) === '5'
-            || textoPlaca.at(4) === '6' || textoPlaca.at(4) === '7' || textoPlaca.at(4) === '8'
-            || textoPlaca.at(4) === '9' || textoPlaca.at(4) === '0') {
+                if (textoPlaca[4] === '1' || textoPlaca[4] === '2' ||
+                textoPlaca[4] === '3' || textoPlaca[4] === '4' || textoPlaca[4] === '5'||
+                textoPlaca[4] === '6' || textoPlaca[4] === '7' || textoPlaca[4] === '8'||
+                textoPlaca[4] === '9' || textoPlaca[4] === '0') {
                 setPlaca("placa3")
                 if (cont === 0) {
                     const fim = textoPlaca.substring(3, textoPlaca.length);

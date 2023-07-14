@@ -1,11 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
-import { FaCarAlt, FaEdit } from 'react-icons/fa';
+import { FaCarAlt, FaEdit, FaParking } from 'react-icons/fa';
 import arrayCores from '../services/cores';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
-import { Button, Loader, Select } from '@mantine/core';
+import { Button, Divider, Input, Loader, Select, Text } from '@mantine/core';
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
 
 const Notificacao = () => {
@@ -324,7 +324,7 @@ const Notificacao = () => {
         if(vaga.length === 0){
             vaga2[0] = [0]
         }
-        console.log(vaga)
+
         requisicao.get(`/vagas/verifica/${vaga2}`).then(
             response => {
                 if(response.data.msg.resultado){
@@ -482,6 +482,10 @@ const Notificacao = () => {
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
                         <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                            <Text fw={500} fz="lg" className="text-center"> Notificar veículo:</Text>
+
+                            <Divider my="sm" size="md" variant="dashed" />
+
                             {dados ?
                                 <div>
                                     <div className="h5 mt-2 align-items-center">
@@ -603,16 +607,31 @@ const Notificacao = () => {
                                         </div>
                                         :
                                         <div>
-                                            <div className="form-group mb-4">
-                                                <label id="labelLogin">Placa do veiculo:</label>
-                                                <div className="input-group">
-                                                    <input className="form-control" name="placa" value={placa} onChange={(e) => setPlaca(e.target.value)} id="fonteInputPlaca" placeholder="Digite a placa do veículo" />
+                                             <div className="form-group mb-3 text-start">
+                                                <Text fw={400} className="mx-1 mb-1"> Placa do veiculo:</Text>
+                                                <div>
+                                                    <Input 
+                                                    name="placa" 
+                                                    value={placa} 
+                                                    icon={<FaCarAlt />}
+                                                    onChange={(e) => setPlaca(e.target.value)} 
+                                                    id="fonteInputPlaca"
+                                                    placeholder="Digite a placa" 
+                                                    />
                                                 </div>
                                             </div>
-                                            <div className="form-group mb-4">
-                                                <label id="labelLogin">Vaga:</label>
-                                                <div className="input-group">
-                                                    <input className="form-control" name="vaga" value={vaga} onChange={(e) => setVaga(e.target.value)} id="fonteInputPlaca" placeholder="Digite a vaga que o veículo está" />
+                                            <div className="form-group mb-3 text-start">
+                                                <Text fw={400} className="mx-1 mb-1"> Vaga do veiculo:</Text>
+                                                <div>
+                                                    <Input 
+                                                    type="number"
+                                                    name="vaga" 
+                                                    value={vaga} 
+                                                    icon={<FaParking />}
+                                                    onChange={(e) => setVaga(e.target.value)} 
+                                                    id="fonteInputPlaca"
+                                                    placeholder="Digite a vaga" 
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="pt-4 mb-6 gap-2 d-md-block">
