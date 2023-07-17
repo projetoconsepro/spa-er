@@ -44,7 +44,6 @@ const ListarVagasMonitor = () => {
     await requisicao
       .get(`/vagas?setor=${setor}`)
       .then((response) => {
-        console.log(response);
         if (response.data.msg.resultado !== false) {
           setEstado(false);
           setMensagem("");

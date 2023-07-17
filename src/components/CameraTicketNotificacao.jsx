@@ -137,7 +137,6 @@ function CameraTicketNotificacao() {
       }).then((response) => {
         if(response.data.msg.resultado){
           FuncTrocaComp("ListarVagasMonitor")
-        console.log(response.data);
       }
       }).catch((error) => {
         console.log(error);

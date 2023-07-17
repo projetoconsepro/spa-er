@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Group, Button, Input, Alert, Radio, Grid, Badge } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
-import Select from "react-select"
+import { addDays, addMonths, endOfMonth,  format } from 'date-fns';
+import Select from "react-select";
 import 'dayjs/locale/pt-br';
 import { IconAlertCircle, IconParking, IconUser } from '@tabler/icons-react';
+import moment from 'moment';
 
 const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -43,9 +45,23 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       return formattedDate;
     }
 
+    function calculateFinalDate(initialDate) {
+      const parsedDate = moment(initialDate);
+    
+      const lastDayOfMonth = parsedDate.clone().endOf('month');
+      const nextDay = parsedDate.clone().add(1, 'day');
+    
+      if (parsedDate.isSame(lastDayOfMonth, 'day')) {
+        const newDate = parsedDate.clone().add(1, 'month').startOf('month');
+        return newDate.format('YYYY-MM-DD');
+      } else {
+        return nextDay.format('YYYY-MM-DD');
+      }
+    }
+
     useEffect(() => {
       setEstadoLoading(onLoading);
-      if(onLoading === false){
+      if (onLoading === false) {
       onClose()
       close()
       }
@@ -305,7 +321,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     }
   };
   
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     if (selectedOption !== null) {
     let consulta = ''
     switch (selectedOption.value) {
@@ -320,10 +336,14 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         consulta = `{"where": [{ "field": "nome", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
         break;
       case 'Periodo':
+        const data = FormatDate(valuePeriodo[1]);
+        console.log(data);
+        const data2 = await calculateFinalDate(data);
+        console.log(data2);
         if (nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
-          consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${FormatDate(valuePeriodo[1])}"] }]}`
+          consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${data2}"] }]}`
         } else {
-        consulta = `{"where": [{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${FormatDate(valuePeriodo[1])}"] }]}`;
+        consulta = `{"where": [{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${data2}"] }]}`;
         }
         break;
       case 'Placa':

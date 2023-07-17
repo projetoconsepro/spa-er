@@ -38,6 +38,7 @@ const Notificacao = () => {
     const [fabricanteCerto, setFabricanteCerto] = useState('');
     const [modeloSelecionado, setModeloSelecionado] = useState('');
     const [modeloCerto, setModeloCerto] = useState('');
+    const [tipoNotificacaoNome, setTipoNotificacaoNome] = useState('');
 
   const handleFabricanteChange = (value) => {
     setFabricanteSelecionado(value);
@@ -149,13 +150,15 @@ const Notificacao = () => {
             "imagens": imagens,
     }).then(
             response => {
+                console.log(response)
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa)
+                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, 
+                    response.data.data.resposta.modelo.modelo, response.data.data.resposta.modelo.fabricante.fabricante, tipoNotificacaoNome)
                     FuncTrocaComp( "CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
@@ -185,13 +188,15 @@ const Notificacao = () => {
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
     }).then(response => {
+        console.log(response)
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa)
+                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, 
+                    response.data.data.resposta.modelo.modelo, response.data.data.resposta.modelo.fabricante.fabricante, tipoNotificacaoNome)
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
@@ -258,6 +263,16 @@ const Notificacao = () => {
     const getTipoNot= () => {
         const tipoNotificacao = document.getElementById('tiposNot').value;
         setTipoNot(tipoNotificacao);
+
+        const objetoEncontrado = tiposNotificacao.find(item => item.id_tipo_notificacao == tipoNotificacao);
+      
+        if (objetoEncontrado) {
+          const nomeTipoNotificacao = objetoEncontrado.nome;
+          setTipoNotificacaoNome(nomeTipoNotificacao);
+
+        } else {
+          setTipoNotificacaoNome("Ocupando vaga de idoso")
+        }
     }
 
     const getModelos = () => {
@@ -489,7 +504,6 @@ const Notificacao = () => {
                             {dados ?
                                 <div>
                                     <div className="h5 mt-2 align-items-center">
-                                        <small>Notificação</small>
                                         <p>Veículo selecionado: {placa}</p>
                                         <p><small>Vaga selecionada: {vaga}</small></p>
                                     </div>

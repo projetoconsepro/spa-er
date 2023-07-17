@@ -85,7 +85,6 @@ const AdicionarCreditos = () => {
             }, 2000);
           }, 3000);
         } else {
-          console.log("deu 5 min");
           setNotification(false);
           setPixExpirado("Pix expirado");
         }
@@ -138,9 +137,7 @@ const AdicionarCreditos = () => {
     const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
 
     requisicao.get(cpf2).then((resposta) => {
-        console.log(resposta);
         if (resposta.data.msg.resultado) {
-          console.log(resposta);
           campo = {
             user: cpf,
             valor: valor,
@@ -153,14 +150,12 @@ const AdicionarCreditos = () => {
             })
             .then((resposta) => {
               if (resposta.data.msg.resultado) {
-                console.log(resposta);
                 setData(resposta.data.data);
                 setTxId(resposta.data.data.txid);
                 getInfoPix(resposta.data.data.txid, campo);
                 setOnOpen(true);
                 open();
               } else {
-                console.log("n abriu nkk");
               }
             })
             .catch((err) => {
@@ -274,7 +269,6 @@ const AdicionarCreditos = () => {
           pagamento: pagamentos,
         })
         .then((response) => {
-          console.log(response);
           if (response.data.msg.resultado) {
             setEstado2(false);
             Swal.fire({

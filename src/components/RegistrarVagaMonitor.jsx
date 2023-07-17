@@ -9,6 +9,7 @@ import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import { Button, Divider, Loader } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
+import { Elderly } from "@mui/icons-material";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -485,8 +486,8 @@ const RegistrarVagaMonitor = () => {
     } else if (tempoo === "00:10:00") {
       setValorCobranca2(valorCobranca * 0);
     } else {
-      if (placaVeiculo !== "") {
-        const placaString = placaVeiculo.toString();
+      if (textoPlaca !== "") {
+        const placaString = textoPlaca.toString();
         const placaMaiuscula = placaString.toUpperCase();
         localStorage.setItem("placa", `${placaMaiuscula}`);
         FuncTrocaComp("Notificacao");
@@ -539,7 +540,7 @@ const RegistrarVagaMonitor = () => {
     setTipoVaga(localStorage.getItem("tipoVaga"));
     param();
     if (localStorage.getItem("popup") == "true") {
-      setPlacaVeiculo(localStorage.getItem("placa"));
+      setTextoPlaca(localStorage.getItem("placa"));
       setVisible(true);
       setValorCobranca2(1);
       SetMostrapag(true);
@@ -568,7 +569,7 @@ const RegistrarVagaMonitor = () => {
               ) : null}
               {tipoVaga === "idoso" ? (
                 <p className="text-start">
-                  <FaUserInjured size={20} />
+                  <Elderly size={20} />
                 </p>
               ) : null}
               <div className="h5 mt-2 align-items-center">

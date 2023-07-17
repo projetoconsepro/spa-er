@@ -8065,6 +8065,14 @@ textarea.form-control-lg {
     }
 }
 
+
+@media (max-width: 350px){
+    #textoSm{
+        font-size: 1rem !important;
+    }
+}
+
+
 #inputParceiro::placeholder{
     font-size: 1rem !important;
 }

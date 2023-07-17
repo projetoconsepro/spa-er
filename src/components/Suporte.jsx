@@ -1,11 +1,53 @@
 import { Accordion, Badge, Button, Card, Group, Text } from "@mantine/core";
 import { FaWhatsapp } from "react-icons/fa";
-import { IconHelpTriangle, IconMail, IconVideo } from "@tabler/icons-react";
+import { Icon24Hours, IconArrowAutofitContent, IconCheck, IconHelpTriangle, IconLamp, IconLamp2, IconMail, IconVideo } from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
 import { FiMail, FiMap } from 'react-icons/fi';
+import { FcIdea } from "react-icons/fc";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const Suporte = () => {
   const [nome, setNome] = useState("");
+  const [textoSuporte, setTextoSuporte] = useState("");
+
+
+
+  const handleSugestao = async () => {
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+    const token = localStorage.getItem("token");
+    const requisicao = axios.create({
+      baseURL: process.env.REACT_APP_HOST,
+      headers: {
+        token: token,
+        id_usuario: user2.id_usuario,
+        perfil_usuario: "cliente",
+      },
+    });
+
+    await requisicao
+      .post("/usuario/sugestao", {
+        descricao: textoSuporte,
+      })
+      .then((res) => {
+        if (res.data.msg.resultado) {
+          setTextoSuporte("");
+          Swal.fire( "Sucesso!", res.data.msg.msg, "success");
+        } else {
+          Swal.fire( "Erro!", res.data.msg.msg, "error");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+
+
+
+
+
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -33,7 +75,7 @@ const Suporte = () => {
         styles={{ item: { backgroundColor: "white" } }}
       >
         <Accordion.Item value="duvidas">
-          <Accordion.Control icon={<IconHelpTriangle color="yellow" />}>
+          <Accordion.Control icon={<IconHelpTriangle color="orange" />}>
             Dúvidas frequentes
           </Accordion.Control>
           <Accordion.Panel>
@@ -120,6 +162,47 @@ const Suporte = () => {
                 Condominio Viena Shopping - R. Júlio de Castilhos, 2500 - 12 - Centro, Taquara - RS, 95600-000
               </Text>
             </div>
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="sugestões">
+          <Accordion.Control icon={<FcIdea color="red" />}>
+            Sugestões
+          </Accordion.Control>
+          <Accordion.Panel>
+
+          <div className='text-start'style={{ marginBottom: '1rem' }}>
+          <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+            Sua contribuição é extremamente importante para nós!
+          </p>
+          <p style={{ fontSize: '0.9rem', color: '#666' }}>
+            Ela nos ajuda a melhorar constantemente o nosso sistema.
+          </p>
+        </div>
+        <textarea
+          value={textoSuporte}
+          onChange={(e) => setTextoSuporte(e.target.value)}
+          placeholder="Digite sua sugestão aqui"
+          style={{
+            width: '100%',
+            color: '#666',
+            height: '150px',
+            padding: '0.5rem',
+            fontSize: '1rem',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+          }}
+        />
+
+        <Button
+          variant="gradient"
+          gradient={{ from: 'green', to: 'blue'}}
+          radius="sm"
+          size="md"
+          style={{ marginTop: '1rem' }}
+          onClick={() => {handleSugestao()}}
+        >
+          Enviar  ‎ ‎ <IconCheck />
+        </Button>
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
