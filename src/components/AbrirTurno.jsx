@@ -81,11 +81,9 @@ const AbrirTurno = () => {
   const setarSetor = () => {
     const setor2 = document.getElementById("setoresSelect2").value;
     setSetorSelecionado2(setor2);
-    console.log(setor2);
 
     const setorA = resposta2.find((setor) => setor.setores === setor2);
     const setorId2 = setorA && setorA.id_setores;
-    console.log(setorId2);
     setSetorSelecionado(setorId2);
   };
 
@@ -132,7 +130,6 @@ const AbrirTurno = () => {
         },
       })
       .then((response) => {
-        console.log(response.data.msg.resultado);
         if (response.data.msg.resultado === true) {
           localStorage.setItem("turno", true);
           localStorage.setItem("caixa", true);

@@ -12,7 +12,7 @@ import Swal from "sweetalert2";
 import Cronometro from "./Cronometro";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
-import { Grid, Group, Input, Text } from "@mantine/core";
+import { Button, Grid, Group, Input, Text } from "@mantine/core";
 import { IconParking } from "@tabler/icons-react";
 
 const ListarVeiculos = () => {
@@ -565,16 +565,16 @@ const ListarVeiculos = () => {
                             </div>
                   <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
                     <div></div>
-                    <button
+                    <Button
                       type="submit"
+                      className="btn3 botao"
                       onClick={() => {
                         hangleplaca(link.placa, index);
                       }}
                       disabled={botaoOff}
-                      className="btn3 botao"
                     >
                       Ativar
-                    </button>
+                    </Button>
                     <div>
                       <span>
                         <IoTrashSharp

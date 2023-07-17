@@ -8,7 +8,9 @@ import { AiFillEdit, AiFillPrinter, AiOutlineBarChart, AiOutlineFileSearch } fro
 import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
+import { FcIdea } from "react-icons/fc";
 import { IconHelpCircle } from "@tabler/icons-react";
+import { IconHelpCircleFilled } from "@tabler/icons-react";
 
 const Sidebar = () => {
     const nome = localStorage.getItem("user");
@@ -188,8 +190,8 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <IconHelpCircle />,
-            name: "‎ Suporte",
+            icon: <IconHelpCircleFilled />,
+            name: "‎ Ajuda",
             componente: "Suporte",
         })
     }
@@ -261,6 +263,12 @@ const Sidebar = () => {
                     name: "‎ Estacionamento",
                     componente: "OcupacaoVagasAdmin",
                 },
+                {
+                    className: styles.className,
+                    icon: <FcIdea />,
+                    name: "‎ Sugestões",
+                    componente: "SugestoesAdmin",
+                }
             ]
         })
         links.push({

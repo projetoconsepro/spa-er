@@ -48,6 +48,7 @@ import InserirCreditos from '../../components/InserirCreditos';
 import CameraTicketNotificacao from '../../components/CameraTicketNotificacao';
 import Suporte from '../../components/Suporte';
 import CameraAutoInfracao from '../../components/CameraAutoInfracao';
+import SugestoesAdmin from '../../components/SugestoesAdmin';
 
 export default function Veiculos({Componente}) {
         if(Componente === "MeusVeiculos"){
@@ -126,6 +127,9 @@ export default function Veiculos({Componente}) {
         }
         else if(Componente === "Regularizacao"){
             return <Regularizacao />
+        }
+        else if (Componente === "SugestoesAdmin"){
+            return <SugestoesAdmin />
         }
         else if(Componente === "UsuariosAdmin"){
             return <UsuariosAdmin />

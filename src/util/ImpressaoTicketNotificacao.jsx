@@ -1,4 +1,4 @@
-const ImpressaoTicketNotificacao = (monitor, vaga, placa) => {
+const ImpressaoTicketNotificacao = (monitor, vaga, placa, modelo, fabricante, motivo) => {
   const obterHoraAtual = () => {
       const dataAtual = new Date();
       const dia = dataAtual.getDate().toString().padStart(2, '0');
@@ -14,6 +14,9 @@ const ImpressaoTicketNotificacao = (monitor, vaga, placa) => {
           tipo: 'NOTIFICACAO',
           dataEmissao: obterHoraAtual(),
           monitor: monitor,
+          modelo: modelo,
+          fabricante: fabricante,
+          motivo: motivo,
           vaga: vaga[0],
           placa: placa,
           valor: '12.00',
