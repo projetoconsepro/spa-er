@@ -225,7 +225,6 @@ const Sidebar = () => {
                     name: "‎ Setores",
                     componente: "SetoresAdmin",
                 },
-                
                 {
                     icon: <FaParking />,
                     className: styles.className,
@@ -288,12 +287,6 @@ const Sidebar = () => {
             icon: <FaUser />,
             name: "‎ Clientes",
             componente: "ClientesAdmin",
-        })
-        links.push({
-            className: styles.className,
-            icon: <FaClipboardList />,
-            name: "‎ Movimentos Setor",
-            componente: "MovimentosAdmin",
         })
         links.push({
             className: styles.className,

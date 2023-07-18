@@ -24,43 +24,7 @@ const AdicionarCreditos = () => {
   const [txid, setTxId] = useState("");
   const [estado2, setEstado2] = useState(false);
 
-  async function getInfoPix(TxId, campo) {
-    const startTime = Date.now();
-    const endTime = startTime + 5 * 60 * 1000;
-
-    let res = { status: "ATIVA" };
-
-    while (Date.now() < endTime && res.status !== "CONCLUIDA") {
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
-      res = requisicao
-        .get(`/verificarcobranca/${TxId}`)
-        .then((resposta) => {
-          if (resposta.data.msg.resultado) {
-            res = { status: "CONCLUIDA" };
-          } else {
-            res = { status: "ATIVA" };
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-    }
-
-    funcPix(TxId, campo);
-  }
-
-  const funcPix = (TxId, campo) => {
+  async function getInfoPix(TxId) {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -72,27 +36,31 @@ const AdicionarCreditos = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-    requisicao
-      .get(`/verificarcobranca/${TxId}`)
-      .then((resposta) => {
-        if (resposta.data.msg.resultado) {
-          setNotification(false);
-          handleRegistrar(campo);
-          setTimeout(() => {
-            close();
-            setTimeout(() => {
-              setNotification(true);
-            }, 2000);
-          }, 3000);
+    await requisicao
+      .post("usuario/credito/pix", {
+        txid: TxId,
+      })
+      .then((response) => {
+        if (response.data.msg.resultado) {
+          setValor("")
+          setCPF("")
+          setOnOpen(false);
+          Swal.fire({
+            title: "Sucesso!",
+            text: "Créditos adicionados com sucesso!",
+            icon: "success",
+            timer: 2000,
+          });
         } else {
           setNotification(false);
-          setPixExpirado("Pix expirado");
+          setPixExpirado(response.data.msg.msg);
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  };
+  }
+
 
   const FuncArrumaInput = (e) => {
     let valor = e;
@@ -140,19 +108,19 @@ const AdicionarCreditos = () => {
         if (resposta.data.msg.resultado) {
           campo = {
             user: cpf,
-            valor: valor,
+            valor: Newvalor,
             pagamento: pagamentos,
           };
           requisicao
             .post("/gerarcobranca", {
               valor: Newvalor,
-              campo: campo,
+              campo: JSON.stringify(campo),
             })
             .then((resposta) => {
               if (resposta.data.msg.resultado) {
                 setData(resposta.data.data);
                 setTxId(resposta.data.data.txid);
-                getInfoPix(resposta.data.data.txid, campo);
+                getInfoPix(resposta.data.data.txid);
                 setOnOpen(true);
                 open();
               } else {
@@ -177,70 +145,21 @@ const AdicionarCreditos = () => {
       });
   };
 
-  const handleRegistrar = (campo) => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    setEstado2(true);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
-    if (campo !== undefined) {
-      requisicao
-        .post("usuario/credito", campo)
-        .then((response) => {
-          setEstado2(false);
-          if (response.data.msg.resultado) {
-            Swal.fire({
-              title: "Sucesso!",
-              text: "Créditos adicionados com sucesso!",
-              icon: "success",
-              timer: 3000,
-              confirmButtonText: "Ok",
-            }).then((result) => {
-              if (result.isConfirmed) {
-              }
-            });
-            setTimeout(() => {
-              setOnOpen(false);
-            }, 3000);
-          } else {
-            Swal.fire({
-              title: "Erro!",
-              text: ` ${response.data.msg.msg}`,
-              icon: "error",
-              confirmButtonText: "Ok",
-            }).then((result) => {
-              if (result.isConfirmed) {
-              }
-            });
-          }
-        })
-        .catch(function (error) {
-          if (
-            error?.response?.data?.msg === "Cabeçalho inválido!" ||
-            error?.response?.data?.msg === "Token inválido!" ||
-            error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
-          ) {
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            localStorage.removeItem("perfil");
-          } else {
-            console.log(error);
-          }
-        });
-    }
-    setValor("");
-    setCPF("");
-  };
-
   const handleSubmit = async () => {
+    const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
+    if (Newvalor < 2) {
+      setInputPlaca("form-control fs-5 is-invalid");
+      setEstado(true);
+      setMensagem("Valor mínimo de R$ 2,00!");
+      setTimeout(() => {
+        setInputPlaca("form-control fs-5");
+        setEstado(false);
+        setMensagem("");
+      }, 4000);
+      return;
+    }
+
+
     if (pagamentos === "dinheiro") {
       transferencia();
     } else {
@@ -271,14 +190,13 @@ const AdicionarCreditos = () => {
         .then((response) => {
           if (response.data.msg.resultado) {
             setEstado2(false);
+            setValor("")
+            setCPF("")
             Swal.fire({
               title: "Sucesso!",
               text: "Créditos adicionados com sucesso!",
               icon: "success",
-              confirmButtonText: "Ok",
-            }).then((result) => {
-              if (result.isConfirmed) {
-              }
+              timer: 2000,
             });
           } else {
             setEstado2(false);
@@ -308,7 +226,6 @@ const AdicionarCreditos = () => {
           }
         });
     } else if (valor === 0) {
-      console.log(valor);
       setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Verifique os campos novamente!");

@@ -59,7 +59,9 @@ const TransferenciaParceiro = () => {
       },
     });
 
-    requisicao.get(`/verificar?cnpj=${cnpj}`).then((response) => {
+    const cnpjFormatado = cnpj.replace(/[.-/]/g, '');
+
+    requisicao.get(`/verificar?cnpj=${cnpjFormatado}`).then((response) => {
       console.log(response)
       if (response.data.msg.resultado) {
         requisicao.get(`/financeiro/saldo/parceiro/${response.data.usuario[0].id_usuario}`).then((res) => {

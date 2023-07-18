@@ -38,7 +38,7 @@ const Notificacao = () => {
     const [fabricanteCerto, setFabricanteCerto] = useState('');
     const [modeloSelecionado, setModeloSelecionado] = useState('');
     const [modeloCerto, setModeloCerto] = useState('');
-    const [tipoNotificacaoNome, setTipoNotificacaoNome] = useState('');
+    const [tipoNotificacaoNome, setTipoNotificacaoNome] = useState("Tempo limite excedido");
 
   const handleFabricanteChange = (value) => {
     setFabricanteSelecionado(value);
@@ -50,17 +50,20 @@ const Notificacao = () => {
   const handleModeloChange = (value) => {
     setModeloSelecionado(value);
     setTimeout(() => {
-        getModelosOutro(value);
+        getModelosOutro();
     }, 0);
 }
 
-    const getModelosOutro = (value) => {
+    const getModelosOutro = () => {
         const modeloSelecionado = document.getElementById('selectModelos').value.toLowerCase();
         const modeloEncontrado = modelo.find(item => item.label.toLowerCase() === modeloSelecionado);
+        console.log(modeloEncontrado)
         setModeloCerto(modeloEncontrado.value);
     }
 
     const submit = async () => {
+        let modeloImpressao = "";
+        let fabricanteImpressao = "";
         setEstado2(true)
         if(imagens.length === 0){
                 setEstado2(false)
@@ -82,6 +85,7 @@ const Notificacao = () => {
         if (!infoBanco) {
                 const getmodelo = modeloCerto;
                 const getfabricante = fabricanteCerto;
+                console.log(getmodelo, getfabricante)
             if (outro === true) {
                 const getcor = document.getElementById("selectCores").value;
                 if (getmodelo === "" || getfabricante === "" || getcor === "") {
@@ -104,7 +108,8 @@ const Notificacao = () => {
             "cor": getcor,
     }).then(
             response => {
-                console.log(response, 'olha só em')
+                modeloImpressao = response.data.data.reposta.modelo.modelo
+                fabricanteImpressao = response.data.data.reposta.modelo.fabricante.fabricante
             }
         ).catch(function (error) {
             localStorage.removeItem("user")
@@ -158,7 +163,7 @@ const Notificacao = () => {
                         localStorage.setItem('id_notificacao', id)
                     }
                     ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, 
-                    response.data.data.resposta.modelo.modelo, response.data.data.resposta.modelo.fabricante.fabricante, tipoNotificacaoNome)
+                    modeloImpressao, fabricanteImpressao, tipoNotificacaoNome, response.data.data.local)
                     FuncTrocaComp( "CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
@@ -181,7 +186,7 @@ const Notificacao = () => {
             localStorage.removeItem("token")
             localStorage.removeItem("perfil");
         });
-    } else{
+    } else {
         requisicao.post('/notificacao', {
             "placa": placa,
             "vaga": vaga,
@@ -196,7 +201,7 @@ const Notificacao = () => {
                         localStorage.setItem('id_notificacao', id)
                     }
                     ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, 
-                    response.data.data.resposta.modelo.modelo, response.data.data.resposta.modelo.fabricante.fabricante, tipoNotificacaoNome)
+                    modeloImpressao, fabricanteImpressao, tipoNotificacaoNome, response.data.data.local)
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
@@ -296,7 +301,6 @@ const Notificacao = () => {
                         label: item.nome,
                         value: item.id_modelo
                     }));
-                    console.log('newdata2', newData)
                     setModelo(newData);
                 }
             ).catch(function (error){
@@ -379,16 +383,17 @@ const Notificacao = () => {
         const getVaga = localStorage.getItem("vaga");
         const getPlaca = localStorage.getItem("placa");
         const getVagaVeiculo = localStorage.getItem("id_vagaveiculo");
+        const placaSemTraco = getPlaca.replace(/-/g, '');
         setDados(true);
 
         if (getVaga !== null && getPlaca !== null) {
             setVagaVeiculo(getVagaVeiculo)
             setSemInfo(true);
-            setPlaca(getPlaca);
+            setPlaca(placaSemTraco);
             setVaga(getVaga);
         }
         
-        requisicao.get(`/veiculo/${getPlaca}`).then(
+        requisicao.get(`/veiculo/${placaSemTraco}`).then(
             response => {
                 if(response.data.msg.resultado === true){
                     setInfoBanco(true);
@@ -446,10 +451,10 @@ const Notificacao = () => {
                 setFabricante(newData);
             }
         ).catch(function (error){
-                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
             || error?.response?.data?.msg === "Token inválido!" 
             || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
+            localStorage.removeItem("user")
             localStorage.removeItem("token")
             localStorage.removeItem("perfil");
             } else {
@@ -466,7 +471,7 @@ const Notificacao = () => {
                 setModelo(newData);
             }
         ).catch(function (error){
-                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
             || error?.response?.data?.msg === "Token inválido!" 
             || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
                 localStorage.removeItem("user")
@@ -483,7 +488,6 @@ const Notificacao = () => {
     }, [])
 
     const attcor = () => {
-
         const cor = document.getElementById('selectCores').value;
         if (cor === "Outra") {
             setOutro(false);

@@ -28,7 +28,7 @@ const HistoricoCaixa = () => {
       const dataD = [];
       const nomeArquivo = 'Relatório do caixa'
       const cabecalho = ['Data', 'Nome', 'Abertura', 'Fechamento', 'Valor de abertura', 'Valor de fechamento'];
-      dataD.push(...data.map((item) => ([item.data, item.nome, item.abertura, item.fechamento, `R$${item.valor_abertura},00`, `R$${item.valor_fechamento},00`])))
+      dataD.push(...data.map((item) => ([item.data, item.nome, item.abertura, item.fechamento, `R$${item.valor_abertura}`, `${item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento}`}`])))
       RelatoriosPDF(nomeArquivo, cabecalho, dataD)
     };
     
@@ -43,7 +43,7 @@ const HistoricoCaixa = () => {
                    <p class="text-start mx-5"><b>Data:</b> ${item.data}</p>
                    <p class="text-start mx-5"><b>Abertura:</b> ${item.abertura}</p>
                    <p class="text-start mx-5"><b>Fechamento:</b> ${item.fechamento}</p>
-                   <p class="text-start mx-5"><b>Valor abertura:</b> R$${item.valor_abertura},00</p>
+                   <p class="text-start mx-5"><b>Valor abertura:</b> R$${item.valor_abertura}</p>
                    <p class="text-start mx-5"><b>Valor fechamento:</b> ${item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento},00`}</p>`,
             showCancelButton: true,
             cancelButtonText: 'Fechar',
@@ -64,7 +64,8 @@ const HistoricoCaixa = () => {
         const dia = data.getDate();
         const mes = data.getMonth() + 1;
         const ano = data.getFullYear();
-        const dataHoje = ano + "-" + mes + "-" + dia;
+
+        const dataHoje = ano + "-" + `${mes < 10 ? `0${mes}` : mes }` + "-" + dia;
         setDataHoje(dataHoje);
 
         const requisicao = axios.create({
