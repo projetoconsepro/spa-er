@@ -107,71 +107,25 @@ const RegistrarVagaMonitor = () => {
         pagamento: "pix",
       };
     }
-    requisicao.post("/gerarcobranca", {
+    requisicao
+      .post("/gerarcobranca", {
         valor: valor2,
         campo: JSON.stringify(campo),
       })
       .then((resposta) => {
-        console.log('sdflkdslf')
         if (resposta.data.msg.resultado) {
-          console.log(resposta.data.data);
-          console.log(resposta.data.data.txid);
           setData(resposta.data.data);
           setTxId(resposta.data.data.txid);
-          getInfoPix(resposta.data.data.txid, campo);
+          getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
-        } else {
-          console.log("n abriu nkk");
         }
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  async function getInfoPix(TxId, campo) {
-    const startTime = Date.now();
-    const endTime = startTime + 5 * 60 * 1000;
-
-    let res = { status: "ATIVA" };
-
-    while (Date.now() < endTime && res.status !== "CONCLUIDA") {
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
-      res = requisicao
-        .get(`/verificarcobranca/${TxId}`)
-        .then((resposta) => {
-          if (resposta.data.msg.resultado) {
-            res = { status: "CONCLUIDA" };
-          } else {
-            res = { status: "ATIVA" };
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-    }
-
-    funcPix(TxId, campo);
-  }
-
-  const closeSocketConnection = () => {
-    if (socketRef.current) {
-      socketRef.current.close();
-    }
-  };
-
-  const funcPix = (Txid, campo) => {
+  async function getInfoPix(TxId) {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -183,29 +137,37 @@ const RegistrarVagaMonitor = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-    requisicao
-      .get(`/verificarcobranca/${Txid}`)
-      .then((resposta) => {
-        console.log(resposta.data);
-        if (resposta.data.msg.resultado) {
-          closeSocketConnection();
-          setNotification(false);
-          registrarEstacionamento(campo);
-          setTimeout(() => {
-            close();
-            setTimeout(() => {
-              setNotification(true);
-            }, 2000);
-          }, 3000);
+    await requisicao
+      .post(`/estacionamento/pix`, {
+        txid: TxId,
+      })
+      .then((response) => {
+        setEstado2(true);
+        if (response.data.msg.resultado === true) {
+          setEstado2(false);
+          localStorage.removeItem("vaga");
+          localStorage.removeItem("popup");
+          localStorage.removeItem("id_vagaveiculo");
+
+          if (user2.perfil[0] === "monitor") {
+            FuncTrocaComp("ListarVagasMonitor");
+          } else if (user2.perfil[0] === "admin") {
+            FuncTrocaComp("Dashboard");
+          }
         } else {
-          setNotification(false);
-          setPixExpirado("Pix expirado");
+          setEstado2(false);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: response.data.msg.msg,
+            footer: '<a href="">Por favor, tente novamente.</a>',
+          });
         }
       })
       .catch((err) => {
         console.log(err);
       });
-  };
+  }
 
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
@@ -213,12 +175,10 @@ const RegistrarVagaMonitor = () => {
 
   useEffect(() => {
     if (estado2) {
-
     }
   }, [estado2]);
 
   const registrarEstacionamento = (campo) => {
-
     const estacionamento = axios.create({
       baseURL: process.env.REACT_APP_HOST,
       headers: {
@@ -227,24 +187,60 @@ const RegistrarVagaMonitor = () => {
         perfil_usuario: "monitor",
       },
     });
-    if (campo !== undefined) {
+    const placaString = textoPlaca.toString();
+    const placaMaiuscula = placaString.toUpperCase();
+    const tirarTraco = placaMaiuscula.split("-").join("");
+    const vagaa = [];
+    vagaa[0] = localStorage.getItem("vaga");
+    if (tirarTraco === "") {
+      setInputPlaca("form-control fs-5 is-invalid");
+      setEstado(true);
+      setMensagem("Preencha o campo placa");
+      setTimeout(() => {
+        setInputPlaca("form-control fs-5");
+        setEstado(false);
+        setMensagem("");
+      }, 4000);
+      return;
+    }
+    const sim = document.getElementById("flexSwitchCheckDefault").checked;
+    if (!sim) {
+      if (!validarPlaca(tirarTraco)) {
+        setInputPlaca("form-control fs-5 is-invalid");
+        setEstado(true);
+        setMensagem("Placa inválida");
+        setTimeout(() => {
+          setInputPlaca("form-control fs-5");
+          setEstado(false);
+          setMensagem("");
+        }, 4000);
+        return;
+      }
+    }
+
+    if (localStorage.getItem("popup") == "true") {
       setEstado2(true);
+      const idvaga = localStorage.getItem("id_vagaveiculo");
       estacionamento
-        .post("/estacionamento", campo)
+        .post("/estacionamento", {
+          placa: tirarTraco,
+          numero_vaga: vagaa,
+          tempo: tempo,
+          pagamento: valor,
+          id_vaga_veiculo: idvaga,
+        })
         .then((response) => {
-          setEstado2(true);
           if (response.data.msg.resultado === true) {
             setEstado2(false);
             localStorage.removeItem("vaga");
             localStorage.removeItem("popup");
             localStorage.removeItem("id_vagaveiculo");
 
-            if(user2.perfil[0] === "monitor"){
-            FuncTrocaComp("ListarVagasMonitor");
-            } else if (user2.perfil[0] === "admin"){
+            if (user2.perfil[0] === "monitor") {
+              FuncTrocaComp("ListarVagasMonitor");
+            } else if (user2.perfil[0] === "admin") {
               FuncTrocaComp("Dashboard");
             }
-
           } else {
             setEstado2(false);
             Swal.fire({
@@ -270,141 +266,73 @@ const RegistrarVagaMonitor = () => {
           }
         });
     } else {
-      const placaString = textoPlaca.toString();
-      const placaMaiuscula = placaString.toUpperCase();
-      const tirarTraco = placaMaiuscula.split("-").join("");
-      const vagaa = [];
-      vagaa[0] = localStorage.getItem("vaga");
-      if (tirarTraco === "") {
-        setInputPlaca("form-control fs-5 is-invalid");
-        setEstado(true);
-        setMensagem("Preencha o campo placa");
-        setTimeout(() => {
-          setInputPlaca("form-control fs-5");
-          setEstado(false);
-          setMensagem("");
-        }, 4000);
-        return;
-      }
-      const sim = document.getElementById("flexSwitchCheckDefault").checked;
-      if (!sim) {
-        if (!validarPlaca(tirarTraco)) {
-          setInputPlaca("form-control fs-5 is-invalid");
-          setEstado(true);
-          setMensagem("Placa inválida");
-          setTimeout(() => {
-            setInputPlaca("form-control fs-5");
-            setEstado(false);
-            setMensagem("");
-          }, 4000);
-          return;
-        }
-      }
+      setEstado2(true);
+      estacionamento
+        .post("/estacionamento", {
+          placa: tirarTraco,
+          numero_vaga: vagaa,
+          tempo: tempo,
+          pagamento: valor,
+        })
+        .then((response) => {
+          if (response.data.msg.resultado === true) {
+            ImpressaoTicketEstacionamento(
+              tempo,
+              response.config.headers.id_usuario,
+              vagaa,
+              tirarTraco,
+              valor
+            );
+            setEstado2(false);
+            localStorage.removeItem("vaga");
 
-      if (localStorage.getItem("popup") == "true") {
-        setEstado2(true);
-        const idvaga = localStorage.getItem("id_vagaveiculo");
-        estacionamento
-          .post("/estacionamento", {
-            placa: tirarTraco,
-            numero_vaga: vagaa,
-            tempo: tempo,
-            pagamento: valor,
-            id_vaga_veiculo: idvaga,
-          })
-          .then((response) => {
-            if (response.data.msg.resultado === true) {
-              setEstado2(false);
-              localStorage.removeItem("vaga");
-              localStorage.removeItem("popup");
-              localStorage.removeItem("id_vagaveiculo");
-
-               if(user2.perfil[0] === "monitor"){
-            FuncTrocaComp("ListarVagasMonitor");
-            } else if (user2.perfil[0] === "admin"){
+            if (user2.perfil[0] === "monitor") {
+              FuncTrocaComp("ListarVagasMonitor");
+            } else if (user2.perfil[0] === "admin") {
               FuncTrocaComp("Dashboard");
             }
-
-            } else {
-              setEstado2(false);
-              Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: response.data.msg.msg,
-                footer: '<a href="">Por favor, tente novamente.</a>',
-              });
-            }
-          })
-          .catch(function (error) {
-            if (
-              error?.response?.data?.msg === "Cabeçalho inválido!" ||
-              error?.response?.data?.msg === "Token inválido!" ||
-              error?.response?.data?.msg ===
-                "Usuário não possui o perfil mencionado!"
-            ) {
-              localStorage.removeItem("user");
-              localStorage.removeItem("token");
-              localStorage.removeItem("perfil");
-            } else {
-              console.log(error);
-            }
-          });
-      } else {
-        setEstado2(true);
-        estacionamento
-          .post("/estacionamento", {
-            placa: tirarTraco,
-            numero_vaga: vagaa,
-            tempo: tempo,
-            pagamento: valor,
-          })
-          .then((response) => {
-            if (response.data.msg.resultado === true) {
-              ImpressaoTicketEstacionamento(tempo, response.config.headers.id_usuario, vagaa, tirarTraco, valor)
-              setEstado2(false);
-              localStorage.removeItem("vaga");
-
-               if(user2.perfil[0] === "monitor"){
-            FuncTrocaComp("ListarVagasMonitor");
-            } else if (user2.perfil[0] === "admin"){
-              FuncTrocaComp("Dashboard");
-            }
-            
-            } else {
-              setEstado2(false);
-              setEstado(true);
-              setMensagem(response.data.msg.msg);
-              setTimeout(() => {
-                setEstado(false);
-                setMensagem("");
-              }, 4000);
-            }
-          })
-          .catch(function (error) {
-            if (
-              error?.response?.data?.msg === "Cabeçalho inválido!" ||
-              error?.response?.data?.msg === "Token inválido!" ||
-              error?.response?.data?.msg ===
-                "Usuário não possui o perfil mencionado!"
-            ) {
-              localStorage.removeItem("user");
-              localStorage.removeItem("token");
-              localStorage.removeItem("perfil");
-            } else {
-              console.log(error);
-            }
-          });
-      }
+          } else {
+            setEstado2(false);
+            setEstado(true);
+            setMensagem(response.data.msg.msg);
+            setTimeout(() => {
+              setEstado(false);
+              setMensagem("");
+            }, 4000);
+          }
+        })
+        .catch(function (error) {
+          if (
+            error?.response?.data?.msg === "Cabeçalho inválido!" ||
+            error?.response?.data?.msg === "Token inválido!" ||
+            error?.response?.data?.msg ===
+              "Usuário não possui o perfil mencionado!"
+          ) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+            localStorage.removeItem("perfil");
+          } else {
+            console.log(error);
+          }
+        });
     }
   };
 
   useEffect(() => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
     if (clicado === false) {
-      if (textoPlaca[4] === '1' || textoPlaca[4] === '2' ||
-      textoPlaca[4] === '3' || textoPlaca[4] === '4' || textoPlaca[4] === '5'||
-      textoPlaca[4] === '6' || textoPlaca[4] === '7' || textoPlaca[4] === '8'||
-      textoPlaca[4] === '9' || textoPlaca[4] === '0') {
+      if (
+        textoPlaca[4] === "1" ||
+        textoPlaca[4] === "2" ||
+        textoPlaca[4] === "3" ||
+        textoPlaca[4] === "4" ||
+        textoPlaca[4] === "5" ||
+        textoPlaca[4] === "6" ||
+        textoPlaca[4] === "7" ||
+        textoPlaca[4] === "8" ||
+        textoPlaca[4] === "9" ||
+        textoPlaca[4] === "0"
+      ) {
         setPlaca("placa3");
         if (cont === 0) {
           const fim = textoPlaca.substring(3, textoPlaca.length);
@@ -480,9 +408,9 @@ const RegistrarVagaMonitor = () => {
     } else if (tempoo === "01:00:00") {
       setValorCobranca2(valorCobranca);
     } else if (tempoo === "00:30:00") {
-      setValorCobranca2(valorCobranca/2);
-    } else if (tempoo === "01:30:00"){
-        setValorCobranca2(valorCobranca*1.5);
+      setValorCobranca2(valorCobranca / 2);
+    } else if (tempoo === "01:30:00") {
+      setValorCobranca2(valorCobranca * 1.5);
     } else if (tempoo === "00:10:00") {
       setValorCobranca2(valorCobranca * 0);
     } else {
@@ -549,9 +477,7 @@ const RegistrarVagaMonitor = () => {
     } else {
       setVisible(false);
     }
-
   }, []);
-
 
   return (
     <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
@@ -600,18 +526,18 @@ const RegistrarVagaMonitor = () => {
               </div>
               <div className="form-group mb-4">
                 <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
-              <input
-                type="text"
-                id={inputVazio}
-                className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
-                value={textoPlaca}
-                onChange={(e) => setTextoPlaca(e.target.value)}
-                maxLength={limite}
-              />
-            </div>
-            <Divider my="sm" size="md" variant="dashed" />
+                  <input
+                    type="text"
+                    id={inputVazio}
+                    className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
+                    value={textoPlaca}
+                    onChange={(e) => setTextoPlaca(e.target.value)}
+                    maxLength={limite}
+                  />
+                </div>
+                <Divider my="sm" size="md" variant="dashed" />
               </div>
-              
+
               <div className="h6 mt-3 " onChange={atualizafunc}>
                 <p className="text-start">Determine um tempo:</p>
                 {visible ? (
@@ -679,7 +605,8 @@ const RegistrarVagaMonitor = () => {
                 <VoltarComponente space={true} onClick={() => HangleBack()} />
                 <Button
                   onClick={handleSubmit}
-                  size="md" radius="md"
+                  size="md"
+                  radius="md"
                   className="bg-blue-50"
                 >
                   Confirmar

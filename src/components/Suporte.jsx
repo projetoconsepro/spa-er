@@ -1,4 +1,4 @@
-import { Accordion, Badge, Button, Card, Group, Text } from "@mantine/core";
+import { Accordion, Badge, Button, Card, Group, Input, Text } from "@mantine/core";
 import { FaWhatsapp } from "react-icons/fa";
 import { Icon24Hours, IconArrowAutofitContent, IconCheck, IconHelpTriangle, IconLamp, IconLamp2, IconMail, IconVideo } from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
@@ -10,10 +10,18 @@ import Swal from "sweetalert2";
 const Suporte = () => {
   const [nome, setNome] = useState("");
   const [textoSuporte, setTextoSuporte] = useState("");
+  const [assunto, setAssunto] = useState("");
 
 
 
   const handleSugestao = async () => {
+
+
+    if (textoSuporte === "" || assunto === "") {
+      Swal.fire( "Aviso!", "Preencha todos os campos!", "error");
+      return;
+    }
+
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     const token = localStorage.getItem("token");
@@ -29,6 +37,7 @@ const Suporte = () => {
     await requisicao
       .post("/usuario/sugestao", {
         descricao: textoSuporte,
+        assunto: assunto,
       })
       .then((res) => {
         if (res.data.msg.resultado) {
@@ -73,6 +82,7 @@ const Suporte = () => {
       <Accordion
         variant="contained"
         styles={{ item: { backgroundColor: "white" } }}
+        className="text-start"
       >
         <Accordion.Item value="duvidas">
           <Accordion.Control icon={<IconHelpTriangle color="orange" />}>
@@ -83,33 +93,63 @@ const Suporte = () => {
               variant="contained"
               styles={{ item: { backgroundColor: "white" } }}
             >
-              <Accordion.Item value="pergunta">
+              <Accordion.Item value="pergunta6">
                 <Accordion.Control>
-                  Porque seu saldo sumiu agora do nada??????
+                    Qual é o horário de funcionamento do estacionamento rotativo?
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Text size="sm" color="dimmed">
-                    RESPOSTA MUITO LEGAL EM PQP
+                  O horário de funcionamento do estacionamento rotativo é das 9h às 18h, de segunda a sexta-feira, e aos sábados até às 13h.
+                  </Text>
+                </Accordion.Panel>
+              </Accordion.Item>
+              <Accordion.Item value="pergunta">
+                <Accordion.Control>
+                  Qual o tempo limite de duração do meu saldo?
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <Text size="sm" color="dimmed" >
+                    Não há limite de tempo para o uso do saldo, ele é seu e você pode utilizá-lo quando desejar.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
               <Accordion.Item value="pergunta2">
                 <Accordion.Control>
-                  Porque seu saldo sumiu agora do nada??????
+                  Qual é o prazo para a regularização de uma notificação do meu veículo?
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Text size="sm" color="dimmed">
-                    RESPOSTA MUITO LEGAL EM PQP
+                  Você tem um prazo de dois dias para realizar a regularização de uma notificação do seu veículo.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
               <Accordion.Item value="pergunta3">
                 <Accordion.Control>
-                  Porque seu saldo sumiu agora do nada??????
+                  Qual é o período de tolerância do estacionamento rotativo?
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Text size="sm" color="dimmed">
-                    RESPOSTA MUITO LEGAL EM PQP
+                  O período de tolerância para o estacionamento rotativo é de 10 minutos.
+                  </Text>
+                </Accordion.Panel>
+              </Accordion.Item>
+              <Accordion.Item value="pergunta4">
+                <Accordion.Control>
+                    É permitido estacionar o veículo na vaga destinada a idosos?
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <Text size="sm" color="dimmed">
+                    Para estacionar na vaga destinada a idosos, é necessário possuir o cartão de idoso. Caso contrário, estará sujeito a receber notificações.
+                  </Text>
+                </Accordion.Panel>
+              </Accordion.Item>
+              <Accordion.Item value="pergunta5">
+                <Accordion.Control>
+                    Onde posso solicitar o cartão de estacionamento para idosos?
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <Text size="sm" color="dimmed">
+                  No setor de trânsito da Prefeitura de Taqura, localizado na Rua Tristão Monteiro, 1278 - Centro, Taquara.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
@@ -170,7 +210,7 @@ const Suporte = () => {
           </Accordion.Control>
           <Accordion.Panel>
 
-          <div className='text-start'style={{ marginBottom: '1rem' }}>
+          <div className='text-start' style={{ marginBottom: '1rem' }}>
           <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
             Sua contribuição é extremamente importante para nós!
           </p>
@@ -178,6 +218,12 @@ const Suporte = () => {
             Ela nos ajuda a melhorar constantemente o nosso sistema.
           </p>
         </div>
+        <Input
+          value={assunto}
+          onChange={(e) => setAssunto(e.target.value)}
+          className="mb-3"
+          placeholder="Qual o assunto da sua sugestão?"
+        />
         <textarea
           value={textoSuporte}
           onChange={(e) => setTextoSuporte(e.target.value)}

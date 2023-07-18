@@ -7,6 +7,7 @@ import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import { Button, Divider, Input } from "@mantine/core";
 import { FaParking } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -83,6 +84,9 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   const fazerPix = async () => {
+    if (vaga === "") {
+      setVaga(0);
+    }
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -99,33 +103,28 @@ const RegistrarEstacionamentoParceiro = () => {
 
     let estado;
 
-    await requisicao.get(`/vagas/verifica/${vaga}`) 
-    .then((response) => {
-      if (!response.data.msg.resultado) {
-        setEstado(true);
-        setMensagem(response.data.msg.msg);
-        setTimeout(() => {
-          setEstado(false);
-          setMensagem("");
-        }, 4000);
-        estado = true;
-        return;
-      }
-      else {
-        estado = false;
-      }
-    })
-  
+    await requisicao
+      .get(`/vagas/verifica/${vaga === "" || vaga[0] === "" ? 0 : vaga}`)
+      .then((response) => {
+        if (!response.data.msg.resultado) {
+          setEstado(true);
+          setMensagem(response.data.msg.msg);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("");
+          }, 4000);
+          estado = true;
+          return;
+        } else {
+          estado = false;
+        }
+      });
+
     if (estado) {
       return;
     }
 
     const formaPagamentoo = document.getElementById("pagamentos").value;
-
-    if (vaga === "") {
-      setVaga(0);
-    }
-
     if (placaMaiuscula === "" || placaMaiuscula.length < 7) {
       setMensagem("Preencha o campo placa");
       setEstado(true);
@@ -169,7 +168,7 @@ const RegistrarEstacionamentoParceiro = () => {
               numero_vaga: vagaa,
               tempo: tempo,
               id_vaga_veiculo:
-              response.data.data[0].estacionado[0].id_vaga_veiculo,
+                response.data.data[0].estacionado[0].id_vaga_veiculo,
             };
           } else {
             campo = {
@@ -194,7 +193,6 @@ const RegistrarEstacionamentoParceiro = () => {
 
     const valor = valorcobranca2.toString();
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
-    console.log(valor2);
 
     requisicao
       .post("/gerarcobranca", {
@@ -205,7 +203,7 @@ const RegistrarEstacionamentoParceiro = () => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
           setTxId(resposta.data.data.txid);
-          getInfoPix(resposta.data.data.txid, campo)
+          getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
         } else {
@@ -352,7 +350,8 @@ const RegistrarEstacionamentoParceiro = () => {
                   });
               } else {
                 console.log(vagaa);
-                requisicao.post("/estacionamento", {
+                requisicao
+                  .post("/estacionamento", {
                     placa: placaMaiuscula,
                     numero_vaga: vagaa,
                     tempo: tempo,
@@ -461,10 +460,9 @@ const RegistrarEstacionamentoParceiro = () => {
       setValorCobranca2(valorCobranca * 2);
     } else if (tempoo === "01:00:00") {
       setValorCobranca2(valorCobranca);
-    } else if (tempoo === "01:30:00"){
-      setValorCobranca2(valorCobranca*1.5);
-    }
-    else if (tempoo === "00:30:00") {
+    } else if (tempoo === "01:30:00") {
+      setValorCobranca2(valorCobranca * 1.5);
+    } else if (tempoo === "00:30:00") {
       setValorCobranca2(valorCobranca / 2);
     } else if (tempoo === "00:10:00") {
       setValorCobranca2(valorCobranca * 0);
@@ -473,13 +471,7 @@ const RegistrarEstacionamentoParceiro = () => {
     }
   };
 
-  async function getInfoPix(TxId, campo) {
-    const startTime = Date.now();
-    const endTime = startTime + 5 * 60 * 1000;
-  
-    let res = { status: 'ATIVA' };
-  
-    while (Date.now() < endTime && res.status !== 'CONCLUIDA') {
+  async function getInfoPix(TxId) {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
@@ -491,67 +483,52 @@ const RegistrarEstacionamentoParceiro = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-    res = requisicao.get(`/verificarcobranca/${TxId}`)
-      .then((resposta) => {
-        if (resposta.data.msg.resultado) {
-          res = { status: 'CONCLUIDA' }
+    await requisicao
+      .post(`/estacionamento/pix`, {
+        txid: TxId,
+      })
+      .then((response) => {
+        if (response.data.msg.resultado) {
+          setOnOpen(false);
+          setVaga("");
+            setTextoPlaca("");
+            setMensagem("Estacionamento registrado com sucesso");
+            setSuccess(true);
+            setTimeout(() => {
+              setSuccess(false);
+              setMensagem("");
+            }, 3000);
         } else {
-          res = { status: 'ATIVA' }
+          setNotification(false);
+          setPixExpirado(response.data.msg.msg);
+          setMensagem(response.data.msg.msg);
+          setEstado(true);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("");
+          }, 3000);
         }
-      }
-      ).catch((err) => {
-        console.log(err)
+      })
+      .catch((err) => {
+        console.log(err);
       });
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-    }
-
-    funcPix(TxId, campo);
   }
-
-
-      const funcPix = (TxId, campo) => {
-        const token = localStorage.getItem("token");
-        const user = localStorage.getItem("user");
-        const user2 = JSON.parse(user);
-        const requisicao = axios.create({
-          baseURL: process.env.REACT_APP_HOST,
-          headers: {
-            token: token,
-            id_usuario: user2.id_usuario,
-            perfil_usuario: user2.perfil[0],
-          },
-        });
-        requisicao.get(`/verificarcobranca/${TxId}`)
-          .then((resposta) => {
-            if (resposta.data.msg.resultado) {
-              setNotification(false);
-              handleRegistrar(campo);
-              setTimeout(() => {
-                close();
-                setTimeout(() => {
-                  setNotification(true);
-                }, 2000);
-              }, 3000);
-              
-    
-            } else {
-              
-              setNotification(false)
-              setPixExpirado("Pix expirado")
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      };
 
   useEffect(() => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
     if (clicado === false) {
-      if (textoPlaca[4] === '1' || textoPlaca[4] === '2' ||
-      textoPlaca[4] === '3' || textoPlaca[4] === '4' || textoPlaca[4] === '5'||
-      textoPlaca[4] === '6' || textoPlaca[4] === '7' || textoPlaca[4] === '8'||
-      textoPlaca[4] === '9' || textoPlaca[4] === '0') {
+      if (
+        textoPlaca[4] === "1" ||
+        textoPlaca[4] === "2" ||
+        textoPlaca[4] === "3" ||
+        textoPlaca[4] === "4" ||
+        textoPlaca[4] === "5" ||
+        textoPlaca[4] === "6" ||
+        textoPlaca[4] === "7" ||
+        textoPlaca[4] === "8" ||
+        textoPlaca[4] === "9" ||
+        textoPlaca[4] === "0"
+      ) {
         setPlaca("placa3");
         if (cont === 0) {
           const fim = textoPlaca.substring(3, textoPlaca.length);
@@ -645,15 +622,14 @@ const RegistrarEstacionamentoParceiro = () => {
             </div>
             <div className="text-start mt-3 px-2">
               <h6>Número da vaga (opcional):</h6>
-                <Input
-                  type="number"
-                  value={vaga}
-                  icon={<FaParking />}
-
-                  onChange={(e) => setVaga([e.target.value])}
-                  maxLength={limite}
-                  placeholder="Exemplo: 0 "
-                />
+              <Input
+                type="number"
+                value={vaga}
+                icon={<FaParking />}
+                onChange={(e) => setVaga([e.target.value])}
+                maxLength={limite}
+                placeholder="Exemplo: 0 "
+              />
             </div>
             <div
               className="text-start mt-3 mb-1 px-2"
@@ -700,7 +676,14 @@ const RegistrarEstacionamentoParceiro = () => {
 
             <div className="mb-2 mt-3 gap-2 d-md-block">
               <VoltarComponente space={true} />
-              <Button className="bg-blue-50" size="md" radius="md" onClick={() => {ValidaFormato();}}>
+              <Button
+                className="bg-blue-50"
+                size="md"
+                radius="md"
+                onClick={() => {
+                  ValidaFormato();
+                }}
+              >
                 Registrar
               </Button>
             </div>
@@ -721,7 +704,12 @@ const RegistrarEstacionamentoParceiro = () => {
           </div>
         </div>
       </div>
-      <ModalPix qrCode={data.brcode} status={notification} mensagemPix={pixExpirado} onOpen={onOpen} />
+      <ModalPix
+        qrCode={data.brcode}
+        status={notification}
+        mensagemPix={pixExpirado}
+        onOpen={onOpen}
+      />
     </div>
   );
 };

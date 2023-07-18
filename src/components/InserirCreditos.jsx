@@ -95,7 +95,6 @@ const InserirCreditos = () => {
           campo: ValorFinal,
         })
         .then((resposta) => {
-          console.log(resposta);
           if (resposta.data.msg.resultado) {
             console.log(resposta.data.data);
             console.log(resposta.data.data.txid);

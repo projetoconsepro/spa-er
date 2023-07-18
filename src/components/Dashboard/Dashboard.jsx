@@ -11,7 +11,6 @@ const Dashboard = () => {
     const [setores, setSetores] = useState([])
 
     function ArrumaHora(data, hora ) {
-        console.log(data)
         if(data !== 'Nenhum registrado'){
             const data2 = data.split("T");
             const data3 = data2[0].split("-");
@@ -73,11 +72,10 @@ const Dashboard = () => {
   return (
     <div>
        <div className="row">
-       <Carousel slideGap="md" height={200} slideSize="33.333333%" loop align="start" slidesToScroll={3}>
+       <Carousel slideGap="md" height={200} slideSize={window.innerWidth <  768 ?  "90%" : "33.333333%"} loop align="center" slidesToScroll={window.innerWidth <  768 ?  1 : 3}>
         {setores.map((item, index) => (
         <Carousel.Slide key={index}>
                 <Card padding="lg" radius="md" withBorder className="text-start bg-blue-100">
-                {window.innerWidth > 900 ?
                 <Grid>
                     <Grid.Col span={4}>
                     <Group position="center" mt="md">
@@ -94,20 +92,6 @@ const Dashboard = () => {
                         <Text size="sm" weight={500}><FaParking />‎ Último movimento: {item.ultimoMovimento}</Text>
                     </Grid.Col>
                 </Grid>
-                : 
-                <Grid>
-                    <Grid.Col span={12}>
-                    <Group position="center" mt="md">
-                    <Text fz="lg" weight={700}>Setor:</Text>
-                    </Group>
-                    <Group position="center" mt="md">
-                    <div className="icon-shape icon-shape bg-blue-200 rounded me-4 me-sm-0 align-center">
-                        <Text fz="lg" weight={700}>{item.nome}</Text>
-                    </div>
-                    </Group>
-                    </Grid.Col>
-                </Grid>
-                }
                 </Card>
         </Carousel.Slide>
         ))}
