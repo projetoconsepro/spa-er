@@ -5,14 +5,19 @@ import { TbHandClick } from "react-icons/tb";
 import { BsFillTrashFill } from "react-icons/bs";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
+import { useDisclosure } from "@mantine/hooks";
+import { Button, Grid, Modal, Text } from "@mantine/core";
+import { Carousel } from '@mantine/carousel';
 
 const Configuracoes = () => {
+  const [opened, { open, close }] = useDisclosure(false);
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [cardBody] = useState("card-body3");
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
+  const [currentSlide, setCurrentSlide] = useState(0);
   const user2 = JSON.parse(user);
 
   const handleCheckboxChange = (index) => {
@@ -24,6 +29,29 @@ const Configuracoes = () => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
+
+  const array = [
+    {
+        key: '1',
+        title: "Bem vindo ao App",
+        text: "O Aplicativo tem seu layout baseado no tema padrão do seu dispositivo, para que você possa ter uma melhor experiência",
+    },
+    {
+        key: '2',
+        title: "O SAIPP possui uma interface que ira te auxiliar", 
+        text: "Possuimos um campo aonde voce pode consultar algumas informações sobre o seu plantio \n Como por exemplo o nivel de umidade ideal para diferentes tipos de plantas",
+    },
+    {
+        key: '3',
+        title: "Para te auxiliar ainda mais possuimos um campo de previsão do tempo",
+        text: "Onde mesmo a distancia voce pode saber como esta o clima na região onde seu sistema esta instalado",
+    },
+    {
+        key: '4',
+        title: "Para um maior controle sobre seu sistema de irrigação",
+        text: "Proporcionamos um campo onde voce pode controlar o nivel de umidade da sua plantação mesmo a distancia \n Por padrao o sistema inicia-se com o minimo de 0 % e o maximo de 100%.",
+    }
+];
 
   const Atualizarequisicao = async () => {
     const requisicao = axios.create({
@@ -139,7 +167,7 @@ const Configuracoes = () => {
           })
           .then((response) => {
             if (response.data.msg.resultado === true) {
-            Atualizarequisicao();
+              Atualizarequisicao();
               Swal.fire({
                 title: response.data.msg.msg,
                 icon: "success",
@@ -162,9 +190,20 @@ const Configuracoes = () => {
     setData([...data]);
   };
 
+  const handleNextSlide = () => {
+    if (currentSlide < array.length - 1) {
+      setCurrentSlide((prevSlide) => prevSlide + 1);
+    }
+  };
+
   return (
     <div className="col-12 px-3 mb-3">
-      <p className="text-start fs-5 fw-bold"><VoltarComponente arrow={true} /> Débito automático</p>
+      <p className="text-start fs-5 fw-bold">
+        <VoltarComponente arrow={true} /> Débito automático
+      </p>
+      <button onClick={()=>open()}>
+        oi
+      </button>
       {data.map((link, index) => (
         <div
           className="card border-0 shadow mt-5 mb-5"
@@ -284,6 +323,39 @@ const Configuracoes = () => {
         </div>
       ))}
       <VoltarComponente />
+    <Modal opened={opened} onClose={() => { close() }} centered size="lg" title="Tutorial débito automático">
+      <Carousel height={200} align="center" slidesToScroll={1} index={currentSlide} maw={320} mx="auto">
+        {array.map((item, index) => (
+          <Carousel.Slide key={index}>
+            <Grid
+              style={{ height: 200 }}
+              justify="center"
+              align="center"
+            >
+              <Grid.Col span={12} style={{ textAlign: "center" }}>
+                <Text
+                  style={{ fontSize: 20, fontWeight: 700 }}
+                  align="center"
+                  color="gray"
+                >
+                  {item.title}
+                </Text>
+                <Text
+                  style={{ fontSize: 15, fontWeight: 400 }}
+                  align="center"
+                  color="gray"
+                >
+                  {item.text}
+                </Text>
+              </Grid.Col>
+            </Grid>
+          </Carousel.Slide>
+        ))}
+      </Carousel>
+      <button onClick={handleNextSlide} disabled={currentSlide === array.length - 1}>
+        NEXT
+      </button>
+    </Modal>
     </div>
   );
 };

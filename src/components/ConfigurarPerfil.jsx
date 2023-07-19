@@ -359,7 +359,7 @@ const ConfigurarPerfil = () => {
           </Accordion.Item>
           : null}
 
-        {perfil === 'cliente' ?
+        {perfil === 'cliente' && 1 === 2 ?
           <Accordion.Item value="camera">
             <Accordion.Control icon={<IconCar size={rem(20)} color='blue' />}>
               Alterar débito automático

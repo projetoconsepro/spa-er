@@ -162,7 +162,7 @@ const Notificacao = () => {
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, 
+                    ImpressaoTicketNotificacao("PRIMEIRA", response.config.headers.id_usuario, vaga, placa, 
                     modeloImpressao, fabricanteImpressao, tipoNotificacaoNome, response.data.data.local)
                     FuncTrocaComp( "CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
@@ -200,7 +200,7 @@ const Notificacao = () => {
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao(response.config.headers.id_usuario, vaga, placa, 
+                    ImpressaoTicketNotificacao("PRIMEIRA", response.config.headers.id_usuario, vaga, placa, 
                     modeloImpressao, fabricanteImpressao, tipoNotificacaoNome, response.data.data.local)
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");

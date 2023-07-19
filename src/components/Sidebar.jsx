@@ -1,4 +1,4 @@
-import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaClipboardList } from "react-icons/fa";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaClipboardList, FaWhatsapp } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
@@ -32,11 +32,16 @@ const Sidebar = () => {
                 
             } else {
             setAriaExpanded(false)
+            if (componente !== "linkWhatsapp") {
             FuncTrocaComp(componente)
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
             }, 1);
+            }
+            else {
+                window.location.href = 'https://app.hiperchat.com.br';
+            }
             }
     }
 
@@ -163,12 +168,6 @@ const Sidebar = () => {
                     componente: "HistoricoFinanceiro",
                 },
             ]
-        })
-        links.push({
-            className: styles.className,
-            icon: <RiSettings5Fill />,
-            name: "‎ Débito automático",
-            componente: "Configuracoes",
         })
         links.push({
             className: styles.className,
@@ -299,6 +298,12 @@ const Sidebar = () => {
             icon: <AiFillEdit />,
             name: "‎ Editar Parâmetro",
             componente: "EditarParametroAdmin",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaWhatsapp />,
+            name: "‎ Whatsapp",
+            componente: "linkWhatsapp",
         })
     }
     else if (teste.perfil[0] === "monitor"){

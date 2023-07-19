@@ -137,13 +137,14 @@ const RegistrarVagaMonitor = () => {
         perfil_usuario: user2.perfil[0],
       },
     });
-    await requisicao
-      .post(`/estacionamento/pix`, {
+    await requisicao.post(`/estacionamento/pix`, {
         txid: TxId,
       })
       .then((response) => {
+        console.log('pix', response)
         setEstado2(true);
         if (response.data.msg.resultado === true) {
+          //COLOCAR IMPRESSAO AQUI
           setEstado2(false);
           localStorage.removeItem("vaga");
           localStorage.removeItem("popup");
@@ -221,8 +222,7 @@ const RegistrarVagaMonitor = () => {
     if (localStorage.getItem("popup") == "true") {
       setEstado2(true);
       const idvaga = localStorage.getItem("id_vagaveiculo");
-      estacionamento
-        .post("/estacionamento", {
+      estacionamento.post("/estacionamento", {
           placa: tirarTraco,
           numero_vaga: vagaa,
           tempo: tempo,
@@ -230,7 +230,17 @@ const RegistrarVagaMonitor = () => {
           id_vaga_veiculo: idvaga,
         })
         .then((response) => {
+          console.log(response)
           if (response.data.msg.resultado === true) {
+            ImpressaoTicketEstacionamento(
+              'SEGUNDA',
+              response.data.data.chegada,
+              response.data.data.tempo_restante,
+              response.config.headers.id_usuario,
+              vagaa,
+              tirarTraco,
+              valor
+            );
             setEstado2(false);
             localStorage.removeItem("vaga");
             localStorage.removeItem("popup");
@@ -267,17 +277,19 @@ const RegistrarVagaMonitor = () => {
         });
     } else {
       setEstado2(true);
-      estacionamento
-        .post("/estacionamento", {
+      estacionamento.post("/estacionamento", {
           placa: tirarTraco,
           numero_vaga: vagaa,
           tempo: tempo,
           pagamento: valor,
         })
         .then((response) => {
+          console.log(response)
           if (response.data.msg.resultado === true) {
-            ImpressaoTicketEstacionamento(
-              tempo,
+              ImpressaoTicketEstacionamento(
+              'PRIMEIRA',
+              response.data.data.chegada,
+              response.data.data.tempo_restante,
               response.config.headers.id_usuario,
               vagaa,
               tirarTraco,
