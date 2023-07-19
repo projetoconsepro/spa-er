@@ -13,6 +13,93 @@
     border: 1px solid black !important;
 }
 
+
+.app-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Carousel Styles */
+  .carousel-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .carousel .slide-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 20px;
+    background-color: #f2f2f2; /* Set your desired background color here */
+  }
+  
+  .carousel .slide-container h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333; /* Set your desired text color here */
+  }
+  
+  .carousel .slide-container p {
+    font-size: 16px;
+    color: #333; /* Set your desired text color here */
+    max-width: 300px;
+    text-align: center;
+  }
+  
+  .carousel .custom-arrow {
+    background-color: #02ab72; /* Set your desired button background color here */
+    color: #fff; /* Set your desired button text color here */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 10px;
+  }
+  
+  .carousel .done-button {
+    background-color: #02ab72; /* Set your desired button background color here */
+    color: #fff; /* Set your desired button text color here */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  
+  .carousel.carousel-slider .control-arrow,
+  .carousel .slider-wrapper {
+    display: none; /* Hide the default carousel arrows */
+  }
+  
+  /* Custom responsive styles (optional) */
+  @media (max-width: 768px) {
+    .carousel .slide-container h2 {
+      font-size: 20px;
+    }
+  
+    .carousel .slide-container p {
+      font-size: 14px;
+    }
+  
+    .carousel .custom-arrow {
+      font-size: 14px;
+    }
+  
+    .carousel .done-button {
+      font-size: 14px;
+    }
+  }
+
 .divPers{
     width: 30% !important;
 }

@@ -8,6 +8,7 @@ import ModalPix from "./ModalPix";
 import { Button, Divider, Input } from "@mantine/core";
 import { FaParking } from "react-icons/fa";
 import Swal from "sweetalert2";
+import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -236,6 +237,7 @@ const RegistrarEstacionamentoParceiro = () => {
         .post("/estacionamento", campo)
         .then((response) => {
           if (response.data.msg.resultado) {
+            //COLOCAR IMPRESSAO AQUI
             setVaga("");
             setTextoPlaca("");
             setMensagem("Estacionamento registrado com sucesso");
@@ -317,6 +319,15 @@ const RegistrarEstacionamentoParceiro = () => {
                   })
                   .then((response) => {
                     if (response.data.msg.resultado) {
+                      ImpressaoTicketEstacionamento(
+                        'PRIMEIRA',
+                        response.data.data.chegada,
+                        response.data.data.tempo_restante,
+                        response.config.headers.id_usuario,
+                        vagaa,
+                        placaMaiuscula,
+                        formaPagamentoo
+                      );
                       setVaga("");
                       setTextoPlaca("");
                       setMensagem("Estacionamento registrado com sucesso");
@@ -359,6 +370,15 @@ const RegistrarEstacionamentoParceiro = () => {
                   })
                   .then((response) => {
                     if (response.data.msg.resultado) {
+                      ImpressaoTicketEstacionamento(
+                        'PRIMEIRA',
+                        response.data.data.chegada,
+                        response.data.data.tempo_restante,
+                        response.config.headers.id_usuario,
+                        vagaa,
+                        placaMaiuscula,
+                        formaPagamentoo
+                      );
                       setMensagem("Estacionamento registrado com sucesso");
                       setSuccess(true);
                       setVaga("");
@@ -392,8 +412,7 @@ const RegistrarEstacionamentoParceiro = () => {
                   });
               }
             } else {
-              requisicao
-                .post("/estacionamento", {
+              requisicao.post("/estacionamento", {
                   placa: placaMaiuscula,
                   numero_vaga: vagaa,
                   tempo: tempo,
@@ -401,6 +420,15 @@ const RegistrarEstacionamentoParceiro = () => {
                 })
                 .then((response) => {
                   if (response.data.msg.resultado) {
+                    ImpressaoTicketEstacionamento(
+                      'PRIMEIRA',
+                      response.data.data.chegada,
+                      response.data.data.tempo_restante,
+                      response.config.headers.id_usuario,
+                      vagaa,
+                      placaMaiuscula,
+                      formaPagamentoo
+                    );
                     setMensagem("Estacionamento registrado com sucesso");
                     setSuccess(true);
                     setVaga("");

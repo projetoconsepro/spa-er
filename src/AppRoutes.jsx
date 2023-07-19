@@ -3,8 +3,6 @@ import {BrowserRouter as Router, Route, Routes, Navigate} from "react-router-dom
 import { AuthProvider, AuthContext } from "./pages/contexts/auth";
 import HomePage from "./pages/HomePage/HomePage";
 import Error from "./components/Error";
-import PaginaPrincipal from "./components/PaginaPrincipal";
-import EstacionamentoAvulso from "./components/EstacionamentoAvulso";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -26,9 +24,7 @@ const AppRoutes = () => {
             <AuthProvider>
             <Routes>
                 <Route exact path="/" element={<HomePage />}/>
-                <Route exact path="/home" element={<PaginaPrincipal />} />
                 <Route exact path="/*" element={<Error />} />
-                <Route exact path="/estacionamento" element={<EstacionamentoAvulso />} />
             </Routes>
             </AuthProvider>
         </Router>

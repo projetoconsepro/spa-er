@@ -1,20 +1,17 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
-import {
-  AiFillCheckCircle,
-  AiFillPrinter,
-  AiOutlineReload,
-} from "react-icons/ai";
+import { AiFillCheckCircle, AiFillPrinter, AiOutlineReload } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import { Loader } from "@mantine/core";
+import { ActionIcon, Loader } from "@mantine/core";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
+import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -441,6 +438,11 @@ const ListarNotificacoes = () => {
       });
   };
 
+  const imprimirSegundaVia = (item) => {
+    console.log(item)
+    ImpressaoTicketNotificacao("SEGUNDA", item.monitor, item.vaga, item.placa, item.modelo, item.fabricante, item.tipo_notificacao, item.endereco, item.valor)
+  }
+
   return (
     <div className="col-12 px-3 mb-3">
       <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
@@ -604,10 +606,12 @@ const ListarNotificacoes = () => {
                               Regularizar
                             </button>
                           </div>
-                          <div className="col-2 pt-2">
-                            <span className="">
+                          <div className="col-2 pt-1">
+                            <span>
                               {" "}
-                              <AiFillPrinter size={25} />{" "}
+                              <button className="btn icon-shape icon-shape rounded w-75 h-75">
+                              <AiFillPrinter size={25} onClick={() => imprimirSegundaVia(link)}/>{" "}
+                              </button>
                             </span>
                           </div>
                         </div>

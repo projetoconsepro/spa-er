@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const ImpressaoTicketEstacionamento = (tempo, monitor, vaga, placa, valor) => {
-        console.log(tempo, monitor, vaga, placa, valor)
+const ImpressaoTicketEstacionamento = (via, tempoChegada, tempo, monitor, vaga, placa, metodo) => {
+    console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo)
         const obterHoraAtual = () => {
             const dataAtual = new Date();
             const hora = dataAtual.getHours().toString().padStart(2, '0');
@@ -20,8 +20,8 @@ const ImpressaoTicketEstacionamento = (tempo, monitor, vaga, placa, valor) => {
         
           const horaInicio = obterHoraAtual();
           const duracao = tempo;
-          const horaValidade = calcularValidade(horaInicio, duracao);
-          console.log('OLHAA SO EM', horaInicio, horaValidade)
+          const horaValidade = calcularValidade(tempoChegada, duracao);
+          console.log('TEMPÇO CHEGADA', horaInicio, horaValidade)
           
           const tipoEstacionamento = (tempo) => {
             let tipo2 = tempo
@@ -30,25 +30,41 @@ const ImpressaoTicketEstacionamento = (tempo, monitor, vaga, placa, valor) => {
             } else {
                 tipo2 = 'COMPRA DE PERIODOS'
             }
-            console.log(tipo2)
             return tipo2
         }
 
-        const valorTicket = () => {
-            let valor2 = tempo
-            if(tempo === '00:10:00'){
-                valor2 = '0,00'
-            } else if (tempo === '00:30:00'){
-                valor2 = '1,00'
-            } else if (tempo === '01:00:00'){
-                valor2 = '2,00'
-            } else if (tempo === '01:30:00'){
-                valor2 = '3,00'
-            } else if (tempo === '02:00:00'){
-                valor2 = '4,00'
-            }
-            console.log(valor2)
-            return valor2
+        const valorTicket = async () => {
+            try {
+                const requisicao = axios.create({
+                  baseURL: process.env.REACT_APP_HOST,
+                })
+                const response = await requisicao.get("/parametros");
+                  let valorCobrar;
+                  let valorCobranca = response.data.data.param.estacionamento.valorHora
+                  if (tempo === "02:00:00") {
+                    valorCobrar = valorCobranca * 2
+                  } else if (tempo === "01:00:00") {
+                    valorCobrar = valorCobranca
+                  } else if (tempo === "01:30:00"){
+                    valorCobrar = valorCobranca * 1.5
+                  }
+                  else if (tempo === "00:30:00") {
+                    valorCobrar = valorCobranca / 2
+                  } else if (tempo === "00:10:00") {
+                    valorCobrar = valorCobranca * 0
+                  } else {
+                    valorCobrar = valorCobranca * 0
+                  }
+                
+                  return valorCobrar;
+
+                } catch(error) {
+                  localStorage.removeItem("user");
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("perfil");
+                };
+                
+
         }
 
         const getDataDeHoje = () => {
@@ -60,10 +76,12 @@ const ImpressaoTicketEstacionamento = (tempo, monitor, vaga, placa, valor) => {
             return `${dia}/${mes}/${ano}`;
           }
 
+
+          if(via === "PRIMEIRA"){
           const json = {
                 tipo: tipoEstacionamento(),
                 dataHoje: getDataDeHoje(),
-                horaInicio: horaInicio,
+                horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
                 vaga: vaga[0],
@@ -71,10 +89,28 @@ const ImpressaoTicketEstacionamento = (tempo, monitor, vaga, placa, valor) => {
                 valor: valorTicket(),
           }
 
-          if(window.ReactNativeWebView) {     
+          console.log('toma', json)
+          if(window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(JSON.stringify(json));
          }
 
+        } else {
+            const json = {
+                tipo: tipoEstacionamento(),
+                dataHoje: getDataDeHoje(),
+                horaInicio: tempoChegada,
+                horaValidade: horaValidade,
+                monitor: monitor,
+                vaga: vaga[0],
+                placa: placa,
+                valor: valorTicket(),
+          }
+
+          console.log('toma', json)
+          if(window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(JSON.stringify(json));
+         }
+        }
 }
 
 export default ImpressaoTicketEstacionamento
