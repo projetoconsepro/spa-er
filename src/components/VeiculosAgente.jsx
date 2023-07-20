@@ -7,6 +7,7 @@ import { Modal } from '@mantine/core'
 import { IconMapSearch } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
 import VoltarComponente from "../util/VoltarComponente";
+import createAPI from "../services/createAPI";
 
 const VeiculosAgente = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -22,14 +23,7 @@ const VeiculosAgente = () => {
     const [enderecoMapa, setEnderecoMapa] = useState('');
 
     const getVagas = async (setor) => {
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': user2.perfil[0]
-            }
-        })
+        const requisicao = createAPI();
         const setor2 = document.getElementById('setoresSelect2').value;
         if (setor2 !== undefined && setor2 !== null && setor2 !== '') {
             setor = setor2;
@@ -88,14 +82,7 @@ const VeiculosAgente = () => {
     
 
     useEffect(() => {
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': user2.perfil[0]
-            }
-        })
+        const requisicao = createAPI();
         requisicao.get('/setores'
         ).then(
             response => {

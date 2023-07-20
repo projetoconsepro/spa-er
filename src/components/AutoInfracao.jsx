@@ -8,6 +8,7 @@ import { Button, Card, Divider, Group, Input, Modal, Text } from '@mantine/core'
 import { Carousel } from '@mantine/carousel';
 import { IconCamera, IconCodeCircle, IconCodeDots, IconFileCode, IconReceipt } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
+import createAPI from '../services/createAPI';
 
 const AutoInfracao = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -42,14 +43,7 @@ const AutoInfracao = () => {
     }
 
     const confirmarInfracao = () => {
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
 
       requisicao.post('/notificacao/auto-infracao',{
           codigo: codigo,

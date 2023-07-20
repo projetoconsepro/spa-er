@@ -9,6 +9,7 @@ import { Button, Divider, Input } from "@mantine/core";
 import { FaParking } from "react-icons/fa";
 import Swal from "sweetalert2";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
+import createAPI from "../services/createAPI";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -93,14 +94,7 @@ const RegistrarEstacionamentoParceiro = () => {
     const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
 
     let estado;
 
@@ -216,60 +210,15 @@ const RegistrarEstacionamentoParceiro = () => {
       });
   };
 
-  const handleRegistrar = async (campo) => {
+  const handleRegistrar = async () => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
 
     const formaPagamentoo = document.getElementById("pagamentos").value;
-    if (campo !== undefined) {
-      requisicao
-        .post("/estacionamento", campo)
-        .then((response) => {
-          if (response.data.msg.resultado) {
-            //COLOCAR IMPRESSAO AQUI
-            setVaga("");
-            setTextoPlaca("");
-            setMensagem("Estacionamento registrado com sucesso");
-            setSuccess(true);
-            setTimeout(() => {
-              setSuccess(false);
-              setMensagem("");
-            }, 3000);
-          } else {
-            setMensagem(response.data.msg.msg);
-            setEstado(true);
-            setTimeout(() => {
-              setEstado(false);
-              setMensagem("");
-            }, 3000);
-          }
-        })
-        .catch(function (error) {
-          if (
-            error?.response?.data?.msg === "Cabeçalho inválido!" ||
-            error?.response?.data?.msg === "Token inválido!" ||
-            error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
-          ) {
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            localStorage.removeItem("perfil");
-          } else {
-            console.log(error);
-          }
-        });
-    } else {
       if (vaga === "") {
         setVaga(0);
       }
@@ -303,13 +252,10 @@ const RegistrarEstacionamentoParceiro = () => {
         } else {
           vagaa[0] = vaga;
         }
-        await requisicao
-          .get(`/veiculo/${placaMaiuscula}`)
-          .then((response) => {
+        await requisicao.get(`/veiculo/${placaMaiuscula}`).then((response) => {
             if (response.data.msg.msg === "Dados encontrados") {
               if (response.data.data[0].estacionado[0].estacionado === "S") {
-                requisicao
-                  .post("/estacionamento", {
+                requisicao.post("/estacionamento", {
                     placa: placaMaiuscula,
                     numero_vaga: vagaa,
                     tempo: tempo,
@@ -326,7 +272,9 @@ const RegistrarEstacionamentoParceiro = () => {
                         response.config.headers.id_usuario,
                         vagaa,
                         placaMaiuscula,
-                        formaPagamentoo
+                        "Dinheiro",
+                        tempo,
+                        response.data.data.notificacao_pendente,
                       );
                       setVaga("");
                       setTextoPlaca("");
@@ -377,7 +325,9 @@ const RegistrarEstacionamentoParceiro = () => {
                         response.config.headers.id_usuario,
                         vagaa,
                         placaMaiuscula,
-                        formaPagamentoo
+                        "Dinheiro",
+                        tempo,
+                        response.data.data.notificacao_pendente
                       );
                       setMensagem("Estacionamento registrado com sucesso");
                       setSuccess(true);
@@ -427,7 +377,9 @@ const RegistrarEstacionamentoParceiro = () => {
                       response.config.headers.id_usuario,
                       vagaa,
                       placaMaiuscula,
-                      formaPagamentoo
+                      "Dinheiro",
+                      tempo,
+                      response.data.data.notificacao_pendente
                     );
                     setMensagem("Estacionamento registrado com sucesso");
                     setSuccess(true);
@@ -477,8 +429,8 @@ const RegistrarEstacionamentoParceiro = () => {
             }
           });
       }
+      
     }
-  };
 
   const atualiza = () => {
     const tempoo = document.getElementById("tempos").value;
@@ -500,23 +452,28 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   async function getInfoPix(TxId) {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
-    await requisicao
-      .post(`/estacionamento/pix`, {
+    const requisicao = createAPI();
+
+    const tirarTraco = textoPlaca.split("-").join("");
+    const placaMaiuscula = tirarTraco.toUpperCase();
+
+    await requisicao.post(`/estacionamento/pix`, {
         txid: TxId,
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          console.log('pix', response)
+          ImpressaoTicketEstacionamento(
+            'PRIMEIRA',
+            response.data.data.chegada,
+            response.data.data.tempo_restante,
+            response.config.headers.id_usuario,
+            response.data.data.id_vagas[0],
+            placaMaiuscula,
+            "PIX",
+            tempo,
+            response.data.data.notificacao_pendente
+          );
           setOnOpen(false);
           setVaga("");
             setTextoPlaca("");
@@ -584,7 +541,6 @@ const RegistrarEstacionamentoParceiro = () => {
     const user2 = JSON.parse(user);
     setToken(token);
     setUser2(user2.perfil[0]);
-    console.log(user2);
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
@@ -593,13 +549,12 @@ const RegistrarEstacionamentoParceiro = () => {
     }
     localStorage.removeItem("placaCarro");
     param();
-    setValorCobranca2(1);
+    setValorCobranca2(0.02);
     setTempo("00:30:00");
   }, []);
 
   const jae = () => {
     const sim = document.getElementById("flexSwitchCheckDefault").checked;
-    console.log(sim);
     if (sim === true) {
       setLimite(10);
     } else {
@@ -686,7 +641,7 @@ const RegistrarEstacionamentoParceiro = () => {
               </p>
             </div>
 
-            <div className="h6 mt-1 mb-4">
+            <div className="h6 mt-1 mb-4 px-2">
               <p className="text-start">Forma de pagamento:</p>
               <select
                 className="form-select form-select-lg mb-3"

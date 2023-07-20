@@ -5,6 +5,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { Badge } from "@mantine/core";
 import { IconCash } from "@tabler/icons-react";
+import createAPI from "../services/createAPI";
 
 const HistoricoFinanceiroParceiro = () => {
   const [resposta, setResposta] = useState([]);
@@ -28,14 +29,7 @@ const HistoricoFinanceiroParceiro = () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-    baseURL: process.env.REACT_APP_HOST,
-    headers: {
-      token: token,
-      id_usuario: user2.id_usuario,
-      perfil_usuario: `${user2.perfil[0]}`,
-    },
-  });
+    const requisicao = createAPI();
 
   requisicao.get('/financeiro/parceiro')
   .then((response) => {
@@ -85,14 +79,7 @@ const handleConsulta = (where) => {
 
   setEstadoLoading(true)
   
-  const requisicao = axios.create({
-    baseURL: process.env.REACT_APP_HOST,
-    headers: {
-      token: token,
-      id_usuario: user2.id_usuario,
-      perfil_usuario: user2.perfil[0],
-    },
-  });
+  const requisicao = createAPI();
 
   const base64 = btoa(where)
   requisicao.get(`/financeiro/parceiro/?query=${base64}`).then((response) => {

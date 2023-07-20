@@ -4,6 +4,7 @@ import axios from 'axios'
 import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
 import { Button, Divider } from '@mantine/core'
+import createAPI from '../services/createAPI'
 
 const RegistrarVeiculo = () => {
     const [placa, setPlaca] = useState("placa")
@@ -34,14 +35,7 @@ const RegistrarVeiculo = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const uppercase = teste.toUpperCase();
-    const veiculo = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "cliente"
-        }
-    })
+    const veiculo = createAPI();
 
 
     function validarPlaca(placa) {

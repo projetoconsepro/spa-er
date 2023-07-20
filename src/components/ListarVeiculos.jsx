@@ -14,6 +14,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Button, Grid, Group, Input, Text } from "@mantine/core";
 import { IconParking } from "@tabler/icons-react";
+import createAPI from "../services/createAPI";
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -60,14 +61,7 @@ const ListarVeiculos = () => {
       icon: "warning",
     }).then((result) => {
       if (result.isConfirmed) {
-        const requisicao = axios.create({
-          baseURL: process.env.REACT_APP_HOST,
-          headers: {
-            token: token,
-            id_usuario: user2.id_usuario,
-            perfil_usuario: "cliente",
-          },
-        });
+        const requisicao = createAPI();
         requisicao
           .put(`/veiculo/remover`, {
             id_veiculo: idVeiculo,
@@ -93,14 +87,7 @@ const ListarVeiculos = () => {
   };
 
   const atualizacomp = async () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
-      },
-    });
+    const requisicao = createAPI();
     await requisicao
       .get("/veiculo")
       .then((response) => {
@@ -263,14 +250,7 @@ const ListarVeiculos = () => {
     setTimeout(() => {
       setBotaoOff(false)
     }, 2000);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
-      },
-    });
+    const requisicao = createAPI();
     const tempo1 = selectedButton
 
     const resposta = await mexerValores();
@@ -326,14 +306,7 @@ const ListarVeiculos = () => {
     setTimeout(() => {
       setBotaoOff(false);
     }, 2000);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
-      },
-    });
+    const requisicao = createAPI();
     const vagaa = [];
 
     vagaa[0] = vaga;

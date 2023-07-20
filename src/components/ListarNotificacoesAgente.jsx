@@ -6,6 +6,7 @@ import moment from 'moment'
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import Filtro from '../util/Filtro'
+import createAPI from '../services/createAPI'
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
@@ -79,14 +80,7 @@ const ListarNotificacoesAgente = () => {
     const reload = () => {
       setEstado(false)
       setMensagem("")
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
       requisicao.get('/notificacao').then((response) => {
         console.log(response.data)
         if (response.data.msg.resultado){
@@ -147,14 +141,7 @@ const ListarNotificacoesAgente = () => {
     setEstado(false)
     setEstadoLoading(true)
     setMensagem("")
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const base64 = btoa(where)
     requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
       if (response.data.data.length !== 0){

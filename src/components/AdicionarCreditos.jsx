@@ -8,6 +8,7 @@ import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Divider, Input } from "@mantine/core";
 import { IconCash, IconUser } from "@tabler/icons-react";
+import createAPI from "../services/createAPI";
 
 const AdicionarCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -25,17 +26,7 @@ const AdicionarCreditos = () => {
   const [estado2, setEstado2] = useState(false);
 
   async function getInfoPix(TxId) {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     await requisicao
       .post("usuario/credito/pix", {
         txid: TxId,
@@ -84,18 +75,8 @@ const AdicionarCreditos = () => {
   };
 
   const fazerPix = async () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     let campo;
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     let cpf2 = `/verificar?cpf=${cpf}`;
     if (cpf2 > 11) {
       cpf2 = `/verificar?cnpj=${cpf}`;
@@ -111,8 +92,7 @@ const AdicionarCreditos = () => {
             valor: Newvalor,
             pagamento: pagamentos,
           };
-          requisicao
-            .post("/gerarcobranca", {
+          requisicao.post("/gerarcobranca", {
               valor: Newvalor,
               campo: JSON.stringify(campo),
             })
@@ -168,17 +148,7 @@ const AdicionarCreditos = () => {
   };
 
   const transferencia = async () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     if (cpf !== "" && valor !== "0") {
       setEstado2(true);
       requisicao

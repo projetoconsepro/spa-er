@@ -8,6 +8,7 @@ import { FaPowerOff } from 'react-icons/fa';
 import { AiFillPrinter } from 'react-icons/ai';
 import CarroLoading from '../components/Carregamento';
 import Filtro from '../util/Filtro';
+import createAPI from '../services/createAPI';
 
 const PrestacaoContas = () => {
   const [data, setData] = useState([]);
@@ -433,14 +434,7 @@ let resumoData2 = [
     const dataHoje = ano + "-" + mes + "-" + dia;
       setDataHoje(dataHoje);
 
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-          'token': token,
-          'id_usuario': user2.id_usuario,
-          'perfil_usuario': "admin"
-      }
-  });
+    const requisicao = createAPI();
   const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
   const passar = btoa(idrequisicao)
   requisicao.get(`/financeiro/admin/?query=${passar}`).then((res) => {
@@ -575,17 +569,7 @@ let resumoData2 = [
     console.log(consulta)
     setEstado2(false);
     setEstadoLoading(true);
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-          'token': token,
-          'id_usuario': user2.id_usuario,
-          'perfil_usuario': "admin"
-      }
-  });
+    const requisicao = createAPI();
   const base64 = btoa(consulta)
   requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
     console.log(res)

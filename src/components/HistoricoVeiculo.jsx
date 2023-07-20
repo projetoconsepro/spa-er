@@ -6,6 +6,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import { AiOutlineReload } from "react-icons/ai";
+import createAPI from "../services/createAPI";
 
 const HistoricoVeiculo = () => {
   const [data, setData] = useState([]);
@@ -35,14 +36,7 @@ const HistoricoVeiculo = () => {
     ) {
       FuncTrocaComp( "FecharTurno");
     }
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: `${user2.perfil[0]}`,
-      },
-    });
+    const requisicao = createAPI();
     setPerfil(user2.perfil[0]);
     setEstado2(true);
     let idrequisicao = "";
@@ -173,14 +167,7 @@ const HistoricoVeiculo = () => {
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     setEstadoLoading(true)
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const base64 = btoa(where)
     requisicao.get(`veiculo/historico/?query=${base64}`).then((response) => {
       console.log(response)

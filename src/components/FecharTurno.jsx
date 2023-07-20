@@ -2,6 +2,7 @@ import axios from 'axios'
 import {React, useState, useEffect} from 'react'
 import Swal from 'sweetalert2'
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
+import createAPI from '../services/createAPI';
 
 const FecharTurno = () => {
     const [estadoTurno, setEstadoTurno] = useState(true);
@@ -38,14 +39,7 @@ const FecharTurno = () => {
 
         setTempoAtual(localStorage.getItem('horaTurno'))
 
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': "monitor"
-            }
-        })
+        const requisicao = createAPI();
         requisicao.get('/setores'
         ).then(
             response => {
@@ -86,14 +80,7 @@ const FecharTurno = () => {
         const user2 = JSON.parse(user);
         localStorage.setItem("setorTurno", "A")
         setSetorSelecionado(1)
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': "monitor"
-            }
-        })
+        const requisicao = createAPI();
         requisicao.post('/turno/fechar',{
             hora: tempoAtual,
             }
@@ -133,19 +120,7 @@ const FecharTurno = () => {
     }
 
     const abrirTurno2 = () => {
-         //parametros requisicao
-         const token = localStorage.getItem('token');
-         const user = localStorage.getItem('user');
-         const user2 = JSON.parse(user);
-         const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': "monitor"
-            }
-        })
-        //abrir turno
+        const requisicao = createAPI();
 
         requisicao.post('/turno/abrir',{
             hora: tempoAtual,
@@ -217,19 +192,7 @@ const FecharTurno = () => {
     }
 
     const fecharCaixa = () => {
-        console.log("fechando caixa")
-        const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
-        const user2 = JSON.parse(user);
-        //parametros requisicao
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': "monitor"
-            }
-        })
+        const requisicao = createAPI();
 
         requisicao.get('/turno/caixa').then(
             response => {

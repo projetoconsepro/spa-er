@@ -11,6 +11,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import VoltarComponente from "../util/VoltarComponente";
+import createAPI from "../services/createAPI";
 
 const TransferirCreditoCliente = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -66,14 +67,7 @@ const TransferirCreditoCliente = () => {
       setEstadoInfoDestinatario(false);
       return;
     }
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const cpf = extrairNumeros(infoDestinatario);
     let campo = "";
     if (cpf.length === 11) {
@@ -155,14 +149,7 @@ const TransferirCreditoCliente = () => {
     } else {
       campo = "Destinatariocnpj";
     }
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
 
     const valor2 = parseFloat(infoDestinatarioValor.replace(",", ".")).toFixed(2);
     if (campo === "Destinatariocpf") {

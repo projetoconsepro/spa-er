@@ -8,6 +8,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Grid, Modal, Text } from "@mantine/core";
 import { Carousel } from '@mantine/carousel';
+import createAPI from "../services/createAPI";
 
 const Configuracoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -54,14 +55,7 @@ const Configuracoes = () => {
 ];
 
   const Atualizarequisicao = async () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
-      },
-    });
+    const requisicao = createAPI();
 
     requisicao
       .get("/veiculo")
@@ -95,14 +89,7 @@ const Configuracoes = () => {
   }, []);
 
   const salvarAlteracoes = (index) => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
-      },
-    });
+    const requisicao = createAPI();
     const idVeiculo = data[index].idVeiculo;
     requisicao
       .put("/veiculo", {
@@ -153,14 +140,7 @@ const Configuracoes = () => {
       icon: "warning",
     }).then((result) => {
       if (result.isConfirmed) {
-        const requisicao = axios.create({
-          baseURL: process.env.REACT_APP_HOST,
-          headers: {
-            token: token,
-            id_usuario: user2.id_usuario,
-            perfil_usuario: "cliente",
-          },
-        });
+        const requisicao = createAPI();
         requisicao
           .put(`/veiculo/remover`, {
             id_veiculo: idVeiculo,

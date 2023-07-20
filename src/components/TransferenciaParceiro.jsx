@@ -5,6 +5,7 @@ import { IconAdjustments, IconArrowAutofitRight, IconArrowForward, IconArrowRigh
 import Swal from "sweetalert2";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
+import createAPI from "../services/createAPI";
 
 const TransferenciaParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -47,17 +48,7 @@ const TransferenciaParceiro = () => {
   };
 
   const getInfoDestinatario = () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
 
     const cnpjFormatado = cnpj.replace(/[.-/]/g, '');
 
@@ -129,17 +120,7 @@ const TransferenciaParceiro = () => {
   }
 
   const fazerPix = () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
 
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
     const campo = {
@@ -166,17 +147,7 @@ const TransferenciaParceiro = () => {
   }
 
   const transferencia = (campo) => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     requisicao.post(`/financeiro/debito/transferir/pix`, {
       txid: campo,
     }).then((response) => {
@@ -199,17 +170,7 @@ const TransferenciaParceiro = () => {
   }
 
   const realizarTransferencia = () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     let valor2;
     if (valor.includes(",")) {
       valor2 = valor.replace(",", ".")

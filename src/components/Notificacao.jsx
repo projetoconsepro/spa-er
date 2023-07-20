@@ -7,6 +7,7 @@ import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Divider, Input, Loader, Select, Text } from '@mantine/core';
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
+import createAPI from '../services/createAPI';
 
 const Notificacao = () => {
     const token = localStorage.getItem('token');
@@ -57,8 +58,9 @@ const Notificacao = () => {
     const getModelosOutro = () => {
         const modeloSelecionado = document.getElementById('selectModelos').value.toLowerCase();
         const modeloEncontrado = modelo.find(item => item.label.toLowerCase() === modeloSelecionado);
-        console.log(modeloEncontrado)
+        if(modeloEncontrado !== undefined){
         setModeloCerto(modeloEncontrado.value);
+        }
     }
 
     const submit = async () => {
@@ -74,14 +76,7 @@ const Notificacao = () => {
                     setMensagem("");
                 }, 4000);
         } else {
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': "monitor"
-            }
-        });
+            const requisicao = createAPI();
         if (!infoBanco) {
                 const getmodelo = modeloCerto;
                 const getfabricante = fabricanteCerto;
@@ -281,15 +276,8 @@ const Notificacao = () => {
     }
 
     const getModelos = () => {
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': "monitor"
-            }
-        });
-        
+        const requisicao = createAPI();
+        setModeloSelecionado('')
         if(document.getElementById('selectFabricantes').value !== ""){
         const fabricanteSelecionado = document.getElementById('selectFabricantes').value.toLowerCase();
         const fabricanteEncontrado = fabricante.find(item => item.label.toLowerCase() === fabricanteSelecionado);
@@ -332,14 +320,7 @@ const Notificacao = () => {
         const placaString = placa.toString()
         const placaMaiuscula = placaString.toUpperCase();
         const placaLimpa = placaMaiuscula.replace(/[^a-zA-Z0-9]/g, '');
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': "monitor"
-            }
-        });
+        const requisicao = createAPI();
         if(vaga.length === 0){
             vaga2[0] = [0]
         }
@@ -369,14 +350,7 @@ const Notificacao = () => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
             FuncTrocaComp("FecharTurno");
         }
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': "monitor"
-            }
-        });
+        const requisicao = createAPI();
         getCor();
         if (localStorage.getItem("placa") !== null && localStorage.getItem("placa") !== undefined && localStorage.getItem("placa") !== "" || localStorage.getItem("vaga") !== null) {
         

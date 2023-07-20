@@ -6,6 +6,7 @@ import { React, useState, useRef } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { BsCreditCard2Back } from "react-icons/bs";
+import createAPI from "../services/createAPI";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -23,17 +24,7 @@ const InserirCreditos = () => {
   const [onOpen, setOnOpen] = useState(false);
 
   const inserirCreditos = (campo, valor) => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
 
     requisicao
       .post("/usuario/saldo/pix", {
@@ -77,17 +68,7 @@ const InserirCreditos = () => {
       }, 5000);
       return;
     } else {
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
 
       requisicao
         .post("/gerarcobranca", {

@@ -1,22 +1,13 @@
 import { Card, Group, Text, Table, Badge } from '@mantine/core';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import createAPI from '../services/createAPI';
 
 const SugestoesAdmin = () => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        const user = localStorage.getItem("user");
-        const user2 = JSON.parse(user);
-        const token = localStorage.getItem("token");
-        const requisicao = axios.create({
-          baseURL: process.env.REACT_APP_HOST,
-          headers: {
-            token: token,
-            id_usuario: user2.id_usuario,
-            perfil_usuario: user2.perfil[0],
-          },
-        });
+      const requisicao = createAPI();
     
         requisicao
           .get("/usuario/sugestao").then((res) => {

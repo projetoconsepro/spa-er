@@ -5,6 +5,7 @@ import adapter from 'webrtc-adapter';
 import { Button, Card } from "@mantine/core";
 import { IconCamera, IconCheck } from "@tabler/icons-react";
 import axios from "axios";
+import createAPI from "../services/createAPI";
 
 function CameraTicketNotificacao() {
     const token = localStorage.getItem('token');
@@ -114,14 +115,7 @@ function CameraTicketNotificacao() {
   };
 
   const savePhotosToLocalStorage = () => {
-    const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': "monitor"
-        }
-    });
+    const requisicao = createAPI();
     if (photos.length > 1) {
       Swal.fire({
         icon: 'error',

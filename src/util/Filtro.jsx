@@ -7,6 +7,7 @@ import Select from "react-select";
 import 'dayjs/locale/pt-br';
 import { IconAlertCircle, IconParking, IconUser } from '@tabler/icons-react';
 import moment from 'moment';
+import createAPI from '../services/createAPI';
 
 const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -81,14 +82,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     
     else if (nome === 'ListarNotificacoesAdmin') {
       setPlacaCarro(localStorage.getItem('placaCarro'));
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
       requisicao.get('/notificacao/tipos').then(
         response => {
             const newData = response?.data?.data?.map(item => ({
@@ -108,14 +102,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     }
 
     else if (nome === 'ListarNotificacoesAgente') {
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
       requisicao.get('/notificacao/tipos').then(
         response => {
             const newData = response?.data?.data?.map(item => ({
@@ -135,17 +122,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     }
 
     else if(nome === 'ListarNotificacoes'){
-      const token = localStorage.getItem('token');
-      const user = localStorage.getItem('user');
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
       requisicao.get('/notificacao/tipos').then(
         response => {
             const newData = response?.data?.data?.map(item => ({
@@ -165,14 +142,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     }
 
     else if(nome === 'Irregularidades'){
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
       requisicao.get('/notificacao/tipos').then(
         response => {
             const newData = response?.data?.data?.map(item => ({

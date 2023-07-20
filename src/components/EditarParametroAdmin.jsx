@@ -3,6 +3,7 @@ import { React, useState, useEffect } from 'react'
 import { IconPrinter, IconCameraSelfie, IconParking, IconBrandTwitter, IconEdit } from '@tabler/icons-react';
 import { Accordion, ActionIcon, Badge, Button, Card, Grid, Group, Input, Text, rem } from '@mantine/core';
 import { IconFilterEdit } from '@tabler/icons-react';
+import createAPI from '../services/createAPI';
 
 const EditarParametroAdmin = () => {
   const [data, setData] = useState([])
@@ -42,14 +43,7 @@ const EditarParametroAdmin = () => {
   };
   
   const handleSaveChanges = () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const requestBody = {
       estacionamento: inputValues,
       turno: inputValues2,
