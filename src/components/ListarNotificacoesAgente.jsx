@@ -38,7 +38,7 @@ const ListarNotificacoesAgente = () => {
     useEffect(() => {
         localStorage.removeItem('autoInfracao')
         for (let i = 0; i < 8; i++) {
-          localStorage.removeItem(`foto${i}`);
+          localStorage.removeItem(`fotoInfracao`);
         }
         reload()
     }, [])

@@ -18,21 +18,23 @@ const AutoInfracao = () => {
     const [data, setData] = useState([])
     const [codigo, setCodigo] = useState('')
     const [dataImagem, setDataImagem] = useState([])
+    const [imagemLocal, setImagemLocal] = useState('')
 
     useEffect(() => {
         const infos = JSON.parse(localStorage.getItem('autoInfracao'))
         setData([infos])
 
-        if(dataImagem.length === 0 || dataImagem === undefined){
-        for (let i = 0; i < 4; i++) {
-          if(localStorage.getItem(`foto${i}`)){
-          dataImagem.push(localStorage.getItem(`foto${i}`))
-        }
-      }
-    }
+       if(localStorage.getItem('fotoInfracao')){
+          setImagemLocal(localStorage.getItem('fotoInfracao'))
+       }
 
-    console.log(dataImagem)
-    }, [])
+        const requisicao = createAPI();
+        requisicao.get(`/notificacao/imagens/${infos.id_notificacao}`).then((response) => {
+          if(response.data.msg.resultado){
+            setDataImagem(response.data.data)
+          }
+        })
+      }, [])
 
     const registrarProva = () => {
       FuncTrocaComp('CameraAutoInfracao')
@@ -70,23 +72,27 @@ const AutoInfracao = () => {
           console.log(error)
       }
     })
-    
+
+
+    if ((imagemLocal !== '') && imagemLocal !== undefined && imagemLocal !== null){
+      console.log(data[0].id_notificacao)
     requisicao.post('/notificacao/ticket', {
       id_notificacao: data[0].id_notificacao,
-      foto: dataImagem
+      foto: imagemLocal,
       }).then((response) => {
         if(response.data.msg.resultado){
-        console.log(response.data);
+        
       }
       }).catch((error) => {
         console.log(error);
       });
+    }
   }
 
   return (
     <div className="col-12 px-3">
       <Modal size="xl" opened={opened} onClose={() => close()} title="Ver imagens" centered >
-       <Carousel slideSize="70%" slideGap="sm" loop>
+       <Carousel slideSize="100%" slideGap="sm" dragFree>
        {dataImagem === undefined ?
           <Carousel.Slide>
               <img src="../../assets/img/imagemError.png" alt="Imagem notificação" width="100%" />
@@ -95,7 +101,7 @@ const AutoInfracao = () => {
         dataImagem.map((item, index) => (
           <Carousel.Slide key={index}>
             {item ?
-              <img src={item} alt="Imagem notificação" width="100%" />
+              <img src={item.imagem} alt="Imagem notificação" width="100%" />
             :
               <img src="../../assets/img/imagemError.png" alt="Imagem notificação" width="100%" />
             }
