@@ -4,6 +4,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
 import { Button, Card, Text } from "@mantine/core";
 import { IconCamera, IconCheck } from "@tabler/icons-react";
+import VoltarComponente from "../util/VoltarComponente";
 
 function CameraAutoInfracao() {
   const videoRef = useRef(null);
@@ -106,16 +107,15 @@ function CameraAutoInfracao() {
   };
 
   const savePhotosToLocalStorage = () => {
-    if (photos.length < 2) {
+    if (photos.length < 1) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Você não pode tirar mais que uma foto!',
-        footer: '<a href>Caso queira tirar outra foto, apague e tire novamente.</a>'
+        text: 'Você precisa tirar uma foto, caso queira voltar clique em "voltar"!',
       });
     } else {
       for (let i = 0; i < photos.length; i++) {
-        localStorage.setItem(`foto${i}`, photos[i].photo);
+        localStorage.setItem(`fotoInfracao`, photos[i].photo);
       }
       FuncTrocaComp("AutoInfracao");
     }
@@ -146,6 +146,7 @@ function CameraAutoInfracao() {
       <div className="container" id="testeRolagem">
         <div className="mb-6">
           <div className="text-middle mt-3">
+            <VoltarComponente space={true}/>
             {photos.length === 1 ? null :
             <Button
             variant="gradient"
