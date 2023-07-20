@@ -183,12 +183,6 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <FaMapMarkerAlt />,
-            name: "‎ Vagas Livres",
-            componente: "VagasLivres",
-        })
-        links.push({
-            className: styles.className,
             icon: <IconHelpCircleFilled />,
             name: "‎ Ajuda",
             componente: "Suporte",
@@ -278,7 +272,7 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FcMoneyTransfer />,
-            name: "‎ Deposito Parceiro",
+            name: "‎ Depósito Parceiro",
             componente: "TransferenciaParceiro",
         })
         links.push({

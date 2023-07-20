@@ -14,6 +14,7 @@ import { RxLapTimer } from 'react-icons/rx'
 import Cronometro from './Cronometro'
 import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
+import createAPI from '../services/createAPI'
 
 
 const ClientesAdmin = () => {
@@ -82,14 +83,7 @@ const ClientesAdmin = () => {
     }, [step])
 
         const AtualizaFunc = async () => {
-            const requisicao = axios.create({
-                baseURL: process.env.REACT_APP_HOST,
-                headers: {
-                    'token': token,
-                    'id_usuario': user2.id_usuario,
-                    'perfil_usuario': "admin"
-                }
-            }) 
+            const requisicao = createAPI();
             
             requisicao.get('/usuario/listar/?query=eyJ3aGVyZSI6IFt7ICJmaWVsZCI6ICJwZXJmaWwiLCAib3BlcmF0b3IiOiAiPSIsICJ2YWx1ZSI6ICJjbGllbnRlIn1dfQ==').then(
                 response => {
@@ -133,14 +127,7 @@ const ClientesAdmin = () => {
               cancelButtonColor: '#d33',
               showLoaderOnConfirm: true,
               preConfirm: () => {
-                  const requisicao = axios.create({
-                      baseURL: process.env.REACT_APP_HOST,
-                      headers: {
-                        token: token,
-                        id_usuario: user2.id_usuario,
-                        perfil_usuario: user2.perfil[0],
-                      },
-                    });
+                const requisicao = createAPI();
                     requisicao.put('/usuario', {
                       nome: item.nome,
                       telefone: item.telefone,
@@ -207,14 +194,7 @@ const ClientesAdmin = () => {
     }
 
     useEffect(() => {
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-            'token': token,
-            'id_usuario': user2.id_usuario,
-            'perfil_usuario': user2.perfil[0]
-        }
-    })
+        const requisicao = createAPI();
     requisicao.get(`/veiculo/${selectedOption}`)
     .then((response) => {
         console.log(response.data)
@@ -262,14 +242,7 @@ const ClientesAdmin = () => {
             setEstadoInfoDestinatario(false)
             return;
         }
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': user2.perfil[0]
-            }
-        })
+        const requisicao = createAPI();
         const cpf = extrairNumeros(infoDestinatario)
         let campo = ''
                 if(cpf.length === 11){
@@ -315,14 +288,7 @@ const ClientesAdmin = () => {
                 }else{
                     campo = "Destinatariocnpj"
                 }
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': user2.perfil[0]
-            }
-        })
+        const requisicao = createAPI();
         if (campo === "Destinatariocpf") {
         requisicao.post(`/financeiro/credito/transferir`, {
             Destinatariocpf: infoDestinatario,
@@ -433,14 +399,7 @@ const ClientesAdmin = () => {
     const handleConsultaSelected = (consulta) => {
     setEstadoLoading(true)
     console.log(consulta)
-    const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+    const requisicao = createAPI();
       const base64 = btoa(consulta)
       requisicao.get(`/usuario/listar/?query=${base64}`).then(
         response => {
@@ -475,14 +434,7 @@ const ClientesAdmin = () => {
     }
 
     const pesquisarUsuario = () => {
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-              token: token,
-              id_usuario: user2.id_usuario,
-              perfil_usuario: user2.perfil[0],
-            },
-          });
+        const requisicao = createAPI();
           const consulta = `{"where": [{ "field": "prefil", "operator": "=", "value": "cliente" },{ "field": "nome", "operator": "LIKE", "value": "%${nome}%" }]}`
           const base64 = btoa(consulta)
           requisicao.get(`/usuario/listar/?query=${base64}`).then(

@@ -10,6 +10,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { Carousel } from '@mantine/carousel';
 import VoltarComponente from '../util/VoltarComponente';
 import Filtro from '../util/Filtro';
+import createAPI from '../services/createAPI';
 
 const ListarNotificacoesAdmin = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -59,14 +60,7 @@ const ListarNotificacoesAdmin = () => {
       }
 
       const mostrar = async (item, index) => {
-        const requisicao = axios.create({
-          baseURL: process.env.REACT_APP_HOST,
-          headers: {
-            token: token,
-            id_usuario: user2.id_usuario,
-            perfil_usuario: user2.perfil[0],
-          },
-        });
+        const requisicao = createAPI();
         if(item.pendente === 'Pendente') {
         Swal.fire({
             title: 'Informações da notificação',
@@ -148,14 +142,7 @@ const ListarNotificacoesAdmin = () => {
     const reload = () => {
       setEstado(false)
       setMensagem("")
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
       requisicao.get('/notificacao').then((response) => {
         setEstado2(true)
         if (response.data.msg.resultado){
@@ -200,14 +187,7 @@ const ListarNotificacoesAdmin = () => {
   }
 
     const imagens = (item) => {
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
 
       requisicao.get(`/notificacao/imagens/${item.id_notificacao}`).then((response) => {
         const newData = response.data.data && response.data.data.length > 0
@@ -254,14 +234,7 @@ const ListarNotificacoesAdmin = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           const motivo = result.value
-          const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-              token: token,
-              id_usuario: user2.id_usuario,
-              perfil_usuario: user2.perfil[0],
-            },
-          });
+          const requisicao = createAPI();
           requisicao.post('/notificacao/cancelar/', {
             idNotificacao: item.id_notificacao,
             idVagaVeiculo: item.id_vaga_veiculo,
@@ -301,14 +274,7 @@ const ListarNotificacoesAdmin = () => {
       setEstadoLoading(true)
       setEstado(false)
       setMensagem("")
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
       const base64 = btoa(where)
       requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
         setEstadoLoading(false)

@@ -5,6 +5,7 @@ import { BsPlus } from 'react-icons/bs'
 import Swal from 'sweetalert2';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
+import createAPI from '../services/createAPI';
 
 const SetoresAdmin = () => {
     const [data, setData] = useState([]);
@@ -32,17 +33,7 @@ const SetoresAdmin = () => {
             showLoaderOnConfirm: true,
             preConfirm: () => {
                 const setor = document.getElementById('swal-input1').value;
-                const token = localStorage.getItem("token");
-                const user = localStorage.getItem("user");
-                const user2 = JSON.parse(user);
-                const requisicao = axios.create({
-                    baseURL: process.env.REACT_APP_HOST,
-                    headers: {
-                      token: token,
-                      id_usuario: user2.id_usuario,
-                      perfil_usuario: user2.perfil[0],
-                    },
-                  });
+                const requisicao = createAPI();
                   requisicao.post('/setores', {
                     nome: setor,
                     }).then((response) => {
@@ -86,14 +77,7 @@ const SetoresAdmin = () => {
         const token = localStorage.getItem("token");
         const user = localStorage.getItem("user");
         const user2 = JSON.parse(user);
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-              token: token,
-              id_usuario: user2.id_usuario,
-              perfil_usuario: user2.perfil[0]
-            },
-          });
+        const requisicao = createAPI();
 
           requisicao.get('/setores'
           ).then(

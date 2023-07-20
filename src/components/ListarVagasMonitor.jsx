@@ -6,6 +6,7 @@ import Cronometro from "./Cronometro";
 import ScrollTopArrow from "./ScrollTopArrow";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import createAPI from "../services/createAPI";
 
 const ListarVagasMonitor = () => {
   const token = localStorage.getItem("token");
@@ -24,14 +25,7 @@ const ListarVagasMonitor = () => {
   const [vagasVencidas, setVagasVencidas] = useState(0);
 
   const getVagas = async (setor) => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "monitor",
-      },
-    });
+    const requisicao = createAPI();
     const setor2 = document.getElementById("setoresSelect").value;
     if (setor2 !== undefined && setor2 !== null && setor2 !== "") {
       setor = setor2;
@@ -220,14 +214,7 @@ const ListarVagasMonitor = () => {
       FuncTrocaComp("FecharTurno");
     }
 
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "monitor",
-      },
-    });
+    const requisicao = createAPI();
     localStorage.removeItem("idVagaVeiculo");
     requisicao
       .get("/setores")
@@ -301,14 +288,7 @@ const ListarVagasMonitor = () => {
   ) => {
 
     localStorage.setItem("numero_vaga", numero);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "monitor",
-      },
-    });
+    const requisicao = createAPI();
     if (tempo === "00:00:00") {
       if (notificacoes !== 0 || notificacoess !== 0) {
         Swal.fire({

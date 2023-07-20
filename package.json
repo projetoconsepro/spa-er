@@ -30,6 +30,7 @@
     "jspdf-autotable": "^3.5.28",
     "leaflet": "^1.9.3",
     "moment": "^2.29.4",
+    "randomcolor": "^0.6.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
     "react-calendar": "^4.0.0",

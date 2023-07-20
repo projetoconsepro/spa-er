@@ -11,6 +11,7 @@ import FuncTrocaComp from '../util/FuncTrocaComp';
 import { FaEllipsisH, FaEye } from 'react-icons/fa';
 import { IconLockCheck } from '@tabler/icons-react';
 import Swal from 'sweetalert2';
+import createAPI from '../services/createAPI';
 
 const ConfigurarPerfil = () => {
   const [data, setData] = useState([]);
@@ -45,14 +46,7 @@ const ConfigurarPerfil = () => {
     setEmail2(user2.email);
     setTelefone(user2.telefone);
     setTelefone2(user2.telefone);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        'token': token,
-        'id_usuario': user2.id_usuario,
-        'perfil_usuario': "cliente"
-      }
-    })
+    const requisicao = createAPI();
 
     requisicao.get('/usuario/saldo-credito').then(
       response => {
@@ -83,14 +77,7 @@ const ConfigurarPerfil = () => {
   };
 
   const handleSaveClick = () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: idUsuario,
-        perfil_usuario: perfil,
-      },
-    });
+    const requisicao = createAPI();
 
     requisicao.put('/usuario', {
       nome: user,
@@ -130,14 +117,7 @@ const ConfigurarPerfil = () => {
   }
 
   const handleSaveClickSenha = () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: idUsuario,
-        perfil_usuario: perfil,
-      },
-    });
+    const requisicao = createAPI();
     if(senha.length >= 8 && !senha.match(/["']/) && senha === senha2){
     const password = sha256(senha).toString();
     requisicao.put('/usuario', {

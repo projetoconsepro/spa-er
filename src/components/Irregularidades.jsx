@@ -11,6 +11,7 @@ import Filtro from "../util/Filtro";
 import { IconReload } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
+import createAPI from "../services/createAPI";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -56,17 +57,7 @@ const Irregularidades = () => {
     } else {
       const valor = data[index].valor.toString();
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
 
       const campo = { 
         id_vaga_veiculo: data[index].id_vaga_veiculo,
@@ -94,17 +85,7 @@ const Irregularidades = () => {
   };
 
   async function getInfoPix(TxId, index) {
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+    const requisicao = createAPI();
       await requisicao
         .put(`/notificacao/pix`,{
           txid: TxId,
@@ -144,14 +125,7 @@ const Irregularidades = () => {
   }
 
   const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
 
     requisicao
       .put("/notificacao/", {
@@ -198,14 +172,7 @@ const Irregularidades = () => {
   };
 
   const startNotificao = async () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const idrequisicao = `{"where": [{ "field": "usuario", "operator": "=", "value": "${user2.id_usuario}" }]}`;
     const passar = btoa(idrequisicao);
     await requisicao
@@ -252,14 +219,7 @@ const Irregularidades = () => {
   };
 
   const startPlaca = async (placa) => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const idrequisicao = `{"where": [{ "field": "placa", "operator": "=", "value": "${placa}" }]}`;
     const passar = btoa(idrequisicao);
     await requisicao
@@ -309,17 +269,8 @@ const Irregularidades = () => {
   };
 
   useEffect(() => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
-      },
-    });
-    requisicao
-      .get("/parametros")
-      .then((response) => {
+    const requisicao = createAPI();
+    requisicao.get("/parametros").then((response) => {
         setValorCobranca(
           response.data.data.param.estacionamento.valor_notificacao
         );
@@ -380,14 +331,7 @@ const Irregularidades = () => {
     setOnLoading(true);
     setEstado(false);
     setMensagem("");
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const base64 = btoa(consulta);
     requisicao
       .get(`/notificacao/?query=${base64}`)

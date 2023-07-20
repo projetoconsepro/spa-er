@@ -42,7 +42,7 @@ const ImpressaoTicketNotificacao = async (via, monitor, vaga, placa, modelo, fab
           vaga: vaga[0],
           placa: placa,
           valor: await param(),
-          via: '1'
+          via: via
     }
 
     console.log(json)
@@ -61,7 +61,7 @@ const ImpressaoTicketNotificacao = async (via, monitor, vaga, placa, modelo, fab
       vaga: vaga,
       placa: placa,
       valor: valor,
-      via: '2'
+      via: via
     }
     console.log(json)
     if(window.ReactNativeWebView) {

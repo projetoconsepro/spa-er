@@ -9,6 +9,7 @@ import { rem } from "@mantine/core";
 import { IconCar, IconCarOff, IconParking } from "@tabler/icons-react";
 import { FaCar, FaCarAlt } from "react-icons/fa";
 import { BiCar, BiSolidCarGarage } from "react-icons/bi";
+import createAPI from "../services/createAPI";
 
 const RegistrarVagaCliente = () => {
   const [mensagem, setMensagem] = useState("");
@@ -46,14 +47,7 @@ const RegistrarVagaCliente = () => {
   });
 
   useEffect(() => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
-      },
-    });
+    const requisicao = createAPI();
     requisicao
       .get("/veiculo")
       .then((response) => {
@@ -141,14 +135,7 @@ const RegistrarVagaCliente = () => {
   }
 
   const handleSubmit = async () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "cliente",
-      },
-    });
+    const requisicao = createAPI();
     const tempo1 = selectedButton;
     const placa2 = placaSelecionada;
 

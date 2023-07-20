@@ -8,6 +8,7 @@ import { RxLapTimer } from 'react-icons/rx';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Divider } from '@mantine/core';
+import createAPI from '../services/createAPI';
 
 
 const BuscarVeiculo = () => {
@@ -93,14 +94,7 @@ const BuscarVeiculo = () => {
         
         const hangleRequisicao = () => {
             setEstado2(true)
-            const requisicao = axios.create({
-                baseURL: process.env.REACT_APP_HOST,
-                headers: {
-                    'token': token,
-                    'id_usuario': user2.id_usuario,
-                    'perfil_usuario': user2.perfil[0]
-                }
-            })
+            const requisicao = createAPI();
             const tirarTraco = textoPlaca.split("-").join("");
             const upperCase = tirarTraco.toUpperCase();
             requisicao.get(`/veiculo/${upperCase}`)

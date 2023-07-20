@@ -3,6 +3,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import { React, useState, useEffect } from "react";
 import { IconCash } from "@tabler/icons-react";
 import { Input } from "@mantine/core";
+import createAPI from "../services/createAPI";
 
 const AbrirTurno = () => {
   const [valor, setValor] = useState('');
@@ -21,14 +22,7 @@ const AbrirTurno = () => {
   const user2 = JSON.parse(user);
 
   useEffect(() => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "monitor",
-      },
-    });
+    const requisicao = createAPI();
     requisicao
       .get("/setores")
       .then((response) => {
@@ -110,14 +104,7 @@ const AbrirTurno = () => {
   };
 
   const abrirTurno = () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "monitor",
-      },
-    });
+    const requisicao = createAPI();
 
     const valorFinal = parseFloat(valor.replace(",", ".")).toFixed(2);
 

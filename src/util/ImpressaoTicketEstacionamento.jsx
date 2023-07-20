@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const ImpressaoTicketEstacionamento = (via, tempoChegada, tempo, monitor, vaga, placa, metodo) => {
-    console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo)
+const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao) => {
+    console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo, notificacao)
         const obterHoraAtual = () => {
             const dataAtual = new Date();
             const hora = dataAtual.getHours().toString().padStart(2, '0');
@@ -34,28 +34,29 @@ const ImpressaoTicketEstacionamento = (via, tempoChegada, tempo, monitor, vaga, 
         }
 
         const valorTicket = async () => {
+          console.log(tempoValor)
             try {
                 const requisicao = axios.create({
                   baseURL: process.env.REACT_APP_HOST,
                 })
                 const response = await requisicao.get("/parametros");
                   let valorCobrar;
-                  let valorCobranca = response.data.data.param.estacionamento.valorHora
-                  if (tempo === "02:00:00") {
+                  let valorCobranca = await response.data.data.param.estacionamento.valorHora
+                  if (tempoValor === "02:00:00") {
                     valorCobrar = valorCobranca * 2
-                  } else if (tempo === "01:00:00") {
+                  } else if (tempoValor === "01:00:00") {
                     valorCobrar = valorCobranca
-                  } else if (tempo === "01:30:00"){
+                  } else if (tempoValor === "01:30:00"){
                     valorCobrar = valorCobranca * 1.5
                   }
-                  else if (tempo === "00:30:00") {
+                  else if (tempoValor === "00:30:00") {
                     valorCobrar = valorCobranca / 2
-                  } else if (tempo === "00:10:00") {
+                  } else if (tempoValor === "00:10:00") {
                     valorCobrar = valorCobranca * 0
                   } else {
                     valorCobrar = valorCobranca * 0
                   }
-                
+                  console.log('valor', valorCobrar)
                   return valorCobrar;
 
                 } catch(error) {
@@ -63,8 +64,6 @@ const ImpressaoTicketEstacionamento = (via, tempoChegada, tempo, monitor, vaga, 
                   localStorage.removeItem("token");
                   localStorage.removeItem("perfil");
                 };
-                
-
         }
 
         const getDataDeHoje = () => {
@@ -72,7 +71,6 @@ const ImpressaoTicketEstacionamento = (via, tempoChegada, tempo, monitor, vaga, 
             const dia = String(data.getDate()).padStart(2, '0');
             const mes = String(data.getMonth() + 1).padStart(2, '0');
             const ano = data.getFullYear();
-          
             return `${dia}/${mes}/${ano}`;
           }
 
@@ -84,15 +82,17 @@ const ImpressaoTicketEstacionamento = (via, tempoChegada, tempo, monitor, vaga, 
                 horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
+                metodo: metodo,
                 vaga: vaga[0],
                 placa: placa,
-                valor: valorTicket(),
+                valor: await valorTicket(),
+                notificacaoPendente: notificacao
           }
 
           console.log('toma', json)
           if(window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(JSON.stringify(json));
-         }
+          }
 
         } else {
             const json = {
@@ -101,10 +101,12 @@ const ImpressaoTicketEstacionamento = (via, tempoChegada, tempo, monitor, vaga, 
                 horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
+                metodo: metodo,
                 vaga: vaga[0],
                 placa: placa,
-                valor: valorTicket(),
-          }
+                valor: await valorTicket(),
+                notificacaoPendente: notificacao
+            } 
 
           console.log('toma', json)
           if(window.ReactNativeWebView) {

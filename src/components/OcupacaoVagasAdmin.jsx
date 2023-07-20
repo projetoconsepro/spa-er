@@ -9,6 +9,7 @@ import RelatoriosPDF from "../util/RelatoriosPDF";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Loader } from "@mantine/core";
+import createAPI from "../services/createAPI";
 
 const OcupacaoVagasAdmin = () => {
   const [data, setData] = useState([]);
@@ -75,14 +76,7 @@ const OcupacaoVagasAdmin = () => {
   };
 
   const reload = () => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: `${user2.perfil[0]}`,
-      },
-    });
+    const requisicao = createAPI();
 
     const data = new Date();
       const dia = data.getDate().toString().padStart(2, '0');
@@ -158,14 +152,7 @@ const OcupacaoVagasAdmin = () => {
 
   const handleConsulta = (consulta) => {
     setEstadoLoading(true)
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-          'token': token,
-          'id_usuario': user2.id_usuario,
-          'perfil_usuario': "admin"
-      }
-  })
+    const requisicao = createAPI();
 
   const base64 = btoa(consulta)
   requisicao.get(`/veiculo/historico/?query=${base64}`).then((response) => {

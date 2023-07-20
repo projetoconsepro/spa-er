@@ -10,6 +10,7 @@ import ModalPix from "./ModalPix";
 import { Button, Divider, Loader } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import { Elderly } from "@mui/icons-material";
+import createAPI from "../services/createAPI";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -76,17 +77,7 @@ const RegistrarVagaMonitor = () => {
     const valor = valorcobranca2.toString();
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
     console.log(valor2);
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
 
     let campo = "";
 
@@ -126,25 +117,29 @@ const RegistrarVagaMonitor = () => {
       });
   };
   async function getInfoPix(TxId) {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
+
+    const tirarTraco = textoPlaca.split("-").join("");
+    const placaMaiuscula = tirarTraco.toUpperCase();
+
     await requisicao.post(`/estacionamento/pix`, {
         txid: TxId,
       })
       .then((response) => {
-        console.log('pix', response)
         setEstado2(true);
         if (response.data.msg.resultado === true) {
-          //COLOCAR IMPRESSAO AQUI
+          console.log('pix', response)
+          ImpressaoTicketEstacionamento(
+            'PRIMEIRA',
+            response.data.data.chegada,
+            response.data.data.tempo_restante,
+            response.config.headers.id_usuario,
+            response.data.data.id_vagas[0],
+            placaMaiuscula,
+            "PIX",
+            tempo,
+            response.data.data.notificacao_pendente
+          );
           setEstado2(false);
           localStorage.removeItem("vaga");
           localStorage.removeItem("popup");
@@ -180,14 +175,7 @@ const RegistrarVagaMonitor = () => {
   }, [estado2]);
 
   const registrarEstacionamento = (campo) => {
-    const estacionamento = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: "monitor",
-      },
-    });
+    const estacionamento = createAPI();
     const placaString = textoPlaca.toString();
     const placaMaiuscula = placaString.toUpperCase();
     const tirarTraco = placaMaiuscula.split("-").join("");
@@ -233,13 +221,15 @@ const RegistrarVagaMonitor = () => {
           console.log(response)
           if (response.data.msg.resultado === true) {
             ImpressaoTicketEstacionamento(
-              'SEGUNDA',
+              'PRIMEIRA',
               response.data.data.chegada,
               response.data.data.tempo_restante,
               response.config.headers.id_usuario,
               vagaa,
               tirarTraco,
-              valor
+              valor,
+              tempo,
+              response.data.data.notificacao_pendente
             );
             setEstado2(false);
             localStorage.removeItem("vaga");
@@ -286,14 +276,16 @@ const RegistrarVagaMonitor = () => {
         .then((response) => {
           console.log(response)
           if (response.data.msg.resultado === true) {
-              ImpressaoTicketEstacionamento(
+            ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
               response.data.data.tempo_restante,
               response.config.headers.id_usuario,
               vagaa,
               tirarTraco,
-              valor
+              valor,
+              tempo,
+              response.data.data.notificacao_pendente
             );
             setEstado2(false);
             localStorage.removeItem("vaga");
@@ -420,7 +412,7 @@ const RegistrarVagaMonitor = () => {
     } else if (tempoo === "01:00:00") {
       setValorCobranca2(valorCobranca);
     } else if (tempoo === "00:30:00") {
-      setValorCobranca2(valorCobranca / 2);
+      setValorCobranca2(0.02);
     } else if (tempoo === "01:30:00") {
       setValorCobranca2(valorCobranca * 1.5);
     } else if (tempoo === "00:10:00") {

@@ -6,6 +6,7 @@ import ScrollTopArrow from "./ScrollTopArrow";
 import { BsPlus } from "react-icons/bs";
 import { BiEdit } from "react-icons/bi";
 import VoltarComponente from "../util/VoltarComponente";
+import createAPI from "../services/createAPI";
 
 const VagasAdmin = () => {
     const token = localStorage.getItem('token');
@@ -21,14 +22,7 @@ const VagasAdmin = () => {
     const [salvaSetor, setSalvaSetor] = useState('');
 
     const getVagas = async (setor) => {
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': user2.perfil[0]
-            }
-        })
+        const requisicao = createAPI();
         const setor2 = document.getElementById('setoresSelect2').value;
         if (setor2 !== undefined && setor2 !== null && setor2 !== '') {
             setor = setor2;
@@ -107,14 +101,7 @@ const VagasAdmin = () => {
     
 
     useEffect(() => {
-        const requisicao = axios.create({
-            baseURL: process.env.REACT_APP_HOST,
-            headers: {
-                'token': token,
-                'id_usuario': user2.id_usuario,
-                'perfil_usuario': user2.perfil[0]
-            }
-        })
+        const requisicao = createAPI();
         requisicao.get('/setores'
         ).then(
             response => {
@@ -212,14 +199,7 @@ const VagasAdmin = () => {
                 const tipo = document.getElementById('swal-input4').value;
                 const status = document.getElementById('swal-input5').value;
 
-                const requisicao = axios.create({
-                    baseURL: process.env.REACT_APP_HOST,
-                    headers: {
-                      token: token,
-                      id_usuario: user2.id_usuario,
-                      perfil_usuario: user2.perfil[0],
-                    },
-                  });
+                const requisicao = createAPI();
                  
                 requisicao.post('/vagas', {
                     numero: numero,
@@ -302,14 +282,7 @@ const VagasAdmin = () => {
                 const status = document.getElementById('swal-input5').value;
 
 
-                const requisicao = axios.create({
-                    baseURL: process.env.REACT_APP_HOST,
-                    headers: {
-                      token: token,
-                      id_usuario: user2.id_usuario,
-                      perfil_usuario: user2.perfil[0],
-                    },
-                  });
+                const requisicao = createAPI();
                 requisicao.put(`/vagas/${vaga.id_vaga}`, {
                     numero: numero,
                     local: endereco,

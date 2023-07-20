@@ -8,6 +8,7 @@ import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
 import Filtro from '../util/Filtro';
+import createAPI from '../services/createAPI';
 
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
@@ -21,17 +22,7 @@ const VeiculosAdmin = () => {
 
   useEffect(() => {
     setEstado2(true)
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-          'token': token,
-          'id_usuario': user2.id_usuario,
-          'perfil_usuario': user2.perfil[0]
-      }
-  })
+    const requisicao = createAPI();
     requisicao.get('/veiculo/listar').then((response) => {
       if (response.data.msg.resultado) {
         setEstado2(false)
@@ -79,17 +70,7 @@ const Imprimir = () => {
 const reload = () => {
   setData([])
   setEstado2(true)
-  const token = localStorage.getItem('token');
-  const user = localStorage.getItem('user');
-  const user2 = JSON.parse(user);
-  const requisicao = axios.create({
-    baseURL: process.env.REACT_APP_HOST,
-    headers: {
-        'token': token,
-        'id_usuario': user2.id_usuario,
-        'perfil_usuario': user2.perfil[0]
-    }
-})
+  const requisicao = createAPI();
   requisicao.get('/veiculo/listar').then((response) => {
     if (response.data.msg.resultado) {
       setEstado2(false)
@@ -112,17 +93,7 @@ const reload = () => {
 
 const handleConsultaSelected = (consulta) => {
     setEstadoLoading(true)
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-          'token': token,
-          'id_usuario': user2.id_usuario,
-          'perfil_usuario': user2.perfil[0]
-      }
-  })
+    const requisicao = createAPI();
     const base64 = btoa(consulta)
     requisicao.get(`/veiculo/listar/?query=${base64}`).then((response) => {
       setEstadoLoading(false)

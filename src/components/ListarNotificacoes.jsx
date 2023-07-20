@@ -12,6 +12,7 @@ import { ActionIcon, Loader } from "@mantine/core";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
+import createAPI from "../services/createAPI";
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -44,17 +45,7 @@ const ListarNotificacoes = () => {
     } else {
       const valor = data[index].valor.toString();
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+      const requisicao = createAPI();
 
       const campo = { 
         id_vaga_veiculo: data[index].id_vaga_veiculo,
@@ -83,17 +74,7 @@ const ListarNotificacoes = () => {
   };
 
   async function getInfoPix(TxId, index) {
-    const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      const user2 = JSON.parse(user);
-      const requisicao = axios.create({
-        baseURL: process.env.REACT_APP_HOST,
-        headers: {
-          token: token,
-          id_usuario: user2.id_usuario,
-          perfil_usuario: user2.perfil[0],
-        },
-      });
+    const requisicao = createAPI();
       await requisicao
         .put(`/notificacao/pix`,{
           txid: TxId,
@@ -124,14 +105,7 @@ const ListarNotificacoes = () => {
     }
 
   const regularizar = async (idVagaVeiculo, index, pagamento) => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     console.log(idVagaVeiculo);
     requisicao
       .put("/notificacao/", {
@@ -188,14 +162,7 @@ const ListarNotificacoes = () => {
   }
 
   const startVagaVeiculo = async (localVagaVeiculo) => {
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const idrequisicao = `{"where": [{ "field": "vaga_veiculo", "operator": "=", "value": "${localVagaVeiculo}" }]}`;
     const passar = btoa(idrequisicao);
 
@@ -251,14 +218,7 @@ const ListarNotificacoes = () => {
 
   const startNotificao = async () => {
     setEstado2(false);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const idrequisicao = `{"where": [{ "field": "usuario", "operator": "=", "value": "${user2.id_usuario}" }]}`;
     const passar = btoa(idrequisicao);
     await requisicao
@@ -304,14 +264,7 @@ const ListarNotificacoes = () => {
 
   const startPlaca = async (placa) => {
     setEstado2(false);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const idrequisicao = `{"where": [{ "field": "placa", "operator": "=", "value": "${placa}" }]}`;
     const passar = btoa(idrequisicao);
     await requisicao
@@ -387,14 +340,7 @@ const ListarNotificacoes = () => {
 
   const handleFiltro = (where) => {
     setEstadoLoading(true);
-    const requisicao = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-      headers: {
-        token: token,
-        id_usuario: user2.id_usuario,
-        perfil_usuario: user2.perfil[0],
-      },
-    });
+    const requisicao = createAPI();
     const base64 = btoa(where);
     requisicao
       .get(`/notificacao/?query=${base64}`)
