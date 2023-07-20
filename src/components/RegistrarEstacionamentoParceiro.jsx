@@ -549,7 +549,7 @@ const RegistrarEstacionamentoParceiro = () => {
     }
     localStorage.removeItem("placaCarro");
     param();
-    setValorCobranca2(0.02);
+    setValorCobranca2(1);
     setTempo("00:30:00");
   }, []);
 
