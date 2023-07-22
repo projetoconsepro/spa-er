@@ -40,6 +40,7 @@ const Notificacao = () => {
     const [modeloSelecionado, setModeloSelecionado] = useState('');
     const [modeloCerto, setModeloCerto] = useState('');
     const [tipoNotificacaoNome, setTipoNotificacaoNome] = useState("Tempo limite excedido");
+    const [disabled, setDisabled] = useState(false);
 
   const handleFabricanteChange = (value) => {
     setFabricanteSelecionado(value);
@@ -64,6 +65,7 @@ const Notificacao = () => {
     }
 
     const submit = async () => {
+        setDisabled(true);
         let modeloImpressao = "";
         let fabricanteImpressao = "";
         setEstado2(true)
@@ -229,6 +231,10 @@ const Notificacao = () => {
     }, 4000);
  }
 }
+
+setTimeout(() => {
+    setDisabled(false);
+}, 2000);
 }
 
     const back = () => {
@@ -578,7 +584,7 @@ const Notificacao = () => {
                                     : null}
                                     <div className="mt-4 mb-5 gap-2 d-md-block">
                                         <button type="submit" className="btn2 botao" onClick={back}>Cancelar</button>
-                                        <button type="submit" className="btn3 botao" onClick={submit}>Confirmar</button>
+                                        <button type="submit" className="btn3 botao" disabled={disabled} onClick={() => submit()}>Confirmar</button>
                                     </div>
                                     <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                         {mensagem}

@@ -13,6 +13,7 @@ import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
 import createAPI from "../services/createAPI";
+import { IconPrinter } from "@tabler/icons-react";
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -179,6 +180,8 @@ const ListarNotificacoes = () => {
             monitor: item.monitor.nome,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
+            fabricante: item.veiculo.modelo.fabricante.nome,
+            endereco: item.local,
             valor: item.valor,
             placa: item.veiculo.placa,
             estado: false,
@@ -235,6 +238,8 @@ const ListarNotificacoes = () => {
             monitor: item.monitor.nome,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
+            fabricante: item.veiculo.modelo.fabricante.nome,
+            endereco: item.local,
             valor: item.valor,
             placa: item.veiculo.placa,
             estado: false,
@@ -280,6 +285,8 @@ const ListarNotificacoes = () => {
             monitor: item.monitor.nome,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
+            fabricante: item.veiculo.modelo.fabricante.nome,
+            endereco: item.local,
             valor: item.valor,
             placa: item.veiculo.placa,
             estado: false,
@@ -356,6 +363,8 @@ const ListarNotificacoes = () => {
             id_vaga_veiculo: item.id_vaga_veiculo,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
+            fabricante: item.veiculo.modelo.fabricante.nome,
+            endereco: item.local,
             valor: item.valor,
             placa: item.veiculo.placa,
             estado: false,
@@ -553,12 +562,7 @@ const ListarNotificacoes = () => {
                             </button>
                           </div>
                           <div className="col-2 pt-1">
-                            <span>
-                              {" "}
-                              <button className="btn icon-shape icon-shape rounded w-75 h-75">
-                              <AiFillPrinter size={25} onClick={() => imprimirSegundaVia(link)}/>{" "}
-                              </button>
-                            </span>
+                          <ActionIcon variant="outline" color="indigo" size="lg"><IconPrinter onClick={() => imprimirSegundaVia(link)}/></ActionIcon>
                           </div>
                         </div>
                       </div>

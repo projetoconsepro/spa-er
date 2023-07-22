@@ -72,7 +72,7 @@ const Dashboard = () => {
   return (
     <div>
        <div className="row">
-       <Carousel slideGap="md" height={200} slideSize={window.innerWidth <  768 ?  "90%" : "33.333333%"} dragFree loop align="center" slidesToScroll={window.innerWidth <  768 ?  1 : 3}>
+       <Carousel slideGap="md" height={200} slideSize={window.innerWidth <  768 ?  "90%" : "33.333333%"} dragFree align="center" slidesToScroll={window.innerWidth <  768 ?  1 : 3}>
         {setores.map((item, index) => (
         <Carousel.Slide key={index}>
                 <Card padding="lg" radius="md" withBorder className="text-start bg-blue-100">
@@ -89,7 +89,7 @@ const Dashboard = () => {
                         <Text size="sm" weight={500} color="red"><AiOutlineInfoCircle />‎ N° de notificações: {item.notificacoes}</Text>
                         <Text size="sm" weight={500}><AiOutlineInfoCircle />‎ N° de ocupações: {item.ocupacao}</Text>
                         <Text size="sm" weight={500}><FaParking />‎ N° de tolerâncias: {item.tolerancia}</Text>
-                        <Text size="sm" weight={500}><FaParking />‎ Último movimento: {item.ultimoMovimento}</Text>
+                        <Text size="sm" weight={500}><FaParking />‎ Último movimento: {item.ultimoMovimento} ‎ ‎</Text>
                     </Grid.Col>
                 </Grid>
                 </Card>
@@ -99,8 +99,9 @@ const Dashboard = () => {
                 {window.innerWidth > 768 ? 
                 <div className="col-12 mb-4 mt-4">
                     <div className="row">
+                        <Group position="center">
                     <div className="card bg-white border-0 shadow divPers mx-2">
-                        <div className={window.innerWidth > 1474 ? "card-body8 p-2" : "card-body4 p-2"}>
+                        <div className={ window.innerWidth > 1474 ? "card-body8 p-2" : "card-body4 p-2" }>
                             <div className="row">
                                 <div className="ct-chart-sales-value ct-double-octave ct-series-g">
                                     <Grafico />
@@ -109,7 +110,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                     <div className="card bg-white border-0 shadow divPers mx-3">
-                        <div className={window.innerWidth > 1474 ? "card-body8 p-2" : "card-body4 p-2"}>
+                        <div className={ window.innerWidth > 1474 ? "card-body8 p-2" : "card-body4 p-2" }>
                         <h4 style={{ textAlign: 'start', margin: '1rem' }}>Movimentos dos setores:</h4>
                             <div className="row">
                                 <div className="col-3">
@@ -125,6 +126,7 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
+                    </Group>
                     </div>
                 </div>
                 : 

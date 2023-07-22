@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import FuncTrocaComp from '../util/FuncTrocaComp';
+import VoltarComponente from '../util/VoltarComponente'
+import { Button, Divider, Group, Input, Text } from '@mantine/core';
+import { IconLockAccess } from '@tabler/icons-react';
 
 const Confirmation = () => {
     const [codigo, setCodigo] = useState("");
@@ -26,7 +29,7 @@ const Confirmation = () => {
                 else{
                     localStorage.setItem('codigoConfirm', codigo);
                     localStorage.removeItem('email')
-                    FuncTrocaComp( "NewPassword");
+                    FuncTrocaComp("NewPassword");
                 }
             }
         ).catch(function (error) {
@@ -76,22 +79,32 @@ const Confirmation = () => {
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
-                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
-                            <div className="text-center text-md-center mb-3 pt-3 mt-4mt-md-0">
+                        <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                            <div className="text-center text-md-center pt-3 mt-4 mt-md-0">
                                 <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
                             </div>
-                            <p className="pt-2 pb-3 fs-5"><strong>Digite o código de verificação enviado ao seu Email</strong></p>
-                            <div className="form-group mb-4">
-                                <label id="labelLogin">Código de verificação:</label>
-                                <div className="input-group">
-                                    <input className={inputLogin} name="email" id="email" value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="Digite o codigo enviado ao seu email" />
-                                </div>
+                            <p className="pt-2 pb-1 fs-5"><strong>Digite o código de verificação enviado ao seu Email</strong></p>
+                            
+                            <Divider my="sm" size="md" variant="dashed" />
+                            
+                            <div className="form-group mb-2 text-start">
+                                <Text mb="sm" size="lg">Código de verificação:</Text>
+                                <Input icon={<IconLockAccess size={18}/>} placeholder="Digite o codigo enviado ao seu email"
+                                 value={codigo} onChange={(e) => setCodigo(e.target.value)}
+                                />       
                             </div>
-                            <p className="text-start" style={{cursor: "pointer"}} onClick={reenviarCodigo}><small>Reenviar código</small></p>
+                            <p className="text-start mx-1" style={{cursor: "pointer", color: "#3A58C8"}} onClick={reenviarCodigo}><small><u>Clique para reenviar</u></small></p>
                             <div className="mt-5 mb-5 gap-2 d-md-block">
-                                    <button type="submit" onClick={() => {handleSubmit()}} className="btn4 botao">Acessar  <span className='align-self-end'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
-                                        <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                                    </svg></span></button>
+                                <VoltarComponente space={true} />
+                                <Button
+                                onClick={() => handleSubmit()}
+                                loaderPosition="right"
+                                className="bg-blue-50"
+                                size="md"
+                                radius="md"
+                                >
+                                    Confirmar
+                                </Button>
                                 </div>
                                 <div className="alert alert-danger" role="alert" style={{ display: estado ? "block" : "none" }}>
                                     {mensagem}

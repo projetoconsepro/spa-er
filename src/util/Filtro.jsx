@@ -651,7 +651,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
           Voltar
         </Button>
         <Button loading={estadoLoading} onClick={()=>{handleSalvar()}} loaderPosition="right">
-          Salvar
+          Filtrar
         </Button>
         </Group>
         </div>

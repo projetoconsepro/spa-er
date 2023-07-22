@@ -33,6 +33,7 @@ const RegistrarEstacionamentoParceiro = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
+  const [divPagamento, setDivPagamento] = useState(true);
 
   const param = async () => {
     const requisicao = axios.create({
@@ -443,8 +444,9 @@ const RegistrarEstacionamentoParceiro = () => {
     } else if (tempoo === "01:30:00") {
       setValorCobranca2(valorCobranca * 1.5);
     } else if (tempoo === "00:30:00") {
-      setValorCobranca2(valorCobranca / 2);
+      setValorCobranca2(0.01);
     } else if (tempoo === "00:10:00") {
+      setDivPagamento(false)
       setValorCobranca2(valorCobranca * 0);
     } else {
       setValorCobranca2(valorCobranca * 0);
@@ -614,12 +616,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 placeholder="Exemplo: 0 "
               />
             </div>
-            <div
-              className="text-start mt-3 mb-1 px-2"
-              onChange={() => {
-                atualiza();
-              }}
-            >
+            <div className="text-start mt-3 mb-1 px-2" onChange={() => {atualiza();}}>
               <h6>Selecione o tempo:</h6>
               <select
                 className="form-select form-select-lg mb-2"
@@ -640,8 +637,8 @@ const RegistrarEstacionamentoParceiro = () => {
                 Valor a ser cobrado: R$ {valorcobranca2}{" "}
               </p>
             </div>
-
-            <div className="h6 mt-1 mb-4 px-2">
+            
+            <div className="h6 mt-1 mb-4 px-2" style={{ display: tempo !== "00:10:00" ? 'block' : 'none'}}>
               <p className="text-start">Forma de pagamento:</p>
               <select
                 className="form-select form-select-lg mb-3"

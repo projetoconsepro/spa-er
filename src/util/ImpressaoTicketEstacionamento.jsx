@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao) => {
-    console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo, notificacao)
+    console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao)
         const obterHoraAtual = () => {
             const dataAtual = new Date();
             const hora = dataAtual.getHours().toString().padStart(2, '0');
