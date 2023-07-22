@@ -119,7 +119,16 @@ const AutoInfracao = () => {
               <Text size={20}> <BsCalendarDate className="mb-1"/> {item.data} </Text>
             </Group>
             <Group position="apart">
+              {item.tipo  !== 'Ocupando vaga de deficiente' && item.tipo  !== 'Ocupando vaga de idoso' ? 
+              <Text size={20}> <FaClipboardList className="mb-1"/> Motivo: {item.tipo} </Text> 
+              : 
+              <Text size={20}> <FaClipboardList className="mb-1"/> <small> Motivo: {item.tipo} </small> </Text>
+              }
+              {item.tipo  !== 'Ocupando vaga de deficiente' && item.tipo  !== 'Ocupando vaga de idoso' ? 
               <Text size={20}> <FaClipboardList className="mb-1"/> Motivo: {item.tipo} </Text>
+              :
+              <Text size={20}> <FaClipboardList className="mb-1"/> <small> Motivo: {item.tipo} </small> </Text>
+              }
             </Group>
             <Divider my="sm" size="md" variant="dashed" />
             <Group position="apart">

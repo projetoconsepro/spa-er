@@ -261,7 +261,7 @@ const TransferenciaParceiro = () => {
             />
             </Input.Wrapper>
 
-            <Group position="apart" mt="md" mb="xs">
+            <Group position="left" mt="md" mb="xs">
               <Text weight={500}>Selecione o método de pagamento:</Text>
               <Select value={metodoPagamento} data={options} onChange={(e) => setMetodoPagamento(e)} />
             </Group>
