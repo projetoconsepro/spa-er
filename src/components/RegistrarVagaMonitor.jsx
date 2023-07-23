@@ -39,7 +39,6 @@ const RegistrarVagaMonitor = () => {
   const [onOpen, setOnOpen] = useState(false);
   const [estado2, setEstado2] = useState(false);
 
-  const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
 

@@ -38,10 +38,6 @@ const RegistrarVagaCliente = () => {
     }
   };
 
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
-
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });

@@ -16,6 +16,7 @@ const SugestoesAdmin = () => {
                     nome: item.nome,
                     descricao: item.descricao,
                     data: item.data,
+                    assunto: item.assunto
                 }
             }
             )
@@ -55,7 +56,7 @@ const SugestoesAdmin = () => {
                 <Card padding="sm" radius="md" withBorder mt="md" key={index}>
                     <Card.Section padding="sm" radius="md" withBorder style={{ backgroundColor: "#F7F7F7" }}>
                     <Group position="left" padding="sm">
-                    <Text weight={400} className="mx-2">Deve melhorar nisso aqui</Text>
+                    <Text weight={400} className="mx-2">{item.assunto}</Text>
                     </Group>
                     </Card.Section>
                     <Group position="apart" mt="md" mb="xs">

@@ -33,6 +33,7 @@ const Suporte = () => {
       .then((res) => {
         if (res.data.msg.resultado) {
           setTextoSuporte("");
+          setAssunto("");
           Swal.fire( "Sucesso!", res.data.msg.msg, "success");
         } else {
           Swal.fire( "Erro!", res.data.msg.msg, "error");

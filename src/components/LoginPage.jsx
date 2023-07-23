@@ -131,11 +131,10 @@ const LoginPage = () => {
                             />
                             </div>
                             <p className="esqueciSenha"><small onClick={() => {recuperar()}} className="color-primary"><u>Esqueci minha senha</u></small></p>
-                     
-                            <div>
-                                <Group position="left">
-                                <Button onClick={() => open()}> clica </Button>
-                                </Group>
+
+                            <div className="mt-3 mb-4 text-center" onClick={() => open()}>
+
+                                <img src="https://cdn.discordapp.com/attachments/1062695518427426819/1132386184878903318/Atualize_seus_dados_agora.gif" alt="gif" />
                             </div>
 
                             <div className="mt-5 mb-4 text-center">

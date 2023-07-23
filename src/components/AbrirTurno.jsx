@@ -17,7 +17,6 @@ const AbrirTurno = () => {
   const [nome, setNome] = useState("");
   const [tempoAtual, setTempoAtual] = useState("");
   const [resposta2, setResposta2] = useState([]);
-  const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
 

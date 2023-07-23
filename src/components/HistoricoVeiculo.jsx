@@ -7,6 +7,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import { AiOutlineReload } from "react-icons/ai";
 import createAPI from "../services/createAPI";
+import { Group, Pagination } from "@mantine/core";
 
 const HistoricoVeiculo = () => {
   const [data, setData] = useState([]);
@@ -23,6 +24,20 @@ const HistoricoVeiculo = () => {
     const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
     return data4;
   }
+
+  
+  const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 50;
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
 
   const reload = () => {
     setData([]);
@@ -265,7 +280,7 @@ const HistoricoVeiculo = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.map((item, index) => (
+                      {currentItems.map((item, index) => (
                         <tr
                           key={index}
                           style={{
@@ -340,6 +355,10 @@ const HistoricoVeiculo = () => {
                 </div>
               </div>
             </div>
+            <Group position="center" mb="md">
+                <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
+            </Group>
+
           </div>
           <VoltarComponente />
         </div>
