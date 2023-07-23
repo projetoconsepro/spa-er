@@ -1,19 +1,8 @@
-import { useState, useContext } from "react";
-
-import {
-    BrowserRouter as Router,
-    Route,
-    Routes,
-    Navigate
-} from "react-router-dom";
-
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import Loading from "./pages/LoginPage/loading";
-import MonitorPage from "./pages/MonitorPage/monitor";
-import DoublePerfil from "./pages/DoublePerfil/doublePerfil";
-
+import { useContext } from "react";
+import {BrowserRouter as Router, Route, Routes, Navigate} from "react-router-dom";
 import { AuthProvider, AuthContext } from "./pages/contexts/auth";
+import HomePage from "./pages/HomePage/HomePage";
+import Error from "./components/Error";
 
 const AppRoutes = () => {
     const Private = ({children}) => {
@@ -24,7 +13,7 @@ const AppRoutes = () => {
         }
 
         if(!authenticated){
-            return <Navigate to="/login" />
+            return <Navigate to="/" />
         }
 
         return children;
@@ -34,11 +23,8 @@ const AppRoutes = () => {
         <Router>
             <AuthProvider>
             <Routes>
-                <Route exact path="/login" element={<LoginPage />} />
-                <Route exact path="/home" element={<HomePage />}/>
-                <Route exact path="/loading" element={<Loading />}/>
-                <Route exact path="/monitor" element={<MonitorPage />}/>
-                <Route exact path="/double" element={<DoublePerfil />}/>
+                <Route exact path="/" element={<HomePage />}/>
+                <Route exact path="/*" element={<Error />} />
             </Routes>
             </AuthProvider>
         </Router>

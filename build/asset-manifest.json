@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.2c010186.css",
+    "main.js": "/static/js/main.e8f96cbb.js",
+    "static/media/placa2.png": "/static/media/placa2.54bdb711e65720ac6f74.png",
+    "static/media/FE-FONT.TTF": "/static/media/FE-FONT.816174a1dc4f3bfb7c1a.TTF",
+    "index.html": "/index.html",
+    "main.2c010186.css.map": "/static/css/main.2c010186.css.map",
+    "main.e8f96cbb.js.map": "/static/js/main.e8f96cbb.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2c010186.css",
+    "static/js/main.e8f96cbb.js"
+  ]
+}
