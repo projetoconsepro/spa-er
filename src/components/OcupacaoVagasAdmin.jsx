@@ -19,9 +19,6 @@ const OcupacaoVagasAdmin = () => {
   const [mensagem, setMensagem] = useState("");
   const [dataHoje, setDataHoje] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
 

@@ -9,9 +9,6 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import createAPI from "../services/createAPI";
 
 const ListarVagasMonitor = () => {
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
   const [resposta, setResposta] = useState([]);
   const [vaga, setVaga] = useState("");
   const [resposta2, setResposta2] = useState([]);

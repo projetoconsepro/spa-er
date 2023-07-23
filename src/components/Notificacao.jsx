@@ -600,7 +600,7 @@ setTimeout(() => {
                                                 <p> <small>Vaga selecionada: {vaga}</small></p>
                                             </div>
                                             <div className="h6 mt-3">
-                                                <button type="submit" className="btn3 botao" onClick={() => { setDados(true) }}>Buscar</button>
+                                                <button type="submit" className="btn3 botao" onClick={() => { setDados(true) }}>Avançar </button>
                                             </div>
                                         </div>
                                         :

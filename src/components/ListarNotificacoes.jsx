@@ -1,7 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
-import { AiFillCheckCircle, AiFillPrinter, AiOutlineReload } from "react-icons/ai";
+import {
+  AiFillCheckCircle,
+  AiFillPrinter,
+  AiOutlineReload,
+} from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
@@ -48,15 +52,15 @@ const ListarNotificacoes = () => {
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
       const requisicao = createAPI();
 
-      const campo = { 
+      const campo = {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
-        tipoPagamento: 'pix',
-      }
+        tipoPagamento: "pix",
+      };
 
       requisicao
         .post("/gerarcobranca", {
           valor: valor2,
-          campo: JSON.stringify(campo)
+          campo: JSON.stringify(campo),
         })
         .then((resposta) => {
           if (resposta.data.msg.resultado) {
@@ -76,34 +80,34 @@ const ListarNotificacoes = () => {
 
   async function getInfoPix(TxId, index) {
     const requisicao = createAPI();
-      await requisicao
-        .put(`/notificacao/pix`,{
-          txid: TxId,
-        })
-        .then((response) => {
-          if (response.data.msg.resultado) {
-            setOnOpen(false);
-            Swal.fire({
-              title: "Regularizado!",
-              text: "A notificação foi regularizada.",
-              icon: "success",
-              timer: 2000,
-            });
-            if (index !== undefined) {
-              data[index].pago = "S";
-              setData([...data]);
-            } else {
-              startNotificao();
-            }
+    await requisicao
+      .put(`/notificacao/pix`, {
+        txid: TxId,
+      })
+      .then((response) => {
+        if (response.data.msg.resultado) {
+          setOnOpen(false);
+          Swal.fire({
+            title: "Regularizado!",
+            text: "A notificação foi regularizada.",
+            icon: "success",
+            timer: 2000,
+          });
+          if (index !== undefined) {
+            data[index].pago = "S";
+            setData([...data]);
           } else {
-            setNotification(false);
-            setPixExpirado(response.data.msg.msg);
+            startNotificao();
           }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+        } else {
+          setNotification(false);
+          setPixExpirado(response.data.msg.msg);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   const regularizar = async (idVagaVeiculo, index, pagamento) => {
     const requisicao = createAPI();
@@ -394,13 +398,30 @@ const ListarNotificacoes = () => {
   };
 
   const imprimirSegundaVia = (item) => {
-    console.log(item)
-    ImpressaoTicketNotificacao("SEGUNDA", item.monitor, item.vaga, item.placa, item.modelo, item.fabricante, item.tipo_notificacao, item.endereco, item.valor)
-  }
+    console.log(item);
+    ImpressaoTicketNotificacao(
+      "SEGUNDA",
+      item.monitor,
+      item.vaga,
+      item.placa,
+      item.modelo,
+      item.fabricante,
+      item.tipo_notificacao,
+      item.endereco,
+      item.valor
+    );
+  };
 
   return (
     <div className="col-12 px-3 mb-3">
+      { user2.perfil[0] === "monitor" ? (
       <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
+      ) : 
+      user2.perfil[0] === "parceiro" ? (
+      <p className="text-start fs-2 fw-bold">Notificações:</p>
+      ) : (
+        null
+      )}
       <div className="row mb-3">
         <div className="col-12">
           <div className="row">
@@ -561,9 +582,19 @@ const ListarNotificacoes = () => {
                               Regularizar
                             </button>
                           </div>
-                          <div className="col-2 pt-1">
-                          <ActionIcon variant="outline" color="indigo" size="lg"><IconPrinter onClick={() => imprimirSegundaVia(link)}/></ActionIcon>
-                          </div>
+                          {user2.perfil[0] === "monitor" ? (
+                            <div className="col-2 pt-1">
+                              <ActionIcon
+                                variant="outline"
+                                color="indigo"
+                                size="lg"
+                              >
+                                <IconPrinter
+                                  onClick={() => imprimirSegundaVia(link)}
+                                />
+                              </ActionIcon>
+                            </div>
+                          ) : null}
                         </div>
                       </div>
                     </div>

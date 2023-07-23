@@ -44,10 +44,6 @@ const ListarVeiculos = () => {
     }
   };
 
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
-
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });
@@ -647,6 +643,13 @@ const ListarVeiculos = () => {
           ) : null}
         </div>
       ))}
+
+      <Button variant="gradient" gradient={{ from: 'blue', to: 'indigo' }} className="mt-5" radius="md" 
+      onClick={() => { FuncTrocaComp("CadastrarVeiculo") }}
+      >
+        <FaCarAlt size={20} />
+        ‎ ‎ ‎ ‎Cadastrar novo veículo
+      </Button>
     </div>
   );
 };
