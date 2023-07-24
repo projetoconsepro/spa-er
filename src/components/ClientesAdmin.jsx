@@ -81,10 +81,6 @@ const ClientesAdmin = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
-
   function extrairNumeros(string) {
     return string ? string.replace(/\D/g, "") : string;
   }

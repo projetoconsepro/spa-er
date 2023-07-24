@@ -27,7 +27,6 @@ const ListarNotificacoes = () => {
   const [placaSetada, setPlacaSetada] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);

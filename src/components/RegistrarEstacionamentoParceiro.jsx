@@ -90,9 +90,6 @@ const RegistrarEstacionamentoParceiro = () => {
     if (vaga === "") {
       setVaga(0);
     }
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = createAPI();
@@ -212,9 +209,6 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   const handleRegistrar = async () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = createAPI();
@@ -605,6 +599,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 maxLength={limite}
               />
             </div>
+            {user2 === "monitor" ? (
             <div className="text-start mt-3 px-2">
               <h6>Número da vaga (opcional):</h6>
               <Input
@@ -616,6 +611,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 placeholder="Exemplo: 0 "
               />
             </div>
+            ) : null}
             <div className="text-start mt-3 mb-1 px-2" onChange={() => {atualiza();}}>
               <h6>Selecione o tempo:</h6>
               <select

@@ -41,7 +41,6 @@ const HistoricoVeiculo = () => {
 
   const reload = () => {
     setData([]);
-    const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     setUser2(user2);
@@ -178,9 +177,6 @@ const HistoricoVeiculo = () => {
   }
   
   const handleFiltro = (where) => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     setEstadoLoading(true)
     const requisicao = createAPI();
     const base64 = btoa(where)

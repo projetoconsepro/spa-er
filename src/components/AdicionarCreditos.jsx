@@ -151,10 +151,11 @@ const AdicionarCreditos = () => {
     const requisicao = createAPI();
     if (cpf !== "" && valor !== "0") {
       setEstado2(true);
+      const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
       requisicao
         .post("usuario/credito", {
           user: cpf,
-          valor: valor,
+          valor: Newvalor,
           pagamento: pagamentos,
         })
         .then((response) => {
@@ -224,7 +225,6 @@ const AdicionarCreditos = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     if (

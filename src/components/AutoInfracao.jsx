@@ -13,9 +13,6 @@ import VoltarComponente from '../util/VoltarComponente';
 
 const AutoInfracao = () => {
     const [opened, { open, close }] = useDisclosure(false);
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     const [data, setData] = useState([])
     const [codigo, setCodigo] = useState('')
     const [dataImagem, setDataImagem] = useState([])
