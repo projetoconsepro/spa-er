@@ -7,6 +7,8 @@ import ScrollTopArrow from "./ScrollTopArrow";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import createAPI from "../services/createAPI";
+import { Button, Group } from "@mantine/core";
+import { IconParking } from "@tabler/icons-react";
 
 const ListarVagasMonitor = () => {
   const [resposta, setResposta] = useState([]);
@@ -589,6 +591,15 @@ const ListarVagasMonitor = () => {
           <div className="row">
             <div className="col-12 mb-4">
               <div className="row mx-2">
+              <Group position="left">
+              <Button variant="gradient" gradient={{ from: "indigo", to: "blue", deg: 60 }} fullWidth mb="md" radius="md" size="md"
+            onClick={() => FuncTrocaComp("RegistrarEstacionamentoParceiro")}>
+              Registrar estacionamento ‎ <IconParking color="white" size={18} />
+            </Button>
+              </Group>
+            
+              </div>
+              <div className="row mx-2">
                 <div className="col-6 align-middle">
                   <select
                     className="form-select form-select-lg mb-3 mt-2"
@@ -606,7 +617,6 @@ const ListarVagasMonitor = () => {
                     ))}
                   </select>
                 </div>
-
                 <div className="col-6 input-group w-50 h-25 mt-3">
                   <span
                     className="input-group-text bg-blue-50 text-white"

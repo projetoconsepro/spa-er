@@ -16,10 +16,7 @@ const Configuracoes = () => {
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [cardBody] = useState("card-body3");
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
   const [currentSlide, setCurrentSlide] = useState(0);
-  const user2 = JSON.parse(user);
 
   const handleCheckboxChange = (index) => {
     data[index].check = !data[index].check;

@@ -74,9 +74,6 @@ const SetoresAdmin = () => {
 
 
     const requisicaoSetores = async () => {
-        const token = localStorage.getItem("token");
-        const user = localStorage.getItem("user");
-        const user2 = JSON.parse(user);
         const requisicao = createAPI();
 
           requisicao.get('/setores'
