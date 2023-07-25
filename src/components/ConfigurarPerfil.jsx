@@ -164,7 +164,16 @@ const ConfigurarPerfil = () => {
     <div>
       <Card padding="lg" radius="md" withBorder>
         <Group position="apart" mt="md" mb="xs">
-          <Text weight={500}>Olá, {user2}!</Text>
+          <Text weight={500}>Olá, 
+          {
+            window.innerWidth > 990 ?
+            `${user2}!`
+            :
+            window.innerWidth < 290 ?
+            user2.length > 15 ? `${user2.substring(0, 15)}...` : `${user2}!`
+            :
+            user2.length > 25 ? `${user2.substring(0, 25)}...` : `${user2}!`
+            }</Text>
           <Badge color={perfil === 'parceiro' ? 'teal.8'
             : perfil === 'cliente' ? 'blue.8'
               : perfil === 'admin' ? 'red.8'

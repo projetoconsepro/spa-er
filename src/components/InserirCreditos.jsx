@@ -36,7 +36,8 @@ const InserirCreditos = () => {
         if (resposta.data.msg.resultado) {
           FuncTrocaComp("MeusVeiculos");
         } else {
-          console.log(resposta);
+          setNotification(false);
+          setPixExpirado("Pix expirado");
         }
       })
       .catch((err) => {

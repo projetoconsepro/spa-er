@@ -438,7 +438,7 @@ const RegistrarEstacionamentoParceiro = () => {
     } else if (tempoo === "01:30:00") {
       setValorCobranca2(valorCobranca * 1.5);
     } else if (tempoo === "00:30:00") {
-      setValorCobranca2(0.01);
+      setValorCobranca2(valorCobranca / 2);
     } else if (tempoo === "00:10:00") {
       setDivPagamento(false)
       setValorCobranca2(valorCobranca * 0);
@@ -464,7 +464,7 @@ const RegistrarEstacionamentoParceiro = () => {
             response.data.data.chegada,
             response.data.data.tempo_restante,
             response.config.headers.id_usuario,
-            response.data.data.id_vagas[0],
+            response.data.data.numero_vagas[0],
             placaMaiuscula,
             "PIX",
             tempo,
@@ -481,7 +481,7 @@ const RegistrarEstacionamentoParceiro = () => {
             }, 3000);
         } else {
           setNotification(false);
-          setPixExpirado(response.data.msg.msg);
+          setPixExpirado("Pix expirado");
           setMensagem(response.data.msg.msg);
           setEstado(true);
           setTimeout(() => {

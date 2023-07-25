@@ -150,13 +150,8 @@ const RegistrarVagaMonitor = () => {
             FuncTrocaComp("Dashboard");
           }
         } else {
-          setEstado2(false);
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: response.data.msg.msg,
-            footer: '<a href="">Por favor, tente novamente.</a>',
-          });
+          setNotification(false);
+          setPixExpirado("Pix expirado");
         }
       })
       .catch((err) => {

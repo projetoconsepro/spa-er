@@ -44,7 +44,7 @@ const AdicionarCreditos = () => {
           });
         } else {
           setNotification(false);
-          setPixExpirado(response.data.msg.msg);
+          setPixExpirado("Pix expirado");
         }
       })
       .catch((err) => {

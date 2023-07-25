@@ -27,14 +27,13 @@ const ListarNotificacoes = () => {
   const [placaSetada, setPlacaSetada] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
   const [data2, setData2] = useState([]);
   const [onOpen, setOnOpen] = useState(false);
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
+  const [perfil, setPerfil] = useState("");
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -100,7 +99,7 @@ const ListarNotificacoes = () => {
           }
         } else {
           setNotification(false);
-          setPixExpirado(response.data.msg.msg);
+          setPixExpirado("Pix expirado");
         }
       })
       .catch((err) => {
@@ -223,6 +222,8 @@ const ListarNotificacoes = () => {
   };
 
   const startNotificao = async () => {
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
     setEstado2(false);
     const requisicao = createAPI();
     const idrequisicao = `{"where": [{ "field": "usuario", "operator": "=", "value": "${user2.id_usuario}" }]}`;
@@ -322,6 +323,12 @@ const ListarNotificacoes = () => {
   };
 
   useEffect(() => {
+
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+
+    setPerfil(user2.perfil[0])
+    
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
@@ -413,14 +420,10 @@ const ListarNotificacoes = () => {
 
   return (
     <div className="col-12 px-3 mb-3">
-      { user2.perfil[0] === "monitor" ? (
+      {perfil === "monitor" ? (
       <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
       ) : 
-      user2.perfil[0] === "parceiro" ? (
-      <p className="text-start fs-2 fw-bold">Notificações:</p>
-      ) : (
-        null
-      )}
+      <p className="text-start fs-2 fw-bold">Notificações:</p>}
       <div className="row mb-3">
         <div className="col-12">
           <div className="row">
@@ -581,7 +584,7 @@ const ListarNotificacoes = () => {
                               Regularizar
                             </button>
                           </div>
-                          {user2.perfil[0] === "monitor" ? (
+                          {perfil === "monitor" ? (
                             <div className="col-2 pt-1">
                               <ActionIcon
                                 variant="outline"
