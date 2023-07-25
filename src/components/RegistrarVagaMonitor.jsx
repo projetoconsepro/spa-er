@@ -133,7 +133,7 @@ const RegistrarVagaMonitor = () => {
             response.data.data.chegada,
             response.data.data.tempo_restante,
             response.config.headers.id_usuario,
-            response.data.data.id_vagas[0],
+            response.data.data.numero_vagas[0],
             placaMaiuscula,
             "PIX",
             tempo,

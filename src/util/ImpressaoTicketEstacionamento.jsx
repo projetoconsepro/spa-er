@@ -41,6 +41,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
           else {
             forma2 = metodo
           }
+          console.log(`forma2`, forma2)
           return forma2
         }
 
