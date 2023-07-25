@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao) => {
+    console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao)
         const obterHoraAtual = () => {
             const dataAtual = new Date();
             const hora = dataAtual.getHours().toString().padStart(2, '0');
@@ -20,15 +21,27 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
           const horaInicio = obterHoraAtual();
           const duracao = tempo;
           const horaValidade = calcularValidade(tempoChegada, duracao);
+          console.log('TEMPÇO CHEGADA', horaInicio, horaValidade)
           
-          const tipoEstacionamento = () => {
-            let tipo2 = ''
+          const tipoEstacionamento = (tempo) => {
+            let tipo2 = tempo
             if(tempo === '00:10:00'){
                 tipo2 = 'TOLERANCIA'
             } else {
                 tipo2 = 'COMPRA DE PERIODOS'
             }
             return tipo2
+        }
+
+        const forma = () => {
+          let forma2 = metodo
+          if(tempo === '00:10:00'){
+            forma2 = 'TOLERANCIA'
+          }
+          else {
+            forma2 = metodo
+          }
+          return forma2
         }
 
         const valorTicket = async () => {
@@ -70,8 +83,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
             const mes = String(data.getMonth() + 1).padStart(2, '0');
             const ano = data.getFullYear();
             return `${dia}/${mes}/${ano}`;
-          }
-
+        }
 
           if(via === "PRIMEIRA"){
           const json = {
@@ -80,7 +92,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
-                metodo: metodo,
+                metodo: forma(),
                 vaga: vaga[0],
                 placa: placa,
                 valor: await valorTicket(),
@@ -99,7 +111,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
-                metodo: metodo,
+                metodo: forma(),
                 vaga: vaga[0],
                 placa: placa,
                 valor: await valorTicket(),

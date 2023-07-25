@@ -15,17 +15,11 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  IconBrandGmail,
-  IconCircleCheck,
-  IconCircleDashed,
-  IconLockCode,
   IconMail,
-  IconMailOpened,
-  IconPassword,
   IconUser,
 } from "@tabler/icons-react";
 import { IconLock } from "@tabler/icons-react";
-import { FaCar, FaClipboard, FaCoins, FaMoneyBill, FaTable, FaWhatsapp } from "react-icons/fa";
+import { FaCar, FaClipboard, FaCoins} from "react-icons/fa";
 import axios from "axios";
 
 const LoginPage = () => {
@@ -124,7 +118,6 @@ const LoginPage = () => {
       requisicao
         .get(`/verificar?email=${emailDois}`)
         .then((response) => {
-          const telefone = response.data.usuario[0].telefone;
           const resposta = response.data.msg.resultado;
           if (resposta === false) {
             setLoading(false);
@@ -134,6 +127,7 @@ const LoginPage = () => {
               setEstado2(false);
             }, 4000);
           } else {
+            const telefone = response.data.usuario[0].telefone; 
             localStorage.setItem("email", emailDois);
             const veiculo = axios.create({
               baseURL: process.env.REACT_APP_HOST,

@@ -140,7 +140,7 @@ const Confirmation = () => {
               </div>
             </div>
             <div className={window.innerWidth > 768 ? "text-start mt-3 mx-3" : "text-start mt-3 mx-3"}>
-              <a href="https://api.whatsapp.com/send?phone=5198007341&text=Olá!">
+              <a href="https://api.whatsapp.com/send?phone=5186604241&text=Olá!">
                 <Button 
                   radius="sm"
                   className="text-start" 
