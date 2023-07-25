@@ -335,7 +335,7 @@ const LoginPage = () => {
               loading={loading}
               onClick={() => contaAntiga()}
             >
-              Acessar{" "}
+              Avançar{" "}
             </Button>
           </div>
           <div

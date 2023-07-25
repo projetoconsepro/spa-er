@@ -51,7 +51,6 @@ const Irregularidades = () => {
 
   const regularizar = (index) => {
     const select = document.getElementById("pagamentos").value;
-
     if (select === "credito") {
       if (parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
         Swal.fire({
@@ -71,6 +70,7 @@ const Irregularidades = () => {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
         tipoPagamento: 'pix',
       }
+
       requisicao
         .post("/gerarcobranca", {
           valor: valor2,
@@ -82,6 +82,7 @@ const Irregularidades = () => {
             setTxId(resposta.data.data.txid);
             getInfoPix(resposta.data.data.txid, index);
             open();
+            setOnOpen(true);
           } else {
             console.log("n abriu nkk");
           }
@@ -115,7 +116,7 @@ const Irregularidades = () => {
             }
           } else {
             setNotification(false);
-            setPixExpirado(response.data.msg.msg);
+            setPixExpirado("Pix expirado");
           }
         })
         .catch((err) => {
@@ -518,7 +519,7 @@ const Irregularidades = () => {
                     className="form-select form-select-lg mb-1"
                     aria-label=".form-select-lg example"
                     id="pagamentos"
-                    defaultValue="saldo"
+                    defaultValue="credito"
                   >
                     <option value="pix">PIX</option>
                     <option value="credito">Saldo</option>

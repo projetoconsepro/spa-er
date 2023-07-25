@@ -412,7 +412,15 @@ const Sidebar = () => {
                                 <div className="media-body ms-3 text-white">
                                     <div className="row">
                                     <div className="col-12 text-start">
-                                    <span className="mb-0 fw-bold fs-6 text-start">{teste.nome.length > 18 ? `${teste.nome.substring(0, 18)}...` : teste.nome} </span> <br />
+                                    <span className="mb-0 fw-bold fs-6 text-start">{
+                                    window.innerWidth > 990 ?
+                                    teste.nome.length > 17 ? `${teste.nome.substring(0, 17)}...` : teste.nome
+                                    :
+                                    window.innerWidth < 290 ?
+                                    teste.nome.length > 15 ? `${teste.nome.substring(0, 15)}...` : teste.nome
+                                    :
+                                    teste.nome.length > 25 ? `${teste.nome.substring(0, 25)}...` : teste.nome
+                                    } </span> <br />
                                     </div>
                                     </div>
                                     <div className="row">

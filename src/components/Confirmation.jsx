@@ -77,6 +77,15 @@ const Confirmation = () => {
         });
     }
 
+    const voltar = () => {
+        if (localStorage.getItem('componenteAnterior') === "ResetPassword"){
+            FuncTrocaComp("ResetPassword");
+        }
+        else {
+            FuncTrocaComp("LoginPage");
+        }
+    }
+
     return (
         <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
@@ -103,7 +112,7 @@ const Confirmation = () => {
                             <p className="text-end mt-1" style={{cursor: "pointer", color: "#3A58C8"}} onClick={() => open()}><small><u>Não tenho acesso ao email</u></small></p>
                             </Group>
                             <div className="mt-5 mb-5 gap-2 d-md-block">
-                                <VoltarComponente space={true} />
+                                <Button className="bg-gray-500 mx-2" size="md" radius="md" onClick={() => {voltar()}}>Voltar</Button> 
                                 <Button
                                 onClick={() => handleSubmit()}
                                 loaderPosition="right"
