@@ -12,6 +12,7 @@ import { IconReload } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
+import { Group, Pagination } from "@mantine/core";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -19,10 +20,8 @@ const Irregularidades = () => {
   const [data2, setData2] = useState([]);
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
-  const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
-  const socketRef = useRef(null);
   const [saldoCredito, setSaldoCredito] = useState(0);
   const [valorCobranca, setValorCobranca] = useState(0);
   const [loading, setOnLoading] = useState(false);
@@ -30,20 +29,28 @@ const Irregularidades = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
-  const [vaga, setVaga] = useState("");
+    
+  const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 50;
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
 
-  useEffect(() => {
-    console.log("setou", txid);
-  }, [txid]);
 
   const regularizar = (index) => {
     const select = document.getElementById("pagamentos").value;
-
     if (select === "credito") {
       if (parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
         Swal.fire({
@@ -63,6 +70,7 @@ const Irregularidades = () => {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
         tipoPagamento: 'pix',
       }
+
       requisicao
         .post("/gerarcobranca", {
           valor: valor2,
@@ -74,6 +82,7 @@ const Irregularidades = () => {
             setTxId(resposta.data.data.txid);
             getInfoPix(resposta.data.data.txid, index);
             open();
+            setOnOpen(true);
           } else {
             console.log("n abriu nkk");
           }
@@ -107,7 +116,7 @@ const Irregularidades = () => {
             }
           } else {
             setNotification(false);
-            setPixExpirado(response.data.msg.msg);
+            setPixExpirado("Pix expirado");
           }
         })
         .catch((err) => {
@@ -404,7 +413,7 @@ const Irregularidades = () => {
         </div>
       </div>
 
-      {data.map((link, index) => (
+      {currentItems.map((link, index) => (
         <div className="card border-0 shadow mt-2 mb-3" key={index}>
           <div
             className="card-body"
@@ -510,7 +519,7 @@ const Irregularidades = () => {
                     className="form-select form-select-lg mb-1"
                     aria-label=".form-select-lg example"
                     id="pagamentos"
-                    defaultValue="saldo"
+                    defaultValue="credito"
                   >
                     <option value="pix">PIX</option>
                     <option value="credito">Saldo</option>
@@ -543,6 +552,11 @@ const Irregularidades = () => {
       >
         {mensagem}
       </div>
+
+      <Group position="center" mb="md">
+            <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
+      </Group>
+
       <VoltarComponente />
 
       <ModalPix

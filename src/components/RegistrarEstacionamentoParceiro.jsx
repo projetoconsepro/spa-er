@@ -90,9 +90,6 @@ const RegistrarEstacionamentoParceiro = () => {
     if (vaga === "") {
       setVaga(0);
     }
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = createAPI();
@@ -212,9 +209,6 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   const handleRegistrar = async () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = createAPI();
@@ -444,7 +438,7 @@ const RegistrarEstacionamentoParceiro = () => {
     } else if (tempoo === "01:30:00") {
       setValorCobranca2(valorCobranca * 1.5);
     } else if (tempoo === "00:30:00") {
-      setValorCobranca2(0.01);
+      setValorCobranca2(valorCobranca / 2);
     } else if (tempoo === "00:10:00") {
       setDivPagamento(false)
       setValorCobranca2(valorCobranca * 0);
@@ -470,7 +464,7 @@ const RegistrarEstacionamentoParceiro = () => {
             response.data.data.chegada,
             response.data.data.tempo_restante,
             response.config.headers.id_usuario,
-            response.data.data.id_vagas[0],
+            response.data.data.numero_vagas[0],
             placaMaiuscula,
             "PIX",
             tempo,
@@ -487,7 +481,7 @@ const RegistrarEstacionamentoParceiro = () => {
             }, 3000);
         } else {
           setNotification(false);
-          setPixExpirado(response.data.msg.msg);
+          setPixExpirado("Pix expirado");
           setMensagem(response.data.msg.msg);
           setEstado(true);
           setTimeout(() => {
@@ -605,6 +599,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 maxLength={limite}
               />
             </div>
+            {user2 === "monitor" ? (
             <div className="text-start mt-3 px-2">
               <h6>Número da vaga (opcional):</h6>
               <Input
@@ -616,6 +611,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 placeholder="Exemplo: 0 "
               />
             </div>
+            ) : null}
             <div className="text-start mt-3 mb-1 px-2" onChange={() => {atualiza();}}>
               <h6>Selecione o tempo:</h6>
               <select

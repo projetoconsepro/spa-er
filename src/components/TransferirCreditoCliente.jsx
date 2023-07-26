@@ -30,9 +30,6 @@ const TransferirCreditoCliente = () => {
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
   const [readyTransfer, setReadyTransfer] = useState(false);
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
 
   function extrairNumeros(string) {
     return string ? string.replace(/\D/g, "") : string;

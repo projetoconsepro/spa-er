@@ -38,10 +38,6 @@ const RegistrarVagaCliente = () => {
     }
   };
 
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
-
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });
@@ -290,7 +286,8 @@ const RegistrarVagaCliente = () => {
                   ))}
                 </Carousel>
               ) : (
-                <Group position="apart">
+                <Group position= {resposta2.length == 3 ? 'apart' :'start' 
+                }>
                   {resposta2.map((item, index) => (
                     <Grid key={index}>
                       <Grid.Col span={12}>
@@ -389,18 +386,6 @@ const RegistrarVagaCliente = () => {
               </div>
             </div>
 
-            <Divider my="sm" size="md" variant="dashed" />
-
-            <div className="form-group mb-4 mt-4">
-              <p className="text-start m-0">Número da vaga (opcional):</p>
-              <Input
-                icon={<IconParking />}
-                placeholder="Exemplo: 3"
-                mt="sm"
-                value={vaga}
-                onChange={(e) => setVaga([e.target.value])}
-              />
-            </div>
 
             <div className="mt-1 mb-5 gap-2 d-md-block">
               <VoltarComponente space={true} />

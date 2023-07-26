@@ -36,7 +36,8 @@ const InserirCreditos = () => {
         if (resposta.data.msg.resultado) {
           FuncTrocaComp("MeusVeiculos");
         } else {
-          console.log(resposta);
+          setNotification(false);
+          setPixExpirado("Pix expirado");
         }
       })
       .catch((err) => {
@@ -157,6 +158,7 @@ const InserirCreditos = () => {
                 <Text weight={500}>1. Escolha o método de pagamento:</Text>
               </Group>
               <Radio.Group>
+                {1 == 2  ? (
                 <Group mt="xs">
                   <Radio
                     value="cartaoCredito"
@@ -167,6 +169,7 @@ const InserirCreditos = () => {
                   <BsCreditCard2Back  className="mx-1" size={25}/>
                   <Text weight={200}> Cartão de crédito</Text>
                 </Group>
+                ) : null}
                 <Group mt="xs">
                   <Radio
                     value="pix"
@@ -181,6 +184,7 @@ const InserirCreditos = () => {
                   />
                   <Text weight={200}> PIX</Text>
                 </Group>
+                {1 == 2 ? (
                 <Group mt="xs">
                   <Radio
                     value="cartaoDebito"
@@ -191,6 +195,7 @@ const InserirCreditos = () => {
                   <BsCreditCard2Back className="mx-1" size={25}/>
                   <Text weight={200}> Cartão de débito</Text>
                 </Group>
+                ) : null}
               </Radio.Group>
               <Button
                 variant="gradient"

@@ -1,4 +1,4 @@
-import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaClipboardList, FaWhatsapp } from "react-icons/fa";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
@@ -9,7 +9,6 @@ import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
-import { IconHelpCircle } from "@tabler/icons-react";
 import { IconHelpCircleFilled } from "@tabler/icons-react";
 
 const Sidebar = () => {
@@ -108,12 +107,6 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaMapMarkerAlt />,
-            name: "‎ Vagas livres",
-            componente: "VagasLivres",
-        })
-        links.push({
-            className: styles.className,
-            icon: <FaMapMarkerAlt />,
             name: "‎ Regularizar",
             componente: "Regularizacao",
         })
@@ -171,7 +164,7 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <FaCarAlt />,
+            icon: <FaCar />,
             name: "‎ Cadastrar Novo Veículo",
             componente: "CadastrarVeiculo",
         })
@@ -315,20 +308,9 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            name: "‎ Consultar vaga",
-            componente: "ConsultarVaga",
-            icon: <FaParking />,
-        })
-        links.push({
-            className: styles.className,
             name: "‎ Notificacão",
             componente: "Notificacao",
             icon: <RiAlertFill />,
-        })
-        links.push({
-            className: styles.className,
-            name: "‎ Vaga livre",
-            icon: <FaMapMarkerAlt />,
         })
         links.push({
             className: styles.className,
@@ -430,7 +412,15 @@ const Sidebar = () => {
                                 <div className="media-body ms-3 text-white">
                                     <div className="row">
                                     <div className="col-12 text-start">
-                                    <span className="mb-0 fw-bold fs-6 text-start">{teste.nome}</span> <br />
+                                    <span className="mb-0 fw-bold fs-6 text-start">{
+                                    window.innerWidth > 990 ?
+                                    teste.nome.length > 17 ? `${teste.nome.substring(0, 17)}...` : teste.nome
+                                    :
+                                    window.innerWidth < 290 ?
+                                    teste.nome.length > 15 ? `${teste.nome.substring(0, 15)}...` : teste.nome
+                                    :
+                                    teste.nome.length > 25 ? `${teste.nome.substring(0, 25)}...` : teste.nome
+                                    } </span> <br />
                                     </div>
                                     </div>
                                     <div className="row">

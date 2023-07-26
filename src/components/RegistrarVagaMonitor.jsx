@@ -39,7 +39,6 @@ const RegistrarVagaMonitor = () => {
   const [onOpen, setOnOpen] = useState(false);
   const [estado2, setEstado2] = useState(false);
 
-  const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
 
@@ -134,7 +133,7 @@ const RegistrarVagaMonitor = () => {
             response.data.data.chegada,
             response.data.data.tempo_restante,
             response.config.headers.id_usuario,
-            response.data.data.id_vagas[0],
+            response.data.data.numero_vagas[0],
             placaMaiuscula,
             "PIX",
             tempo,
@@ -151,13 +150,8 @@ const RegistrarVagaMonitor = () => {
             FuncTrocaComp("Dashboard");
           }
         } else {
-          setEstado2(false);
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: response.data.msg.msg,
-            footer: '<a href="">Por favor, tente novamente.</a>',
-          });
+          setNotification(false);
+          setPixExpirado("Pix expirado");
         }
       })
       .catch((err) => {

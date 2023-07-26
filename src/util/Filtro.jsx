@@ -316,10 +316,13 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         }
         break;
       case 'Placa':
-         if(nome === 'OcupacaoVagasAdmin'){
-          consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" },{ "field": "placa", "operator": "=", "value": "${inputPlaca}" }]}`;
+        const placa = inputPlaca.toUpperCase();
+        const placa2 = placa.replace(/[^a-zA-Z0-9]/g, '');
+
+        if(nome === 'OcupacaoVagasAdmin'){
+          consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" },{ "field": "placa", "operator": "=", "value": "${placa2}" }]}`;
         } else {
-        consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${inputPlaca}" }]}`;
+        consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placa2}" }]}`;
         }
         break;
       case 'Vaga':

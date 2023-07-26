@@ -44,10 +44,6 @@ const ListarVeiculos = () => {
     }
   };
 
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
-
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });
@@ -95,7 +91,7 @@ const ListarVeiculos = () => {
           FuncTrocaComp("CadastrarVeiculo");
         }
         for (let i = 0; i < resposta.length; i++) {
-            delete resposta[i];
+          delete resposta[i];
         }
         for (let i = 0; i < response?.data?.data.length; i++) {
           resposta[i] = {};
@@ -158,7 +154,9 @@ const ListarVeiculos = () => {
               resposta[i].numero_notificacoes_pendentes = "Uma notificação";
               nofityvar[i] = { notifi: "notify2" };
             } else {
-              resposta[i].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
+              resposta[
+                i
+              ].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
               nofityvar[i] = { notifi: "notify2" };
               notificacao[i] = { estado: false };
             }
@@ -233,9 +231,8 @@ const ListarVeiculos = () => {
     } else if (tempo1 === "01:00:00") {
       return valorcobranca;
     } else if (tempo1 === "01:30:00") {
-    return valorcobranca * 1.5;
-    }
-    else if (tempo1 === "00:30:00") {
+      return valorcobranca * 1.5;
+    } else if (tempo1 === "00:30:00") {
       return valorcobranca / 2;
     }
   }
@@ -246,12 +243,12 @@ const ListarVeiculos = () => {
   }
 
   const hangleplaca = async (placa, index) => {
-    setBotaoOff(true)
+    setBotaoOff(true);
     setTimeout(() => {
-      setBotaoOff(false)
+      setBotaoOff(false);
     }, 2000);
     const requisicao = createAPI();
-    const tempo1 = selectedButton
+    const tempo1 = selectedButton;
 
     const resposta = await mexerValores();
 
@@ -366,7 +363,9 @@ const ListarVeiculos = () => {
 
   return (
     <div className="col-12 px-3 mb-4">
-      <p className="text-start fs-2 fw-bold"><VoltarComponente arrow={true} /> Meus veículos</p>
+      <p className="text-start fs-2 fw-bold">
+        <VoltarComponente arrow={true} /> Meus veículos
+      </p>
       <div className="card border-0 shadow">
         <div className="card-body">
           <div className="d-flex align-items-center justify-content-between pb-3">
@@ -476,9 +475,13 @@ const ListarVeiculos = () => {
                     </button>
                     <div className="mt-4 text-end">
                       <span>
-                        <IoTrashSharp color="red" size={25} onClick={() => {
+                        <IoTrashSharp
+                          color="red"
+                          size={25}
+                          onClick={() => {
                             removerVeiculo(link.id_veiculo);
-                          }}/>
+                          }}
+                        />
                       </span>
                     </div>
                   </div>
@@ -486,160 +489,210 @@ const ListarVeiculos = () => {
               ) : mostrardiv[index].estado ? (
                 <div className="h6 mt-3 mx-4">
                   <Group position="apart">
-                  <p className='text-start mb-3'>Determine o tempo (minutos):</p>
+                    <p className="text-start mb-3">
+                      Determine o tempo (minutos):
+                    </p>
                   </Group>
                   <Grid>
                     <Grid.Col span={3}>
-                      <button 
-                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "00:30:00" ? 'corTempoSelecionado' : 'corTempo'}`}
-                        onClick={() => handleButtonClick("00:30:00")}>
-                        <Text fz="lg" weight={700}>30</Text>
+                      <button
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "00:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("00:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          30
+                        </Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "01:00:00" ? 'corTempoSelecionado' : 'corTempo'}`} 
-                        onClick={() => handleButtonClick("01:00:00")}>
-                        <Text fz="lg" weight={700}>60</Text>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          60
+                        </Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center  ${
-                        selectedButton === "01:30:00" ? 'corTempoSelecionado' : 'corTempo'}`}
-                        onClick={() => handleButtonClick("01:30:00")}>
-                        <Text fz="lg" weight={700}>90</Text>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center  ${
+                          selectedButton === "01:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          90
+                        </Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "02:00:00" ? 'corTempoSelecionado' : 'corTempo'}`}
-                        onClick={() => handleButtonClick("02:00:00")}>
-                        <Text fz="lg" weight={700}>120</Text>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
                       </button>
                     </Grid.Col>
                   </Grid>
                   <div className="h6 mt-3 mx-2">
-                  <p id="tempoCusto" className="text-end">
-                    Esse tempo irá custar: R$ {valorcobranca2}{" "}
-                  </p>
-                  <div className="form-group mb-4 mt-4">
-                                <p className='text-start m-0'>Número da vaga (opcional):</p>
-                                <Input
-                                icon={<IconParking />}
-                                placeholder="Exemplo: 3"
-                                mt="sm"
-                                value={vaga} 
-                                onChange={(e) => setVaga([e.target.value])}
-                                />
-                            </div>
-                  <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
-                    <div></div>
-                    <Button
-                      type="submit"
-                      className="btn3 botao"
-                      onClick={() => {
-                        hangleplaca(link.placa, index);
-                      }}
-                      disabled={botaoOff}
-                    >
-                      Ativar
-                    </Button>
-                    <div>
-                      <span>
-                        <IoTrashSharp
-                          color="red"
-                          size={25}
-                          onClick={() => {
-                            removerVeiculo(link.id_veiculo);
-                          }}
-                        />
-                      </span>
+                    <p id="tempoCusto" className="text-end">
+                      Esse tempo irá custar: R$ {valorcobranca2}{" "}
+                    </p>
+                    <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
+                      <div></div>
+                      <Button
+                        type="submit"
+                        className="btn3 botao"
+                        onClick={() => {
+                          hangleplaca(link.placa, index);
+                        }}
+                        disabled={botaoOff}
+                      >
+                        Ativar
+                      </Button>
+                      <div>
+                        <span>
+                          <IoTrashSharp
+                            color="red"
+                            size={25}
+                            onClick={() => {
+                              removerVeiculo(link.id_veiculo);
+                            }}
+                          />
+                        </span>
+                      </div>
                     </div>
-                  </div>
                   </div>
                 </div>
               ) : (
                 <div className="h6 mx-4">
                   <Group position="apart">
-                  <p className='text-start mb-3'>Determine o tempo (minutos):</p>
+                    <p className="text-start mb-3">
+                      Determine o tempo (minutos):
+                    </p>
                   </Group>
                   <Grid>
                     <Grid.Col span={3}>
-                      <button 
-                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "00:30:00" ? 'corTempoSelecionado' : 'corTempo'}`}
-                        onClick={() => handleButtonClick("00:30:00")}>
-                        <Text fz="lg" weight={700}>30</Text>
+                      <button
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "00:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("00:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          30
+                        </Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "01:00:00" ? 'corTempoSelecionado' : 'corTempo'}`} 
-                        onClick={() => handleButtonClick("01:00:00")}>
-                        <Text fz="lg" weight={700}>60</Text>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          60
+                        </Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "01:30:00" ? 'corTempoSelecionado' : 'corTempo'}`}
-                        onClick={() => handleButtonClick("01:30:00")}>
-                        <Text fz="lg" weight={700}>90</Text>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          90
+                        </Text>
                       </button>
                     </Grid.Col>
                     <Grid.Col span={3}>
                       <button
-                        type="button" className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "02:00:00" ? 'corTempoSelecionado' : 'corTempo'}`}
-                        onClick={() => handleButtonClick("02:00:00")}>
-                        <Text fz="lg" weight={700}>120</Text>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
                       </button>
                     </Grid.Col>
                   </Grid>
                   <div className="h6 mx-2 mt-3">
-                  <p id="tempoCusto" className="text-end">
-                    Esse tempo irá custar: R$ {valorcobranca2}{" "}
-                  </p>
-                  <p className="text-start" id="horarioChegada">
-                    Horário chegada: {link.chegada}{" "}
-                  </p>
-                  <p className="text-start pb-3" id="horarioChegada">
-                    Tempo Creditado: {link.tempo}{" "}
-                  </p>
-                  <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
-                    <div></div>
-                    <button
-                      type="submit"
-                      onClick={() => {
-                        AddTempo(
-                          link.placa,
-                          index,
-                          link.id_vaga_veiculo,
-                          link.vaga
-                        );
-                      }}
-                      className="btn3 botao"
-                      disabled={botaoOff}
-                    >
-                      Ativar
-                    </button>
-                    <div>
-                      <span>
-                        <IoTrashSharp
-                          color="red"
-                          size={25}
-                          onClick={() => {
-                            removerVeiculo(link.id_veiculo);
-                          }}
-                        />
-                      </span>
+                    <p id="tempoCusto" className="text-end">
+                      Esse tempo irá custar: R$ {valorcobranca2}{" "}
+                    </p>
+                    <p className="text-start" id="horarioChegada">
+                      Horário chegada: {link.chegada}{" "}
+                    </p>
+                    <p className="text-start pb-3" id="horarioChegada">
+                      Tempo Creditado: {link.tempo}{" "}
+                    </p>
+                    <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
+                      <div></div>
+                      <button
+                        type="submit"
+                        onClick={() => {
+                          AddTempo(
+                            link.placa,
+                            index,
+                            link.id_vaga_veiculo,
+                            link.vaga
+                          );
+                        }}
+                        className="btn3 botao"
+                        disabled={botaoOff}
+                      >
+                        Ativar
+                      </button>
+                      <div>
+                        <span>
+                          <IoTrashSharp
+                            color="red"
+                            size={25}
+                            onClick={() => {
+                              removerVeiculo(link.id_veiculo);
+                            }}
+                          />
+                        </span>
+                      </div>
                     </div>
-                  </div>
                   </div>
                 </div>
               )}
@@ -647,6 +700,18 @@ const ListarVeiculos = () => {
           ) : null}
         </div>
       ))}
+
+      <Button
+        variant="gradient"
+        gradient={{ from: "blue", to: "indigo" }}
+        className="mt-5"
+        radius="md"
+        onClick={() => {
+          FuncTrocaComp("CadastrarVeiculo");
+        }}
+      >
+        <FaCarAlt size={20} />‎ ‎ ‎ ‎Cadastrar novo veículo
+      </Button>
     </div>
   );
 };

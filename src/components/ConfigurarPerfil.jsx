@@ -1,20 +1,17 @@
-import axios from 'axios';
+
 import sha256 from 'crypto-js/sha256';
 import { React, useState, useEffect } from 'react'
-import { IconCreditCard, IconUser, IconLock, IconBrandTwitter, IconUserCircle, IconMailbox, IconMail, IconSettings, IconEdit, IconTrash, IconPhone, IconPassword } from '@tabler/icons-react';
+import { IconCreditCard, IconUser, IconLock, IconUserCircle, IconMail, IconEdit, IconPhone, IconTrash } from '@tabler/icons-react';
 import { Accordion, ActionIcon, Badge, Button, Card, Grid, Group, Input, PasswordInput, Text, rem } from '@mantine/core';
 import { IconCar } from '@tabler/icons-react';
 import { IconAdjustments } from '@tabler/icons-react';
-import { IconAccessPoint } from '@tabler/icons-react';
 import { IconArrowForwardUpDouble } from '@tabler/icons-react';
 import FuncTrocaComp from '../util/FuncTrocaComp';
-import { FaEllipsisH, FaEye } from 'react-icons/fa';
 import { IconLockCheck } from '@tabler/icons-react';
 import Swal from 'sweetalert2';
 import createAPI from '../services/createAPI';
 
 const ConfigurarPerfil = () => {
-  const [data, setData] = useState([]);
   const [saldo, setSaldo] = useState([]);
   const [user2, setUser2] = useState('');
   const [user, setUser] = useState('');
@@ -77,8 +74,8 @@ const ConfigurarPerfil = () => {
   };
 
   const handleSaveClick = () => {
+    if(user.length < 60 && telefone.length === 11){
     const requisicao = createAPI();
-
     requisicao.put('/usuario', {
       nome: user,
       telefone: telefone,
@@ -109,7 +106,16 @@ const ConfigurarPerfil = () => {
             }, 3000);
         }
       })
+  } else {
+    setEstado(true);
+    setMensagem('O seu nome deve ter no máximo 60 caracteres e o seu telefone deve ter 11 caracteres.');
+    setTimeout(() => {
+        setEstado(false);
+        setMensagem('');
+    }, 3000);
   }
+
+}
 
   const handleCancelClickSenha = () => {
     setSenha('')
@@ -158,7 +164,16 @@ const ConfigurarPerfil = () => {
     <div>
       <Card padding="lg" radius="md" withBorder>
         <Group position="apart" mt="md" mb="xs">
-          <Text weight={500}>Olá, {user2}!</Text>
+          <Text weight={500}>Olá, 
+          {
+            window.innerWidth > 990 ?
+            `${user2}!`
+            :
+            window.innerWidth < 290 ?
+            user2.length > 15 ? `${user2.substring(0, 15)}...` : `${user2}!`
+            :
+            user2.length > 25 ? `${user2.substring(0, 25)}...` : `${user2}!`
+            }</Text>
           <Badge color={perfil === 'parceiro' ? 'teal.8'
             : perfil === 'cliente' ? 'blue.8'
               : perfil === 'admin' ? 'red.8'
@@ -362,4 +377,4 @@ const ConfigurarPerfil = () => {
   )
 }
 
-export default ConfigurarPerfil
+export default ConfigurarPerfil;

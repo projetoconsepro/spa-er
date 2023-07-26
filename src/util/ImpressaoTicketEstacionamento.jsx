@@ -33,6 +33,18 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
             return tipo2
         }
 
+        const forma = () => {
+          let forma2 = metodo
+          if(tempo === '00:10:00'){
+            forma2 = 'TOLERANCIA'
+          }
+          else {
+            forma2 = metodo
+          }
+          console.log(`forma2`, forma2)
+          return forma2
+        }
+
         const valorTicket = async () => {
           console.log(tempoValor)
             try {
@@ -72,8 +84,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
             const mes = String(data.getMonth() + 1).padStart(2, '0');
             const ano = data.getFullYear();
             return `${dia}/${mes}/${ano}`;
-          }
-
+        }
 
           if(via === "PRIMEIRA"){
           const json = {
@@ -82,7 +93,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
-                metodo: metodo,
+                metodo: forma(),
                 vaga: vaga[0],
                 placa: placa,
                 valor: await valorTicket(),
@@ -101,7 +112,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
-                metodo: metodo,
+                metodo: forma(),
                 vaga: vaga[0],
                 placa: placa,
                 valor: await valorTicket(),

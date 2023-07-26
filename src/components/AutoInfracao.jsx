@@ -9,12 +9,10 @@ import { Carousel } from '@mantine/carousel';
 import { IconCamera, IconCodeCircle, IconCodeDots, IconFileCode, IconReceipt } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import createAPI from '../services/createAPI';
+import VoltarComponente from '../util/VoltarComponente';
 
 const AutoInfracao = () => {
     const [opened, { open, close }] = useDisclosure(false);
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     const [data, setData] = useState([])
     const [codigo, setCodigo] = useState('')
     const [dataImagem, setDataImagem] = useState([])
@@ -124,11 +122,6 @@ const AutoInfracao = () => {
               : 
               <Text size={20}> <FaClipboardList className="mb-1"/> <small> Motivo: {item.tipo} </small> </Text>
               }
-              {item.tipo  !== 'Ocupando vaga de deficiente' && item.tipo  !== 'Ocupando vaga de idoso' ? 
-              <Text size={20}> <FaClipboardList className="mb-1"/> Motivo: {item.tipo} </Text>
-              :
-              <Text size={20}> <FaClipboardList className="mb-1"/> <small> Motivo: {item.tipo} </small> </Text>
-              }
             </Group>
             <Divider my="sm" size="md" variant="dashed" />
             <Group position="apart">
@@ -152,7 +145,7 @@ const AutoInfracao = () => {
         </Card>
       ))}
 
-    <Card padding="lg" radius="md" withBorder mt="md">
+    <Card padding="lg" radius="md" withBorder mt="md" className='mb-3'>
       <Group position="apart" mb="md">
       <Text> Informe o código para confirmar: </Text>
       </Group>
@@ -163,6 +156,7 @@ const AutoInfracao = () => {
       CONFIRMAR AUTO DE INFRAÇÃO ‎ <IconReceipt size={18}/>
       </Button>
     </Card>
+    <VoltarComponente />
     </div>
   )
 }
