@@ -197,13 +197,13 @@ const ListarVagasMonitor = () => {
         }, 1000);
       }
     }, 1000);
+
     const cardToScroll = document.querySelector(
       `.card-list[data-vaga="${vaga}"]`
     );
     if (cardToScroll) {
       setTimeout(() => {
         cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
-        console.log(vaga);
       }, 100);
     }
   }, [vaga]);
