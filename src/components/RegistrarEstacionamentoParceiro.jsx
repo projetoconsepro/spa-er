@@ -273,12 +273,16 @@ const RegistrarEstacionamentoParceiro = () => {
                       );
                       setVaga("");
                       setTextoPlaca("");
-                      setMensagem("Estacionamento registrado com sucesso");
-                      setSuccess(true);
-                      setTimeout(() => {
-                        setSuccess(false);
-                        setMensagem("");
-                      }, 3000);
+                        if (user2 === "monitor"){
+                          FuncTrocaComp("ListarVagasMonitor")
+                        } else {
+                        setMensagem("Estacionamento registrado com sucesso");
+                        setSuccess(true);
+                        setTimeout(() => {
+                          setSuccess(false);
+                          setMensagem("");
+                        }, 3000);
+                      }
                     } else {
                       setMensagem(response.data.msg.msg);
                       setEstado(true);
@@ -324,14 +328,18 @@ const RegistrarEstacionamentoParceiro = () => {
                         tempo,
                         response.data.data.notificacao_pendente
                       );
-                      setMensagem("Estacionamento registrado com sucesso");
-                      setSuccess(true);
                       setVaga("");
                       setTextoPlaca("");
-                      setTimeout(() => {
-                        setSuccess(false);
-                        setMensagem("");
-                      }, 3000);
+                        if (user2 === "monitor"){
+                          FuncTrocaComp("ListarVagasMonitor")
+                        } else {
+                        setMensagem("Estacionamento registrado com sucesso");
+                        setSuccess(true);
+                        setTimeout(() => {
+                          setSuccess(false);
+                          setMensagem("");
+                        }, 3000);
+                      }
                     } else {
                       setMensagem(response.data.msg.msg);
                       setEstado(true);
@@ -376,14 +384,18 @@ const RegistrarEstacionamentoParceiro = () => {
                       tempo,
                       response.data.data.notificacao_pendente
                     );
-                    setMensagem("Estacionamento registrado com sucesso");
-                    setSuccess(true);
                     setVaga("");
                     setTextoPlaca("");
-                    setTimeout(() => {
-                      setSuccess(false);
-                      setMensagem("");
-                    }, 3000);
+                      if (user2 === "monitor"){
+                        FuncTrocaComp("ListarVagasMonitor")
+                      } else {
+                      setMensagem("Estacionamento registrado com sucesso");
+                      setSuccess(true);
+                      setTimeout(() => {
+                        setSuccess(false);
+                        setMensagem("");
+                      }, 3000);
+                    }
                   } else {
                     setMensagem(response.data.msg.msg);
                     setEstado(true);
@@ -472,13 +484,17 @@ const RegistrarEstacionamentoParceiro = () => {
           );
           setOnOpen(false);
           setVaga("");
-            setTextoPlaca("");
+          setTextoPlaca("");
+            if (user2 === "monitor"){
+              FuncTrocaComp("ListarVagasMonitor")
+            } else {
             setMensagem("Estacionamento registrado com sucesso");
             setSuccess(true);
             setTimeout(() => {
               setSuccess(false);
               setMensagem("");
             }, 3000);
+          }
         } else {
           setNotification(false);
           setPixExpirado("Pix expirado");
