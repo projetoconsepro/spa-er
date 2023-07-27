@@ -9,6 +9,7 @@ import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Divider } from '@mantine/core';
 import createAPI from '../services/createAPI';
+import ImpressaoTicketEstacionamento from '../util/ImpressaoTicketEstacionamento';
 
 
 const BuscarVeiculo = () => {
@@ -152,7 +153,17 @@ const BuscarVeiculo = () => {
             const upperCase = tirarTraco.toUpperCase();
             localStorage.setItem('placaCarro', upperCase)
             FuncTrocaComp('ListarNotificacoes')
-            
+        }
+
+        const imprimirSegundaVia = (link) => {
+            console.log(link)
+            if(link.estacionado === 'S'){
+                ImpressaoTicketEstacionamento('SEGUNDA', link.chegada, link.temporestante, 
+                'Nao informado', link.vaga, link.placa, 'Nao informado', 'Nao informado',
+                link.numero_notificacoes_pendentes)
+            } else {
+                
+            }
         }
 
   return (
@@ -198,7 +209,7 @@ const BuscarVeiculo = () => {
                         <div>
                          {data.map((link, index) => (
                             <div className="card border-3 shadow mt-5" key={index} >
-                                <div className={link.numero_notificacoes_pendentes !== 0 && link.estacionado === 'S' ? 'card-body4 h-75' : 'card-body4'}>
+                                <div className={link.numero_notificacoes_pendentes !== 0 && link.estacionado === 'S' ? 'card-body8 h-75' : 'card-body8'}>
                                     <div className="d-flex align-items-center justify-content-between pb-3">
                                         <div>
                                             <div className="h2 mb-0 d-flex align-items-center">
@@ -276,6 +287,7 @@ const BuscarVeiculo = () => {
                                         :
                                         null
                                     }
+                                        <button type="submit" className="btn4 mb-2 botao" onClick={() => {imprimirSegundaVia(link)}}>Imprimir via</button>
                                         <button type="submit" className="btn4 bg-gray-400 botao" onClick={() => {goHistorico()}}>Histórico</button>
                                     </div>
                                 </div>

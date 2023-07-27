@@ -20,10 +20,10 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
         
           const horaInicio = obterHoraAtual();
           const duracao = tempo;
-          const horaValidade = calcularValidade(tempoChegada, duracao);
-          console.log('TEMPÇO CHEGADA', horaInicio, horaValidade)
+          const horaValidade = calcularValidade(horaInicio, duracao);
+          console.log('TEMPO CHEGADA', horaInicio, horaValidade)
           
-          const tipoEstacionamento = (tempo) => {
+          const tipoEstacionamento = () => {
             let tipo2 = tempo
             if(tempo === '00:10:00'){
                 tipo2 = 'TOLERANCIA'
@@ -41,12 +41,10 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
           else {
             forma2 = metodo
           }
-          console.log(`forma2`, forma2)
           return forma2
         }
 
         const valorTicket = async () => {
-          console.log(tempoValor)
             try {
                 const requisicao = axios.create({
                   baseURL: process.env.REACT_APP_HOST,
@@ -86,11 +84,12 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
             return `${dia}/${mes}/${ano}`;
         }
 
-          if(via === "PRIMEIRA"){
+          if(via === 'PRIMEIRA'){
           const json = {
+                via: via,
                 tipo: tipoEstacionamento(),
                 dataHoje: getDataDeHoje(),
-                horaInicio: tempoChegada,
+                horaInicio: horaInicio,
                 horaValidade: horaValidade,
                 monitor: monitor,
                 metodo: forma(),
@@ -99,7 +98,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 valor: await valorTicket(),
                 notificacaoPendente: notificacao
           }
-
+          
           console.log('toma', json)
           if(window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(JSON.stringify(json));
@@ -107,13 +106,14 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
 
         } else {
             const json = {
-                tipo: tipoEstacionamento(),
+                via: via,
+                tipo: 'EXTRATO DE PLACA',
                 dataHoje: getDataDeHoje(),
-                horaInicio: tempoChegada,
+                horaInicio: horaInicio,
                 horaValidade: horaValidade,
                 monitor: monitor,
                 metodo: forma(),
-                vaga: vaga[0],
+                vaga: vaga,
                 placa: placa,
                 valor: await valorTicket(),
                 notificacaoPendente: notificacao
