@@ -82,10 +82,10 @@ const Notificacao = () => {
         if (!infoBanco) {
                 const getmodelo = modeloCerto;
                 const getfabricante = fabricanteCerto;
-                console.log(getmodelo, getfabricante)
-            if (outro === true) {
-                const getcor = document.getElementById("selectCores").value;
-                if (getmodelo === "" || getfabricante === "" || getcor === "") {
+                let cor = cor2;
+            if (!outro) {
+                cor = document.getElementById("selectCores").value;
+                if (getmodelo === "" || getfabricante === "" || cor === "") {
                     setMensagem("Necessário selecionar modelo, fabricante e cor")
                     setEstado(true)
                     setTimeout(() => {
@@ -94,6 +94,7 @@ const Notificacao = () => {
                     }, 4000);
                     return;
                 }
+            }
         requisicao.post(`/veiculo/${placa}`, {
             "placa": placa,
              "modelo": {
@@ -102,7 +103,7 @@ const Notificacao = () => {
                     "idFabricante": getfabricante,
                 }
             },
-            "cor": getcor,
+            "cor": cor,
     }).then(
             response => {
                 modeloImpressao = response.data.data.reposta.modelo.modelo
@@ -114,37 +115,12 @@ const Notificacao = () => {
             localStorage.removeItem("perfil");
         });
     }
-    else{
-        if (getmodelo === "" || getfabricante === ""){
-            setMensagem("Necessário selecionar modelo e fabricante")
-            setEstado(true)
-            setTimeout(() => {
-                setEstado(false);
-                setMensagem("");
-            }, 4000);
-            return;
-        }
-        requisicao.post(`/veiculo/${placa}`, {
-            "placa": placa,
-             "modelo": {
-                "idModelo": getmodelo,
-                "fabricante": {
-                    "idFabricante": getfabricante,
-                }
-            },
-            "cor": cor2,
-        }).then(
-            response => {
-            console.log(response, 'olha só em2')
-        }
-        ).catch(function (error) {
-            localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-        });
-    }
-    }
+   
     if (imagens.length !== 0) {
+        if(infoBanco){
+            modeloImpressao = modeloVeiculo;
+            fabricanteImpressao = fabricanteVeiculo;
+        }
         if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") { 
         requisicao.post('/notificacao', {
             "id_vaga_veiculo": vagaVeiculo,
@@ -376,6 +352,7 @@ setTimeout(() => {
         requisicao.get(`/veiculo/${placaSemTraco}`).then(
             response => {
                 if(response.data.msg.resultado === true){
+                    console.log(response)
                     setInfoBanco(true);
                     setCorVeiculo(response.data.data[0].cor)
                     setModeloVeiculo(response.data.data[0].modelo.modelo)

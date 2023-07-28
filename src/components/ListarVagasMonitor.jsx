@@ -8,7 +8,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import createAPI from "../services/createAPI";
 import { Button, Group } from "@mantine/core";
-import { IconParking } from "@tabler/icons-react";
+import { IconParking, IconReload } from "@tabler/icons-react";
 
 const ListarVagasMonitor = () => {
   const [resposta, setResposta] = useState([]);
@@ -196,7 +196,7 @@ const ListarVagasMonitor = () => {
           localStorage.removeItem("numero_vaga");
         }, 1000);
       }
-    }, 1000);
+    }, 2300);
 
     const cardToScroll = document.querySelector(
       `.card-list[data-vaga="${vaga}"]`
@@ -591,11 +591,15 @@ const ListarVagasMonitor = () => {
           <div className="row">
             <div className="col-12 mb-4">
               <div className="row mx-2">
-              <Group position="left">
-              <Button variant="gradient" gradient={{ from: "indigo", to: "blue", deg: 60 }} fullWidth mb="md" radius="md" size="md"
-            onClick={() => FuncTrocaComp("RegistrarEstacionamentoParceiro")}>
+              <Group position="apart">
+              <Button variant="gradient" gradient={{ from: "indigo", to: "blue", deg: 60 }} className="w-75" mb="md" radius="md" size="md"
+              onClick={() => FuncTrocaComp("RegistrarEstacionamentoParceiro")}>
               Registrar estacionamento ‎ <IconParking color="white" size={18} />
-            </Button>
+              </Button>
+              <Button variant="gradient" gradient={{ from: "indigo", to: "blue", deg: 60 }} mb="md" radius="md" size="md"
+              onClick={() => getVagas(salvaSetor)}>
+              <IconReload color="white" size={20} />
+              </Button>
               </Group>
             
               </div>
