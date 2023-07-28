@@ -12,12 +12,13 @@ import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import { ActionIcon, Loader } from "@mantine/core";
+import { ActionIcon, Button, Loader } from "@mantine/core";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
 import createAPI from "../services/createAPI";
-import { IconPrinter } from "@tabler/icons-react";
+import { IconPrinter, IconReceipt } from "@tabler/icons-react";
+import ImpressaoTicketRegularizacao from "../util/ImpressaoTicketRegularizacao";
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -44,7 +45,7 @@ const ListarNotificacoes = () => {
     const select = document.getElementById("pagamentos").value;
 
     if (select === "dinheiro") {
-      regularizar(data[index].id_vaga_veiculo, index, select);
+      regularizar(data[index].id_vaga_veiculo, index, select, data[index]);
     } else {
       const valor = data[index].valor.toString();
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
@@ -64,7 +65,7 @@ const ListarNotificacoes = () => {
           if (resposta.data.msg.resultado) {
             setOnOpen(true);
             setData2(resposta.data.data);
-            getInfoPix(resposta.data.data.txid, index);
+            getInfoPix(resposta.data.data.txid, index, data[index]);
             open();
           } else {
             console.log("n abriu nkk");
@@ -76,7 +77,7 @@ const ListarNotificacoes = () => {
     }
   };
 
-  async function getInfoPix(TxId, index) {
+  async function getInfoPix(TxId, index, item) {
     const requisicao = createAPI();
     await requisicao
       .put(`/notificacao/pix`, {
@@ -84,6 +85,8 @@ const ListarNotificacoes = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          ImpressaoTicketRegularizacao('PRIMEIRA', item)
+          console.log(response.data.data)
           setOnOpen(false);
           Swal.fire({
             title: "Regularizado!",
@@ -107,17 +110,20 @@ const ListarNotificacoes = () => {
       });
   }
 
-  const regularizar = async (idVagaVeiculo, index, pagamento) => {
+  const regularizacaoSegundaVia = (item) => {
+  ImpressaoTicketRegularizacao('SEGUNDA', item)
+  }
+
+  const regularizar = async (idVagaVeiculo, index, pagamento, item) => {
     const requisicao = createAPI();
     console.log(idVagaVeiculo);
-    requisicao
-      .put("/notificacao/", {
+    requisicao.put("/notificacao/", {
         id_vaga_veiculo: idVagaVeiculo,
         tipoPagamento: pagamento,
-      })
-      .then((response) => {
+      }).then((response) => {
         console.log(response);
         if (response.data.msg.resultado) {
+          ImpressaoTicketRegularizacao('PRIMEIRA', item)
           Swal.fire({
             title: "Regularizado!",
             text: "A notificação foi regularizada.",
@@ -172,14 +178,13 @@ const ListarNotificacoes = () => {
     await requisicao
       .get(`/notificacao/?query=${passar}`)
       .then((response) => {
-        console.log(response, "response");
         if (response.data.msg.resultado) {
           const newData = response?.data.data.map((item) => ({
             data: ArrumaHora(item.data),
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
+            monitor: item.monitor.id_usuario,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
             fabricante: item.veiculo.modelo.fabricante.nome,
@@ -239,7 +244,7 @@ const ListarNotificacoes = () => {
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
+            monitor: item.monitor.id_usuario,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
             fabricante: item.veiculo.modelo.fabricante.nome,
@@ -286,7 +291,7 @@ const ListarNotificacoes = () => {
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
+            monitor: item.monitor.id_usuario,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
             fabricante: item.veiculo.modelo.fabricante.nome,
@@ -369,7 +374,7 @@ const ListarNotificacoes = () => {
             data: ArrumaHora(item.data),
             id_notificacao: item.id_notificacao,
             tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
+            monitor: item.monitor.id_usuario,
             id_vaga_veiculo: item.id_vaga_veiculo,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
@@ -414,7 +419,8 @@ const ListarNotificacoes = () => {
       item.fabricante,
       item.tipo_notificacao,
       item.endereco,
-      item.valor
+      item.valor,
+      item.data,
     );
   };
 
@@ -560,7 +566,16 @@ const ListarNotificacoes = () => {
                     </h6>
                   </div>
 
-                  {link.pago === "S" ? null : (
+                  {link.pago === "S" ? 
+                  <div className="px-3">
+                   {perfil === "monitor" ? (
+                    <Button variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }} fullWidth mt="md" radius="md"
+                    onClick={() => regularizacaoSegundaVia(link)}>
+                    IMPRIMIR SEGUNDA VIA ‎ <IconReceipt size={18}/>
+                   </Button>
+                   ) : null}
+                  </div>
+                  : (
                     <div className="h6 mt-3 mx-5">
                       <select
                         className="form-select form-select-lg mb-1"

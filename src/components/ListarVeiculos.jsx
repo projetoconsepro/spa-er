@@ -13,7 +13,7 @@ import Cronometro from "./Cronometro";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Button, Grid, Group, Input, Text } from "@mantine/core";
-import { IconParking } from "@tabler/icons-react";
+import { IconParking, IconReload } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 
 const ListarVeiculos = () => {
@@ -29,6 +29,7 @@ const ListarVeiculos = () => {
   const [notificacao, setNotificacao] = useState([]);
   const [selectedButton, setSelectedButton] = useState("01:00:00");
   const [botaoOff, setBotaoOff] = useState(false);
+  const [contador, setContador] = useState(0);
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -81,6 +82,16 @@ const ListarVeiculos = () => {
       }
     });
   };
+
+  useEffect(() => {
+    if (contador >= 60) {
+      setContador(0);
+      atualizacomp();
+    }
+    setTimeout(() => {
+      setContador(contador + 1);
+    }, 1000);
+  }, [contador]);
 
   const atualizacomp = async () => {
     const requisicao = createAPI();
@@ -363,9 +374,16 @@ const ListarVeiculos = () => {
 
   return (
     <div className="col-12 px-3 mb-4">
-      <p className="text-start fs-2 fw-bold">
-        <VoltarComponente arrow={true} /> Meus veículos
-      </p>
+        <div className="row">
+        <div className="col-10">
+        <p className="text-start fs-2 fw-bold">
+        <VoltarComponente arrow={true} /> Meus veículos 
+        </p>
+        </div>
+        <div className="col-2" onClick={() => atualizacomp()}>
+        <IconReload className="text-end mt-2" />
+        </div>
+        </div>
       <div className="card border-0 shadow">
         <div className="card-body">
           <div className="d-flex align-items-center justify-content-between pb-3">

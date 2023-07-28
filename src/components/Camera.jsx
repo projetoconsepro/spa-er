@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
 import { Button, Card, Text } from "@mantine/core";
-import { IconCamera, IconCheck } from "@tabler/icons-react";
+import { IconCamera, IconCheck, IconReload } from "@tabler/icons-react";
 
 function Camera() {
   const videoRef = useRef(null);
@@ -105,12 +105,27 @@ function Camera() {
     }
   };
 
+  const stopVideoCapture = () => {
+    let video = videoRef.current;
+    if (video && video.srcObject) {
+      const stream = video.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop());
+      video.srcObject = null;
+  
+      // Aguarda 1 segundo antes de chamar novamente a função getVideo.
+      setTimeout(() => {
+        getVideo(); // Chama a função getVideo novamente para iniciar a captura após 1 segundo.
+      }, 1000);
+    }
+  };
+
   const savePhotosToLocalStorage = () => {
-    if (photos.length < 4) {
+    if (photos.length < 3) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Mínimo de 4 fotos!',
+        text: 'Mínimo de 3 fotos!',
         footer: '<a href>Tire no mínimo 4 fotos, por favor.</a>'
       });
     } else {
@@ -122,6 +137,16 @@ function Camera() {
   };
 
   return (
+    <>
+            <Button
+            variant="gradient"
+            size="sm"
+            className="mx-2"
+            gradient={{ from: 'yellow', to: 'orange' }}
+            rightIcon={<IconReload />}
+            onClick={() => stopVideoCapture()}
+            >Reiniciar
+            </Button>
     <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
       {photos.length > 0 && (
       <Card shadow="sm" className="mt-3 mb-2">
@@ -154,7 +179,7 @@ function Camera() {
             onClick={takePicture}
             >Tirar foto
             </Button>
-            {photos.length > 3 && (
+            {photos.length > 2 && (
             <Button
             className="mx-2"
             variant="gradient"
@@ -169,6 +194,7 @@ function Camera() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
