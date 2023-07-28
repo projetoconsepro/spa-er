@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
 import { Button, Card } from "@mantine/core";
-import { IconCamera, IconCheck } from "@tabler/icons-react";
+import { IconCamera, IconCheck, IconReload } from "@tabler/icons-react";
 import axios from "axios";
 import createAPI from "../services/createAPI";
 
@@ -66,6 +66,21 @@ function CameraTicketNotificacao() {
       setCont2(cont2 + 1);
     }, 500);
   }, [cont2]);
+
+  const stopVideoCapture = () => {
+    let video = videoRef.current;
+    if (video && video.srcObject) {
+      const stream = video.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop());
+      video.srcObject = null;
+  
+      // Aguarda 1 segundo antes de chamar novamente a função getVideo.
+      setTimeout(() => {
+        getVideo(); // Chama a função getVideo novamente para iniciar a captura após 1 segundo.
+      }, 1000);
+    }
+  };
 
   const takePicture = () => {
     const video = videoRef.current;
@@ -139,6 +154,16 @@ function CameraTicketNotificacao() {
   };
 
   return (
+    <>
+      <Button
+            variant="gradient"
+            size="sm"
+            className="mx-2"
+            gradient={{ from: 'yellow', to: 'orange' }}
+            rightIcon={<IconReload />}
+            onClick={() => stopVideoCapture()}
+            >Reiniciar
+            </Button>
     <div>
       {photos.length > 0 && (
       <Card shadow="sm" className="mt-3 mb-2">
@@ -184,6 +209,7 @@ function CameraTicketNotificacao() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

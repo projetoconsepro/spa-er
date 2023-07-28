@@ -3,6 +3,8 @@ import {React, useState, useEffect} from 'react'
 import Swal from 'sweetalert2'
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import createAPI from '../services/createAPI';
+import { Button } from '@mantine/core';
+import { IconReceipt } from '@tabler/icons-react';
 
 const FecharTurno = () => {
     const [estadoTurno, setEstadoTurno] = useState(true);
@@ -262,6 +264,15 @@ const FecharTurno = () => {
         );
     }
 
+    const testarImpressora = () => {
+        const json = {
+            tipo: 'TESTE',
+        }
+        if(window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(JSON.stringify(json));
+        }
+    }
+
   return (
     <div className="container">
     <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
@@ -290,20 +301,25 @@ const FecharTurno = () => {
                 <div className="col-6">
                 <select className="form-select form-select-sm mb-3 mt-2" aria-label=".form-select-lg example" id="setoresSelect2"
                 onChange={() => {setarSetor()}}>
-
                     {resposta2.map((link, index) => (
                     <option value={link.setores} key={index}>Setor: {link.setores}</option>
                     ))}
                     </select>
                 </div>
                 </div> : null}
-
                 </div>
                     <div>
-                    {estadoTurno === true ? <button type="button" className="btn4 botao mt-3" onClick={() => {fecharTurno()}}>Fechar turno</button> : <button type="button" className="btn4 botao mt-3" onClick={() => {abrirTurno2()}}>Abrir turno</button>}
+                    {estadoTurno === true ? 
+                    <button type="button" className="btn4 botao mt-3" onClick={() => {fecharTurno()}}>Fechar turno</button> 
+                    : 
+                    <button type="button" className="btn4 botao mt-3" onClick={() => {abrirTurno2()}}>Abrir turno</button>}
                     {estadoTurno === true ? 
                     <div>{estadoCaixa === true ? <button type="button" className="btn7 botao mt-3" onClick={() => {fecharCaixa()}}>Fechar caixa</button> : null}
                     </div>: null }   
+                    <Button variant="gradient" gradient={{ from: 'orange', to: 'red' }} fullWidth mt="md" radius="md"
+                    onClick={() => testarImpressora()}>
+                    Testar impressão ‎ <IconReceipt size={18}/>
+                    </Button>
                     </div>
                 </div>
             </div>
