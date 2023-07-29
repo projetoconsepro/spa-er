@@ -179,16 +179,6 @@ const ListarVagasMonitor = () => {
   };
 
   useEffect(() => {
-    if (contador === 60) {
-      setContador(0);
-      getVagas(salvaSetor);
-    }
-    setTimeout(() => {
-      setContador(contador + 1);
-    }, 1000);
-  }, [contador]);
-
-  useEffect(() => {
     setTimeout(() => {
       if (localStorage.getItem("numero_vaga")) {
         setVaga(localStorage.getItem("numero_vaga"));
