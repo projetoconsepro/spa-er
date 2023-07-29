@@ -81,7 +81,10 @@ const Notificacao = () => {
         } 
 
         if (!infoBanco){
-            if (fabricanteCerto === "" || modeloCerto === "" || (cor === "" && cor2 === "")) {
+
+
+
+            if (fabricanteCerto === "" || modeloCerto === "" || cor === "") {
                 setEstado2(false)
                 setMensagem("Necessário selecionar modelo, fabricante e cor")
                 setEstado(true)
@@ -97,6 +100,24 @@ const Notificacao = () => {
         if (!infoBanco) {
                 const getmodelo = modeloCerto;
                 const getfabricante = fabricanteCerto;
+
+
+                if (document.getElementById('selectCores') !== null && document.getElementById('selectCores') !== undefined){
+                    const corSelect = document.getElementById('selectCores').value;
+                    if(corSelect === ""){
+                        setEstado2(false)
+                        setMensagem("Necessário selecionar modelo, fabricante e cor")
+                        setEstado(true)
+                        setTimeout(() => {
+                        setEstado(false);
+                        setMensagem("");
+                    }, 4000);
+                    return;
+                    }
+                }
+                
+
+
                 if((document.getElementById('selectCores') === null || document.getElementById('selectCores') === undefined) && cor2 === ''){
                     setEstado2(false)
                     setMensagem("Necessário selecionar modelo, fabricante e cor")
@@ -109,11 +130,9 @@ const Notificacao = () => {
                 }
                 let corNova = '';
                 if(cor2 !== ""){
-                    console.log('toma', cor2)
                     corNova = cor2
                 } else {
                     const corSelect = document.getElementById('selectCores').value;
-                    console.log('teme', corSelect)
                     corNova = corSelect
                 }
         requisicao.post(`/veiculo/${placa}`, {
@@ -555,7 +574,7 @@ setTimeout(() => {
                                             {outro ?
                                             <div  onChange={()=>{attcor()}}>
                                             <h6 className='mx-4'><small>Cor:</small></h6>
-                                            <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectCores">
+                                            <select className="form-select form-select-sm mb-3 mx-3" defaultValue="" aria-label=".form-select-sm example" id="selectCores">
                                             <option value="">Selecione uma cor</option>
                                             {cor.map((link, index) => (
                                                 <option value={link.cor} key={index}>{link.cor}</option>
