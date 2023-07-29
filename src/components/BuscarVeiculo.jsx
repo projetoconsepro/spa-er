@@ -158,9 +158,9 @@ const BuscarVeiculo = () => {
         const imprimirSegundaVia = (link) => {
             console.log(link)
             if(link.estacionado === 'S'){
-                ImpressaoTicketEstacionamento('SEGUNDA', link.chegada, link.temporestante, 
+                ImpressaoTicketEstacionamento('SEGUNDA', link.chegada, link.tempo, 
                 'Nao informado', link.vaga, link.placa, 'Nao informado', 'Nao informado',
-                link.numero_notificacoes_pendentes)
+                link.numero_notificacoes_pendentes, link.temporestante)
             } else {
                 
             }

@@ -30,6 +30,7 @@ const ListarVeiculos = () => {
   const [selectedButton, setSelectedButton] = useState("01:00:00");
   const [botaoOff, setBotaoOff] = useState(false);
   const [contador, setContador] = useState(0);
+  const [horaAgora, setHoraAgora] = useState("");
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -43,6 +44,14 @@ const ListarVeiculos = () => {
     } else if (tempo1 === "00:30:00") {
       setValorCobranca2(valorcobranca / 2);
     }
+  };
+
+  const calcularValidade = (horaInicio, duracao) => {
+    const [horas, minutos, segundos] = duracao.split(':').map(Number);
+    const dataInicio = new Date(`2000-01-01T${horaInicio}`);
+    const dataValidade = new Date(dataInicio.getTime() + (horas * 3600000) + (minutos * 60000) + (segundos * 1000));
+    const horaValidade = dataValidade.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    return horaValidade;
   };
 
   const parametros = axios.create({
@@ -82,16 +91,6 @@ const ListarVeiculos = () => {
       }
     });
   };
-
-  useEffect(() => {
-    if (contador >= 60) {
-      setContador(0);
-      atualizacomp();
-    }
-    setTimeout(() => {
-      setContador(contador + 1);
-    }, 1000);
-  }, [contador]);
 
   const atualizacomp = async () => {
     const requisicao = createAPI();
@@ -150,10 +149,9 @@ const ListarVeiculos = () => {
             resposta[i].tempo = response.data.data[i].tempo;
             resposta[i].chegada = response.data.data[i].chegada;
             resposta[i].id_vaga_veiculo = response.data.data[i].id_vaga_veiculo;
-            resposta[i].temporestante = response.data.data[i].temporestante;
+            resposta[i].temporestante = calcularValidade(response.data.data[i].chegada, response.data.data[i].tempo);
             if (response.data.data[i].numero_notificacoes_pendentess > 0) {
               resposta[i].textoestacionado = "Clique aqui para regularizar";
-              resposta[i].temporestante = "00:00:00";
             }
             if (response.data.data[i].numero_notificacoes_pendentes === 0) {
               resposta[i].numero_notificacoes_pendentes = "Sem notificações";
@@ -229,6 +227,25 @@ const ListarVeiculos = () => {
         }
       });
   };
+
+  const atualizaHora = () => {
+    const dataAtual = new Date();
+    const hora = dataAtual.getHours().toString().padStart(2, '0');
+    const minutos = dataAtual.getMinutes().toString().padStart(2, '0');
+    const segundos = dataAtual.getSeconds().toString().padStart(2, '0');
+    const horaAtual = `${hora}:${minutos}:${segundos}`;
+    setHoraAgora(horaAtual)
+  }
+
+  useEffect(() => {
+    atualizaHora()
+    if (contador >= 10) {
+      setContador(0);
+    }
+    setTimeout(() => {
+      setContador(contador + 1);
+    }, 1000);
+  }, [contador]);
 
   useEffect(() => {
     atualizacomp();
@@ -330,8 +347,7 @@ const ListarVeiculos = () => {
         footer: '<a href="">Clique aqui para adicionar crédito.</a>',
       });
     } else {
-      requisicao
-        .post("/estacionamento", {
+      requisicao.post("/estacionamento", {
           placa: placa,
           numero_vaga: vagaa,
           tempo: tempo1,
@@ -436,9 +452,9 @@ const ListarVeiculos = () => {
                     className="h6 d-flex align-items-center fs-6"
                     id="estacionadocarroo"
                   >
-                    <h6>
-                      <RxLapTimer />‎ Tempo restante:{" "}
-                      <Cronometro time={link.temporestante} />{" "}
+                    <h6 className={link.temporestante < horaAgora ? "text-danger" : ""}>
+                      <RxLapTimer />‎ Validade:{" "}
+                      <span>{link.temporestante}</span>{" "}
                     </h6>
                   </div>
                 )}
