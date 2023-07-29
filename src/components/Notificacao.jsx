@@ -77,24 +77,45 @@ const Notificacao = () => {
                     setEstado(false);
                     setMensagem("");
                 }, 4000);
-        } else {
-            const requisicao = createAPI();
+            return;
+        } 
+
+        if (!infoBanco){
+            if (fabricanteCerto === "" || modeloCerto === "" || (cor === "" && cor2 === "")) {
+                setEstado2(false)
+                setMensagem("Necessário selecionar modelo, fabricante e cor")
+                setEstado(true)
+                setTimeout(() => {
+                    setEstado(false);
+                    setMensagem("");
+                }, 4000);
+                return;
+            }
+        }
+
+        const requisicao = createAPI();
         if (!infoBanco) {
                 const getmodelo = modeloCerto;
                 const getfabricante = fabricanteCerto;
-                let cor = cor2;
-            if (!outro) {
-                cor = document.getElementById("selectCores").value;
-                if (getmodelo === "" || getfabricante === "" || cor === "") {
+                if((document.getElementById('selectCores') === null || document.getElementById('selectCores') === undefined) && cor2 === ''){
+                    setEstado2(false)
                     setMensagem("Necessário selecionar modelo, fabricante e cor")
                     setEstado(true)
                     setTimeout(() => {
-                        setEstado(false);
-                        setMensagem("");
-                    }, 4000);
-                    return;
+                    setEstado(false);
+                    setMensagem("");
+                }, 4000);
+                return;
                 }
-            }
+                let corNova = '';
+                if(cor2 !== ""){
+                    console.log('toma', cor2)
+                    corNova = cor2
+                } else {
+                    const corSelect = document.getElementById('selectCores').value;
+                    console.log('teme', corSelect)
+                    corNova = corSelect
+                }
         requisicao.post(`/veiculo/${placa}`, {
             "placa": placa,
              "modelo": {
@@ -103,9 +124,10 @@ const Notificacao = () => {
                     "idFabricante": getfabricante,
                 }
             },
-            "cor": cor,
+            "cor": corNova,
     }).then(
             response => {
+                console.log('oi', response)
                 modeloImpressao = response.data.data.reposta.modelo.modelo
                 fabricanteImpressao = response.data.data.reposta.modelo.fabricante.fabricante
             }
@@ -122,13 +144,13 @@ const Notificacao = () => {
             fabricanteImpressao = fabricanteVeiculo;
         }
         if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") { 
+        console.log('oi2')
         requisicao.post('/notificacao', {
             "id_vaga_veiculo": vagaVeiculo,
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
     }).then(
             response => {
-                console.log(response)
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
                     if(response.data.data.id_notificacao !== undefined){
@@ -160,6 +182,7 @@ const Notificacao = () => {
             localStorage.removeItem("perfil");
         });
     } else {
+        console.log('oi3')
         requisicao.post('/notificacao', {
             "placa": placa,
             "vaga": vaga,
@@ -208,10 +231,10 @@ const Notificacao = () => {
  }
 }
 
+
 setTimeout(() => {
     setDisabled(false);
 }, 2000);
-}
 
     const back = () => {
         FuncTrocaComp( "ListarVagasMonitor");
@@ -221,7 +244,6 @@ setTimeout(() => {
         for (let i = 0; i < 6; i++) {
             localStorage.removeItem(`foto${i}`);
         }
-        
     }
 
     const renderCamera = () => {
@@ -294,7 +316,6 @@ setTimeout(() => {
     }));
     setCor(newData);
 }
-
 
     const SetdadosTrue = () => {
         setEstado2(true)
@@ -377,8 +398,6 @@ setTimeout(() => {
     else {
         setDados(false);
     }
-
-
         requisicao.get('/notificacao/tipos').then(
             response => {
                 const newData = response?.data?.data?.map(item => ({
@@ -560,8 +579,17 @@ setTimeout(() => {
                                     </div>
                                     : null}
                                     <div className="mt-4 mb-5 gap-2 d-md-block">
-                                        <button type="submit" className="btn2 botao" onClick={back}>Cancelar</button>
-                                        <button type="submit" className="btn3 botao" disabled={disabled} onClick={() => submit()}>Confirmar</button>
+                                    <Button className="bg-gray-500 mx-2" size="md" radius="md" onClick={() => {back()}}>Voltar</Button> 
+                                        <Button 
+                                        loading={estado2} 
+                                        disabled={disabled} onClick={() => submit()}
+                                        loaderPosition="right"
+                                        className="bg-blue-50"
+                                        size="md"
+                                        radius="md"
+                                        >
+                                        Confirmar
+                                        </Button>
                                     </div>
                                     <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                         {mensagem}
@@ -619,7 +647,7 @@ setTimeout(() => {
                                                 size="md"
                                                 radius="md"
                                                 >
-                                                    Buscar
+                                                    Avançar
                                                 </Button>
                                             </div>
 
@@ -630,9 +658,6 @@ setTimeout(() => {
                                     }
                                 </div>
                             }
-                            <div style={{ display: estado2 ? 'block' : 'none'}}>
-                                <Loader />
-                            </div>
                         </div>
                         
                     </div>

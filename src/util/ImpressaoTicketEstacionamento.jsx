@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao) => {
+const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao, tempoRestante) => {
     console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao)
         const obterHoraAtual = () => {
             const dataAtual = new Date();
@@ -20,7 +20,12 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
         
           const horaInicio = obterHoraAtual();
           const duracao = tempo;
-          const horaValidade = calcularValidade(horaInicio, duracao);
+          let horaValidade = ""
+          if(tempoRestante == "00:00:00"){
+            horaValidade = calcularValidade(tempoChegada, duracao);  
+          } else {
+            horaValidade = calcularValidade(horaInicio, duracao);  
+          }
           console.log('TEMPO CHEGADA', horaInicio, horaValidade)
           
           const tipoEstacionamento = () => {
