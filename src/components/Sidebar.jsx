@@ -1,4 +1,4 @@
-import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp } from "react-icons/fa";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
@@ -31,15 +31,24 @@ const Sidebar = () => {
                 
             } else {
             setAriaExpanded(false)
-            if (componente !== "linkWhatsapp") {
+            if (componente !== "linkWhatsapp" && componente !== "ConfigurarImpressora") {
             FuncTrocaComp(componente)
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
             }, 1);
             }
+            else if (componente === "ConfigurarImpressora"){
+                setMostrarSidebar(false)
+            setTimeout(() => {
+                setMostrarSidebar(true)
+            }, 1);
+                if(window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage('mostrar');
+                }
+            }
             else {
-                window.location.href = 'https://app.hiperchat.com.br';
+                window.open('https://app.hiperchat.com.br/', '_blank');
             }
             }
     }
@@ -335,6 +344,12 @@ const Sidebar = () => {
             icon: <BsCashCoin />,
             name: "‎ Abrir/fechar turno",
             componente: "AbrirTurno",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaPrint />,
+            name: "‎ Configurar impressora",
+            componente: "ConfigurarImpressora",
         })
     }
     else if (teste.perfil[0] === "agente"){

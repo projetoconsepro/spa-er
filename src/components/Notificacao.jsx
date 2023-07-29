@@ -176,8 +176,32 @@ const Notificacao = () => {
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao("PRIMEIRA", response.config.headers.id_usuario, vaga, placa, 
-                    modeloImpressao, fabricanteImpressao, tipoNotificacaoNome, response.data.data.local)
+
+                    const primeiraParam = "PRIMEIRA";
+                    const idUsuario = response.config.headers.id_usuario;
+                    const local = response.data.data.local;
+
+                    localStorage.setItem('parametrosImpressaoTicket', JSON.stringify({
+                        primeiraParam: primeiraParam,
+                        idUsuario: idUsuario,
+                        vaga: vaga,
+                        placa: placa,
+                        modeloImpressao: modeloImpressao,
+                        fabricanteImpressao: fabricanteImpressao,
+                        tipoNotificacaoNome: tipoNotificacaoNome,
+                        local: local,
+                      }));
+
+                    ImpressaoTicketNotificacao("PRIMEIRA",
+                     response.config.headers.id_usuario, 
+                     vaga, 
+                     placa, 
+                     modeloImpressao,
+                     fabricanteImpressao, 
+                     tipoNotificacaoNome, 
+                     response.data.data.local)
+
+
                     FuncTrocaComp( "CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
@@ -215,8 +239,30 @@ const Notificacao = () => {
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao("PRIMEIRA", response.config.headers.id_usuario, vaga, placa, 
-                    modeloImpressao, fabricanteImpressao, tipoNotificacaoNome, response.data.data.local)
+                    const primeiraParam = "PRIMEIRA";
+                    const idUsuario = response.config.headers.id_usuario;
+                    const local = response.data.data.local;
+
+                    localStorage.setItem('parametrosImpressaoTicket', JSON.stringify({
+                        primeiraParam: primeiraParam,
+                        idUsuario: idUsuario,
+                        vaga: vaga,
+                        placa: placa,
+                        modeloImpressao: modeloImpressao,
+                        fabricanteImpressao: fabricanteImpressao,
+                        tipoNotificacaoNome: tipoNotificacaoNome,
+                        local: local,
+                      }));
+
+                    ImpressaoTicketNotificacao("PRIMEIRA",
+                     response.config.headers.id_usuario, 
+                     vaga, 
+                     placa, 
+                     modeloImpressao,
+                     fabricanteImpressao, 
+                     tipoNotificacaoNome, 
+                     response.data.data.local)
+                     
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
