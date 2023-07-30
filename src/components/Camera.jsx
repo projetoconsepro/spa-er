@@ -138,7 +138,7 @@ function Camera() {
     <>
     <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
       {photos.length > 0 && (
-       <div className='row pb-3'>
+       <div className='row pb-1'>
        {photos.map((imagem, key) => (
            <div key={key} className="col-4">
               <img
@@ -153,7 +153,7 @@ function Camera() {
 
    </div>
       )}
-      <Card shadow="sm" className="mt-3 mb-2">
+      <Card shadow="sm" className="mt-1 mb-2">
       {divErro ?
       <Text>Erro ao capturar vídeo, tente reiniciar a aplicação.</Text>
       :

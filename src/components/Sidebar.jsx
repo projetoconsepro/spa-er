@@ -317,12 +317,6 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            name: "‎ Notificacão",
-            componente: "Notificacao",
-            icon: <RiAlertFill />,
-        })
-        links.push({
-            className: styles.className,
             name: "‎ Listar Vagas",
             icon: <FaCarAlt />,
             componente: "ListarVagasMonitor"
