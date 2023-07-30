@@ -215,7 +215,7 @@ function CameraTicketNotificacao() {
 
       <div>
       {photos.length > 0 && (
-       <div className='row pb-3'>
+       <div className='row pb-1'>
         <div className="col-4"></div>
        {photos.map((imagem, key) => (
            <div key={key} className="col-4">
@@ -223,7 +223,7 @@ function CameraTicketNotificacao() {
                 key={imagem.id}
                 src={imagem.photo}
                 alt="foto"
-                className="mt-2 mb-2"
+                className="mt-1 mb-1"
                 onClick={() => abrirModal(imagem.id)}
               />
            </div>
@@ -231,7 +231,7 @@ function CameraTicketNotificacao() {
   <div className="col-4"></div>
    </div>
       )}
-        <Card shadow="sm" className="mt-3 mb-2">
+        <Card shadow="sm" className="mt-1 mb-1">
           <video ref={videoRef} className="w-100"></video>
         </Card>
         <div className="container" id="testeRolagem">

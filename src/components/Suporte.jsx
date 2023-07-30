@@ -152,7 +152,10 @@ const Suporte = () => {
           <Accordion.Control icon={<IconVideo color="blue" />}>
             Como usar o sistema
           </Accordion.Control>
-          <Accordion.Panel></Accordion.Panel>
+          <Accordion.Panel>
+            
+
+          </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="contato">
           <Accordion.Control icon={<IconMail color="red" />}>

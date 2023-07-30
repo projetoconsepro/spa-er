@@ -165,7 +165,7 @@ function CameraAutoInfracao() {
             gradient={{ from: 'teal', to: 'lime'}}
             rightIcon={<IconCheck />}
             onClick={savePhotosToLocalStorage}
-            >Salvar fotos
+            >Salvar foto
             </Button>
             )}
           </div>

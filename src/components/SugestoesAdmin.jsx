@@ -16,7 +16,8 @@ const SugestoesAdmin = () => {
                     nome: item.nome,
                     descricao: item.descricao,
                     data: item.data,
-                    assunto: item.assunto
+                    assunto: item.assunto,
+                    perfil: item.perfil
                 }
             }
             )
@@ -61,7 +62,14 @@ const SugestoesAdmin = () => {
                     </Card.Section>
                     <Group position="apart" mt="md" mb="xs">
                     <Text weight={500} fz="md">Nome: {item.nome}</Text>
-                    <Badge color="indigo" size="md">CLIENTE</Badge>
+                    {item.perfil === "cliente" ?
+                    <Badge color="indigo" size="md">{item.perfil.toUpperCase()}</Badge>
+                    :
+                    item.perfil === "parceiro" ?
+                    <Badge color="teal" size="md">{item.perfil.toUpperCase()}</Badge>
+                    :
+                    <Badge color="red" size="md">{item.perfil.toUpperCase()}</Badge>
+                    }
                     </Group>
                     <Group position="left" mt="md" mb="xs">
                     <Text weight={500} fz="sm">Data: {formatarDataHora(item.data)}</Text>
