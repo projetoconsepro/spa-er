@@ -71,8 +71,6 @@ function Camera() {
     const updatedPhotos = [...photos, { id: cont, photo: photoDataUrl }];
     setPhotos(updatedPhotos);
     setCont(cont + 1);
-    setTamanho(tamanho + 30)
-    mainDivRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
 
   const deletePhoto = (id) => {
@@ -138,28 +136,22 @@ function Camera() {
 
   return (
     <>
-            <Button
-            variant="gradient"
-            size="sm"
-            className="mx-2"
-            gradient={{ from: 'yellow', to: 'orange' }}
-            rightIcon={<IconReload />}
-            onClick={() => stopVideoCapture()}
-            >Reiniciar
-            </Button>
     <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
       {photos.length > 0 && (
-      <Card shadow="sm" className="mt-3 mb-2">
-      {photos.map((item) => (
-        <img
-          key={item.id}
-          src={item.photo}
-          alt="foto"
-          className="mt-2 mb-2"
-          onClick={() => abrirModal(item.id)}
-        />
-      ))}
-      </Card>
+       <div className='row pb-3'>
+       {photos.map((imagem, key) => (
+           <div key={key} className="col-4">
+              <img
+                key={imagem.id}
+                src={imagem.photo}
+                alt="foto"
+                className="mt-2 mb-2"
+                onClick={() => abrirModal(imagem.id)}
+              />
+           </div>
+       ))}
+
+   </div>
       )}
       <Card shadow="sm" className="mt-3 mb-2">
       {divErro ?
@@ -167,9 +159,8 @@ function Camera() {
       :
       <video ref={videoRef} className="w-100"></video>
       }
-      </Card>
       <div className="container" id="testeRolagem">
-        <div className="mb-6">
+        <div className="mb-3">
           <div className="text-middle mt-3">
             <Button
             variant="gradient"
@@ -179,9 +170,18 @@ function Camera() {
             onClick={takePicture}
             >Tirar foto
             </Button>
+            <Button
+            variant="gradient"
+            size="md"
+            className="mx-2"
+            gradient={{ from: 'yellow', to: 'orange' }}
+            rightIcon={<IconReload />}
+            onClick={() => stopVideoCapture()}
+            >Reiniciar
+            </Button>
             {photos.length >= 2 && (
             <Button
-            className="mx-2"
+            className="mt-2"
             variant="gradient"
             size="md"
             gradient={{ from: 'teal', to: 'lime'}}
@@ -193,6 +193,7 @@ function Camera() {
           </div>
         </div>
       </div>
+      </Card>
     </div>
     </>
   );
