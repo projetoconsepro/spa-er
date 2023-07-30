@@ -1,8 +1,21 @@
-import { Accordion, Badge, Button, Card, Group, Input, Text } from "@mantine/core";
+import {
+  Accordion,
+  Badge,
+  Button,
+  Card,
+  Group,
+  Input,
+  Text,
+} from "@mantine/core";
 import { FaWhatsapp } from "react-icons/fa";
-import { Icon24Hours, IconArrowAutofitContent, IconCheck, IconHelpTriangle, IconLamp, IconLamp2, IconMail, IconVideo } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconHelpTriangle,
+  IconMail,
+  IconVideo,
+} from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
-import { FiMail, FiMap } from 'react-icons/fi';
+import { FiMail, FiMap } from "react-icons/fi";
 import { FcIdea } from "react-icons/fc";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -12,14 +25,11 @@ const Suporte = () => {
   const [nome, setNome] = useState("");
   const [textoSuporte, setTextoSuporte] = useState("");
   const [assunto, setAssunto] = useState("");
-
-
+  const [perfil, setPerfil] = useState("");
 
   const handleSugestao = async () => {
-
-
     if (textoSuporte === "" || assunto === "") {
-      Swal.fire( "Aviso!", "Preencha todos os campos!", "error");
+      Swal.fire("Aviso!", "Preencha todos os campos!", "error");
       return;
     }
 
@@ -34,9 +44,9 @@ const Suporte = () => {
         if (res.data.msg.resultado) {
           setTextoSuporte("");
           setAssunto("");
-          Swal.fire( "Sucesso!", res.data.msg.msg, "success");
+          Swal.fire("Sucesso!", res.data.msg.msg, "success");
         } else {
-          Swal.fire( "Erro!", res.data.msg.msg, "error");
+          Swal.fire("Erro!", res.data.msg.msg, "error");
         }
       })
       .catch((err) => {
@@ -44,16 +54,13 @@ const Suporte = () => {
       });
   };
 
-
-
-
-
-
-
   useEffect(() => {
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
+    setPerfil(user2.perfil[0]);
     setNome(user2.nome);
+
+
   }, []);
 
   return (
@@ -87,11 +94,13 @@ const Suporte = () => {
             >
               <Accordion.Item value="pergunta6">
                 <Accordion.Control>
-                    Qual é o horário de funcionamento do estacionamento rotativo?
+                  Qual é o horário de funcionamento do estacionamento rotativo?
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Text size="sm" color="dimmed">
-                  O horário de funcionamento do estacionamento rotativo é das 9h às 18h, de segunda a sexta-feira, e aos sábados até às 13h.
+                    O horário de funcionamento do estacionamento rotativo é das
+                    9h às 18h, de segunda a sexta-feira, e aos sábados até às
+                    13h.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
@@ -100,18 +109,21 @@ const Suporte = () => {
                   Qual o tempo limite de duração do meu saldo?
                 </Accordion.Control>
                 <Accordion.Panel>
-                  <Text size="sm" color="dimmed" >
-                    Não há limite de tempo para o uso do saldo, ele é seu e você pode utilizá-lo quando desejar.
+                  <Text size="sm" color="dimmed">
+                    Não há limite de tempo para o uso do saldo, ele é seu e você
+                    pode utilizá-lo quando desejar.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
               <Accordion.Item value="pergunta2">
                 <Accordion.Control>
-                  Qual é o prazo para a regularização de uma notificação do meu veículo?
+                  Qual é o prazo para a regularização de uma notificação do meu
+                  veículo?
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Text size="sm" color="dimmed">
-                  Você tem um prazo de dois dias para realizar a regularização de uma notificação do seu veículo.
+                    Você tem um prazo de dois dias para realizar a regularização
+                    de uma notificação do seu veículo.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
@@ -121,27 +133,31 @@ const Suporte = () => {
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Text size="sm" color="dimmed">
-                  O período de tolerância para o estacionamento rotativo é de 10 minutos.
+                    O período de tolerância para o estacionamento rotativo é de
+                    10 minutos.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
               <Accordion.Item value="pergunta4">
                 <Accordion.Control>
-                    É permitido estacionar o veículo na vaga destinada a idosos?
+                  É permitido estacionar o veículo na vaga destinada a idosos?
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Text size="sm" color="dimmed">
-                    Para estacionar na vaga destinada a idosos, é necessário possuir o cartão de idoso. Caso contrário, estará sujeito a receber notificações.
+                    Para estacionar na vaga destinada a idosos, é necessário
+                    possuir o cartão de idoso. Caso contrário, estará sujeito a
+                    receber notificações.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
               <Accordion.Item value="pergunta5">
                 <Accordion.Control>
-                    Onde posso solicitar o cartão de estacionamento para idosos?
+                  Onde posso solicitar o cartão de estacionamento para idosos?
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Text size="sm" color="dimmed">
-                  No setor de trânsito da Prefeitura de Taqura, localizado na Rua Tristão Monteiro, 1278 - Centro, Taquara.
+                    No setor de trânsito da Prefeitura de Taqura, localizado na
+                    Rua Tristão Monteiro, 1278 - Centro, Taquara.
                   </Text>
                 </Accordion.Panel>
               </Accordion.Item>
@@ -153,8 +169,37 @@ const Suporte = () => {
             Como usar o sistema
           </Accordion.Control>
           <Accordion.Panel>
-            
-
+            {perfil === "cliente" ?
+          <Accordion
+              variant="contained"
+              styles={{ item: { backgroundColor: "white" } }}
+            >
+              <Accordion.Item value="credito">
+                <Accordion.Control>
+                  Como faço para comprar créditos?
+                </Accordion.Control>
+                <Accordion.Panel>
+                <iframe width="100%" height="500" src="https://www.youtube.com/embed/_pI2x798syo" title="Adicionar crédito" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                </Accordion.Panel>
+              </Accordion.Item>
+              <Accordion.Item value="estacionar">
+                <Accordion.Control>
+                  Como estacionar pelo aplicativo?
+                </Accordion.Control>
+                <Accordion.Panel>
+                <iframe width="100%" height="500" src="https://www.youtube.com/embed/TTZyZRaq7Og" title="Estacionamento pelo App" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                </Accordion.Panel>
+              </Accordion.Item>
+              <Accordion.Item value="whatsapp">
+                <Accordion.Control>
+                  Como estacionar pelo WhatsApp?
+                </Accordion.Control>
+                <Accordion.Panel>
+                <iframe width="100%" height="500" src="https://www.youtube.com/embed/qpaxJ7In8Mg" title="Estacionamento pelo WhatsApp" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+            : null }
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="contato">
@@ -171,14 +216,21 @@ const Suporte = () => {
                 <span>Contato via WhatsApp</span>
               </div>
             </div>
-            <div className={window.innerWidth > 768 ? "text-start mt-3 mx-3" : "text-center mt-3 mx-3"}>
+            <div
+              className={
+                window.innerWidth > 768
+                  ? "text-start mt-3 mx-3"
+                  : "text-center mt-3 mx-3"
+              }
+            >
               <a href="https://api.whatsapp.com/send?phone=5186604241&text=Olá!">
-                <Button 
+                <Button
                   radius="sm"
-                  className="text-start" 
+                  className="text-start"
                   variant="gradient"
                   size="md"
-                  gradient={{ from: 'teal', to: 'green'}}>
+                  gradient={{ from: "teal", to: "green" }}
+                >
                   Iniciar conversa
                 </Button>
               </a>
@@ -194,7 +246,8 @@ const Suporte = () => {
             </div>
             <div className="text-start mt-3 mx-3">
               <Text size="sm" color="dimmed">
-                Condominio Viena Shopping - R. Júlio de Castilhos, 2500 - 12 - Centro, Taquara - RS, 95600-000
+                Condominio Viena Shopping - R. Júlio de Castilhos, 2500 - 12 -
+                Centro, Taquara - RS, 95600-000
               </Text>
             </div>
           </Accordion.Panel>
@@ -204,46 +257,47 @@ const Suporte = () => {
             Sugestões
           </Accordion.Control>
           <Accordion.Panel>
+            <div className="text-start" style={{ marginBottom: "1rem" }}>
+              <p style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
+                Sua contribuição é extremamente importante para nós!
+              </p>
+              <p style={{ fontSize: "0.9rem", color: "#666" }}>
+                Ela nos ajuda a melhorar constantemente o nosso sistema.
+              </p>
+            </div>
+            <Input
+              value={assunto}
+              onChange={(e) => setAssunto(e.target.value)}
+              className="mb-3"
+              placeholder="Qual o assunto da sua sugestão?"
+            />
+            <textarea
+              value={textoSuporte}
+              onChange={(e) => setTextoSuporte(e.target.value)}
+              placeholder="Digite sua sugestão aqui"
+              style={{
+                width: "100%",
+                color: "#666",
+                height: "150px",
+                padding: "0.5rem",
+                fontSize: "1rem",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+              }}
+            />
 
-          <div className='text-start' style={{ marginBottom: '1rem' }}>
-          <p style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
-            Sua contribuição é extremamente importante para nós!
-          </p>
-          <p style={{ fontSize: '0.9rem', color: '#666' }}>
-            Ela nos ajuda a melhorar constantemente o nosso sistema.
-          </p>
-        </div>
-        <Input
-          value={assunto}
-          onChange={(e) => setAssunto(e.target.value)}
-          className="mb-3"
-          placeholder="Qual o assunto da sua sugestão?"
-        />
-        <textarea
-          value={textoSuporte}
-          onChange={(e) => setTextoSuporte(e.target.value)}
-          placeholder="Digite sua sugestão aqui"
-          style={{
-            width: '100%',
-            color: '#666',
-            height: '150px',
-            padding: '0.5rem',
-            fontSize: '1rem',
-            border: '1px solid #ccc',
-            borderRadius: '5px',
-          }}
-        />
-
-        <Button
-          variant="gradient"
-          gradient={{ from: 'green', to: 'blue'}}
-          radius="sm"
-          size="md"
-          style={{ marginTop: '1rem' }}
-          onClick={() => {handleSugestao()}}
-        >
-          Enviar  ‎ ‎ <IconCheck />
-        </Button>
+            <Button
+              variant="gradient"
+              gradient={{ from: "green", to: "blue" }}
+              radius="sm"
+              size="md"
+              style={{ marginTop: "1rem" }}
+              onClick={() => {
+                handleSugestao();
+              }}
+            >
+              Enviar ‎ ‎ <IconCheck />
+            </Button>
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
