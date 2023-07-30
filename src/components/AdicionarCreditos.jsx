@@ -9,6 +9,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Button, Divider, Input } from "@mantine/core";
 import { IconCash, IconUser } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
+import ImpressaoTicketCredito from "../util/ImpressaoTicketCredito";
 
 const AdicionarCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -33,6 +34,7 @@ const AdicionarCreditos = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          ImpressaoTicketCredito(cpf, valor, pagamentos, response.config.headers.id_usuario)
           setValor("")
           setCPF("")
           setOnOpen(false);
@@ -160,6 +162,7 @@ const AdicionarCreditos = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado) {
+            ImpressaoTicketCredito(cpf, Newvalor, pagamentos, response.config.headers.id_usuario)
             setEstado2(false);
             setValor("")
             setCPF("")

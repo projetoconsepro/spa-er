@@ -189,7 +189,7 @@ function CameraTicketNotificacao() {
 
   return (
     <>
-    <Group position="apart">
+    <Group position="apart" mb="md">
       <Button
         variant="gradient"
         size="sm"
@@ -214,19 +214,23 @@ function CameraTicketNotificacao() {
 
 
       <div>
-        {photos.length > 0 && (
-          <Card shadow="sm" className="mt-3 mb-2">
-            {photos.map((item) => (
+      {photos.length > 0 && (
+       <div className='row pb-3'>
+        <div className="col-4"></div>
+       {photos.map((imagem, key) => (
+           <div key={key} className="col-4">
               <img
-                key={item.id}
-                src={item.photo}
+                key={imagem.id}
+                src={imagem.photo}
                 alt="foto"
                 className="mt-2 mb-2"
-                onClick={() => abrirModal(item.id)}
+                onClick={() => abrirModal(imagem.id)}
               />
-            ))}
-          </Card>
-        )}
+           </div>
+       ))}
+  <div className="col-4"></div>
+   </div>
+      )}
         <Card shadow="sm" className="mt-3 mb-2">
           <video ref={videoRef} className="w-100"></video>
         </Card>
