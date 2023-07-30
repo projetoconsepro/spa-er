@@ -121,7 +121,7 @@ function Camera() {
   };
 
   const savePhotosToLocalStorage = () => {
-    if (photos.length < 3) {
+    if (photos.length < 2) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -179,7 +179,7 @@ function Camera() {
             onClick={takePicture}
             >Tirar foto
             </Button>
-            {photos.length > 2 && (
+            {photos.length >= 2 && (
             <Button
             className="mx-2"
             variant="gradient"
