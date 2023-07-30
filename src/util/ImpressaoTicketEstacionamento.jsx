@@ -20,13 +20,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
         
           const horaInicio = obterHoraAtual();
           const duracao = tempo;
-          let horaValidade = ""
-          if(tempoRestante == "00:00:00"){
-            horaValidade = calcularValidade(tempoChegada, duracao);  
-          } else {
-            horaValidade = calcularValidade(horaInicio, duracao);  
-          }
-          console.log('TEMPO CHEGADA', horaInicio, horaValidade)
+          let horaValidade = calcularValidade(tempoChegada, duracao); 
           
           const tipoEstacionamento = () => {
             let tipo2 = tempo
@@ -114,7 +108,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 via: via,
                 tipo: 'EXTRATO DE PLACA',
                 dataHoje: getDataDeHoje(),
-                horaInicio: horaInicio,
+                horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
                 metodo: forma(),

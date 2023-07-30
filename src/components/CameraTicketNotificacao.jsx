@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from "webrtc-adapter";
 import { Button, Card, Group } from "@mantine/core";
-import { IconCamera, IconCheck, IconReload } from "@tabler/icons-react";
+import { IconCamera, IconCheck, IconPrinter, IconReload } from "@tabler/icons-react";
 import axios from "axios";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
@@ -205,7 +205,7 @@ function CameraTicketNotificacao() {
         size="sm"
         className="mx-2"
         gradient={{ from: "purple", to: "pink" }}
-        rightIcon={<IconReload />}
+        rightIcon={<IconPrinter />}
         onClick={() => regerarImpressao()}
       >
         Re-imprimir notificação

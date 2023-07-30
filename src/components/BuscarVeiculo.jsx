@@ -22,8 +22,7 @@ const BuscarVeiculo = () => {
     const [estado2, setEstado2] = useState(false);
     const [cont, setCont] = useState(0);
     const [div , setDiv] = useState(false)
-    const [data, setData] = useState([])
-    const token = localStorage.getItem('token');
+    const [data, setData] = useState([]);
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
@@ -32,7 +31,6 @@ const BuscarVeiculo = () => {
         const upperCase = tirarTraco.toUpperCase();
         localStorage.setItem('placaCarro', upperCase)
         FuncTrocaComp('HistoricoVeiculo')
-        
     }
 
 
@@ -156,11 +154,10 @@ const BuscarVeiculo = () => {
         }
 
         const imprimirSegundaVia = (link) => {
-            console.log(link)
             if(link.estacionado === 'S'){
                 ImpressaoTicketEstacionamento('SEGUNDA', link.chegada, link.tempo, 
                 'Nao informado', link.vaga, link.placa, 'Nao informado', 'Nao informado',
-                link.numero_notificacoes_pendentes, link.temporestante)
+                link.numero_notificacoes_pendentes)
             } else {
                 
             }

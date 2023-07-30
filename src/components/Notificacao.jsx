@@ -35,19 +35,11 @@ const Notificacao = () => {
     const [outro, setOutro] = useState (true);
     const [estado2, setEstado2] = useState(false);
     let [cont, setCont] = useState(0);
-    const [fabricanteSelecionado, setFabricanteSelecionado] = useState('');
     const [fabricanteCerto, setFabricanteCerto] = useState('');
     const [modeloSelecionado, setModeloSelecionado] = useState('');
     const [modeloCerto, setModeloCerto] = useState('');
     const [tipoNotificacaoNome, setTipoNotificacaoNome] = useState("Tempo limite excedido");
     const [disabled, setDisabled] = useState(false);
-
-  const handleFabricanteChange = (value) => {
-    setFabricanteSelecionado(value);
-    setTimeout(() => {
-      getModelos(value);
-    }, 0);
-  };
 
   const handleModeloChange = (value) => {
     setModeloSelecionado(value);
@@ -81,10 +73,7 @@ const Notificacao = () => {
         } 
 
         if (!infoBanco){
-
-
-
-            if (fabricanteCerto === "" || modeloCerto === "" || cor === "") {
+            if (modeloCerto === "" || cor === "") {
                 setEstado2(false)
                 setMensagem("Necessário selecionar modelo, fabricante e cor")
                 setEstado(true)
@@ -99,9 +88,6 @@ const Notificacao = () => {
         const requisicao = createAPI();
         if (!infoBanco) {
                 const getmodelo = modeloCerto;
-                const getfabricante = fabricanteCerto;
-
-
                 if (document.getElementById('selectCores') !== null && document.getElementById('selectCores') !== undefined){
                     const corSelect = document.getElementById('selectCores').value;
                     if(corSelect === ""){
@@ -140,13 +126,12 @@ const Notificacao = () => {
              "modelo": {
                 "idModelo": getmodelo,
                 "fabricante": {
-                    "idFabricante": getfabricante,
+                    "idFabricante": ''
                 }
             },
             "cor": corNova,
     }).then(
             response => {
-                console.log('oi', response)
                 modeloImpressao = response.data.data.reposta.modelo.modelo
                 fabricanteImpressao = response.data.data.reposta.modelo.fabricante.fabricante
             }
@@ -163,7 +148,6 @@ const Notificacao = () => {
             fabricanteImpressao = fabricanteVeiculo;
         }
         if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") { 
-        console.log('oi2')
         requisicao.post('/notificacao', {
             "id_vaga_veiculo": vagaVeiculo,
             "id_tipo_notificacao": tipoNot,
@@ -225,7 +209,6 @@ const Notificacao = () => {
             localStorage.removeItem("perfil");
         });
     } else {
-        console.log('oi3')
         requisicao.post('/notificacao', {
             "placa": placa,
             "vaga": vaga,
@@ -346,13 +329,7 @@ setTimeout(() => {
 
     const getModelos = () => {
         const requisicao = createAPI();
-        setModeloSelecionado('')
-        if(document.getElementById('selectFabricantes').value !== ""){
-        const fabricanteSelecionado = document.getElementById('selectFabricantes').value.toLowerCase();
-        const fabricanteEncontrado = fabricante.find(item => item.label.toLowerCase() === fabricanteSelecionado);
-            if(fabricanteEncontrado !== undefined){
-            setFabricanteCerto(fabricanteEncontrado.value);
-            requisicao.get(`/veiculo/modelos/${fabricanteEncontrado.value}`).then(
+            requisicao.get(`/veiculo/modelos/`).then(
                 response => {
                     const newData = response?.data?.data?.modelos.map(item => ({
                         label: item.nome,
@@ -371,8 +348,6 @@ setTimeout(() => {
                     console.log(error)
                 }
             });
-            }
-        }
     }
 
     const getCor = () => {
@@ -414,11 +389,13 @@ setTimeout(() => {
             })
     }
 
+
     useEffect(() => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
             FuncTrocaComp("FecharTurno");
         }
         const requisicao = createAPI();
+        getModelos();
         getCor();
         if (localStorage.getItem("placa") !== null && localStorage.getItem("placa") !== undefined && localStorage.getItem("placa") !== "" || localStorage.getItem("vaga") !== null) {
         
@@ -483,45 +460,6 @@ setTimeout(() => {
             }
         });
         
-        requisicao.get('/veiculo/fabricantes').then(
-            response => {
-                const newData = response?.data?.data?.fabricantes.map(item => ({
-                    label: item.nome,
-                    value: item.id_fabricante_veiculo
-                    }));
-                setFabricante(newData);
-            }
-        ).catch(function (error){
-            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-            localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-        });
-
-        requisicao.get(`/veiculo/modelos/1`).then(
-            response => {
-                const newData = response?.data?.data?.modelos.map(item => ({
-                    label: item.nome,
-                    value: item.id_modelo
-                }));
-                setModelo(newData);
-            }
-        ).catch(function (error){
-            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-        });
         if (cont === 0) {
             pegarFotos();
         }
@@ -579,9 +517,9 @@ setTimeout(() => {
                                     {infoBanco ?
                                         <div className="row justify-content-center">
                                             <div className="col-7">
-                                                <h6 className='mx-3 pt-2'><small>Modelo: {modeloVeiculo}</small></h6>
-                                                <h6 className='mx-3'><small>Cor: {corVeiculo}</small></h6>
-                                                <h6 className='mx-3 pb-2'><small>Fabricante: {fabricanteVeiculo}</small></h6>
+                                                <h6 className='mx-3 pt-2'><small>Fabricante: {fabricanteVeiculo}</small></h6>
+                                                <h6 className='mx-3'><small>Modelo: {modeloVeiculo}</small></h6>
+                                                <h6 className='mx-3 pb-2'><small>Cor: {corVeiculo}</small></h6>
                                             </div>
                                             <div className="col-3 text-center pt-3 mt-3">
                                                 <FaCarAlt size={35} />
@@ -593,20 +531,8 @@ setTimeout(() => {
                                         : 
                                         <div className="row justify-content-center">
                                         <div className="col-8">
-                                            <div onChange={()=>{getModelos()}}>
-                                            <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
-                                            <Select
-                                                className="mx-3 mb-3"
-                                                searchable
-                                                nothingFound="Sem resultados"
-                                                id="selectFabricantes"
-                                                data={fabricante}
-                                                value={fabricanteSelecionado}
-                                                onChange={(value) => handleFabricanteChange(value)}
-                                            />
-                                            </div>
                                             <div>
-                                            <h6 className='mx-4'><small>Modelo:</small></h6>
+                                            <h6 className='mx-4 mt-2'><small>Modelo:</small></h6>
                                             <Select
                                                 className="mx-3 mb-3"
                                                 searchable
