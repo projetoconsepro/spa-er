@@ -260,6 +260,7 @@ const RegistrarEstacionamentoParceiro = () => {
                   })
                   .then((response) => {
                     if (response.data.msg.resultado) {
+                      if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                       ImpressaoTicketEstacionamento(
                         'PRIMEIRA',
                         response.data.data.chegada,
@@ -271,6 +272,7 @@ const RegistrarEstacionamentoParceiro = () => {
                         tempo,
                         response.data.data.notificacao_pendente,
                       );
+                      }
                       setVaga("");
                       setTextoPlaca("");
                         if (user2 === "monitor"){
@@ -317,6 +319,7 @@ const RegistrarEstacionamentoParceiro = () => {
                   })
                   .then((response) => {
                     if (response.data.msg.resultado) {
+                      if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                       ImpressaoTicketEstacionamento(
                         'PRIMEIRA',
                         response.data.data.chegada,
@@ -328,6 +331,7 @@ const RegistrarEstacionamentoParceiro = () => {
                         tempo,
                         response.data.data.notificacao_pendente
                       );
+                      }
                       setVaga("");
                       setTextoPlaca("");
                         if (user2 === "monitor"){
@@ -373,6 +377,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 })
                 .then((response) => {
                   if (response.data.msg.resultado) {
+                    if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                     ImpressaoTicketEstacionamento(
                       'PRIMEIRA',
                       response.data.data.chegada,
@@ -384,6 +389,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       tempo,
                       response.data.data.notificacao_pendente
                     );
+                    }
                     setVaga("");
                     setTextoPlaca("");
                       if (user2 === "monitor"){
@@ -436,7 +442,6 @@ const RegistrarEstacionamentoParceiro = () => {
             }
           });
       }
-      
     }
 
   const atualiza = () => {
@@ -470,7 +475,7 @@ const RegistrarEstacionamentoParceiro = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
-          console.log('pix', response)
+          if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
             response.data.data.chegada,
@@ -482,6 +487,7 @@ const RegistrarEstacionamentoParceiro = () => {
             tempo,
             response.data.data.notificacao_pendente
           );
+          }
           setOnOpen(false);
           setVaga("");
           setTextoPlaca("");
@@ -615,19 +621,6 @@ const RegistrarEstacionamentoParceiro = () => {
                 maxLength={limite}
               />
             </div>
-            {user2 === "monitor" ? (
-            <div className="text-start mt-3 px-2">
-              <h6>Número da vaga (opcional):</h6>
-              <Input
-                type="number"
-                value={vaga}
-                icon={<FaParking />}
-                onChange={(e) => setVaga([e.target.value])}
-                maxLength={limite}
-                placeholder="Exemplo: 0 "
-              />
-            </div>
-            ) : null}
             <div className="text-start mt-3 mb-1 px-2" onChange={() => {atualiza();}}>
               <h6>Selecione o tempo:</h6>
               <select
@@ -636,9 +629,6 @@ const RegistrarEstacionamentoParceiro = () => {
                 id="tempos"
                 defaultValue="00:30:00"
               >
-                {user2 === "monitor" ? (
-                  <option value="00:10:00">Tolerância</option>
-                ) : null}
                 <option value="00:30:00">30 Minutos</option>
                 <option value="01:00:00">60 Minutos</option>
                 <option value="01:30:00">90 Minutos</option>

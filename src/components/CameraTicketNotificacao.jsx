@@ -9,13 +9,11 @@ import createAPI from "../services/createAPI";
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
 
 function CameraTicketNotificacao() {
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
   const videoRef = useRef(null);
   const [photos, setPhotos] = useState([]);
   const [cont, setCont] = useState(0);
   const [cont2, setCont2] = useState(0);
+  const [cameraLoaded, setCameraLoaded] = useState(false);
   const [idNotificacao, setIdNotificacao] = useState("");
 
   useEffect(() => {
@@ -37,6 +35,7 @@ function CameraTicketNotificacao() {
         if (video) {
           video.srcObject = stream;
           video.play();
+          setCameraLoaded(true);
         }
       } else {
         console.log("O navegador não suporta getUserMedia");
@@ -45,6 +44,7 @@ function CameraTicketNotificacao() {
           function (stream) {
             let video = videoRef.current;
             if (video) {
+              setCameraLoaded(true);
               video.srcObject = stream;
               video.play();
             }
@@ -69,6 +69,7 @@ function CameraTicketNotificacao() {
   }, [cont2]);
 
   const stopVideoCapture = () => {
+    setCameraLoaded(false);
     let video = videoRef.current;
     if (video && video.srcObject) {
       const stream = video.srcObject;
@@ -208,7 +209,7 @@ function CameraTicketNotificacao() {
         rightIcon={<IconPrinter />}
         onClick={() => regerarImpressao()}
       >
-        Re-imprimir notificação
+        Re-imprimir ticket
       </Button>
     </Group>
 
@@ -244,6 +245,7 @@ function CameraTicketNotificacao() {
                   gradient={{ from: "indigo", to: "cyan" }}
                   rightIcon={<IconCamera />}
                   onClick={takePicture}
+                  disabled={!cameraLoaded} 
                 >
                   Tirar foto
                 </Button>

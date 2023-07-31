@@ -481,9 +481,7 @@ setTimeout(() => {
                     <div className="col-12 d-flex align-items-center justify-content-center">
                         <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                             <Text fw={500} fz="lg" className="text-center"> Notificar veículo:</Text>
-
                             <Divider my="sm" size="md" variant="dashed" />
-
                             {dados ?
                                 <div>
                                     <div className="h5 mt-2 align-items-center">
@@ -501,7 +499,6 @@ setTimeout(() => {
                                                     : null}
                                             </div>
                                         ))}
-
                                     </div>
                                     {imagensSalvas ? 
                                     <div>

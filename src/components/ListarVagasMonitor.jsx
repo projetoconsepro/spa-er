@@ -18,8 +18,6 @@ const ListarVagasMonitor = () => {
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [salvaSetor, setSalvaSetor] = useState("");
-  const [tolerancia, setTolerancia] = useState(10);
-  const [contador, setContador] = useState(0);
   const [vagasLivres, setVagasLivres] = useState(0);
   const [vagasOcupadas, setVagasOcupadas] = useState(0);
   const [vagasVencidas, setVagasVencidas] = useState(0);
@@ -204,29 +202,6 @@ const ListarVagasMonitor = () => {
           resposta2[i] = {};
           resposta2[i].setores = response.data.data.setores[i].nome;
         }
-      })
-      .catch(function (error) {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("perfil");
-        } else {
-          console.log(error);
-        }
-      });
-    requisicao
-      .get("setores/tolerancia")
-      .then((response) => {
-        const timestamp = response.data.data.tolerancia;
-        const data = new Date(timestamp * 1000);
-        const minutes = data.getMinutes();
-        const teste = parseInt(minutes);
-        setTolerancia(teste);
       })
       .catch(function (error) {
         if (
