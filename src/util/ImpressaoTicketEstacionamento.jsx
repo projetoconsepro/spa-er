@@ -17,8 +17,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
             const horaValidade = dataValidade.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
             return horaValidade;
           };
-        
-          const horaInicio = obterHoraAtual();
+         
           const duracao = tempo;
           let horaValidade = calcularValidade(tempoChegada, duracao); 
           
@@ -88,7 +87,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 via: via,
                 tipo: tipoEstacionamento(),
                 dataHoje: getDataDeHoje(),
-                horaInicio: horaInicio,
+                horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
                 metodo: forma(),
