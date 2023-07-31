@@ -13,11 +13,11 @@ function Camera() {
   const [cont2, setCont2] = useState(0);
   const [tamanho, setTamanho] = useState(90);
   const [divErro, setDivErro] = useState(false);
+  const [cameraLoaded, setCameraLoaded] = useState(false); 
 
   const getVideo = async () => {
     try {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // O navegador suporta getUserMedia()
         console.log("O navegador suporta getUserMedia");
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
@@ -28,6 +28,7 @@ function Camera() {
         if (video) {
           video.srcObject = stream;
           video.play();
+          setCameraLoaded(true);
         }
       } else {
         console.log("O navegador não suporta getUserMedia");
@@ -37,6 +38,7 @@ function Camera() {
             if (video) {
               video.srcObject = stream;
               video.play();
+              setCameraLoaded(true); // Set cameraLoaded to true when the camera is loaded
             }
           },
           function (error) {
@@ -104,6 +106,7 @@ function Camera() {
   };
 
   const stopVideoCapture = () => {
+    setCameraLoaded(false);
     let video = videoRef.current;
     if (video && video.srcObject) {
       const stream = video.srcObject;
@@ -136,65 +139,68 @@ function Camera() {
 
   return (
     <>
-    <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
-      {photos.length > 0 && (
-       <div className='row pb-1'>
-       {photos.map((imagem, key) => (
-           <div key={key} className="col-4">
-              <img
-                key={imagem.id}
-                src={imagem.photo}
-                alt="foto"
-                className="mt-2 mb-2"
-                onClick={() => abrirModal(imagem.id)}
-              />
-           </div>
-       ))}
-
-   </div>
-      )}
-      <Card shadow="sm" className="mt-1 mb-2">
-      {divErro ?
-      <Text>Erro ao capturar vídeo, tente reiniciar a aplicação.</Text>
-      :
-      <video ref={videoRef} className="w-100"></video>
-      }
-      <div className="container" id="testeRolagem">
-        <div className="mb-3">
-          <div className="text-middle mt-3">
-            <Button
-            variant="gradient"
-            size="md"
-            gradient={{ from: 'indigo', to: 'cyan' }}
-            rightIcon={<IconCamera />}
-            onClick={takePicture}
-            >Tirar foto
-            </Button>
-            <Button
-            variant="gradient"
-            size="md"
-            className="mx-2"
-            gradient={{ from: 'yellow', to: 'orange' }}
-            rightIcon={<IconReload />}
-            onClick={() => stopVideoCapture()}
-            >Reiniciar
-            </Button>
-            {photos.length >= 2 && (
-            <Button
-            className="mt-2"
-            variant="gradient"
-            size="md"
-            gradient={{ from: 'teal', to: 'lime'}}
-            rightIcon={<IconCheck />}
-            onClick={savePhotosToLocalStorage}
-            >Salvar fotos
-            </Button>
-            )}
+      <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
+        {photos.length > 0 && (
+          <div className='row pb-1'>
+            {photos.map((imagem, key) => (
+              <div key={key} className="col-4">
+                <img
+                  key={imagem.id}
+                  src={imagem.photo}
+                  alt="foto"
+                  className="mt-2 mb-2"
+                  onClick={() => abrirModal(imagem.id)}
+                />
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+        <Card shadow="sm" className="mt-1 mb-2">
+          {divErro ?
+            <Text>Erro ao capturar vídeo, tente reiniciar a aplicação.</Text>
+            :
+            <video ref={videoRef} className="w-100"></video>
+          }
+          <div className="container" id="testeRolagem">
+            <div className="mb-3">
+              <div className="text-middle mt-3">
+                <Button
+                  variant="gradient"
+                  size="md"
+                  gradient={{ from: 'indigo', to: 'cyan' }}
+                  rightIcon={<IconCamera />}
+                  onClick={takePicture}
+                  disabled={!cameraLoaded} 
+                >
+                  Tirar foto
+                </Button>
+                <Button
+                  variant="gradient"
+                  size="md"
+                  className="mx-2"
+                  gradient={{ from: 'yellow', to: 'orange' }}
+                  rightIcon={<IconReload />}
+                  onClick={() => stopVideoCapture()}
+                >
+                  Reiniciar
+                </Button>
+                {photos.length >= 2 && (
+                  <Button
+                    className="mt-2"
+                    variant="gradient"
+                    size="md"
+                    gradient={{ from: 'teal', to: 'lime'}}
+                    rightIcon={<IconCheck />}
+                    onClick={savePhotosToLocalStorage}
+                  >
+                    Salvar fotos
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
-      </Card>
-    </div>
     </>
   );
 }

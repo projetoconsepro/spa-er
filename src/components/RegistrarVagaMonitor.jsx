@@ -127,7 +127,7 @@ const RegistrarVagaMonitor = () => {
       .then((response) => {
         setEstado2(true);
         if (response.data.msg.resultado === true) {
-          console.log('pix', response)
+          if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
             response.data.data.chegada,
@@ -139,6 +139,7 @@ const RegistrarVagaMonitor = () => {
             tempo,
             response.data.data.notificacao_pendente
           );
+          }
           setEstado2(false);
           localStorage.removeItem("vaga");
           localStorage.removeItem("popup");
@@ -214,6 +215,7 @@ const RegistrarVagaMonitor = () => {
         .then((response) => {
           console.log(response)
           if (response.data.msg.resultado === true) {
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -225,6 +227,7 @@ const RegistrarVagaMonitor = () => {
               tempo,
               response.data.data.notificacao_pendente
             );
+            }
             setEstado2(false);
             localStorage.removeItem("vaga");
             localStorage.removeItem("popup");
@@ -270,6 +273,7 @@ const RegistrarVagaMonitor = () => {
         .then((response) => {
           console.log(response)
           if (response.data.msg.resultado === true) {
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -281,6 +285,7 @@ const RegistrarVagaMonitor = () => {
               tempo,
               response.data.data.notificacao_pendente
             );
+            }
             setEstado2(false);
             localStorage.removeItem("vaga");
 
