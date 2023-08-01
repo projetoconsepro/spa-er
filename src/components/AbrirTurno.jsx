@@ -4,6 +4,7 @@ import { React, useState, useEffect } from "react";
 import { IconCash } from "@tabler/icons-react";
 import { Input } from "@mantine/core";
 import createAPI from "../services/createAPI";
+import Swal from "sweetalert2";
 
 const AbrirTurno = () => {
   const [valor, setValor] = useState('');
@@ -20,11 +21,24 @@ const AbrirTurno = () => {
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
 
+  const verificarTurno = () => {
+    const requisicao = createAPI();
+    requisicao.get("/turno/verificar").then((response) => {
+      console.log(response)
+      if(response.data.msg.resultado) {
+        localStorage.setItem("turno", true);
+        localStorage.setItem("caixa", true);
+        setAbTurno(true);
+      } 
+      else {
+        setAbTurno(false)
+      }
+    });
+  }
+
   useEffect(() => {
     const requisicao = createAPI();
-    requisicao
-      .get("/setores")
-      .then((response) => {
+    requisicao.get("/setores").then((response) => {
         for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
           resposta2[i] = {};
           resposta2[i].setores = response.data.data.setores[i].nome;
@@ -46,6 +60,8 @@ const AbrirTurno = () => {
         }
       });
 
+    verificarTurno()
+
     setNome(user2.nome);
     const data = new Date();
     let hora = data.getHours();
@@ -63,12 +79,6 @@ const AbrirTurno = () => {
     const horaAtual = hora + ":" + minuto + ":" + segundos;
     setTempoAtual(horaAtual);
 
-    if (
-      localStorage.getItem("turno") === "true" ||
-      localStorage.getItem("caixa") === "true"
-    ) {
-      FuncTrocaComp("FecharTurno");
-    }
   }, []);
 
   const setarSetor = () => {
@@ -107,8 +117,7 @@ const AbrirTurno = () => {
 
     const valorFinal = parseFloat(valor.replace(",", ".")).toFixed(2);
 
-    requisicao
-      .post("/turno/abrir", {
+    requisicao.post("/turno/abrir", {
         hora: tempoAtual,
         idSetor: setorSelecionado,
         caixa: {
@@ -116,7 +125,7 @@ const AbrirTurno = () => {
         },
       })
       .then((response) => {
-        if (response.data.msg.resultado === true) {
+        if (response.data.msg.resultado) {
           localStorage.setItem("turno", true);
           localStorage.setItem("caixa", true);
           localStorage.setItem("horaTurno", tempoAtual);
@@ -124,16 +133,10 @@ const AbrirTurno = () => {
           FuncTrocaComp("ListarVagasMonitor");
         } else {
           setEstado2(true);
-          setMensagem(
-            response.data.msg.msg,
-            "Redirecionando para fechar turno..."
-          );
+          setMensagem(response.data.msg.msg);
           setTimeout(() => {
             setEstado2(false);
             setMensagem("");
-            localStorage.setItem("turno", true);
-            localStorage.setItem("caixa", true);
-            FuncTrocaComp("FecharTurno");
           }, 5000);
         }
       })
@@ -153,6 +156,110 @@ const AbrirTurno = () => {
       });
   };
 
+  const fecharTurno = () => {
+    const requisicao = createAPI();
+    requisicao.post('/turno/fechar',{
+        hora: tempoAtual,
+        }
+    ).then(
+        response => {
+           console.log(response)
+           if(response.data.msg.resultado){
+                setAbTurno(false)
+           }
+           else{
+            console.log(response)
+            setEstado2(true)
+            setMensagem(response.data.msg.msg)
+                setTimeout(() => {
+                setEstado2(false)
+                setMensagem("")
+                }, 4000)
+           }
+        }
+    ).catch(function (error) {
+        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+        || error?.response?.data?.msg === "Token inválido!" 
+        || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+            localStorage.removeItem("user")
+        localStorage.removeItem("token")
+        localStorage.removeItem("perfil");
+        } else {
+            console.log(error)
+        }
+    }
+    );
+  }
+
+  const fecharCaixa = () => {
+    const requisicao = createAPI();
+
+    requisicao.get('/turno/caixa').then(
+        response => {
+            if(response.data.msg.resultado){
+                console.log(response)
+                const sim = parseFloat(response.data.caixa.valor_abertura) + parseFloat(response.data.caixa.valor_movimentos);
+                Swal.fire({
+                    title: 'Confirmar fechamento de caixa',
+                    showDenyButton: true,
+                    html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response.data.caixa.valor_abertura},00</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response.data.caixa.valor_movimentos},00</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4></div><div className="col-12"></div></div></div>`,
+                    confirmButtonText: `Confirmar`,
+                    confirmButtonColor: '#28a745',
+                    denyButtonText: `Cancelar`,
+                    
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        requisicao.post('/turno/fechar',{
+                            hora: tempoAtual,
+                            caixa: {
+                                valor_movimentacao: sim,
+                            }
+                            }
+                        ).then(
+                            response => {
+                                console.log(response)
+                            if(response.data.msg.resultado === true){
+                                Swal.fire('Caixa fechado com sucesso', '', 'success')
+                                verificarTurno();
+                            }
+                            else{
+                                Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error')
+                                console.log(response)
+                            }
+                            }
+                        ).catch(function (error) {
+                                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+        || error?.response?.data?.msg === "Token inválido!" 
+        || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+            localStorage.removeItem("user")
+        localStorage.removeItem("token")
+        localStorage.removeItem("perfil");
+        } else {
+            console.log(error)
+        }
+            }
+            );
+        } else if (result.isDenied) {
+                        
+        }
+        })
+        }
+        else {console.log(response)}
+        }
+    ).catch(function (error) {
+                    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+        || error?.response?.data?.msg === "Token inválido!" 
+        || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+            localStorage.removeItem("user")
+        localStorage.removeItem("token")
+        localStorage.removeItem("perfil");
+        } else {
+            console.log(error)
+        }
+    }
+    );
+  }
+
   return (
     <div className="container">
       <div
@@ -160,10 +267,10 @@ const AbrirTurno = () => {
         data-background-lg="../../assets/img/illustrations/signin.svg"
       >
         <div className="col-12 d-flex align-items-center justify-content-center">
-          <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+          <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
             <div className="row">
               <div className="col-12">
-                <h5 className="mt-1">Abertura de turno</h5>
+                <h5 className="mt-1">Menu de turno</h5>
               </div>
               <div className="col-12">
                 <h6 className="mt-2">Nome do monitor: {nome}</h6>
@@ -174,17 +281,8 @@ const AbrirTurno = () => {
             </div>
             {abTurno === true ? (
               <div>
-                {botaoFecharTurno === true ? (
-                  <button
-                    type="button"
-                    className="btn7 botao mt-3"
-                    onClick={() => {
-                      abrirTurno("fecharTurno");
-                    }}
-                  >
-                    Fechar turno
-                  </button>
-                ) : null}
+                  <button type="button" className="btn5 botao mt-3" onClick={() => {fecharTurno();}}>Fechar turno</button>
+                  <button type="button" className="btn7 botao mt-3" onClick={() => {fecharCaixa()}}>Fechar caixa</button>
               </div>
             ) : (
               <div>

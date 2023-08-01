@@ -264,7 +264,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       ImpressaoTicketEstacionamento(
                         'PRIMEIRA',
                         response.data.data.chegada,
-                        response.data.data.tempo_restante,
+                        response.data.data.tempo,
                         response.config.headers.id_usuario,
                         vagaa,
                         placaMaiuscula,
@@ -323,7 +323,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       ImpressaoTicketEstacionamento(
                         'PRIMEIRA',
                         response.data.data.chegada,
-                        response.data.data.tempo_restante,
+                        response.data.data.tempo,
                         response.config.headers.id_usuario,
                         vagaa,
                         placaMaiuscula,
@@ -381,7 +381,7 @@ const RegistrarEstacionamentoParceiro = () => {
                     ImpressaoTicketEstacionamento(
                       'PRIMEIRA',
                       response.data.data.chegada,
-                      response.data.data.tempo_restante,
+                      response.data.data.tempo,
                       response.config.headers.id_usuario,
                       vagaa,
                       placaMaiuscula,
@@ -479,7 +479,7 @@ const RegistrarEstacionamentoParceiro = () => {
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
             response.data.data.chegada,
-            response.data.data.tempo_restante,
+            response.data.data.tempo,
             response.config.headers.id_usuario,
             response.data.data.numero_vagas[0],
             placaMaiuscula,
