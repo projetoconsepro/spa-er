@@ -332,7 +332,7 @@ const ListarNotificacoesAdmin = () => {
   return (
     <div className="dashboard-container mb-3">
        <Modal size="xl" opened={opened} onClose={() => close()} title="Ver imagens" centered >
-       <Carousel slideSize="70%" slideGap="sm" loop>
+       <Carousel slideSize="80%" slideGap="sm">
        {dataImagem === undefined || dataImagem.length === 0 ?
           <Carousel.Slide>
               <img src="../../assets/img/imagemError.png" alt="Imagem notificação" width="100%" />
