@@ -16,6 +16,7 @@ const AbrirTurno = () => {
   const [setorSelecionado2, setSetorSelecionado2] = useState("A");
   const [botaoFecharTurno, setBotaoFecharTurno] = useState(false);
   const [nome, setNome] = useState("");
+  const [caixa, setCaixa] = useState([]);
   const [tempoAtual, setTempoAtual] = useState("");
   const [resposta2, setResposta2] = useState([]);
   const user = localStorage.getItem("user");
@@ -31,9 +32,17 @@ const AbrirTurno = () => {
         setAbTurno(true);
       } 
       else {
+        localStorage.setItem("turno", false);
         setAbTurno(false)
       }
     });
+
+    if(localStorage.getItem('caixa') == 'true'){
+      console.log('aqui')
+    setCaixa(false)
+    } else {
+    setCaixa(true)
+    }
   }
 
   useEffect(() => {
@@ -156,6 +165,77 @@ const AbrirTurno = () => {
       });
   };
 
+  const abrirTurno2 = () => {
+    const requisicao = createAPI();
+
+    requisicao.post('/turno/abrir',{
+        hora: tempoAtual,
+        idSetor: setorSelecionado
+        }
+    ).then(
+        response => {
+           if(response.data.msg.resultado === true){
+            localStorage.setItem("turno", true)
+            localStorage.setItem("setorTurno", setorSelecionado2)
+            const data = new Date();
+            let hora = data.getHours();
+            if(hora < 10){
+                hora = "0" + hora;
+            }
+            let minuto = data.getMinutes();
+            if(minuto < 10){
+                minuto = "0" + minuto;
+            }
+                let segundos = data.getSeconds();
+            if(segundos < 10){
+                segundos = "0" + segundos;
+            }
+            const horaAtual = hora + ":" + minuto + ":" + segundos;
+            localStorage.setItem("horaTurno", horaAtual)
+            FuncTrocaComp( "ListarVagasMonitor")
+           }
+           else{
+            console.log(response)
+            localStorage.setItem("turno", true)
+            setMensagem(response.data.msg.msg)
+            setEstado2(true)
+                setTimeout(() => {
+                setEstado2(false)
+                setMensagem("")
+                }, 4000)
+
+        }
+        }
+    ).catch(function (error) {
+                    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+        || error?.response?.data?.msg === "Token inválido!" 
+        || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
+            localStorage.removeItem("user")
+        localStorage.removeItem("token")
+        localStorage.removeItem("perfil");
+        } else {
+            console.log(error)
+        }
+    }
+    );
+
+    const data = new Date();
+    let hora = data.getHours();
+    if(hora < 10){
+        hora = "0" + hora;
+    }
+    let minuto = data.getMinutes();
+    if(minuto < 10){
+        minuto = "0" + minuto;
+    }
+    let segundos = data.getSeconds();
+    if(segundos < 10){
+        segundos = "0" + segundos;
+    }
+    const horaAtual = hora + ":" + minuto + ":" + segundos;
+    setTempoAtual(horaAtual);
+}
+
   const fecharTurno = () => {
     const requisicao = createAPI();
     requisicao.post('/turno/fechar',{
@@ -165,6 +245,7 @@ const AbrirTurno = () => {
         response => {
            console.log(response)
            if(response.data.msg.resultado){
+                verificarTurno()
                 setAbTurno(false)
            }
            else{
@@ -219,6 +300,8 @@ const AbrirTurno = () => {
                             response => {
                                 console.log(response)
                             if(response.data.msg.resultado === true){
+                                localStorage.setItem("turno", false);
+                                localStorage.setItem("caixa", false);
                                 Swal.fire('Caixa fechado com sucesso', '', 'success')
                                 verificarTurno();
                             }
@@ -308,7 +391,7 @@ const AbrirTurno = () => {
                   </div>
                 </div>
 
-                {estado === true ? (
+                {caixa === true ? (
                   <div className="align-items-center justify-content-between pb-3 mt-2">
                     <div className="row justify-content-center align-items-center">
                       <div className="col-12">
@@ -389,7 +472,9 @@ const AbrirTurno = () => {
                     </div>
                   </div>
                 ) : (
-                  ""
+                  <div>
+                    <button type="button" className="btn5 botao mt-3" onClick={() => {abrirTurno2();}}>Abrir turno</button>
+                  </div>
                 )}
               </div>
             )}

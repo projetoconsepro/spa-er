@@ -225,12 +225,6 @@ const Sidebar = () => {
                     className: styles.className,
                     name: "‎ Vagas ", 
                     componente: "VagasAdmin",
-                },
-                {
-                    className: styles.className,
-                    icon: <FaCar />,
-                    name: "‎ Listar Veículos",
-                    componente: "VeiculosAdmin",
                 }
             ]
         })

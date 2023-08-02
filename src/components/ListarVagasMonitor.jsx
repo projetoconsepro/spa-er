@@ -23,12 +23,15 @@ const ListarVagasMonitor = () => {
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [horaAgora, setHoraAgora] = useState("");
 
-
   const calcularValidade = (horaInicio, duracao) => {
-    const [horas, minutos, segundos] = duracao.split(':').map(Number);
+    const [horas, minutos, segundos] = duracao.split(":").map(Number);
     const dataInicio = new Date(`2000-01-01T${horaInicio}`);
-    const dataValidade = new Date(dataInicio.getTime() + (horas * 3600000) + (minutos * 60000) + (segundos * 1000));
-    const horaValidade = dataValidade.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    const dataValidade = new Date(
+      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
+    );
+    const horaValidade = dataValidade.toLocaleTimeString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    });
     return horaValidade;
   };
 
@@ -43,153 +46,167 @@ const ListarVagasMonitor = () => {
     }
     localStorage.setItem("setorTurno", setor);
     setSalvaSetor(setor);
-    await requisicao
-      .get(`/vagas?setor=${setor}`)
-      .then((response) => {
-        if (response.data.msg.resultado !== false) {
-          setEstado(false);
-          setMensagem("");
-          for (let i = 0; i < response?.data?.data.length; i++) {
-            setSalvaSetor(response.data.data[0].nome);
-            if (response.data.data[i].numero !== 0) {
-              resposta[i] = {};
-              resposta[i].numero = response.data.data[i].numero;
-              resposta[i].corvaga = response.data.data[i].cor;
-              resposta[i].tipo = response.data.data[i].tipo;
-              resposta[i].id_vaga = response.data.data[i].id_vaga;
+    await requisicao.get(`/vagas?setor=${setor}`).then((response) => {
+      if (response.data.msg.resultado !== false) {
 
-              if (response.data.data[i].estacionado === "N") {
-                resposta[i].chegada = "";
-                resposta[i].placa = "";
-                resposta[i].temporestante = "";
-                resposta[i].Countdown = "";
-                resposta[i].variaDisplay = "escondido";
+        const updatedResposta = resposta.map((item) => ({ ...item }));
+
+        for (let i = 0; i < response?.data?.data.length; i++) {
+          setSalvaSetor(response.data.data[0].nome);
+
+          if (response.data.data[i].numero !== 0) {
+            // Create an object with the updated properties
+            const updatedItem = {
+              numero: response.data.data[i].numero,
+              corvaga: response.data.data[i].cor,
+              tipo: response.data.data[i].tipo,
+              id_vaga: response.data.data[i].id_vaga,
+            };
+
+            if (response.data.data[i].estacionado === "N") {
+              updatedItem.chegada = "";
+              updatedItem.placa = "";
+              updatedItem.temporestante = "";
+              updatedItem.Countdown = "";
+              updatedItem.variaDisplay = "escondido";
+            } else {
+              updatedItem.debito = response.data.data[i].debitar_automatico;
+              updatedItem.numero_notificaoes =
+                response.data.data[i].numero_notificacoes_pendentes;
+              updatedItem.variaDisplay = "aparece";
+              if (response.data.data[i].numero_notificacoes_pendentes !== 0) {
+                updatedItem.display = "testeNot";
+                updatedItem.numero_notificacoes_pendentes =
+                  response.data.data[i].numero_notificacoes_pendentess;
               } else {
-                resposta[i].debito = response.data.data[i].debitar_automatico;
-                resposta[i].numero_notificaoes =
-                  response.data.data[i].numero_notificacoes_pendentes;
-                resposta[i].variaDisplay = "aparece";
-                if (response.data.data[i].numero_notificacoes_pendentes !== 0) {
-                  resposta[i].display = "testeNot";
-                  resposta[i].numero_notificacoes_pendentes =
-                    response.data.data[i].numero_notificacoes_pendentess;
-                } else {
-                  resposta[i].display = "testeNot2";
-                  resposta[i].numero_notificacoes_pendentes = 0;
-                }
-                resposta[i].id_vaga_veiculo =
-                response.data.data[i].id_vaga_veiculo;
-                resposta[i].chegada = response.data.data[i].chegada;
-                resposta[i].placa = response.data.data[i].placa;
-                resposta[i].temporestante = calcularValidade(response.data.data[i].chegada, response.data.data[i].tempo);
-                resposta[i].tempo = response.data.data[i].tempo;
-
-                resposta[i].numero_notificacoes_pendentess = response.data.data[i].numero_notificacoes_pendentess;
-
-                const dataAtual = new Date();
-                const hora = dataAtual.getHours().toString().padStart(2, '0');
-                const minutos = dataAtual.getMinutes().toString().padStart(2, '0');
-                const segundos = dataAtual.getSeconds().toString().padStart(2, '0');
-                const horaAtual = `${hora}:${minutos}:${segundos}`;
-                function converterParaSegundos(tempo) {
-                  const [horas2, minutos2, segundos2] = tempo.split(":").map(Number);
-                  return horas2 * 3600 + minutos2 * 60 + segundos2;
-                }
-                const segundosHoraAtual = converterParaSegundos(horaAtual);
-                const segundosTempoRestante = converterParaSegundos(resposta[i].temporestante);
-                const diffSegundos = segundosTempoRestante - segundosHoraAtual;
-                const diffMinutos = diffSegundos / 60;
-
-                if (resposta[i].temporestante < horaAtual) {
-                  resposta[i].corline = "#F8D7DA";
-                  resposta[i].cor = "#842029";
-                } else if (diffMinutos <= 10) {
-                    resposta[i].corline = "#FFF3CD";
-                    resposta[i].cor = "#664D03";
-                } else if (diffMinutos >= 10) {
-                  resposta[i].corline = "#D1E7DD";
-                  resposta[i].cor = "#0F5132";
-                } else {
-                  resposta[i].corline = "#fff";
-                  resposta[i].cor = "#000";
-                }
-                if (resposta[i].numero_notificacoes_pendentess !== 0) {
-                  resposta[i].corline = "#D3D3D4";
-                  resposta[i].cor = "#141619";
-                }
+                updatedItem.display = "testeNot2";
+                updatedItem.numero_notificacoes_pendentes = 0;
               }
+              updatedItem.id_vaga_veiculo =
+                response.data.data[i].id_vaga_veiculo;
+              updatedItem.chegada = response.data.data[i].chegada;
+              updatedItem.placa = response.data.data[i].placa;
+              updatedItem.temporestante = calcularValidade(
+                response.data.data[i].chegada,
+                response.data.data[i].tempo
+              );
+              updatedItem.tempo = response.data.data[i].tempo;
+
+              updatedItem.numero_notificacoes_pendentess =
+                response.data.data[i].numero_notificacoes_pendentess;
+
+              const dataAtual = new Date();
+              const hora = dataAtual.getHours().toString().padStart(2, "0");
+              const minutos = dataAtual
+                .getMinutes()
+                .toString()
+                .padStart(2, "0");
+              const segundos = dataAtual
+                .getSeconds()
+                .toString()
+                .padStart(2, "0");
+              const horaAtual = `${hora}:${minutos}:${segundos}`;
+
+              function converterParaSegundos(tempo) {
+                const [horas2, minutos2, segundos2] = tempo
+                  .split(":")
+                  .map(Number);
+                return horas2 * 3600 + minutos2 * 60 + segundos2;
+              }
+
+              const segundosHoraAtual = converterParaSegundos(horaAtual);
+              const segundosTempoRestante = converterParaSegundos(
+                updatedItem.temporestante
+              );
+              const diffSegundos = segundosTempoRestante - segundosHoraAtual;
+              const diffMinutos = diffSegundos / 60;
+
+              if (updatedItem.temporestante < horaAtual) {
+                updatedItem.corline = "#F8D7DA";
+                updatedItem.cor = "#842029";
+              } else if (diffMinutos <= 10) {
+                updatedItem.corline = "#FFF3CD";
+                updatedItem.cor = "#664D03";
+              } else if (diffMinutos >= 10) {
+                updatedItem.corline = "#D1E7DD";
+                updatedItem.cor = "#0F5132";
+              } else {
+                updatedItem.corline = "#fff";
+                updatedItem.cor = "#000";
+              }
+              if (updatedItem.numero_notificacoes_pendentess !== 0) {
+                updatedItem.corline = "#D3D3D4";
+                updatedItem.cor = "#141619";
+              }
+            }
+
+            // Update the copy of the array at the specific index
+            updatedResposta[i] = updatedItem;
+          }
+        }
+
+        vagas();
+
+        setResposta(updatedResposta);
+
+        let estacionadoSCount = 0;
+        let estacionadoNCount = 0;
+        let estacionadoPCount = 0;
+
+        response.data.data.forEach((objeto) => {
+          if (objeto.numero !== 0) {
+            if (objeto.estacionado === "S") {
+              estacionadoSCount++;
+              if (objeto.temporestante === "00:00:00" && objeto.numero_notificacoes_pendentess !== 0) {
+                estacionadoPCount++;
+              }
+            } else if (objeto.estacionado === "N") {
+              estacionadoNCount++;
             }
           }
-          let estacionadoSCount = 0;
-          let estacionadoNCount = 0;
-          let estacionadoPCount = 0;
+        });
 
-          response.data.data.forEach((objeto) => {
-            if (objeto.numero !== 0) {
-              if (objeto.estacionado === "S") {
-                estacionadoSCount++;
-                if (objeto.temporestante === "00:00:00") {
-                  estacionadoPCount++;
-                }
-              } else if (objeto.estacionado === "N") {
-                estacionadoNCount++;
-              }
-            }
-          });
-
-          setVagasLivres(estacionadoNCount);
-          setVagasOcupadas(estacionadoSCount);
-          setVagasVencidas(estacionadoPCount);
-        } else {
-          setEstado(true);
-          setMensagem(response.data.msg.msg);
-        }
-      })
-      .catch(function (error) {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("perfil");
-        } else {
-          console.log(error);
-        }
-      });
+        setVagasLivres(estacionadoNCount);
+        setVagasOcupadas(estacionadoSCount);
+        setVagasVencidas(estacionadoPCount);
+      } else {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+      }
+    });
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (localStorage.getItem("numero_vaga")) {
-        setVaga(localStorage.getItem("numero_vaga"));
+
+  const vagas = () => {
+    if (localStorage.getItem("numero_vaga")) {
+      setVaga(localStorage.getItem("numero_vaga"));
+
+      const newVaga = localStorage.getItem("numero_vaga");
+
+      localStorage.removeItem("numero_vaga")
+
+      const cardToScroll = document.querySelector(
+        `.card-list[data-vaga="${newVaga}"]`
+      );
+      if (cardToScroll) {
         setTimeout(() => {
-          localStorage.removeItem("numero_vaga");
-        }, 1000);
+          cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
       }
-    }, 2300);
 
-    const cardToScroll = document.querySelector(
-      `.card-list[data-vaga="${vaga}"]`
-    );
-    if (cardToScroll) {
-      setTimeout(() => {
-        cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 100);
+
     }
-  }, [vaga]);
+}
 
   useEffect(() => {
-    if (localStorage.getItem("turno") !== "true") {
-      FuncTrocaComp("FecharTurno");
+    if (localStorage.getItem("turno") != "true") {
+      FuncTrocaComp("AbrirTurno");
     }
 
     const dataAtual = new Date();
-    const hora = dataAtual.getHours().toString().padStart(2, '0');
-    const minutos = dataAtual.getMinutes().toString().padStart(2, '0');
-    const segundos = dataAtual.getSeconds().toString().padStart(2, '0');
+    const hora = dataAtual.getHours().toString().padStart(2, "0");
+    const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
+    const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
     const horaAtual = `${hora}:${minutos}:${segundos}`;
     setHoraAgora(horaAtual);
 
@@ -234,49 +251,63 @@ const ListarVagasMonitor = () => {
 
   const funcExtratoPlaca = (placa) => {
     const requisicao = createAPI();
-    requisicao.get(`/veiculo/${placa}`)
-            .then((response) => {
-                if (response.data.msg.resultado === false && response.data.msg.msg !== "Dados encontrados") {
-                    setMensagem(response.data.msg.msg)
-                    setTimeout(() => {
-                    setEstado(false)
-                    setMensagem("")
-                    }, 3000)
-                }
-                else{
-                    const link = response?.data.data.map((item) => ({
-                        placa: item.placa,
-                        modelo: item.modelo.modelo,
-                        fabricante: item.modelo.fabricante.fabricante,
-                        cor: item.cor,
-                        vaga: item.estacionado[0].numerovaga,
-                        numero_notificacoes_pendentes: item.numero_notificacoes_pendentes,
-                        saldo_devedor: item.saldo_devedorr,
-                        estacionado: item.estacionado[0].estacionado,
-                        tempo: item.estacionado[0].tempo,
-                        chegada: item.estacionado[0].chegada,
-                        temporestante: item.estacionado[0].temporestante,
-                        id_vaga_veiculo: item.estacionado[0].id_vaga_veiculo,
-                      }));
+    requisicao
+      .get(`/veiculo/${placa}`)
+      .then((response) => {
+        if (
+          response.data.msg.resultado === false &&
+          response.data.msg.msg !== "Dados encontrados"
+        ) {
+          setMensagem(response.data.msg.msg);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("");
+          }, 3000);
+        } else {
+          const link = response?.data.data.map((item) => ({
+            placa: item.placa,
+            modelo: item.modelo.modelo,
+            fabricante: item.modelo.fabricante.fabricante,
+            cor: item.cor,
+            vaga: item.estacionado[0].numerovaga,
+            numero_notificacoes_pendentes: item.numero_notificacoes_pendentes,
+            saldo_devedor: item.saldo_devedorr,
+            estacionado: item.estacionado[0].estacionado,
+            tempo: item.estacionado[0].tempo,
+            chegada: item.estacionado[0].chegada,
+            temporestante: item.estacionado[0].temporestante,
+            id_vaga_veiculo: item.estacionado[0].id_vaga_veiculo,
+          }));
 
-                      const impressao = link[0]
+          const impressao = link[0];
 
-                      ImpressaoTicketEstacionamento('SEGUNDA', impressao.chegada, impressao.tempo,
-                      'Nao informado', impressao.vaga, impressao.placa, 'Nao informado', 'Nao informado',
-                      impressao.numero_notificacoes_pendentes)
-                }
-            })
-            .catch((error) => {
-                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-            })
+          ImpressaoTicketEstacionamento(
+            "SEGUNDA",
+            impressao.chegada,
+            impressao.tempo,
+            "Nao informado",
+            impressao.vaga,
+            impressao.placa,
+            "Nao informado",
+            "Nao informado",
+            impressao.numero_notificacoes_pendentes
+          );
+        }
+      })
+      .catch((error) => {
+        if (
+          error?.response?.data?.msg === "Cabeçalho inválido!" ||
+          error?.response?.data?.msg === "Token inválido!" ||
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
+        } else {
+          console.log(error);
+        }
+      });
   };
 
   const estaciona = (
@@ -287,11 +318,12 @@ const ListarVagasMonitor = () => {
     notificacoes,
     notificacoess,
     tipo,
-    debito
+    debito,
+    index
   ) => {
-
     localStorage.setItem("numero_vaga", numero);
     const requisicao = createAPI();
+    console.log(index);
     if (tempo < horaAgora && placa !== "") {
       if (notificacoes !== 0 || notificacoess !== 0) {
         Swal.fire({
@@ -315,15 +347,20 @@ const ListarVagasMonitor = () => {
               })
               .then((response) => {
                 if (response.data.msg.resultado) {
-                  Swal.fire({
-                    text:"Vaga liberada", 
-                    title:"", 
-                    icon:"success",
-                    timer: 1200,
-                  });
-                  setTimeout(() => {
-                    getVagas(salvaSetor);
-                  }, 1000);
+                  const updatedResposta = [...resposta];
+                  updatedResposta[index] = {
+                    ...updatedResposta[index],
+                    placa: "",
+                    chegada: "",
+                    temporestante: "",
+                    corline: "#fff",
+                    display: "testeNot2",
+                  };
+                  const  newArray = updatedResposta.filter((item) => item !== undefined);
+                  
+                  console.log(newArray);
+
+                  setResposta(newArray);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -348,11 +385,10 @@ const ListarVagasMonitor = () => {
           }
         });
 
-        const btnFooter2 = document.getElementById('ticket');
-        btnFooter2.addEventListener('click', function() {
+        const btnFooter2 = document.getElementById("ticket");
+        btnFooter2.addEventListener("click", function () {
           funcExtratoPlaca(placa);
-        }
-        );
+        });
       } else if (debito === "S") {
         Swal.fire({
           title: "Deseja liberar esta vaga?",
@@ -369,20 +405,27 @@ const ListarVagasMonitor = () => {
           `,
         }).then((result) => {
           if (result.isConfirmed) {
-            requisicao.post(`/estacionamento/saida`, {
+            requisicao
+              .post(`/estacionamento/saida`, {
                 idvagaVeiculo: id_vaga,
               })
               .then((response) => {
                 if (response.data.msg.resultado) {
-                  Swal.fire({
-                    text:"Vaga liberada", 
-                    title:"", 
-                    icon:"success",
-                    timer: 1200,
-                  });
-                  setTimeout(() => {
-                    getVagas(salvaSetor);
-                  }, 1000);
+                  const updatedResposta = [...resposta];
+                  updatedResposta[index] = {
+                    ...updatedResposta[index],
+                    placa: "",
+                    chegada: "",
+                    temporestante: "",
+                    corline: "#fff",
+                    display: "testeNot2",
+                  };
+
+                  const  newArray = updatedResposta.filter((item) => item !== undefined);
+
+                  console.log(newArray);
+
+                  setResposta(newArray);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -402,12 +445,14 @@ const ListarVagasMonitor = () => {
                 }
               });
           } else if (result.isDenied) {
-            requisicao.post("/estacionamento", {
+            requisicao
+              .post("/estacionamento", {
                 placa: placa,
                 numero_vaga: numero,
                 tempo: tempo,
                 id_vaga_veiculo: id_vaga,
-              }).then((response) => {
+              })
+              .then((response) => {
                 if (response.data.msg.resultado === true) {
                   getVagas(salvaSetor);
                 } else {
@@ -420,19 +465,28 @@ const ListarVagasMonitor = () => {
                     denyButtonText: `Notificar`,
                   }).then((result) => {
                     if (result.isConfirmed) {
-                      requisicao.post(`/estacionamento/saida`, {
+                      requisicao
+                        .post(`/estacionamento/saida`, {
                           idvagaVeiculo: id_vaga,
-                        }).then((response) => {
+                        })
+                        .then((response) => {
                           if (response.data.msg.resultado) {
-                            Swal.fire({
-                              text:"Vaga liberada", 
-                              title:"", 
-                              icon:"success",
-                              timer: 1200,
-                            });
-                            setTimeout(() => {
-                              getVagas(salvaSetor);
-                            }, 1000);
+                            const updatedResposta = [...resposta];
+                            updatedResposta[index] = {
+                              ...updatedResposta[index],
+                              placa: "",
+                              chegada: "",
+                              temporestante: "",
+                              corline: "#fff",
+                              display: "testeNot2",
+                            };
+
+
+                            const  newArray = updatedResposta.filter((item) => item !== undefined);
+
+                            console.log(newArray);
+
+                            setResposta(newArray);
                           } else {
                             Swal.fire(`${response.data.msg.msg}`, "", "error");
                           }
@@ -479,11 +533,10 @@ const ListarVagasMonitor = () => {
           }
         });
 
-        const btnFooter2 = document.getElementById('ticket');
-        btnFooter2.addEventListener('click', function() {
+        const btnFooter2 = document.getElementById("ticket");
+        btnFooter2.addEventListener("click", function () {
           funcExtratoPlaca(placa);
-        }
-        );
+        });
       } else {
         Swal.fire({
           title: "Deseja liberar esta vaga?",
@@ -509,15 +562,20 @@ const ListarVagasMonitor = () => {
               })
               .then((response) => {
                 if (response.data.msg.resultado) {
-                  Swal.fire({
-                    text:"Vaga liberada", 
-                    title:"", 
-                    icon:"success",
-                    timer: 1200,
-                  });
-                  setTimeout(() => {
-                    getVagas(salvaSetor);
-                  }, 1000);
+                  const updatedResposta = [...resposta];
+                  updatedResposta[index] = {
+                    ...updatedResposta[index],
+                    placa: "",
+                    chegada: "",
+                    temporestante: "",
+                    corline: "#fff",
+                    display: "testeNot2",
+                  };
+
+
+                  const  newArray = updatedResposta.filter((item) => item !== undefined);
+
+                  setResposta(newArray);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -545,21 +603,20 @@ const ListarVagasMonitor = () => {
           }
         });
 
-        const btnFooter = document.getElementById('btnFooter');
-            btnFooter.addEventListener('click', function() {
-            localStorage.setItem("vaga", numero);
-            localStorage.setItem("id_vagaveiculo", id_vaga);
-            localStorage.setItem("placa", placa);
-            localStorage.setItem("popup", true);
-            FuncTrocaComp("RegistrarVagaMonitor");
-            Swal.close()
+        const btnFooter = document.getElementById("btnFooter");
+        btnFooter.addEventListener("click", function () {
+          localStorage.setItem("vaga", numero);
+          localStorage.setItem("id_vagaveiculo", id_vaga);
+          localStorage.setItem("placa", placa);
+          localStorage.setItem("popup", true);
+          FuncTrocaComp("RegistrarVagaMonitor");
+          Swal.close();
         });
 
-        const btnFooter2 = document.getElementById('ticket');
-            btnFooter2.addEventListener('click', function() {
-              funcExtratoPlaca(placa);
-            }
-        );
+        const btnFooter2 = document.getElementById("ticket");
+        btnFooter2.addEventListener("click", function () {
+          funcExtratoPlaca(placa);
+        });
       }
     } else {
       if (placa === "") {
@@ -589,13 +646,21 @@ const ListarVagasMonitor = () => {
               })
               .then((response) => {
                 if (response.data.msg.resultado) {
-                  Swal.fire({
-                    text:"Vaga liberada", 
-                    title:"", 
-                    icon:"success",
-                    timer: 1200,
-                  });
-                  getVagas(salvaSetor);
+                  const updatedResposta = [...resposta];
+                  updatedResposta[index] = {
+                    ...updatedResposta[index],
+                    placa: "",
+                    chegada: "",
+                    temporestante: "",
+                    corline: "#fff",
+                    display: "testeNot2",
+                  };
+
+                  const  newArray = updatedResposta.filter((item) => item !== undefined);
+
+                  console.log(newArray);
+
+                  setResposta(newArray);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -623,11 +688,10 @@ const ListarVagasMonitor = () => {
           }
         });
 
-        const btnFooter2 = document.getElementById('ticket');
-        btnFooter2.addEventListener('click', function() {
+        const btnFooter2 = document.getElementById("ticket");
+        btnFooter2.addEventListener("click", function () {
           funcExtratoPlaca(placa);
-        }
-        );
+        });
       }
     }
   };
@@ -639,17 +703,32 @@ const ListarVagasMonitor = () => {
           <div className="row">
             <div className="col-12 mb-4">
               <div className="row mx-2">
-              <Group position="apart">
-              <Button variant="gradient" gradient={{ from: "indigo", to: "blue", deg: 60 }} className="w-75" mb="md" radius="md" size="md"
-              onClick={() => FuncTrocaComp("RegistrarEstacionamentoParceiro")}>
-              Registrar estacionamento ‎ <IconParking color="white" size={18} />
-              </Button>
-              <Button variant="gradient" gradient={{ from: "indigo", to: "blue", deg: 60 }} mb="md" radius="md" size="md"
-              onClick={() => getVagas(salvaSetor)}>
-              <IconReload color="white" size={20} />
-              </Button>
-              </Group>
-            
+                <Group position="apart">
+                  <Button
+                    variant="gradient"
+                    gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                    className="w-75"
+                    mb="md"
+                    radius="md"
+                    size="md"
+                    onClick={() =>
+                      FuncTrocaComp("RegistrarEstacionamentoParceiro")
+                    }
+                  >
+                    Registrar estacionamento ‎{" "}
+                    <IconParking color="white" size={18} />
+                  </Button>
+                  <Button
+                    variant="gradient"
+                    gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                    mb="md"
+                    radius="md"
+                    size="md"
+                    onClick={() => getVagas(salvaSetor)}
+                  >
+                    <IconReload color="white" size={20} />
+                  </Button>
+                </Group>
               </div>
               <div className="row mx-2">
                 <div className="col-6 align-middle">
@@ -688,9 +767,23 @@ const ListarVagasMonitor = () => {
               </div>
               <div>
                 <div className="row px-2 mb-1">
-                  <div className="col-4 beetwen text-start"> <small><small>Livres: {vagasLivres}</small> </small></div>
-                  <div className="col-4 beetwen"><small><small>Ocupadas: {vagasOcupadas}</small> </small></div>
-                  <div className="col-4 beetwen text-end"> <small><small>Tempo : {vagasVencidas}</small> </small></div>
+                  <div className="col-4 beetwen text-start">
+                    {" "}
+                    <small>
+                      <small>Livres: {vagasLivres}</small>{" "}
+                    </small>
+                  </div>
+                  <div className="col-4 beetwen">
+                    <small>
+                      <small>Ocupadas: {vagasOcupadas}</small>{" "}
+                    </small>
+                  </div>
+                  <div className="col-4 beetwen text-end">
+                    {" "}
+                    <small>
+                      <small>Tempo : {vagasVencidas}</small>{" "}
+                    </small>
+                  </div>
                 </div>
               </div>
 
@@ -728,7 +821,8 @@ const ListarVagasMonitor = () => {
                               vaga.numero_notificacoes_pendentes,
                               vaga.numero_notificacoes_pendentess,
                               vaga.tipo,
-                              vaga.debito
+                              vaga.debito,
+                              index
                             );
                           }}
                         >
@@ -777,7 +871,7 @@ const ListarVagasMonitor = () => {
                                 color: vaga.cor,
                               }}
                             >
-                             <span>{vaga.temporestante}</span>
+                              <span>{vaga.temporestante}</span>
                             </h6>
                           </td>
                         </tr>

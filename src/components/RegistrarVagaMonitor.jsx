@@ -37,7 +37,7 @@ const RegistrarVagaMonitor = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
-  const [estado2, setEstado2] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
 
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
@@ -125,7 +125,6 @@ const RegistrarVagaMonitor = () => {
         txid: TxId,
       })
       .then((response) => {
-        setEstado2(true);
         if (response.data.msg.resultado === true) {
           if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
           ImpressaoTicketEstacionamento(
@@ -140,7 +139,7 @@ const RegistrarVagaMonitor = () => {
             response.data.data.notificacao_pendente
           );
           }
-          setEstado2(false);
+          setLoadingButton(false);
           localStorage.removeItem("vaga");
           localStorage.removeItem("popup");
           localStorage.removeItem("id_vagaveiculo");
@@ -163,11 +162,6 @@ const RegistrarVagaMonitor = () => {
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });
-
-  useEffect(() => {
-    if (estado2) {
-    }
-  }, [estado2]);
 
   const registrarEstacionamento = (campo) => {
     const estacionamento = createAPI();
@@ -203,7 +197,6 @@ const RegistrarVagaMonitor = () => {
     }
 
     if (localStorage.getItem("popup") == "true") {
-      setEstado2(true);
       const idvaga = localStorage.getItem("id_vagaveiculo");
       estacionamento.post("/estacionamento", {
           placa: tirarTraco,
@@ -213,7 +206,6 @@ const RegistrarVagaMonitor = () => {
           id_vaga_veiculo: idvaga,
         })
         .then((response) => {
-          console.log(response)
           if (response.data.msg.resultado === true) {
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
@@ -228,10 +220,12 @@ const RegistrarVagaMonitor = () => {
               response.data.data.notificacao_pendente
             );
             }
-            setEstado2(false);
+ 
             localStorage.removeItem("vaga");
             localStorage.removeItem("popup");
             localStorage.removeItem("id_vagaveiculo");
+
+            setLoadingButton(false);
 
             if (user2.perfil[0] === "monitor") {
               FuncTrocaComp("ListarVagasMonitor");
@@ -239,7 +233,7 @@ const RegistrarVagaMonitor = () => {
               FuncTrocaComp("Dashboard");
             }
           } else {
-            setEstado2(false);
+
             Swal.fire({
               icon: "error",
               title: "Oops...",
@@ -263,7 +257,6 @@ const RegistrarVagaMonitor = () => {
           }
         });
     } else {
-      setEstado2(true);
       estacionamento.post("/estacionamento", {
           placa: tirarTraco,
           numero_vaga: vagaa,
@@ -286,7 +279,7 @@ const RegistrarVagaMonitor = () => {
               response.data.data.notificacao_pendente
             );
             }
-            setEstado2(false);
+            setLoadingButton(false);
             localStorage.removeItem("vaga");
 
             if (user2.perfil[0] === "monitor") {
@@ -295,7 +288,6 @@ const RegistrarVagaMonitor = () => {
               FuncTrocaComp("Dashboard");
             }
           } else {
-            setEstado2(false);
             setEstado(true);
             setMensagem(response.data.msg.msg);
             setTimeout(() => {
@@ -337,19 +329,6 @@ const RegistrarVagaMonitor = () => {
         textoPlaca[4] === "0"
       ) {
         setPlaca("placa3");
-        if (cont === 0) {
-          const fim = textoPlaca.substring(3, textoPlaca.length);
-          const texto = textoPlaca.substring(0, 3);
-          const traco = "-";
-          setTextoPlaca(texto + traco + fim);
-          setCont(cont + 1);
-        } else {
-          const fim = textoPlaca.substring(4, textoPlaca.length);
-          const texto = textoPlaca.substring(0, 3);
-          const traco = "-";
-          setTextoPlaca(texto + traco + fim);
-          setCont(cont + 1);
-        }
       } else {
         setPlaca("placa");
         setCont(0);
@@ -452,6 +431,7 @@ const RegistrarVagaMonitor = () => {
   }
 
   const handleSubmit = async () => {
+    setLoadingButton(true);
     const select = document.getElementById("pagamentos").value;
 
     if (select === "pix") {
@@ -607,6 +587,7 @@ const RegistrarVagaMonitor = () => {
               <div className="pt-4 mb-4 gap-2 d-md-block">
                 <VoltarComponente space={true} onClick={() => HangleBack()} />
                 <Button
+                  loading={loadingButton}
                   onClick={handleSubmit}
                   size="md"
                   radius="md"
@@ -621,9 +602,6 @@ const RegistrarVagaMonitor = () => {
                 style={{ display: estado ? "block" : "none" }}
               >
                 {mensagem}
-              </div>
-              <div style={{ display: estado2 ? "block" : "none" }}>
-                <Loader />
               </div>
             </div>
           </div>
