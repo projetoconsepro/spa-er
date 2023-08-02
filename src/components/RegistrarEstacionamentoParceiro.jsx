@@ -34,6 +34,7 @@ const RegistrarEstacionamentoParceiro = () => {
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [divPagamento, setDivPagamento] = useState(true);
+  const [loadingButton, setLoadingButton] = useState(false);
 
   const param = async () => {
     const requisicao = axios.create({
@@ -52,6 +53,7 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   const ValidaFormato = () => {
+    setLoadingButton(true);
     const clicado = document.getElementById("pagamentos").value;
 
     if (clicado === "pix") {
@@ -273,6 +275,7 @@ const RegistrarEstacionamentoParceiro = () => {
                         response.data.data.notificacao_pendente,
                       );
                       }
+                      setLoadingButton(false);
                       setVaga("");
                       setTextoPlaca("");
                         if (user2 === "monitor"){
@@ -332,6 +335,7 @@ const RegistrarEstacionamentoParceiro = () => {
                         response.data.data.notificacao_pendente
                       );
                       }
+                      setLoadingButton(false);
                       setVaga("");
                       setTextoPlaca("");
                         if (user2 === "monitor"){
@@ -390,6 +394,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       response.data.data.notificacao_pendente
                     );
                     }
+                    setLoadingButton(false);
                     setVaga("");
                     setTextoPlaca("");
                       if (user2 === "monitor"){
@@ -488,6 +493,7 @@ const RegistrarEstacionamentoParceiro = () => {
             response.data.data.notificacao_pendente
           );
           }
+          setLoadingButton(false);
           setOnOpen(false);
           setVaga("");
           setTextoPlaca("");
@@ -533,19 +539,6 @@ const RegistrarEstacionamentoParceiro = () => {
         textoPlaca[4] === "0"
       ) {
         setPlaca("placa3");
-        if (cont === 0) {
-          const fim = textoPlaca.substring(3, textoPlaca.length);
-          const texto = textoPlaca.substring(0, 3);
-          const traco = "-";
-          setTextoPlaca(texto + traco + fim);
-          setCont(cont + 1);
-        } else {
-          const fim = textoPlaca.substring(4, textoPlaca.length);
-          const texto = textoPlaca.substring(0, 3);
-          const traco = "-";
-          setTextoPlaca(texto + traco + fim);
-          setCont(cont + 1);
-        }
       } else {
         setPlaca("placa");
         setCont(0);
@@ -659,6 +652,7 @@ const RegistrarEstacionamentoParceiro = () => {
             <div className="mb-2 mt-3 gap-2 d-md-block">
               <VoltarComponente space={true} />
               <Button
+                loading={loadingButton}
                 className="bg-blue-50"
                 size="md"
                 radius="md"
