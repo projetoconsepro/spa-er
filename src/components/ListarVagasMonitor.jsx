@@ -183,8 +183,6 @@ const ListarVagasMonitor = () => {
 
       const newVaga = localStorage.getItem("numero_vaga");
 
-      localStorage.removeItem("numero_vaga")
-
       const cardToScroll = document.querySelector(
         `.card-list[data-vaga="${newVaga}"]`
       );
@@ -193,8 +191,6 @@ const ListarVagasMonitor = () => {
           cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 100);
       }
-
-
     }
 }
 
