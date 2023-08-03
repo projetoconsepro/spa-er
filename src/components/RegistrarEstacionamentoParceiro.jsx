@@ -221,6 +221,7 @@ const RegistrarEstacionamentoParceiro = () => {
       }
 
       if (placaMaiuscula === "" || placaMaiuscula.length < 7) {
+        setLoadingButton(false);
         setMensagem("Preencha o campo placa");
         setEstado(true);
         setTimeout(() => {
@@ -232,6 +233,7 @@ const RegistrarEstacionamentoParceiro = () => {
       const sim = document.getElementById("flexSwitchCheckDefault").checked;
       if (!sim) {
         if (!validarPlaca(placaMaiuscula)) {
+          setLoadingButton(false);
           setEstado(true);
           setMensagem("Placa inválida");
           setTimeout(() => {
@@ -261,6 +263,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       response.data.data[0].estacionado[0].id_vaga_veiculo,
                   })
                   .then((response) => {
+                    setLoadingButton(false);
                     if (response.data.msg.resultado) {
                       if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                       ImpressaoTicketEstacionamento(
@@ -275,7 +278,6 @@ const RegistrarEstacionamentoParceiro = () => {
                         response.data.data.notificacao_pendente,
                       );
                       }
-                      setLoadingButton(false);
                       setVaga("");
                       setTextoPlaca("");
                         if (user2 === "monitor"){
@@ -321,6 +323,7 @@ const RegistrarEstacionamentoParceiro = () => {
                     pagamento: formaPagamentoo,
                   })
                   .then((response) => {
+                    setLoadingButton(false);
                     if (response.data.msg.resultado) {
                       if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                       ImpressaoTicketEstacionamento(
@@ -335,7 +338,6 @@ const RegistrarEstacionamentoParceiro = () => {
                         response.data.data.notificacao_pendente
                       );
                       }
-                      setLoadingButton(false);
                       setVaga("");
                       setTextoPlaca("");
                         if (user2 === "monitor"){
@@ -380,6 +382,7 @@ const RegistrarEstacionamentoParceiro = () => {
                   pagamento: formaPagamentoo,
                 })
                 .then((response) => {
+                  setLoadingButton(false);
                   if (response.data.msg.resultado) {
                     if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                     ImpressaoTicketEstacionamento(
@@ -394,7 +397,6 @@ const RegistrarEstacionamentoParceiro = () => {
                       response.data.data.notificacao_pendente
                     );
                     }
-                    setLoadingButton(false);
                     setVaga("");
                     setTextoPlaca("");
                       if (user2 === "monitor"){
@@ -479,6 +481,7 @@ const RegistrarEstacionamentoParceiro = () => {
         txid: TxId,
       })
       .then((response) => {
+        setLoadingButton(false);
         if (response.data.msg.resultado) {
           if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
           ImpressaoTicketEstacionamento(
@@ -493,7 +496,6 @@ const RegistrarEstacionamentoParceiro = () => {
             response.data.data.notificacao_pendente
           );
           }
-          setLoadingButton(false);
           setOnOpen(false);
           setVaga("");
           setTextoPlaca("");
