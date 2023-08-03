@@ -157,7 +157,7 @@ const ListarVagasMonitor = () => {
           if (objeto.numero !== 0) {
             if (objeto.estacionado === "S") {
               estacionadoSCount++;
-              if (objeto.temporestante === "00:00:00" && objeto.numero_notificacoes_pendentess !== 0) {
+              if (objeto.temporestante === "00:00:00" && objeto.numero_notificacoes_pendentess === 0) {
                 estacionadoPCount++;
               }
             } else if (objeto.estacionado === "N") {

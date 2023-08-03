@@ -125,6 +125,7 @@ const RegistrarVagaMonitor = () => {
         txid: TxId,
       })
       .then((response) => {
+        setLoadingButton(false);
         if (response.data.msg.resultado === true) {
           if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
           ImpressaoTicketEstacionamento(
@@ -139,7 +140,6 @@ const RegistrarVagaMonitor = () => {
             response.data.data.notificacao_pendente
           );
           }
-          setLoadingButton(false);
           localStorage.removeItem("vaga");
           localStorage.removeItem("popup");
           localStorage.removeItem("id_vagaveiculo");
@@ -171,6 +171,7 @@ const RegistrarVagaMonitor = () => {
     const vagaa = [];
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
+      setLoadingButton(false);
       setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
@@ -184,6 +185,7 @@ const RegistrarVagaMonitor = () => {
     const sim = document.getElementById("flexSwitchCheckDefault").checked;
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
+        setLoadingButton(false);
         setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
@@ -206,7 +208,9 @@ const RegistrarVagaMonitor = () => {
           id_vaga_veiculo: idvaga,
         })
         .then((response) => {
+          console.log(response)
           if (response.data.msg.resultado === true) {
+            setLoadingButton(false);
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
@@ -225,15 +229,13 @@ const RegistrarVagaMonitor = () => {
             localStorage.removeItem("popup");
             localStorage.removeItem("id_vagaveiculo");
 
-            setLoadingButton(false);
-
             if (user2.perfil[0] === "monitor") {
               FuncTrocaComp("ListarVagasMonitor");
             } else if (user2.perfil[0] === "admin") {
               FuncTrocaComp("Dashboard");
             }
           } else {
-
+            setLoadingButton(false);
             Swal.fire({
               icon: "error",
               title: "Oops...",
@@ -266,6 +268,7 @@ const RegistrarVagaMonitor = () => {
         .then((response) => {
           console.log(response)
           if (response.data.msg.resultado === true) {
+            setLoadingButton(false);
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
@@ -279,7 +282,6 @@ const RegistrarVagaMonitor = () => {
               response.data.data.notificacao_pendente
             );
             }
-            setLoadingButton(false);
             localStorage.removeItem("vaga");
 
             if (user2.perfil[0] === "monitor") {
@@ -288,6 +290,7 @@ const RegistrarVagaMonitor = () => {
               FuncTrocaComp("Dashboard");
             }
           } else {
+            setLoadingButton(false);
             setEstado(true);
             setMensagem(response.data.msg.msg);
             setTimeout(() => {
