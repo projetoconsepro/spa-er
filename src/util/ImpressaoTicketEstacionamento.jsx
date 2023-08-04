@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao, tempoRestante) => {
+const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao) => {
     console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao)
         const obterHoraAtual = () => {
             const dataAtual = new Date();
@@ -91,7 +91,7 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 horaValidade: horaValidade,
                 monitor: monitor,
                 metodo: forma(),
-                vaga: vaga[0],
+                vaga: metodo === 'PIX' ? vaga : vaga[0],
                 placa: placa,
                 valor: await valorTicket(),
                 notificacaoPendente: notificacao
