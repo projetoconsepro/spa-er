@@ -199,9 +199,6 @@ useEffect(() => {
   setTimeout(() => {
     if (localStorage.getItem("numero_vaga")) {
       setVaga(localStorage.getItem("numero_vaga"));
-      setTimeout(() => {
-        localStorage.removeItem("numero_vaga");
-      }, 1000);
     }
   }, 2300);
 
@@ -229,8 +226,7 @@ useEffect(() => {
 
     const requisicao = createAPI();
     localStorage.removeItem("idVagaVeiculo");
-    requisicao
-      .get("/setores")
+    requisicao.get("/setores")
       .then((response) => {
         for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
           resposta2[i] = {};

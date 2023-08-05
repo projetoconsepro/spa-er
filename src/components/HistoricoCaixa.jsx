@@ -48,10 +48,10 @@ const HistoricoCaixa = () => {
                    <p class="text-start mx-5"><b>Valor fechamento:</b> ${item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento},00`}</p>`,
             showCancelButton: true,
             cancelButtonText: 'Fechar',
-            showConfirmButton: false,
+            showConfirmButton: item.valor_fechamento === null ? true : false,
             }).then((result) => {
             if (result.isConfirmed) {
-                
+            
             } else if (result.isDenied) {
                 
             } else if (result.isDismissed) {
@@ -98,7 +98,7 @@ const HistoricoCaixa = () => {
           localStorage.removeItem("token")
           localStorage.removeItem("perfil");
           } else {
-              console.log(error)
+          console.log(error)
           }
         })
     }

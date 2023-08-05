@@ -639,15 +639,12 @@ const RegistrarEstacionamentoParceiro = () => {
               <p className="text-start">Forma de pagamento:</p>
               <select
                 className="form-select form-select-lg mb-3"
-                defaultValue="dinheiro"
+                defaultValue="pix"
                 aria-label=".form-select-lg example"
                 id="pagamentos"
               >
-                <option value="dinheiro">Dinheiro</option>
                 <option value="pix">PIX</option>
-                {user2 === "monitor" ? (
-                  <option value="parkimetro">Parkimetro</option>
-                ) : null}
+                <option value="dinheiro">Dinheiro</option>
               </select>
             </div>
 

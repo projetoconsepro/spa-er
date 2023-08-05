@@ -435,8 +435,11 @@ const RegistrarVagaMonitor = () => {
 
   const handleSubmit = async () => {
     setLoadingButton(true);
-    const select = document.getElementById("pagamentos").value;
-
+    let select = document.getElementById("pagamentos").value;
+    const tolerancia = document.getElementById("tempos").value;
+    if (tolerancia === '00:10:00'){
+      select = 'dinheiro'
+    }
     if (select === "pix") {
       fazerPix();
     } else {
@@ -581,9 +584,8 @@ const RegistrarVagaMonitor = () => {
                   aria-label=".form-select-lg example"
                   id="pagamentos"
                 >
-                  <option value="dinheiro">Dinheiro</option>
                   <option value="pix">PIX</option>
-                  <option value="parkimetro">Parkimetro</option>
+                  <option value="dinheiro">Dinheiro</option>
                 </select>
               </div>
 
