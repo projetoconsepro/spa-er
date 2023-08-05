@@ -187,12 +187,33 @@ const ListarVagasMonitor = () => {
         `.card-list[data-vaga="${newVaga}"]`
       );
       if (cardToScroll) {
+        console.log('oi')
         setTimeout(() => {
           cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 100);
       }
     }
 }
+
+useEffect(() => {
+  setTimeout(() => {
+    if (localStorage.getItem("numero_vaga")) {
+      setVaga(localStorage.getItem("numero_vaga"));
+      setTimeout(() => {
+        localStorage.removeItem("numero_vaga");
+      }, 1000);
+    }
+  }, 2300);
+
+  const cardToScroll = document.querySelector(
+    `.card-list[data-vaga="${vaga}"]`
+  );
+  if (cardToScroll) {
+    setTimeout(() => {
+      cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+  }
+}, [vaga]);
 
   useEffect(() => {
     if (localStorage.getItem("turno") != "true") {
