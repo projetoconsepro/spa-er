@@ -169,11 +169,68 @@ const PrestacaoContas = () => {
           ])
       }
     });
+
     const BoldLine = regularizacaoData.length - 2 ;
 
     console.log(data[0].aplicativo)
-    regularizacaoData.push([{ content: 'APLICATIVO', colSpan: 21 }]);
+    regularizacaoData.push([{ content: 'Clientes APP  ', colSpan: 21 }]);
     data[0].aplicativo.map((item) => {
+      if(item.Regularizacao !== undefined){
+      }
+      else {
+        regularizacaoData.push(
+          ['Total',
+          item.total.Regularizacao.quantidade,
+          formatNumero(item.total.Regularizacao.dinheiro),
+          formatNumero(item.total.Regularizacao.pix),
+          formatNumero(item.total.Regularizacao.TotalValor),
+          item.total.estacionamento.quantidade,
+          formatNumero(item.total.estacionamento.dinheiro),
+          formatNumero(item.total.estacionamento.pix),
+          formatNumero(item.total.estacionamento.TotalValor),
+          item.total.creditosInseridos.quantidade,
+          formatNumero(item.total.creditosInseridos.dinheiro),
+          formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(item.total.creditosInseridos.TotalValor),
+          item.total.finalTotal.quantidade,
+          formatNumero(item.total.finalTotal.dinheiro),
+          formatNumero(item.total.finalTotal.pix),
+          formatNumero(item.total.finalTotal.TotalValor),
+          ])
+      }
+    });
+
+    console.log(data[0].avulso)
+    regularizacaoData.push([{ content: 'AVULSO', colSpan: 21 }]);
+    data[0].avulso.map((item) => {
+      if(item.Regularizacao !== undefined){
+      }
+      else {
+        regularizacaoData.push(
+          ['Total',
+          item.total.Regularizacao.quantidade,
+          formatNumero(item.total.Regularizacao.dinheiro),
+          formatNumero(item.total.Regularizacao.pix),
+          formatNumero(item.total.Regularizacao.TotalValor),
+          item.total.estacionamento.quantidade,
+          formatNumero(item.total.estacionamento.dinheiro),
+          formatNumero(item.total.estacionamento.pix),
+          formatNumero(item.total.estacionamento.TotalValor),
+          item.total.creditosInseridos.quantidade,
+          formatNumero(item.total.creditosInseridos.dinheiro),
+          formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(item.total.creditosInseridos.TotalValor),
+          item.total.finalTotal.quantidade,
+          formatNumero(item.total.finalTotal.dinheiro),
+          formatNumero(item.total.finalTotal.pix),
+          formatNumero(item.total.finalTotal.TotalValor),
+          ])
+      }
+    });
+
+    console.log(data[0].chatbot)
+    regularizacaoData.push([{ content: 'CHATBOT', colSpan: 21 }]);
+    data[0].chatbot.map((item) => {
       if(item.Regularizacao !== undefined){
       }
       else {
@@ -204,57 +261,91 @@ const PrestacaoContas = () => {
     const iParceiro = data[0].parceiro.length - 1;
     const iMonitor = data[0].monitor.length - 1;
     const iAplicativo = data[0].aplicativo.length - 1;
+    const iAvulso = data[0].avulso.length - 1;
+    const iChatbot = data[0].chatbot.length - 1;
 
     regularizacaoData.push(
       ['Total',
       data[0].parceiro[iParceiro].total.Regularizacao.quantidade 
       + data[0].monitor[iMonitor].total.Regularizacao.quantidade 
-      + data[0].aplicativo[iAplicativo].total.Regularizacao.quantidade,
+      + data[0].aplicativo[iAplicativo].total.Regularizacao.quantidade
+      + data[0].avulso[iAvulso].total.Regularizacao.quantidade
+      + data[0].chatbot[iChatbot].total.Regularizacao.quantidade,
       formatNumero(data[0].parceiro[iParceiro].total.Regularizacao.dinheiro
       + data[0].monitor[iMonitor].total.Regularizacao.dinheiro
-      + data[0].aplicativo[iAplicativo].total.Regularizacao.dinheiro),
+      + data[0].aplicativo[iAplicativo].total.Regularizacao.dinheiro
+      + data[0].avulso[iAvulso].total.Regularizacao.dinheiro
+      + data[0].chatbot[iChatbot].total.Regularizacao.dinheiro),
       formatNumero(data[0].parceiro[iParceiro].total.Regularizacao.pix
       + data[0].monitor[iMonitor].total.Regularizacao.pix
-      + data[0].aplicativo[iAplicativo].total.Regularizacao.pix),
+      + data[0].aplicativo[iAplicativo].total.Regularizacao.pix
+      + data[0].avulso[iAvulso].total.Regularizacao.pix
+      + data[0].chatbot[iChatbot].total.Regularizacao.pix),
       formatNumero(data[0].parceiro[iParceiro].total.Regularizacao.TotalValor
       + data[0].monitor[iMonitor].total.Regularizacao.TotalValor
-      + data[0].aplicativo[iAplicativo].total.Regularizacao.TotalValor),
+      + data[0].aplicativo[iAplicativo].total.Regularizacao.TotalValor
+      + data[0].avulso[iAvulso].total.Regularizacao.TotalValor
+      + data[0].chatbot[iChatbot].total.Regularizacao.TotalValor),
       data[0].parceiro[iParceiro].total.estacionamento.quantidade 
       + data[0].monitor[iMonitor].total.estacionamento.quantidade 
-      + data[0].aplicativo[iAplicativo].total.estacionamento.quantidade,
+      + data[0].aplicativo[iAplicativo].total.estacionamento.quantidade
+      + data[0].avulso[iAvulso].total.estacionamento.quantidade
+      + data[0].chatbot[iChatbot].total.estacionamento.quantidade,
       formatNumero(data[0].parceiro[iParceiro].total.estacionamento.dinheiro
       + data[0].monitor[iMonitor].total.estacionamento.dinheiro
-      + data[0].aplicativo[iAplicativo].total.estacionamento.dinheiro),
+      + data[0].aplicativo[iAplicativo].total.estacionamento.dinheiro
+      + data[0].avulso[iAvulso].total.estacionamento.dinheiro
+      + data[0].chatbot[iChatbot].total.estacionamento.dinheiro),
       formatNumero(data[0].parceiro[iParceiro].total.estacionamento.pix
       + data[0].monitor[iMonitor].total.estacionamento.pix
-      + data[0].aplicativo[iAplicativo].total.estacionamento.pix),
+      + data[0].aplicativo[iAplicativo].total.estacionamento.pix
+      + data[0].avulso[iAvulso].total.estacionamento.pix
+      + data[0].chatbot[iChatbot].total.estacionamento.pix),
       formatNumero(data[0].parceiro[iParceiro].total.estacionamento.TotalValor
       + data[0].monitor[iMonitor].total.estacionamento.TotalValor
-      + data[0].aplicativo[iAplicativo].total.estacionamento.TotalValor),
+      + data[0].aplicativo[iAplicativo].total.estacionamento.TotalValor
+      + data[0].avulso[iAvulso].total.estacionamento.TotalValor
+      + data[0].chatbot[iChatbot].total.estacionamento.TotalValor),
       data[0].parceiro[iParceiro].total.creditosInseridos.quantidade 
       + data[0].monitor[iMonitor].total.creditosInseridos.quantidade 
-      + data[0].aplicativo[iAplicativo].total.creditosInseridos.quantidade,
+      + data[0].aplicativo[iAplicativo].total.creditosInseridos.quantidade
+      + data[0].avulso[iAvulso].total.creditosInseridos.quantidade
+      + data[0].chatbot[iChatbot].total.creditosInseridos.quantidade,
       formatNumero(data[0].parceiro[iParceiro].total.creditosInseridos.dinheiro
       + data[0].monitor[iMonitor].total.creditosInseridos.dinheiro
-      + data[0].aplicativo[iAplicativo].total.creditosInseridos.dinheiro),
+      + data[0].aplicativo[iAplicativo].total.creditosInseridos.dinheiro
+      + data[0].avulso[iAvulso].total.creditosInseridos.dinheiro
+      + data[0].chatbot[iChatbot].total.creditosInseridos.dinheiro),
       formatNumero(data[0].parceiro[iParceiro].total.creditosInseridos.pix
       + data[0].monitor[iMonitor].total.creditosInseridos.pix
-      + data[0].aplicativo[iAplicativo].total.creditosInseridos.pix),
+      + data[0].aplicativo[iAplicativo].total.creditosInseridos.pix
+      + data[0].avulso[iAvulso].total.creditosInseridos.pix
+      + data[0].chatbot[iChatbot].total.creditosInseridos.pix),
       formatNumero(data[0].parceiro[iParceiro].total.creditosInseridos.TotalValor
       + data[0].monitor[iMonitor].total.creditosInseridos.TotalValor
-      + data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor),
+      + data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor
+      + data[0].avulso[iAvulso].total.creditosInseridos.TotalValor
+      + data[0].chatbot[iChatbot].total.creditosInseridos.TotalValor),
       data[0].parceiro[iParceiro].total.finalTotal.quantidade 
       + data[0].monitor[iMonitor].total.finalTotal.quantidade 
-      + data[0].aplicativo[iAplicativo].total.finalTotal.quantidade,
+      + data[0].aplicativo[iAplicativo].total.finalTotal.quantidade
+      + data[0].avulso[iAvulso].total.finalTotal.quantidade
+      + data[0].chatbot[iChatbot].total.finalTotal.quantidade,
       formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro
       + data[0].monitor[iMonitor].total.finalTotal.dinheiro
-      + data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro),
+      + data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro
+      + data[0].avulso[iAvulso].total.finalTotal.dinheiro
+      + data[0].chatbot[iChatbot].total.finalTotal.dinheiro),
       formatNumero(data[0].parceiro[iParceiro].total.finalTotal.pix
       + data[0].monitor[iMonitor].total.finalTotal.pix
-      + data[0].aplicativo[iAplicativo].total.finalTotal.pix),
+      + data[0].aplicativo[iAplicativo].total.finalTotal.pix
+      + data[0].avulso[iAvulso].total.finalTotal.pix
+      + data[0].chatbot[iChatbot].total.finalTotal.pix),
       formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor
       + data[0].monitor[iMonitor].total.finalTotal.TotalValor
-      + data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor),
+      + data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor
+      + data[0].avulso[iAvulso].total.finalTotal.TotalValor
+      + data[0].chatbot[iChatbot].total.finalTotal.TotalValor),
       ]);
 
     const columnStyles = {
@@ -328,23 +419,43 @@ const PrestacaoContas = () => {
 
 
     resumoData.push(
-    ['Monitor', formatNumero(data[0].monitor[iMonitor].total.finalTotal.dinheiro) , formatNumero(data[0].monitor[iMonitor].total.finalTotal.pix) , formatNumero(data[0].monitor[iMonitor].total.finalTotal.TotalValor)],
+    ['Monitores', formatNumero(data[0].monitor[iMonitor].total.finalTotal.dinheiro) , formatNumero(data[0].monitor[iMonitor].total.finalTotal.pix) , formatNumero(data[0].monitor[iMonitor].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
-    ['Parceiro', formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.pix) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor)],
+    ['Parceiros', formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.pix) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
-    ['Aplicativo', formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.pix) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor)],
+    ['Clientes APP', formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.pix) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
-    ['Faturamento total', formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro + data[0].monitor[iMonitor].total.finalTotal.dinheiro + data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.pix + data[0].monitor[iMonitor].total.finalTotal.pix + data[0].aplicativo[iAplicativo].total.finalTotal.pix) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor + data[0].monitor[iMonitor].total.finalTotal.TotalValor + data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor)],
+    ['Avulso', formatNumero(data[0].avulso[iAvulso].total.finalTotal.dinheiro) , formatNumero(data[0].avulso[iAvulso].total.finalTotal.pix) , formatNumero(data[0].avulso[iAvulso].total.finalTotal.TotalValor)],
     );
-    
-    
 
+    resumoData.push(
+    ['Chatbot', formatNumero(data[0].chatbot[iChatbot].total.finalTotal.dinheiro) , formatNumero(data[0].chatbot[iChatbot].total.finalTotal.pix) , formatNumero(data[0].chatbot[iChatbot].total.finalTotal.TotalValor)],
+    );
+
+    resumoData.push(
+    ['Faturamento total', 
+    formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro 
+    + data[0].monitor[iMonitor].total.finalTotal.dinheiro 
+    + data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro 
+    + data[0].avulso[iAvulso].total.finalTotal.dinheiro 
+    + data[0].chatbot[iChatbot].total.finalTotal.dinheiro), 
+    formatNumero(data[0].parceiro[iParceiro].total.finalTotal.pix 
+    + data[0].monitor[iMonitor].total.finalTotal.pix 
+    + data[0].aplicativo[iAplicativo].total.finalTotal.pix 
+    + data[0].avulso[iAvulso].total.finalTotal.pix 
+    + data[0].chatbot[iChatbot].total.finalTotal.pix), 
+    formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor 
+    + data[0].monitor[iMonitor].total.finalTotal.TotalValor 
+    + data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor 
+    + data[0].avulso[iAvulso].total.finalTotal.TotalValor 
+    + data[0].chatbot[iChatbot].total.finalTotal.TotalValor)],
+    );
 
 let startY = doc.lastAutoTable.finalY + 5;
 let tableWidth = 40; 
@@ -368,45 +479,6 @@ doc.autoTable({
 });
 
 ////////////////////////////////////////////////////
-
-let resumoData2 = [
-  [{ content: 'Movimentos crédito aplicativo', colSpan: 2 }],
-  ['Tipo','Crédito'],
-  ];
-
-  resumoData2.push(
-    ['Estacionamento', formatNumero(data[0].aplicativo[0].estacionamento.credito)],
-    );
-  
-  resumoData2.push(
-    ['Regularização', formatNumero(data[0].aplicativo[0].Regularizacao.credito)],
-    );
-  resumoData2.push(
-    ['Total Geral', formatNumero(data[0].aplicativo[0].estacionamento.credito + data[0].aplicativo[0].Regularizacao.credito)],
-    );
-
-
-  const table1FinalY = doc.autoTable.previous.finalY;
-  const startX = 60;
-  tableWidth = 20; 
-
-  doc.autoTable({
-    head: [resumoData2[0]],
-    body: resumoData2.slice(1),
-    useCss: true,
-    startY: table1FinalY + 10,
-    startX: startX,
-    margin: { left: 3.5, right: 3.5 },
-    columnStyles: {
-      0: { cellWidth: 40 },
-      1: { cellWidth: 40 },
-      2: { cellWidth: 40 },
-      3: { cellWidth: 40 },
-      4: { cellWidth: 40 },
-    },
-    headStyles: headStyles,
-    theme: 'grid',
-  }); 
 
     const totalPages = doc.internal.getNumberOfPages(); // Obtém o total de páginas
     for (let i = 1; i <= totalPages; i++) {
@@ -432,12 +504,12 @@ let resumoData2 = [
     const mes = (data.getMonth() + 1).toString().padStart(2, '0');
     const ano = data.getFullYear();
     const dataHoje = ano + "-" + mes + "-" + dia;
-      setDataHoje(dataHoje);
+    setDataHoje(dataHoje);
 
     const requisicao = createAPI();
-  const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
-  const passar = btoa(idrequisicao)
-  requisicao.get(`/financeiro/admin/?query=${passar}`).then((res) => {
+    const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
+    const passar = btoa(idrequisicao)
+    requisicao.get(`/financeiro/admin/?query=${passar}`).then((res) => {
     console.log(res)
     setEstado(true);
     setData(res.data.data);
@@ -545,20 +617,94 @@ let resumoData2 = [
       }
     });
 
+    const newData5 = res.data.data[0].avulso.map((item) => {
+      if (item) {
+          if (item.total) {
+        const perfil = 'Avulso';
+        const nome = '';
+        const totalRegularizacao = item.total.Regularizacao.TotalValor;
+        const totalEstacionamento = item.total.estacionamento.TotalValor;
+        const totalRecarga = item.total.creditosInseridos.TotalValor;
+        const finalTotal = item.total.finalTotal.TotalValor;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+        }
+        const perfil = 'Avulso';
+        const nome = '';
+        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
+        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
+        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
+        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+      }
+    });
+
+    const newData6 = res.data.data[0].chatbot.map((item) => {
+      if (item) {
+          if (item.total) {
+        const perfil = 'Chatbot';
+        const nome = '';
+        const totalRegularizacao = item.total.Regularizacao.TotalValor;
+        const totalEstacionamento = item.total.estacionamento.TotalValor;
+        const totalRecarga = item.total.creditosInseridos.TotalValor;
+        const finalTotal = item.total.finalTotal.TotalValor;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+        }
+        const perfil = 'Chatbot';
+        const nome = '';
+        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
+        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
+        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
+        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+      }
+    });
+
+
     const iParceiro = res.data.data[0].parceiro.length - 1;
     const iMonitor = res.data.data[0].monitor.length - 1;
     const iAplicativo = res.data.data[0].aplicativo.length - 1;
+    const iAvulso = res.data.data[0].avulso.length - 1;
+    const iChatbot = res.data.data[0].chatbot.length - 1;
 
     const newData4 = {
         nome : '',
         perfil : 'Total geral',
-        totalRegularizacao : res.data.data[0].parceiro[iParceiro].total.Regularizacao.TotalValor + res.data.data[0].monitor[iMonitor].total.Regularizacao.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.Regularizacao.TotalValor,
-        totalEstacionamento : res.data.data[0].parceiro[iParceiro].total.estacionamento.TotalValor + res.data.data[0].monitor[iMonitor].total.estacionamento.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.estacionamento.TotalValor,
-        totalRecarga : res.data.data[0].parceiro[iParceiro].total.creditosInseridos.TotalValor + res.data.data[0].monitor[iMonitor].total.creditosInseridos.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor,
-        finalTotal : res.data.data[0].parceiro[iParceiro].total.finalTotal.TotalValor + res.data.data[0].monitor[iMonitor].total.finalTotal.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor,
+        totalRegularizacao : res.data.data[0].parceiro[iParceiro].total.Regularizacao.TotalValor + res.data.data[0].monitor[iMonitor].total.Regularizacao.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.Regularizacao.TotalValor + res.data.data[0].avulso[iAvulso].total.Regularizacao.TotalValor + res.data.data[0].chatbot[iChatbot].total.Regularizacao.TotalValor,
+        totalEstacionamento : res.data.data[0].parceiro[iParceiro].total.estacionamento.TotalValor + res.data.data[0].monitor[iMonitor].total.estacionamento.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.estacionamento.TotalValor + res.data.data[0].avulso[iAvulso].total.estacionamento.TotalValor + res.data.data[0].chatbot[iChatbot].total.estacionamento.TotalValor,
+        totalRecarga : res.data.data[0].parceiro[iParceiro].total.creditosInseridos.TotalValor + res.data.data[0].monitor[iMonitor].total.creditosInseridos.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor + res.data.data[0].avulso[iAvulso].total.creditosInseridos.TotalValor + res.data.data[0].chatbot[iChatbot].total.creditosInseridos.TotalValor,
+        finalTotal : res.data.data[0].parceiro[iParceiro].total.finalTotal.TotalValor + res.data.data[0].monitor[iMonitor].total.finalTotal.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor + res.data.data[0].avulso[iAvulso].total.finalTotal.TotalValor + res.data.data[0].chatbot[iChatbot].total.finalTotal.TotalValor,
     };
 
-    newData = newData.concat(newData2, newData3, newData4);
+    newData = newData.concat(newData2, newData3, newData5, newData6, newData4);
+    console.log('sdf', newData5)
     setData2(newData);
   }).catch((err) => {
     console.log(err);

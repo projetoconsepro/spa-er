@@ -150,6 +150,7 @@ const Notificacao = () => {
         if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") { 
         requisicao.post('/notificacao', {
             "id_vaga_veiculo": vagaVeiculo,
+            "placa" : placa,
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
     }).then(
