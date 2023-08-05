@@ -5,6 +5,7 @@ import { IconCash } from "@tabler/icons-react";
 import { Input } from "@mantine/core";
 import createAPI from "../services/createAPI";
 import Swal from "sweetalert2";
+import ImpressaoFecharCaixa from "../util/ImpressaoFecharCaixa";
 
 const AbrirTurno = () => {
   const [valor, setValor] = useState('');
@@ -123,9 +124,7 @@ const AbrirTurno = () => {
 
   const abrirTurno = () => {
     const requisicao = createAPI();
-
     const valorFinal = parseFloat(valor.replace(",", ".")).toFixed(2);
-
     requisicao.post("/turno/abrir", {
         hora: tempoAtual,
         idSetor: setorSelecionado,
@@ -274,16 +273,15 @@ const AbrirTurno = () => {
 
   const fecharCaixa = () => {
     const requisicao = createAPI();
-
     requisicao.get('/turno/caixa').then(
-        response => {
-            if(response.data.msg.resultado){
-                console.log(response)
-                const sim = parseFloat(response.data.caixa.valor_abertura) + parseFloat(response.data.caixa.valor_movimentos);
+        response2 => {
+            if(response2.data.msg.resultado){
+                console.log(response2)
+                const sim = parseFloat(response2.data.caixa.valor_abertura) + parseFloat(response2.data.caixa.valor_movimentos);
                 Swal.fire({
                     title: 'Confirmar fechamento de caixa',
                     showDenyButton: true,
-                    html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response.data.caixa.valor_abertura},00</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response.data.caixa.valor_movimentos},00</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4></div><div className="col-12"></div></div></div>`,
+                    html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response2.data.caixa.valor_abertura},00</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response2.data.caixa.valor_movimentos},00</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4></div><div className="col-12"></div></div></div>`,
                     confirmButtonText: `Confirmar`,
                     confirmButtonColor: '#28a745',
                     denyButtonText: `Cancelar`,
@@ -298,23 +296,23 @@ const AbrirTurno = () => {
                             }
                         ).then(
                             response => {
-                                console.log(response)
+                            console.log(response)
                             if(response.data.msg.resultado === true){
                                 localStorage.setItem("turno", false);
                                 localStorage.setItem("caixa", false);
                                 Swal.fire('Caixa fechado com sucesso', '', 'success')
                                 verificarTurno();
+                                ImpressaoFecharCaixa(response2.data.caixa, sim)
                             }
                             else{
                                 Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error')
                                 console.log(response)
                             }
-                            }
-                        ).catch(function (error) {
-                                        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
+                            }).catch(function (error) {
+        if(error?.response?.data?.msg === "Cabeçalho inválido!" 
         || error?.response?.data?.msg === "Token inválido!" 
         || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-            localStorage.removeItem("user")
+        localStorage.removeItem("user")
         localStorage.removeItem("token")
         localStorage.removeItem("perfil");
         } else {
@@ -327,7 +325,9 @@ const AbrirTurno = () => {
         }
         })
         }
-        else {console.log(response)}
+        else {
+          console.log(response2)
+        }
         }
     ).catch(function (error) {
                     if(error?.response?.data?.msg === "Cabeçalho inválido!" 
