@@ -210,7 +210,7 @@ useEffect(() => {
       cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 100);
   }
-}, [vaga]);
+  }, [vaga]);
 
   useEffect(() => {
     if (localStorage.getItem("turno") != "true") {

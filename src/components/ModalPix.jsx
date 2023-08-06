@@ -17,7 +17,7 @@ import { React, useState, useEffect, useRef } from "react";
 import QRCode from "react-qr-code";
 import { FaCopy, FaCheck } from "react-icons/fa";
 
-const ModalPix = ({ qrCode, status, mensagemPix, onOpen }) => {
+const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
   const inputRef = useRef(null);
   const [icon, setIcon] = useState("FaCopy");
 
@@ -43,6 +43,14 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen }) => {
       close();
     }
   }, [qrCode, onOpen]);
+
+  useEffect(() => {
+    if (opened){
+      console.log('aberto')
+    } else {
+      onClose()
+    }
+  }, [opened]);
 
   return (
     <div>

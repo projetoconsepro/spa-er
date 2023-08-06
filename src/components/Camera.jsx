@@ -4,6 +4,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
 import { Button, Card, Text } from "@mantine/core";
 import { IconCamera, IconCheck, IconReload } from "@tabler/icons-react";
+import VoltarComponente from "../util/VoltarComponente";
 
 function Camera() {
   const videoRef = useRef(null);
@@ -167,6 +168,7 @@ function Camera() {
                 <Button
                   variant="gradient"
                   size="md"
+                  className="mb-4"
                   gradient={{ from: 'indigo', to: 'cyan' }}
                   rightIcon={<IconCamera />}
                   onClick={takePicture}
@@ -177,13 +179,14 @@ function Camera() {
                 <Button
                   variant="gradient"
                   size="md"
-                  className="mx-2"
+                  className="mx-2 mb-4"
                   gradient={{ from: 'yellow', to: 'orange' }}
                   rightIcon={<IconReload />}
                   onClick={() => stopVideoCapture()}
                 >
                   Reiniciar
                 </Button>
+                <VoltarComponente space={true} />
                 {photos.length >= 2 && (
                   <Button
                     className="mt-2"

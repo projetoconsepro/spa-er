@@ -61,8 +61,8 @@ const PrestacaoContas = () => {
     header()
 
     const regularizacaoData = [
-      ['', { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 4 }, { content: 'Total arrecadado', colSpan: 4 },],
-      ['', 'Quant' ,'Din', 'Pix', 'Total', 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix', 'Total'],
+      ['', { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 4 }, { content: 'Total arrecadado', colSpan: 3 },],
+      ['', 'Quant' ,'Din', 'Pix', 'Total', 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix', 'Total' , 'Din', 'Pix', 'Total'],
       
     ];
 
@@ -93,7 +93,6 @@ const PrestacaoContas = () => {
         formatNumero(item.creditosInseridos.dinheiro),
         formatNumero(item.creditosInseridos.pix),
         formatNumero(item.creditosInseridos.TotalValor),
-        item.finalTotal.quantidade,
         formatNumero(item.finalTotal.dinheiro),
         formatNumero(item.finalTotal.pix),
         formatNumero(item.finalTotal.TotalValor),
@@ -114,7 +113,6 @@ const PrestacaoContas = () => {
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
           formatNumero(item.total.creditosInseridos.TotalValor),
-          item.total.finalTotal.quantidade,
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
           formatNumero(item.total.finalTotal.TotalValor),
@@ -141,7 +139,6 @@ const PrestacaoContas = () => {
         formatNumero(item.creditosInseridos.dinheiro),
         formatNumero(item.creditosInseridos.pix),
         formatNumero(item.creditosInseridos.TotalValor),
-        item.finalTotal.quantidade,
         formatNumero(item.finalTotal.dinheiro),
         formatNumero(item.finalTotal.pix),
         formatNumero(item.finalTotal.TotalValor),
@@ -162,7 +159,6 @@ const PrestacaoContas = () => {
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
           formatNumero(item.total.creditosInseridos.TotalValor),
-          item.total.finalTotal.quantidade,
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
           formatNumero(item.total.finalTotal.TotalValor),
@@ -192,7 +188,6 @@ const PrestacaoContas = () => {
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
           formatNumero(item.total.creditosInseridos.TotalValor),
-          item.total.finalTotal.quantidade,
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
           formatNumero(item.total.finalTotal.TotalValor),
@@ -220,7 +215,6 @@ const PrestacaoContas = () => {
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
           formatNumero(item.total.creditosInseridos.TotalValor),
-          item.total.finalTotal.quantidade,
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
           formatNumero(item.total.finalTotal.TotalValor),
@@ -248,7 +242,6 @@ const PrestacaoContas = () => {
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
           formatNumero(item.total.creditosInseridos.TotalValor),
-          item.total.finalTotal.quantidade,
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
           formatNumero(item.total.finalTotal.TotalValor),
@@ -326,11 +319,6 @@ const PrestacaoContas = () => {
       + data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor
       + data[0].avulso[iAvulso].total.creditosInseridos.TotalValor
       + data[0].chatbot[iChatbot].total.creditosInseridos.TotalValor),
-      data[0].parceiro[iParceiro].total.finalTotal.quantidade 
-      + data[0].monitor[iMonitor].total.finalTotal.quantidade 
-      + data[0].aplicativo[iAplicativo].total.finalTotal.quantidade
-      + data[0].avulso[iAvulso].total.finalTotal.quantidade
-      + data[0].chatbot[iChatbot].total.finalTotal.quantidade,
       formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro
       + data[0].monitor[iMonitor].total.finalTotal.dinheiro
       + data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro
@@ -396,7 +384,9 @@ const PrestacaoContas = () => {
       },
       didParseCell: (data) => {
         const rowIndex = data.row ? data.row.index : null;
-        if (rowIndex === BoldCol || rowIndex === BoldLine || rowIndex === BoldLine + 3 || rowIndex === BoldLine + 4||rowIndex === BoldCol + 1 || rowIndex === BoldLine + 1 ||  rowIndex === BoldLine + 2 || rowIndex === 0 || rowIndex === 1) { 
+        if (rowIndex === BoldCol || rowIndex === BoldLine || rowIndex === BoldLine + 3 || rowIndex === BoldLine + 4||rowIndex === BoldCol + 1 || rowIndex === BoldLine + 1 ||  rowIndex === BoldLine + 2 || rowIndex === 0 || rowIndex === 1
+          ||  rowIndex === BoldLine + 5 || rowIndex === BoldLine + 6 || rowIndex === BoldLine + 7 || rowIndex === BoldLine + 8
+          ) { 
         const columnCount = data.table.columns.length;
 
         for (let i = 0; i < columnCount; i++) {
@@ -427,7 +417,7 @@ const PrestacaoContas = () => {
     );
 
     resumoData.push(
-    ['Clientes APP', formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.pix) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor)],
+    ['CLIENTES APP', formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.pix) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
@@ -827,21 +817,95 @@ doc.autoTable({
       }
     });
 
+    const newData5 = res.data.data[0].avulso.map((item) => {
+      if (item) {
+          if (item.total) {
+        const perfil = 'Avulso';
+        const nome = '';
+        const totalRegularizacao = item.total.Regularizacao.TotalValor;
+        const totalEstacionamento = item.total.estacionamento.TotalValor;
+        const totalRecarga = item.total.creditosInseridos.TotalValor;
+        const finalTotal = item.total.finalTotal.TotalValor;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+        }
+        const perfil = 'Avulso';
+        const nome = '';
+        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
+        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
+        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
+        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+      }
+    });
+
+    const newData6 = res.data.data[0].chatbot.map((item) => {
+      if (item) {
+          if (item.total) {
+        const perfil = 'Chatbot';
+        const nome = '';
+        const totalRegularizacao = item.total.Regularizacao.TotalValor;
+        const totalEstacionamento = item.total.estacionamento.TotalValor;
+        const totalRecarga = item.total.creditosInseridos.TotalValor;
+        const finalTotal = item.total.finalTotal.TotalValor;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+        }
+        const perfil = 'Chatbot';
+        const nome = '';
+        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
+        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
+        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
+        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
+        return {
+          perfil,
+          nome,
+          totalRegularizacao,
+          totalEstacionamento,
+          totalRecarga,
+          finalTotal,
+        };
+      }
+    });
+
+
     const iParceiro = res.data.data[0].parceiro.length - 1;
     const iMonitor = res.data.data[0].monitor.length - 1;
     const iAplicativo = res.data.data[0].aplicativo.length - 1;
+    const iAvulso = res.data.data[0].avulso.length - 1;
+    const iChatbot = res.data.data[0].chatbot.length - 1;
 
     const newData4 = {
         nome : '',
         perfil : 'Total geral',
-        totalRegularizacao : res.data.data[0].parceiro[iParceiro].total.Regularizacao.TotalValor + res.data.data[0].monitor[iMonitor].total.Regularizacao.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.Regularizacao.TotalValor,
-        totalEstacionamento : res.data.data[0].parceiro[iParceiro].total.estacionamento.TotalValor + res.data.data[0].monitor[iMonitor].total.estacionamento.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.estacionamento.TotalValor,
-        totalRecarga : res.data.data[0].parceiro[iParceiro].total.creditosInseridos.TotalValor + res.data.data[0].monitor[iMonitor].total.creditosInseridos.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor,
-        finalTotal : res.data.data[0].parceiro[iParceiro].total.finalTotal.TotalValor + res.data.data[0].monitor[iMonitor].total.finalTotal.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor,
+        totalRegularizacao : res.data.data[0].parceiro[iParceiro].total.Regularizacao.TotalValor + res.data.data[0].monitor[iMonitor].total.Regularizacao.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.Regularizacao.TotalValor + res.data.data[0].avulso[iAvulso].total.Regularizacao.TotalValor + res.data.data[0].chatbot[iChatbot].total.Regularizacao.TotalValor,
+        totalEstacionamento : res.data.data[0].parceiro[iParceiro].total.estacionamento.TotalValor + res.data.data[0].monitor[iMonitor].total.estacionamento.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.estacionamento.TotalValor + res.data.data[0].avulso[iAvulso].total.estacionamento.TotalValor + res.data.data[0].chatbot[iChatbot].total.estacionamento.TotalValor,
+        totalRecarga : res.data.data[0].parceiro[iParceiro].total.creditosInseridos.TotalValor + res.data.data[0].monitor[iMonitor].total.creditosInseridos.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor + res.data.data[0].avulso[iAvulso].total.creditosInseridos.TotalValor + res.data.data[0].chatbot[iChatbot].total.creditosInseridos.TotalValor,
+        finalTotal : res.data.data[0].parceiro[iParceiro].total.finalTotal.TotalValor + res.data.data[0].monitor[iMonitor].total.finalTotal.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor + res.data.data[0].avulso[iAvulso].total.finalTotal.TotalValor + res.data.data[0].chatbot[iChatbot].total.finalTotal.TotalValor,
     };
-    newData = newData.concat(newData2, newData3, newData4);
+
+    newData = newData.concat(newData2, newData3, newData5, newData6, newData4);
+    console.log('sdf', newData5)
     setData2(newData);
-    console.log(data2)
   }
   else{
     setData([]);

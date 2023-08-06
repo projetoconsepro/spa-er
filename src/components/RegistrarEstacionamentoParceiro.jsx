@@ -525,6 +525,10 @@ const RegistrarEstacionamentoParceiro = () => {
       });
   }
 
+  const onClose = () => {
+    setLoadingButton(false);
+  }
+
   useEffect(() => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
     if (clicado === false) {
@@ -684,6 +688,7 @@ const RegistrarEstacionamentoParceiro = () => {
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
+        onClose={onClose}
       />
     </div>
   );
