@@ -187,7 +187,7 @@ const Notificacao = () => {
                      response.data.data.local)
 
 
-                    FuncTrocaComp( "CameraTicketNotificacao");
+                    FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
                     localStorage.removeItem("placa");

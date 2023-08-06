@@ -92,11 +92,22 @@ const ListarVeiculos = () => {
     });
   };
 
+  const FormatDate =  (date) => {
+    const data = new Date(date);
+    const year = data.getFullYear();
+    const month = String(data.getMonth() + 1).padStart(2, '0');
+    const day = String(data.getDate()).padStart(2, '0');
+    const formattedDate = `${day}/${month}/${year}`;
+
+    return formattedDate;
+  }
+
   const atualizacomp = async () => {
     const requisicao = createAPI();
     await requisicao
       .get("/veiculo")
       .then((response) => {
+        console.log(response, 'response')
         if (response.data.msg.resultado === false) {
           FuncTrocaComp("CadastrarVeiculo");
         }
@@ -141,15 +152,15 @@ const ListarVeiculos = () => {
             resposta[i].div = "card-body2 mb-2";
             resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
             mostrardiv[i] = { estado: false };
-            resposta[i].notificacoesVaga =
-              response.data.data[i].numero_notificacoes_pendentess;
+            resposta[i].notificacoesVaga = response.data.data[i].numero_notificacoes_pendentess;
             resposta[i].vaga = response.data.data[i].numerovaga;
-            resposta[i].estacionado =
-              "Estacionado - Vaga: " + response.data.data[i].numerovaga;
+            resposta[i].estacionado = "Estacionado - Vaga: " + response.data.data[i].numerovaga;
             resposta[i].tempo = response.data.data[i].tempo;
             resposta[i].chegada = response.data.data[i].chegada;
             resposta[i].id_vaga_veiculo = response.data.data[i].id_vaga_veiculo;
             resposta[i].temporestante = calcularValidade(response.data.data[i].chegada, response.data.data[i].tempo);
+            const diffDate = FormatDate(response.data.data[i].date);
+            resposta[i].data = `${diffDate} - ${resposta[i].temporestante}`;
             if (response.data.data[i].numero_notificacoes_pendentess > 0) {
               resposta[i].textoestacionado = "Clique aqui para regularizar";
             }
@@ -230,11 +241,15 @@ const ListarVeiculos = () => {
 
   const atualizaHora = () => {
     const dataAtual = new Date();
+    const dia = dataAtual.getDate().toString().padStart(2, '0');
+    const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0'); 
+    const ano = dataAtual.getFullYear();
     const hora = dataAtual.getHours().toString().padStart(2, '0');
     const minutos = dataAtual.getMinutes().toString().padStart(2, '0');
     const segundos = dataAtual.getSeconds().toString().padStart(2, '0');
-    const horaAtual = `${hora}:${minutos}:${segundos}`;
-    setHoraAgora(horaAtual)
+    
+    const dataHoraAtual = `${dia}/${mes}/${ano} - ${hora}:${minutos}:${segundos}`;
+    setHoraAgora(dataHoraAtual);
   }
 
   useEffect(() => {
@@ -452,7 +467,7 @@ const ListarVeiculos = () => {
                     className="h6 d-flex align-items-center fs-6"
                     id="estacionadocarroo"
                   >
-                    <h6 className={link.temporestante < horaAgora ? "text-danger" : ""}>
+                    <h6 className={link.data < horaAgora ? "text-danger" : ""}>
                       <RxLapTimer />‎ Validade:{" "}
                       <span>{link.temporestante}</span>{" "}
                     </h6>

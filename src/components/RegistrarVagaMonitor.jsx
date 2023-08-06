@@ -159,6 +159,10 @@ const RegistrarVagaMonitor = () => {
       });
   }
 
+  const onClose = () => {
+    setLoadingButton(false);
+  }
+  
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });
@@ -384,7 +388,11 @@ const RegistrarVagaMonitor = () => {
     if (tempoo === "00:10:00") {
       SetMostrapag(false);
       setValor("");
-    } else {
+    } else if (tempoo === "notificacao"){
+      SetMostrapag(false);
+      setValor("");
+    } 
+    else {
       SetMostrapag(true);
     }
 
@@ -437,10 +445,16 @@ const RegistrarVagaMonitor = () => {
     setLoadingButton(true);
     let select = document.getElementById("pagamentos").value;
     const tolerancia = document.getElementById("tempos").value;
-    if (tolerancia === '00:10:00'){
-      select = 'dinheiro'
+    if (tolerancia === "notificacao"){
+      const placaString = textoPlaca.toString();
+      const placaMaiuscula = placaString.toUpperCase();
+      localStorage.setItem("placa", `${placaMaiuscula}`);
+      FuncTrocaComp("Notificacao");
     }
-    if (select === "pix") {
+    if (tolerancia === '00:10:00'){
+      registrarEstacionamento();
+    }
+    else if (select === "pix") {
       fazerPix();
     } else {
       registrarEstacionamento();
@@ -616,6 +630,7 @@ const RegistrarVagaMonitor = () => {
           status={notification}
           mensagemPix={pixExpirado}
           onOpen={onOpen}
+          onClose={onClose}
         />
       </div>
     </section>

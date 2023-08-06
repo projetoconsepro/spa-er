@@ -302,7 +302,7 @@ const AbrirTurno = () => {
                                 localStorage.setItem("caixa", false);
                                 Swal.fire('Caixa fechado com sucesso', '', 'success')
                                 verificarTurno();
-                                ImpressaoFecharCaixa(response2.data.caixa, sim)
+                                ImpressaoFecharCaixa(response2.data.caixa, sim, response.config.headers.id_usuario)
                             }
                             else{
                                 Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error')
