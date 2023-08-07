@@ -445,7 +445,7 @@ const RegistrarVagaMonitor = () => {
     setLoadingButton(true);
     let select = document.getElementById("pagamentos").value;
     const tolerancia = document.getElementById("tempos").value;
-    if (tolerancia === "notificacao"){
+    if (tolerancia === "notificacao" && textoPlaca !== ""){
       const placaString = textoPlaca.toString();
       const placaMaiuscula = placaString.toUpperCase();
       localStorage.setItem("placa", `${placaMaiuscula}`);
