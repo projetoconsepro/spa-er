@@ -326,10 +326,21 @@ const AbrirTurno = () => {
         })
         }
         else {
-          console.log(response2)
-        }
-        }
-    ).catch(function (error) {
+          if (response2.data.msg.resultado === false){
+            const requisicao = createAPI();
+            requisicao.post('/turno/fechar',{
+                hora: tempoAtual,
+                }
+            ).then(
+                response => {
+                    console.log(response)
+                    if(response.data.msg.resultado){
+                      setAbTurno(false)
+                      setCaixa(true)
+                    }
+                  }
+            )}
+        }}).catch(function (error) {
                     if(error?.response?.data?.msg === "Cabeçalho inválido!" 
         || error?.response?.data?.msg === "Token inválido!" 
         || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){

@@ -1,4 +1,4 @@
-import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint } from "react-icons/fa";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint, FaConnectdevelop } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
@@ -9,7 +9,7 @@ import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
-import { IconHelpCircleFilled } from "@tabler/icons-react";
+import { IconHelpCircleFilled, IconHttpConnect, IconPlugConnected } from "@tabler/icons-react";
 
 const Sidebar = () => {
     const nome = localStorage.getItem("user");
@@ -28,10 +28,9 @@ const Sidebar = () => {
 
     const componentefunc = (componente, index) =>{
             if (links[index].subitem !== undefined) {
-                
             } else {
             setAriaExpanded(false)
-            if (componente !== "linkWhatsapp" && componente !== "ConfigurarImpressora") {
+            if (componente !== "linkWhatsapp" && componente !== "ConfigurarImpressora" && componente !== "ConectarImpressora") {
             FuncTrocaComp(componente)
             setMostrarSidebar(false)
             setTimeout(() => {
@@ -39,12 +38,20 @@ const Sidebar = () => {
             }, 1);
             }
             else if (componente === "ConfigurarImpressora"){
-                setMostrarSidebar(false)
+            setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
             }, 1);
                 if(window.ReactNativeWebView) {
                     window.ReactNativeWebView.postMessage('mostrar');
+                }
+            } else if (componente === "ConectarImpressora"){
+                setMostrarSidebar(false)
+                setTimeout(() => {
+                    setMostrarSidebar(true)
+                }, 1);
+                if(window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage('conectar');
                 }
             }
             else {
@@ -338,6 +345,12 @@ const Sidebar = () => {
             icon: <FaPrint />,
             name: "‎ Configurar impressora",
             componente: "ConfigurarImpressora",
+        })
+        links.push({
+            className: styles.className,
+            icon: <IconPlugConnected />,
+            name: "‎ Conectar",
+            componente: "ConectarImpressora",
         })
     }
     else if (teste.perfil[0] === "agente"){
