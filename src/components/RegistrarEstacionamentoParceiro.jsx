@@ -647,8 +647,16 @@ const RegistrarEstacionamentoParceiro = () => {
                 aria-label=".form-select-lg example"
                 id="pagamentos"
               >
+                {user2 !== 'admin' ?
+                <>
                 <option value="pix">PIX</option>
                 <option value="dinheiro">Dinheiro</option>
+                </>
+                : null }
+                {user2 === 'admin' ?
+                <option value="parkimetro">Parkimetro</option>
+                : null
+                }
               </select>
             </div>
 

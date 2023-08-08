@@ -360,6 +360,7 @@ const RegistrarVagaMonitor = () => {
     await parametros
       .get("/parametros")
       .then((response) => {
+        console.log(response);
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
       })
       .catch(function (error) {
