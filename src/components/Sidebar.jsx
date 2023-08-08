@@ -206,6 +206,12 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Registrar Estacionamento",
+            componente: "RegistrarEstacionamentoParceiro",
+        })
+        links.push({
+            className: styles.className,
             icon: <FaCarAlt />,
             name: "‎ Buscar Veículo",
             componente: "BuscarVeiculo",
