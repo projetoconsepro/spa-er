@@ -57,6 +57,7 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
   return (
     <div>
       <Modal
+        style={{ zIndex: 51 }}
         opened={opened}
         onClose={() => {
           close();

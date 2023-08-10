@@ -136,6 +136,12 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
+            icon: <FaCarAlt />,
+            name: "‎ Débito automático",
+            componente: "Configuracoes",
+        })
+        links.push({
+            className: styles.className,
             icon: <FaParking />,
             name: "‎ Registrar Estacionamento",
             componente: "RegistrarEstacionamento",

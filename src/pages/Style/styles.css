@@ -4533,8 +4533,8 @@ textarea.form-control-lg {
     border-left: 0;
     border-right: 0;
 }
-#notify{
-
+#nav{
+    z-index: 50;
 }
 #notify2{
     color: red !important;
