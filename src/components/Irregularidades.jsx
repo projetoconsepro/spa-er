@@ -322,7 +322,7 @@ const Irregularidades = () => {
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
     ) {
-      FuncTrocaComp("FecharTurno");
+      FuncTrocaComp("AbrirTurno");
     }
     const placa = localStorage.getItem("placaCarro");
     if (placa !== null && placa !== undefined && placa !== "") {

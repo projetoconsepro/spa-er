@@ -279,13 +279,35 @@ const AbrirTurno = () => {
                 console.log(response2)
                 const sim = parseFloat(response2.data.caixa.valor_abertura) + parseFloat(response2.data.caixa.valor_movimentos);
                 Swal.fire({
-                    title: 'Confirmar fechamento de caixa',
-                    showDenyButton: true,
-                    html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response2.data.caixa.valor_abertura},00</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response2.data.caixa.valor_movimentos},00</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4></div><div className="col-12"></div></div></div>`,
-                    confirmButtonText: `Confirmar`,
-                    confirmButtonColor: '#28a745',
-                    denyButtonText: `Cancelar`,
-                    
+                  title: 'Confirmar fechamento de caixa',
+                  showDenyButton: true,
+                  html: `<div className="row justify-content-center align-items-center">
+                            <div className="col-12">
+                                <h6 class="text-start">Confirmar fechamento de caixa:</h6>
+                            </div>
+                        </div>
+                        <div className="row justify-content-center align-items-center">
+                            <div className="col-12">
+                                <h6 class="mt-4 text-start">Você iniciou o caixa com: R$${response2.data.caixa.valor_abertura},00</h6>
+                            </div>
+                            <div className="col-12">
+                                <h6 class="mt-4 text-start">Saldo movimentos: R$${response2.data.caixa.valor_movimentos},00</h6>
+                            </div>
+                            <div className="col-12">
+                                <h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4>
+                            </div>
+                            <div class="col-12 d-flex justify-content-start align-items-center">
+                                <input type="checkbox" checked id="imprimirCheckbox" name="imprimirCheckbox" class="mx-2" style="transform: scale(1.3);"> 
+                                <label for="imprimirCheckbox" class="mx-2 mt-2">Imprimir</label>
+                            </div>
+                        </div>`,
+                  confirmButtonText: `Confirmar`,
+                  confirmButtonColor: '#28a745',
+                  denyButtonText: `Cancelar`,
+                  preConfirm: () => {
+                      const imprimirCheckbox = document.getElementById('imprimirCheckbox');
+                      return imprimirCheckbox.checked ? 1 : 0;
+                  },
                     }).then((result) => {
                     if (result.isConfirmed) {
                         requisicao.post('/turno/fechar',{
@@ -297,12 +319,17 @@ const AbrirTurno = () => {
                         ).then(
                             response => {
                             console.log(response)
-                            if(response.data.msg.resultado === true){
+                            if(response.data.msg.resultado === true && result.value === 1){
                                 localStorage.setItem("turno", false);
                                 localStorage.setItem("caixa", false);
                                 Swal.fire('Caixa fechado com sucesso', '', 'success')
                                 verificarTurno();
                                 ImpressaoFecharCaixa(response2.data.caixa, sim, response.config.headers.id_usuario)
+                            } else if (response.data.msg.resultado === true && result.value === 0){
+                                localStorage.setItem("turno", false);
+                                localStorage.setItem("caixa", false);
+                                Swal.fire('Caixa fechado com sucesso', '', 'success')
+                                verificarTurno();
                             }
                             else{
                                 Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error')
