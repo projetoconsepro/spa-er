@@ -6,9 +6,11 @@ import { BsFillTrashFill } from "react-icons/bs";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Grid, Modal, Text } from "@mantine/core";
+import { Button, Card, Divider, Grid, Group, Modal, Text } from "@mantine/core";
 import { Carousel } from '@mantine/carousel';
 import createAPI from "../services/createAPI";
+import { IconCheck, IconX } from "@tabler/icons-react";
+import FuncTrocaComp from "../util/FuncTrocaComp";
 
 const Configuracoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -17,6 +19,9 @@ const Configuracoes = () => {
   const [mensagem, setMensagem] = useState("");
   const [cardBody] = useState("card-body3");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [estadoDiv, setEstadoDiv] = useState(false);
+  const [estadoDiv2, setEstadoDiv2] = useState(true);
+  const [debito, setDebito] = useState(true);
 
   const handleCheckboxChange = (index) => {
     data[index].check = !data[index].check;
@@ -27,29 +32,6 @@ const Configuracoes = () => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
-
-  const array = [
-    {
-        key: '1',
-        title: "Bem vindo ao App",
-        text: "O Aplicativo tem seu layout baseado no tema padrão do seu dispositivo, para que você possa ter uma melhor experiência",
-    },
-    {
-        key: '2',
-        title: "O SAIPP possui uma interface que ira te auxiliar", 
-        text: "Possuimos um campo aonde voce pode consultar algumas informações sobre o seu plantio \n Como por exemplo o nivel de umidade ideal para diferentes tipos de plantas",
-    },
-    {
-        key: '3',
-        title: "Para te auxiliar ainda mais possuimos um campo de previsão do tempo",
-        text: "Onde mesmo a distancia voce pode saber como esta o clima na região onde seu sistema esta instalado",
-    },
-    {
-        key: '4',
-        title: "Para um maior controle sobre seu sistema de irrigação",
-        text: "Proporcionamos um campo onde voce pode controlar o nivel de umidade da sua plantação mesmo a distancia \n Por padrao o sistema inicia-se com o minimo de 0 % e o maximo de 100%.",
-    }
-];
 
   const Atualizarequisicao = async () => {
     const requisicao = createAPI();
@@ -81,8 +63,35 @@ const Configuracoes = () => {
       });
   };
 
+  const cancelarTermos = () => {
+    close()
+    FuncTrocaComp("MeusVeiculos");
+  }
+
+  const confirmarTermos = () => {
+    const checkbox = document.getElementById("termsCheckbox");
+    if (checkbox.checked) {
+      localStorage.setItem("termosDebito", "true");
+      setEstadoDiv2(false)
+      close();
+      Atualizarequisicao();
+  } else {
+      setEstadoDiv(true)
+      setTimeout(() => {
+        setEstadoDiv(false)
+      }, 3000);
+  }
+  }
+
   useEffect(() => {
-    Atualizarequisicao();
+    const debito = localStorage.getItem("termosDebito");
+    if(debito == "true"){
+      setEstadoDiv2(false)
+      Atualizarequisicao();
+    } else {
+      open()
+      setDebito(false)
+    }
   }, []);
 
   const salvarAlteracoes = (index) => {
@@ -167,23 +176,30 @@ const Configuracoes = () => {
     setData([...data]);
   };
 
-  const handleNextSlide = () => {
-    if (currentSlide < array.length - 1) {
-      setCurrentSlide((prevSlide) => prevSlide + 1);
-    }
-  };
-
   return (
     <div className="col-12 px-3 mb-3">
+      <div className="row">
+      <div className="col-9">
       <p className="text-start fs-5 fw-bold">
         <VoltarComponente arrow={true} /> Débito automático
       </p>
-      <button onClick={()=>open()}>
-        oi
-      </button>
+      </div>
+      <div className="col-3">
+      <Button variant="outline" size="xs" color="gray" onClick={() => open()}>
+        ?
+      </Button>
+      </div>
+      </div>
+
+      <Card className="border-0 shadow mt-2 mb-3" style={{ display: estadoDiv2 ? 'block' : 'none'}}>
+        <Group>
+          <Text>Você precisa aceitar os termos de uso do débito automático para usar dessa funcionalidade. Clique no botão no canto superior direito para aceitar.</Text>
+        </Group>
+      </Card>
+
       {data.map((link, index) => (
         <div
-          className="card border-0 shadow mt-5 mb-5"
+          className="card border-0 shadow mt-2 mb-5"
           key={index}
           id="divD"
           disabled={
@@ -300,38 +316,53 @@ const Configuracoes = () => {
         </div>
       ))}
       <VoltarComponente />
-    <Modal opened={opened} onClose={() => { close() }} centered size="lg" title="Tutorial débito automático">
-      <Carousel height={200} align="center" slidesToScroll={1} index={currentSlide} maw={320} mx="auto">
-        {array.map((item, index) => (
-          <Carousel.Slide key={index}>
-            <Grid
-              style={{ height: 200 }}
-              justify="center"
-              align="center"
-            >
-              <Grid.Col span={12} style={{ textAlign: "center" }}>
-                <Text
-                  style={{ fontSize: 20, fontWeight: 700 }}
-                  align="center"
-                  color="gray"
-                >
-                  {item.title}
-                </Text>
-                <Text
-                  style={{ fontSize: 15, fontWeight: 400 }}
-                  align="center"
-                  color="gray"
-                >
-                  {item.text}
-                </Text>
-              </Grid.Col>
-            </Grid>
-          </Carousel.Slide>
-        ))}
-      </Carousel>
-      <button onClick={handleNextSlide} disabled={currentSlide === array.length - 1}>
-        NEXT
-      </button>
+    <Modal opened={opened} onClose={() => { close() }} closeOnClickOutside={false} style={{ zIndex: 51 }} centered title="Termos de uso débito automático">
+    <div>
+        <small><strong>Ao solicitar a ativação automática do estacionamento, o usuário concorda com os seguintes termos:</strong></small> <br/>
+        <small>a) Quando o monitor fiscalizar, será realizada uma ativação de 30 minutos, sendo repetida a ativação por um período máximo de 2 horas em cada vaga;</small> <br/>
+        <Divider my="sm" size="md" variant="dashed" />
+        <small>b) Permanecendo por mais de 2 horas na mesma vaga, será emitida tarifa de regularização;</small> <br/>
+        <Divider my="sm" size="md" variant="dashed" />
+        <small>c) Quando não possuir saldo mínimo de crédito para ativação no aplicativo CONSEPRO Taquara, será efetuado a notificação conforme a legislação vigente.</small> <br/>
+        <Divider my="sm" size="md" variant="dashed" />
+        <small>d) Declaro ter ciência, que ao optar pela ativação automática, não terei direito ao período de tolerância de 10 minutos, sendo que na primeira fiscalização do monitor, será realizada a ativação de 30 minutos;</small> <br/>
+        <Divider my="sm" size="md" variant="dashed" />
+        <small>e) A ativação fica vinculada a placa do veículo.</small> <br/>
+    </div>
+    {estadoDiv2 ? 
+    <>
+    <div className="form-check mt-3">
+            <input type="checkbox" className="form-check-input" id="termsCheckbox" />
+            <label className={estadoDiv ? 'form-check-label text-danger' : 'form-check-label'} htmlFor="termsCheckbox">Concordo com os termos de uso</label>
+          </div><div className="alert alert-danger mt-2" style={{ display: estadoDiv ? 'block' : 'none' }}>
+              <small>É necessário concordar com os termos de uso para ativar o débito automático.</small>
+            </div><div className="mt-3 d-flex justify-content-between px-4">
+              <Button
+                color="gray"
+                mt="md"
+                radius="md"
+                onClick={() => {
+                  cancelarTermos();
+                } }
+              >
+                Não aceito ‎
+                <IconX size="1.125rem" />
+              </Button>
+              <Button
+                variant="gradient"
+                gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                mt="md"
+                radius="md"
+                onClick={() => {
+                  confirmarTermos();
+                } }
+              >
+                Confirmar ‎
+                <IconCheck size="1.125rem" />
+              </Button>
+            </div>
+            </>
+    : null}
     </Modal>
     </div>
   );
