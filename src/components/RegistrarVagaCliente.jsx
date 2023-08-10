@@ -23,6 +23,7 @@ const RegistrarVagaCliente = () => {
   const [valorcobranca2, setValorCobranca2] = useState("2");
   const [selectedButton, setSelectedButton] = useState("01:00:00");
   const [placaSelecionada, setPlacaSelecionada] = useState("");
+  const [loadingButton, setLoadingButton] = useState(false);
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -131,11 +132,13 @@ const RegistrarVagaCliente = () => {
   }
 
   const handleSubmit = async () => {
+    setLoadingButton(true);
     const requisicao = createAPI();
     const tempo1 = selectedButton;
     const placa2 = placaSelecionada;
 
     if (placaSelecionada === "") {
+      setLoadingButton(false);
       setMensagem("Selecione um veículo.");
       setEstado(true);
       setTimeout(() => {
@@ -147,6 +150,7 @@ const RegistrarVagaCliente = () => {
 
     const resposta = await mexerValores();
     if (parseFloat(valor) < parseFloat(resposta)) {
+      setLoadingButton(false);
       setMensagem("Saldo insuficiente.");
       setEstado(true);
       setTimeout(() => {
@@ -188,6 +192,7 @@ const RegistrarVagaCliente = () => {
       await requisicao
         .post("/estacionamento", campo)
         .then((response) => {
+          setLoadingButton(false);
           if (response.data.msg.resultado === true) {
             FuncTrocaComp("MeusVeiculos");
           } else {
@@ -200,6 +205,7 @@ const RegistrarVagaCliente = () => {
           }
         })
         .catch(function (error) {
+          setLoadingButton(false);
           if (
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
@@ -390,6 +396,7 @@ const RegistrarVagaCliente = () => {
             <div className="mt-1 mb-5 gap-2 d-md-block">
               <VoltarComponente space={true} />
               <Button
+                loading={loadingButton}
                 onClick={() => {
                   handleSubmit();
                 }}

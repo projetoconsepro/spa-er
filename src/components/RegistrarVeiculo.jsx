@@ -15,6 +15,7 @@ const RegistrarVeiculo = () => {
     const [estado, setEstado] = useState(false);
     const [cont, setCont] = useState(0);
     const [teste, setTeste] = useState("")
+    const [loadingButton, setLoadingButton] = useState(false);
 
     const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked
@@ -31,7 +32,7 @@ const RegistrarVeiculo = () => {
     }
 
     const requisicao = () => {
-    const token = localStorage.getItem('token');
+    setLoadingButton(true);
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const uppercase = teste.toUpperCase();
@@ -48,6 +49,7 @@ const RegistrarVeiculo = () => {
           return false;
         }
       }
+
       let estadoIf = false;
 
     if (placa !== "placa2"){
@@ -61,6 +63,7 @@ const RegistrarVeiculo = () => {
         }
         placaFinal = placaFinal.toUpperCase()
         if(validarPlaca(placaFinal) === false ) {
+            setLoadingButton(false);
             estadoIf = false;
             setMensagem("Placa inválida")
             setEstado(true)
@@ -81,6 +84,7 @@ const RegistrarVeiculo = () => {
         id_usuario: user2.id_usuario
       }).then(
         response => {
+            setLoadingButton(false);
             const resposta = response.data.msg.resultado;
             if (resposta === false){
                 setMensagem(response.data.msg.msg)
@@ -172,7 +176,7 @@ const RegistrarVeiculo = () => {
                     </div>
                     <div className="mt-1 mb-6 gap-2 d-md-block">
                         <VoltarComponente space={true}/>
-                        <Button onClick={requisicao} className="bg-blue-50" size="md" radius="md">Cadastrar</Button>
+                        <Button loading={loadingButton} onClick={requisicao} className="bg-blue-50" size="md" radius="md">Cadastrar</Button>
                         </div>
                         <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                             {mensagem}

@@ -393,7 +393,7 @@ setTimeout(() => {
 
     useEffect(() => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
-            FuncTrocaComp("FecharTurno");
+            FuncTrocaComp("AbrirTurno");
         }
         const requisicao = createAPI();
         getModelos();
