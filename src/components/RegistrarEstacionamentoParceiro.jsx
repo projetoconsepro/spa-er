@@ -44,6 +44,7 @@ const RegistrarEstacionamentoParceiro = () => {
       .get("/parametros")
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
+        setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
       })
       .catch(function (error) {
         localStorage.removeItem("user");
@@ -454,7 +455,7 @@ const RegistrarEstacionamentoParceiro = () => {
   const atualiza = () => {
     const tempoo = document.getElementById("tempos").value;
     setTempo(tempoo);
-
+    console.log(tempoo)
     if (tempoo === "02:00:00") {
       setValorCobranca2(valorCobranca * 2);
     } else if (tempoo === "01:00:00") {
@@ -566,7 +567,6 @@ const RegistrarEstacionamentoParceiro = () => {
     }
     localStorage.removeItem("placaCarro");
     param();
-    setValorCobranca2(1);
     setTempo("00:30:00");
   }, []);
 

@@ -19,7 +19,7 @@ import createAPI from "../services/createAPI";
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
   const [valorcobranca, setValorCobranca] = useState("");
-  const [valorcobranca2, setValorCobranca2] = useState("2");
+  const [valorcobranca2, setValorCobranca2] = useState("");
   const [mostrar, setMostrar] = useState(false);
   const [mostrar2, setMostrar2] = useState([]);
   const [mostrardiv, setMostrarDiv] = useState([]);
@@ -222,6 +222,7 @@ const ListarVeiculos = () => {
       .get("/parametros")
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
+        setValorCobranca2(response.data.data.param.estacionamento.valorHora);
       })
       .catch(function (error) {
         if (

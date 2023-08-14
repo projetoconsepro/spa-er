@@ -206,7 +206,7 @@ const HistoricoFinanceiro = () => {
                     {typeof item.valor === "number" &&
                     item.valor.toString()[0] === "0"
                       ? `R$ ${item.valor.toString().replace(".", ",")}`
-                      : `R$ ${item.valor},00`}
+                      : `R$ ${item.valor}`}
                   </div>
                 </div>
               </div>

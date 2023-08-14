@@ -45,7 +45,7 @@ const HistoricoCaixa = () => {
                    <p class="text-start mx-5"><b>Abertura:</b> ${item.abertura}</p>
                    <p class="text-start mx-5"><b>Fechamento:</b> ${item.fechamento}</p>
                    <p class="text-start mx-5"><b>Valor abertura:</b> R$${item.valor_abertura}</p>
-                   <p class="text-start mx-5"><b>Valor fechamento:</b> ${item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento},00`}</p>`,
+                   <p class="text-start mx-5"><b>Valor fechamento:</b> ${item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento}`}</p>`,
             showCancelButton: true,
             cancelButtonText: 'Fechar',
             showConfirmButton: item.valor_fechamento === null ? true : false,
@@ -196,8 +196,8 @@ const HistoricoCaixa = () => {
                           <td> {item.nome.length > 14 ? item.nome.substring(0, 14) + "..." : item.nome}</td>
                           <td id="tabelaUsuarios2">{item.abertura}</td>
                           <td id="tabelaUsuarios2">{item.fechamento}</td>
-                          <td id="tabelaUsuarios2">R${item.valor_abertura},00</td>
-                          <td>{item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento},00`}</td>
+                          <td id="tabelaUsuarios2">R${item.valor_abertura}</td>
+                          <td>{item.valor_fechamento === null ? 'Caixa em aberto' : `R$${item.valor_fechamento}`}</td>
                         </tr>
                     ))}
                       </tbody>

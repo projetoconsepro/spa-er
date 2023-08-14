@@ -240,7 +240,7 @@ const ClientesAdmin = () => {
                    }</p>
                    <p><p><b>Saldo:</b> R$${
                      item.saldo > 0 ? item.saldo : `0${item.saldo}`
-                   },00</p>              
+                   }</p>              
                     `,
 
       background: item.ativo === "S" ? "#fff" : "#f8d7da",
@@ -1080,9 +1080,9 @@ const ClientesAdmin = () => {
                               R$
                               {item.saldo != 0
                                 ? Number.isInteger(item.saldo)
-                                  ? `${item.saldo},00`
+                                  ? `${item.saldo}`
                                   : item.saldo
-                                : `0${item.saldo},00`}
+                                : `0${item.saldo}`}
                             </small>
                           </td>
                           <td
