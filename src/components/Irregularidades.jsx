@@ -12,7 +12,7 @@ import { IconReload } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
-import { Group, Pagination } from "@mantine/core";
+import { Button, Group, Pagination } from "@mantine/core";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -29,6 +29,7 @@ const Irregularidades = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
     
   const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
@@ -50,9 +51,12 @@ const Irregularidades = () => {
 
 
   const regularizar = (index) => {
+    setLoadingButton(true);
     const select = document.getElementById("pagamentos").value;
     if (select === "credito") {
-      if (parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
+      const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
+      if (parseFloat(numeroCorrigido) < parseFloat(data[index].valor)) {
+        setLoadingButton(false);
         Swal.fire({
           icon: "error",
           title: "Saldo insuficiente",
@@ -101,6 +105,7 @@ const Irregularidades = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado) {
+            setLoadingButton(false);
             setOnOpen(false);
             Swal.fire({
               title: "Regularizado!",
@@ -115,6 +120,7 @@ const Irregularidades = () => {
               startNotificao();
             }
           } else {
+            setLoadingButton(false);
             setNotification(false);
             setPixExpirado("Pix expirado");
           }
@@ -133,6 +139,10 @@ const Irregularidades = () => {
     return data5;
   }
 
+  const onClose = () => {
+  setLoadingButton(false);
+  }
+
   const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
     const requisicao = createAPI();
 
@@ -143,6 +153,7 @@ const Irregularidades = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          setLoadingButton(false);
           Swal.fire({
             title: "Regularizado!",
             text: "A notificação foi regularizada.",
@@ -156,6 +167,7 @@ const Irregularidades = () => {
             startNotificao();
           }
         } else {
+          setLoadingButton(false);
           setEstado(true);
           setMensagem(response.data.msg.msg);
           setTimeout(() => {
@@ -527,15 +539,16 @@ const Irregularidades = () => {
                   <div className="pt-3 gap-6 d-md-block">
                     <div className="row">
                       <div className="col-12">
-                        <button
+                        <Button
                           type="submit"
+                          loading={loadingButton}
                           className="btn4 botao align-itens-center fs-6"
                           onClick={() => {
                             regularizar(index);
                           }}
                         >
                           Regularizar
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -564,6 +577,7 @@ const Irregularidades = () => {
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
+        onClose={onClose}
       />
     </div>
   );

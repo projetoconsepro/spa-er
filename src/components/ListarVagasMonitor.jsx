@@ -135,6 +135,17 @@ const ListarVagasMonitor = () => {
                 updatedItem.cor = "#000";
               }
               if (updatedItem.numero_notificacoes_pendentess !== 0) {
+                const horaOriginal = new Date(response.data.data[i].hora_notificacao);
+
+                // Adicione duas horas à hora original
+                horaOriginal.setHours(horaOriginal.getHours() + 2);
+
+                const horaOriginalFormatada = horaOriginal.toLocaleTimeString("pt-BR", {
+                  timeZone: "America/Sao_Paulo",
+                });
+
+                updatedItem.hora_notificacao = horaOriginalFormatada;
+
                 updatedItem.corline = "#D3D3D4";
                 updatedItem.cor = "#141619";
               }
@@ -196,6 +207,7 @@ const ListarVagasMonitor = () => {
 }
 
 useEffect(() => {
+  localStorage.removeItem("id_vagaveiculo");
   setTimeout(() => {
     if (localStorage.getItem("numero_vaga")) {
       setVaga(localStorage.getItem("numero_vaga"));
@@ -212,17 +224,22 @@ useEffect(() => {
   }
   }, [vaga]);
 
-  useEffect(() => {
-    if (localStorage.getItem("turno") != "true") {
-      FuncTrocaComp("AbrirTurno");
-    }
 
+  const horaAgoraFunc = async () => {
     const dataAtual = new Date();
     const hora = dataAtual.getHours().toString().padStart(2, "0");
     const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
     const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
     const horaAtual = `${hora}:${minutos}:${segundos}`;
     setHoraAgora(horaAtual);
+    return horaAtual;
+  };
+
+
+  useEffect(() => {
+    if (localStorage.getItem("turno") != "true") {
+      FuncTrocaComp("AbrirTurno");
+    }
 
     const requisicao = createAPI();
     localStorage.removeItem("idVagaVeiculo");
@@ -323,7 +340,8 @@ useEffect(() => {
       });
   };
 
-  const estaciona = (
+  const estaciona = async (
+    hora_notificacao,
     numero,
     id_vaga,
     tempo,
@@ -336,9 +354,9 @@ useEffect(() => {
   ) => {
     localStorage.setItem("numero_vaga", numero);
     const requisicao = createAPI();
-    console.log(index);
-    if (tempo < horaAgora && placa !== "") {
-      if (notificacoes !== 0 || notificacoess !== 0) {
+    const horaAgoraNew = await horaAgoraFunc();
+    if (tempo < horaAgoraNew && placa !== "") {
+      if ((notificacoes !== 0 || notificacoess !== 0) && horaAgoraNew < hora_notificacao) {
         Swal.fire({
           title: "Deseja liberar esta vaga?",
           showCancelButton: true,
@@ -395,6 +413,70 @@ useEffect(() => {
           } else if (result.isDenied) {
             localStorage.setItem("VagaVeiculoId", id_vaga);
             FuncTrocaComp("ListarNotificacoes");
+          }
+        });
+
+        const btnFooter2 = document.getElementById("ticket");
+        btnFooter2.addEventListener("click", function () {
+          funcExtratoPlaca(placa);
+        });
+      } else if ((notificacoes !== 0 || notificacoess !== 0) &&  horaAgoraNew >= hora_notificacao) {
+        Swal.fire({
+          title: "Deseja liberar esta vaga?",
+          showCancelButton: true,
+          showDenyButton: true,
+          cancelButtonText: "Cancelar",
+          confirmButtonText: "Liberar",
+          denyButtonText: `Notificar`,
+          footer: `
+          <button class="btn3 botao bg-blue-50" id="ticket">
+          Extrato de placa
+          </button>
+          `,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            requisicao
+              .post(`/estacionamento/saida`, {
+                idvagaVeiculo: id_vaga,
+              })
+              .then((response) => {
+                if (response.data.msg.resultado) {
+                  const updatedResposta = [...resposta];
+                  updatedResposta[index] = {
+                    ...updatedResposta[index],
+                    placa: "",
+                    chegada: "",
+                    temporestante: "",
+                    corline: "#fff",
+                    display: "testeNot2",
+                  };
+                  const  newArray = updatedResposta.filter((item) => item !== undefined);
+                  
+                  console.log(newArray);
+
+                  setResposta(newArray);
+                } else {
+                  Swal.fire(`${response.data.msg.msg}`, "", "error");
+                }
+              })
+              .catch(function (error) {
+                if (
+                  error?.response?.data?.msg === "Cabeçalho inválido!" ||
+                  error?.response?.data?.msg === "Token inválido!" ||
+                  error?.response?.data?.msg ===
+                    "Usuário não possui o perfil mencionado!"
+                ) {
+                  localStorage.removeItem("user");
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("perfil");
+                } else {
+                  console.log(error);
+                }
+              });
+          } else if (result.isDenied) {
+            localStorage.setItem("vaga", numero);
+            localStorage.setItem("placa", placa);
+            FuncTrocaComp("Notificacao");
           }
         });
 
@@ -827,6 +909,7 @@ useEffect(() => {
                           data-vaga={vaga.numero}
                           onClick={() => {
                             estaciona(
+                              vaga.hora_notificacao,
                               vaga.numero,
                               vaga.id_vaga_veiculo,
                               vaga.temporestante,

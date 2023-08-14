@@ -150,7 +150,9 @@ const RegistrarVagaCliente = () => {
     }
 
     const resposta = await mexerValores();
-    if (parseFloat(valor) < parseFloat(resposta)) {
+
+    const numeroCorrigido = parseFloat(valor.replace(",", "."));
+    if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
       setLoadingButton(false);
       setMensagem("Saldo insuficiente.");
       setEstado(true);

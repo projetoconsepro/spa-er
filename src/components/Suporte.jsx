@@ -174,6 +174,14 @@ const Suporte = () => {
               variant="contained"
               styles={{ item: { backgroundColor: "white" } }}
             >
+              <Accordion.Item value="Debito">
+                <Accordion.Control>
+                  Como habilitar o débito automático?
+                </Accordion.Control>
+                <Accordion.Panel>
+
+                </Accordion.Panel>
+              </Accordion.Item>
               <Accordion.Item value="credito">
                 <Accordion.Control>
                   Como faço para comprar créditos?

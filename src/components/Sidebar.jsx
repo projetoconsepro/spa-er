@@ -10,6 +10,7 @@ import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
 import { IconHelpCircleFilled, IconHttpConnect, IconPlugConnected } from "@tabler/icons-react";
+import { CarCrashOutlined } from "@mui/icons-material";
 
 const Sidebar = () => {
     const nome = localStorage.getItem("user");
@@ -136,7 +137,7 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <FaCarAlt />,
+            icon:  <CarCrashOutlined />,
             name: "‎ Débito automático",
             componente: "Configuracoes",
         })

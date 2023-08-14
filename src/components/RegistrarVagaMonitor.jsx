@@ -360,8 +360,10 @@ const RegistrarVagaMonitor = () => {
     await parametros
       .get("/parametros")
       .then((response) => {
-        console.log(response);
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
+        if (localStorage.getItem("popup") == "true") {
+          setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
+        }
       })
       .catch(function (error) {
         if (
@@ -475,10 +477,10 @@ const RegistrarVagaMonitor = () => {
     }
     setTipoVaga(localStorage.getItem("tipoVaga"));
     param();
+    
     if (localStorage.getItem("popup") == "true") {
       setTextoPlaca(localStorage.getItem("placa"));
       setVisible(true);
-      setValorCobranca2(1);
       SetMostrapag(true);
       setValor("dinheiro");
       setTempo("00:30:00");

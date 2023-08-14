@@ -300,7 +300,9 @@ const ListarVeiculos = () => {
       vaga[0] = 0;
     }
 
-    if (parseFloat(saldoCredito) < parseFloat(resposta)) {
+
+    const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
+    if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
       Swal.fire({
         icon: "error",
         title: "Saldo insuficiente",
@@ -356,7 +358,8 @@ const ListarVeiculos = () => {
 
     const resposta = await mexerValores();
 
-    if (parseFloat(saldoCredito) < parseFloat(resposta)) {
+    const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
+    if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
       Swal.fire({
         icon: "error",
         title: "Saldo insuficiente",
