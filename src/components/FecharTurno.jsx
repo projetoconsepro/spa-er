@@ -204,7 +204,7 @@ const FecharTurno = () => {
                     Swal.fire({
                         title: 'Confirmar fechamento de caixa',
                         showDenyButton: true,
-                        html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response.data.caixa.valor_abertura},00</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response.data.caixa.valor_movimentos},00</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4></div><div className="col-12"></div></div></div>`,
+                        html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response.data.caixa.valor_abertura}</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response.data.caixa.valor_movimentos}</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim}</h4></div><div className="col-12"></div></div></div>`,
                         confirmButtonText: `Confirmar`,
                         confirmButtonColor: '#28a745',
                         denyButtonText: `Cancelar`,

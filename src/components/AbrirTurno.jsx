@@ -288,13 +288,13 @@ const AbrirTurno = () => {
                         </div>
                         <div className="row justify-content-center align-items-center">
                             <div className="col-12">
-                                <h6 class="mt-4 text-start">Você iniciou o caixa com: R$${response2.data.caixa.valor_abertura},00</h6>
+                                <h6 class="mt-4 text-start">Você iniciou o caixa com: R$${response2.data.caixa.valor_abertura}</h6>
                             </div>
                             <div className="col-12">
-                                <h6 class="mt-4 text-start">Saldo movimentos: R$${response2.data.caixa.valor_movimentos},00</h6>
+                                <h6 class="mt-4 text-start">Saldo movimentos: R$${response2.data.caixa.valor_movimentos}</h6>
                             </div>
                             <div className="col-12">
-                                <h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4>
+                                <h4 class="mt-4 text-start">Saldo final: R$${sim}</h4>
                             </div>
                             <div class="col-12 d-flex justify-content-start align-items-center">
                                 <input type="checkbox" checked id="imprimirCheckbox" name="imprimirCheckbox" class="mx-2" style="transform: scale(1.3);"> 

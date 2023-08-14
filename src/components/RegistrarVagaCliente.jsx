@@ -20,7 +20,7 @@ const RegistrarVagaCliente = () => {
   const [resposta2, setResposta2] = useState([]);
   const [valor, setValor] = useState(0);
   const [valorcobranca, setValorCobranca] = useState("");
-  const [valorcobranca2, setValorCobranca2] = useState("2");
+  const [valorcobranca2, setValorCobranca2] = useState("");
   const [selectedButton, setSelectedButton] = useState("01:00:00");
   const [placaSelecionada, setPlacaSelecionada] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
@@ -100,6 +100,7 @@ const RegistrarVagaCliente = () => {
       .get("/parametros")
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
+        setValorCobranca2(response.data.data.param.estacionamento.valorHora);
       })
       .catch(function (error) {
         if (
