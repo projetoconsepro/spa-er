@@ -21,13 +21,9 @@ const PrestacaoContas = () => {
   const [dataHoje, setDataHoje] = useState('');
 
 
-  const formatNumero = (numero) => {
-    if (Number.isInteger(numero)) {
-      return numero + ',00';
-    } else {
-      return `${numero}`;
-    }
-  };
+  function formatNumero(number) {
+    return new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(number);
+  }
   
 
   const gerarPdf = () => {
@@ -99,6 +95,7 @@ const PrestacaoContas = () => {
         ]);
       }
       else {
+        console.log('creito', item.total.creditosInseridos)
         regularizacaoData.push(
           ['Total',
           item.total.Regularizacao.quantidade,
