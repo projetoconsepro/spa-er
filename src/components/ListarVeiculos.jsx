@@ -223,6 +223,7 @@ const ListarVeiculos = () => {
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
         setValorCobranca2(response.data.data.param.estacionamento.valorHora);
+        setSelectedButton("01:00:00")
       })
       .catch(function (error) {
         if (
