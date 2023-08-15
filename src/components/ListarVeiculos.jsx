@@ -107,7 +107,6 @@ const ListarVeiculos = () => {
     await requisicao
       .get("/veiculo")
       .then((response) => {
-        console.log(response, 'response')
         if (response.data.msg.resultado === false) {
           FuncTrocaComp("CadastrarVeiculo");
         }
