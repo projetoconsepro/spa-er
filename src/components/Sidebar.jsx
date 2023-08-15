@@ -204,7 +204,7 @@ const Sidebar = () => {
             componente: "Suporte",
         })
     }
-    else if (teste.perfil[0] === "admin"){
+    else if (teste.perfil[0] === "admin") {
         links.push({
             className: styles.className,
             icon: <AiOutlineBarChart />,
@@ -278,12 +278,6 @@ const Sidebar = () => {
                     componente: "SugestoesAdmin",
                 }
             ]
-        })
-        links.push({
-            className: styles.className,
-            icon: <BsCashStack />,
-            name: "‎ Adicionar Créditos",
-            componente: "AdicionarCreditos",
         })
         links.push({
             className: styles.className,
