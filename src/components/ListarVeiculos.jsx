@@ -182,6 +182,7 @@ const ListarVeiculos = () => {
             }
           }
         }
+        setBotaoOff(false);
       })
       .catch(function (error) {
         if (
@@ -281,16 +282,13 @@ const ListarVeiculos = () => {
     }
   }
 
-  function handleClick(index) {
+  function handleClick ( index ) {
     setMostrar(!mostrar);
     mostrar2[index].estado = !mostrar2[index].estado;
   }
 
   const hangleplaca = async (placa, index) => {
     setBotaoOff(true);
-    setTimeout(() => {
-      setBotaoOff(false);
-    }, 2000);
     const requisicao = createAPI();
     const tempo1 = selectedButton;
 
@@ -303,6 +301,7 @@ const ListarVeiculos = () => {
 
     const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
     if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
+      setBotaoOff(false);
       Swal.fire({
         icon: "error",
         title: "Saldo insuficiente",
@@ -320,6 +319,7 @@ const ListarVeiculos = () => {
           if (response.data.msg.resultado === true) {
             atualizacomp();
           } else {
+            setBotaoOff(false);
             Swal.fire({
               icon: "error",
               title: "Oops...",
@@ -346,9 +346,6 @@ const ListarVeiculos = () => {
   };
   const AddTempo = async (placa, index, id_vaga_veiculo, vaga) => {
     setBotaoOff(true);
-    setTimeout(() => {
-      setBotaoOff(false);
-    }, 2000);
     const requisicao = createAPI();
     const vagaa = [];
 
@@ -360,6 +357,7 @@ const ListarVeiculos = () => {
 
     const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
     if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
+      setBotaoOff(false);
       Swal.fire({
         icon: "error",
         title: "Saldo insuficiente",
@@ -377,6 +375,7 @@ const ListarVeiculos = () => {
           if (response.data.msg.resultado === true) {
             atualizacomp();
           } else {
+            setBotaoOff(false);
             Swal.fire({
               icon: "error",
               title: "Oops..",
@@ -620,7 +619,7 @@ const ListarVeiculos = () => {
                         onClick={() => {
                           hangleplaca(link.placa, index);
                         }}
-                        disabled={botaoOff}
+                        loading={botaoOff}
                       >
                         Ativar
                       </Button>
@@ -719,7 +718,7 @@ const ListarVeiculos = () => {
                     </p>
                     <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
                       <div></div>
-                      <button
+                      <Button
                         type="submit"
                         onClick={() => {
                           AddTempo(
@@ -730,10 +729,10 @@ const ListarVeiculos = () => {
                           );
                         }}
                         className="btn3 botao"
-                        disabled={botaoOff}
+                        loading={botaoOff}
                       >
                         Ativar
-                      </button>
+                      </Button>
                       <div>
                         <span>
                           <IoTrashSharp
