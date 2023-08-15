@@ -9,12 +9,13 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import { TbHandClick } from "react-icons/tb";
 import "../pages/Style/styles.css";
 import Swal from "sweetalert2";
-import Cronometro from "./Cronometro";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Button, Grid, Group, Input, Text } from "@mantine/core";
 import { IconParking, IconReload } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
+import EnviarNotificacao from "../util/EnviarNotificacao";
+import LimparNotificacao from "../util/LimparNotificacao";
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -31,6 +32,7 @@ const ListarVeiculos = () => {
   const [botaoOff, setBotaoOff] = useState(false);
   const [contador, setContador] = useState(0);
   const [horaAgora, setHoraAgora] = useState("");
+  const [cont, setCont] = useState(0);
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -92,6 +94,20 @@ const ListarVeiculos = () => {
     });
   };
 
+  const calcularValidade2 = (horaInicio, duracao) => {
+    const [horas, minutos, segundos] = duracao.split(':').map(Number);
+    const dataInicio = new Date(`2000-01-01T${horaInicio}`);
+    const dataValidade = new Date(dataInicio.getTime() + (horas * 3600000) + (minutos * 60000) + (segundos * 1000));
+
+    const dataAtual = new Date();
+    dataAtual.setHours(dataValidade.getHours());
+    dataAtual.setMinutes(dataValidade.getMinutes() - 10);
+    dataAtual.setSeconds(dataValidade.getSeconds());
+    const timestamp = dataAtual.getTime();
+
+    return timestamp;
+  };
+
   const FormatDate =  (date) => {
     const data = new Date(date);
     const year = data.getFullYear();
@@ -104,9 +120,11 @@ const ListarVeiculos = () => {
 
   const atualizacomp = async () => {
     const requisicao = createAPI();
+    atualizaHora();
     await requisicao
       .get("/veiculo")
       .then((response) => {
+        LimparNotificacao();
         if (response.data.msg.resultado === false) {
           FuncTrocaComp("CadastrarVeiculo");
         }
@@ -148,6 +166,7 @@ const ListarVeiculos = () => {
               notificacao[i] = { estado: false };
             }
           } else {
+            EnviarNotificacao(calcularValidade2(response.data.data[i].chegada, response.data.data[i].tempo), response.data.data[i].id_vaga_veiculo, response.data.data[i].usuario)
             resposta[i].div = "card-body2 mb-2";
             resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
             mostrardiv[i] = { estado: false };
@@ -255,7 +274,6 @@ const ListarVeiculos = () => {
   }
 
   useEffect(() => {
-    atualizaHora()
     if (contador >= 10) {
       setContador(0);
     }
@@ -265,8 +283,13 @@ const ListarVeiculos = () => {
   }, [contador]);
 
   useEffect(() => {
-    atualizacomp();
-  }, []);
+    if (cont != 0) {
+      atualizacomp();
+    }
+    else {
+    setCont(1);
+    }
+  }, [cont]);
 
   function mexerValores() {
     const tempo1 = selectedButton;
