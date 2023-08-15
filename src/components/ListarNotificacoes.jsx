@@ -35,6 +35,7 @@ const ListarNotificacoes = () => {
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
   const [perfil, setPerfil] = useState("");
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -42,6 +43,7 @@ const ListarNotificacoes = () => {
   };
 
   const pagamento = (index) => {
+    setButtonLoading(true);
     const select = document.getElementById("pagamentos").value;
 
     if (select === "dinheiro") {
@@ -84,6 +86,7 @@ const ListarNotificacoes = () => {
         txid: TxId,
       })
       .then((response) => {
+        setButtonLoading(false);
         if (response.data.msg.resultado) {
           ImpressaoTicketRegularizacao('PRIMEIRA', item)
           console.log(response.data.data)
@@ -111,46 +114,47 @@ const ListarNotificacoes = () => {
   }
 
   const regularizacaoSegundaVia = (item) => {
-  ImpressaoTicketRegularizacao('SEGUNDA', item)
+    ImpressaoTicketRegularizacao('SEGUNDA', item)
   }
 
   const regularizar = async (idVagaVeiculo, index, pagamento, item) => {
     const requisicao = createAPI();
     console.log(idVagaVeiculo);
     requisicao.put("/notificacao/", {
-        id_vaga_veiculo: idVagaVeiculo,
-        tipoPagamento: pagamento,
-      }).then((response) => {
-        console.log(response);
-        if (response.data.msg.resultado) {
-          ImpressaoTicketRegularizacao('PRIMEIRA', item)
-          Swal.fire({
-            title: "Regularizado!",
-            text: "A notificação foi regularizada.",
-            icon: "success",
-            timer: 2000,
-          });
-          if (index !== undefined) {
-            data[index].pago = "S";
-            setData([...data]);
-          } else {
-            startNotificao();
-          }
+      id_vaga_veiculo: idVagaVeiculo,
+      tipoPagamento: pagamento,
+    }).then((response) => {
+      setButtonLoading(false);
+      console.log(response);
+      if (response.data.msg.resultado) {
+        ImpressaoTicketRegularizacao('PRIMEIRA', item)
+        Swal.fire({
+          title: "Regularizado!",
+          text: "A notificação foi regularizada.",
+          icon: "success",
+          timer: 2000,
+        });
+        if (index !== undefined) {
+          data[index].pago = "S";
+          setData([...data]);
         } else {
-          setEstado(true);
-          setMensagem(response.data.msg.msg);
-          setTimeout(() => {
-            setEstado(false);
-            setMensagem("");
-          }, 5000);
+          startNotificao();
         }
-      })
+      } else {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("");
+        }, 5000);
+      }
+    })
       .catch((error) => {
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -211,7 +215,7 @@ const ListarNotificacoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -265,7 +269,7 @@ const ListarNotificacoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -275,6 +279,10 @@ const ListarNotificacoes = () => {
         }
       });
   };
+
+  const onClose = () => {
+    setButtonLoading(false)
+  }
 
   const startPlaca = async (placa) => {
     setEstado2(false);
@@ -316,7 +324,7 @@ const ListarNotificacoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -333,7 +341,7 @@ const ListarNotificacoes = () => {
     const user2 = JSON.parse(user);
 
     setPerfil(user2.perfil[0])
-    
+
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
@@ -397,7 +405,7 @@ const ListarNotificacoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -427,9 +435,9 @@ const ListarNotificacoes = () => {
   return (
     <div className="col-12 px-3 mb-3">
       {perfil === "monitor" ? (
-      <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
-      ) : 
-      <p className="text-start fs-2 fw-bold">Notificações:</p>}
+        <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
+      ) :
+        <p className="text-start fs-2 fw-bold">Notificações:</p>}
       <div className="row mb-3">
         <div className="col-12">
           <div className="row">
@@ -483,17 +491,17 @@ const ListarNotificacoes = () => {
                         id="bordaBaixo"
                       >
                         <h6>
-                            {" "}
-                            <FaClipboardList />‎{" "}
-                            <small>Motivo: {link.tipo_notificacao}</small>
+                          {" "}
+                          <FaClipboardList />‎{" "}
+                          <small>Motivo: {link.tipo_notificacao}</small>
                         </h6>
                       </div>
                     ) : (
                       <div className="h6 d-flex align-items-center fs-6">
                         <h6>
-                            {" "}
-                            <FaClipboardList />‎{" "}
-                            <small>Motivo: {link.tipo_notificacao}</small>
+                          {" "}
+                          <FaClipboardList />‎{" "}
+                          <small>Motivo: {link.tipo_notificacao}</small>
                         </h6>
                       </div>
                     )}
@@ -550,56 +558,56 @@ const ListarNotificacoes = () => {
                     </h6>
                   </div>
 
-                  {link.pago === "S" ? 
-                  <div className="px-3">
-                   {perfil === "monitor" ? (
-                    <Button variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }} fullWidth mt="md" radius="md"
-                    onClick={() => regularizacaoSegundaVia(link)}>
-                    IMPRIMIR SEGUNDA VIA ‎ <IconReceipt size={18}/>
-                   </Button>
-                   ) : null}
-                  </div>
-                  : (
-                    <div className="h6 mt-3 mx-5">
-                      <select
-                        className="form-select form-select-lg mb-1"
-                        aria-label=".form-select-lg example"
-                        id="pagamentos"
-                        defaultValue="01:00:00"
-                      >
-                        <option value="pix">PIX</option>
-                        <option value="dinheiro">Dinheiro</option>
-                      </select>
-                      <div className="pt-3 gap-6 d-md-block">
-                        <div className="row">
-                          <div className="col-10">
-                            <button
-                              type="submit"
-                              className="btn5 botao align-itens-center fs-6"
-                              onClick={() => {
-                                pagamento(index);
-                              }}
-                            >
-                              Regularizar
-                            </button>
-                          </div>
-                          {perfil === "monitor" ? (
-                            <div className="col-2 pt-1">
-                              <ActionIcon
-                                variant="outline"
-                                color="indigo"
-                                size="lg"
+                  {link.pago === "S" ?
+                    <div className="px-3">
+                      {perfil === "monitor" ? (
+                        <Button variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }} fullWidth mt="md" radius="md"
+                          onClick={() => regularizacaoSegundaVia(link)}>
+                          IMPRIMIR SEGUNDA VIA ‎ <IconReceipt size={18} />
+                        </Button>
+                      ) : null}
+                    </div>
+                    : (
+                      <div className="h6 mt-3 mx-5">
+                        <select
+                          className="form-select form-select-lg mb-1"
+                          aria-label=".form-select-lg example"
+                          id="pagamentos"
+                          defaultValue="01:00:00"
+                        >
+                          <option value="pix">PIX</option>
+                          <option value="dinheiro">Dinheiro</option>
+                        </select>
+                        <div className="pt-3 gap-6 d-md-block">
+                          <div className="row">
+                            <div className="col-10">
+                              <Button
+                                className="btn5 botao align-itens-center fs-6"
+                                onClick={() => {
+                                  pagamento(index);
+                                }}
+                                loading={buttonLoading}
                               >
-                                <IconPrinter
-                                  onClick={() => imprimirSegundaVia(link)}
-                                />
-                              </ActionIcon>
+                                Regularizar
+                              </Button>
                             </div>
-                          ) : null}
+                            {perfil === "monitor" ? (
+                              <div className="col-2 pt-1">
+                                <ActionIcon
+                                  variant="outline"
+                                  color="indigo"
+                                  size="lg"
+                                >
+                                  <IconPrinter
+                                    onClick={() => imprimirSegundaVia(link)}
+                                  />
+                                </ActionIcon>
+                              </div>
+                            ) : null}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               ) : null}
             </div>
@@ -623,6 +631,7 @@ const ListarNotificacoes = () => {
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
+        onClose={onClose}
       />
     </div>
   );
