@@ -699,7 +699,6 @@ doc.autoTable({
   }, []);
 
   const handleConsulta = (consulta) => {
-    console.log(consulta)
     setEstado2(false);
     setEstadoLoading(true);
     const requisicao = createAPI();
