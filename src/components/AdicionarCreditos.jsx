@@ -129,7 +129,7 @@ const AdicionarCreditos = () => {
 
   const handleSubmit = async () => {
     const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
-    if (Newvalor < 2) {
+    if (Newvalor < 2 || isNaN(Newvalor)) {
       setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Valor mínimo de R$ 2,00!");

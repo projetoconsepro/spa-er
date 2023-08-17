@@ -216,6 +216,7 @@ const RegistrarVagaMonitor = () => {
           if (response.data.msg.resultado === true) {
             setLoadingButton(false);
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+            console.log('a', response)
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -272,6 +273,7 @@ const RegistrarVagaMonitor = () => {
         .then((response) => {
           console.log(response)
           if (response.data.msg.resultado === true) {
+            console.log('b', response)
             setLoadingButton(false);
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
@@ -281,8 +283,8 @@ const RegistrarVagaMonitor = () => {
               response.config.headers.id_usuario,
               vagaa,
               tirarTraco,
-              valor,
-              tempo,
+              response.data.msg.msg === "Debito" ? 'debito' : valor,
+              response.data.msg.msg === "Debito" ? response.data.data.tempoDebito : tempo,
               response.data.data.notificacao_pendente
             );
             }
