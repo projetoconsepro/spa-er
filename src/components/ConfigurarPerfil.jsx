@@ -124,7 +124,7 @@ const ConfigurarPerfil = () => {
 
   const handleSaveClickSenha = () => {
     const requisicao = createAPI();
-    if(senha.length >= 8 && !senha.match(/["']/) && senha === senha2){
+    if(senha.length >= 4 && !senha.match(/["']/) && senha === senha2){
     const password = sha256(senha).toString();
     requisicao.put('/usuario', {
       senha: password,
@@ -308,7 +308,7 @@ const ConfigurarPerfil = () => {
               </Input.Wrapper>
             </div>
             <div className="mt-4">
-              {senha.length >= 8 && senha2.length >= 8 ?
+              {senha.length >= 4 && senha2.length >= 4 ?
                 <Group position="center" spacing="sm" grow>
                   <Button color="gray" onClick={handleCancelClickSenha}>
                     Cancelar

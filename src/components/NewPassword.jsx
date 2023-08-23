@@ -41,7 +41,7 @@ const NewPassword = () => {
         }
     }
 
-    if (senha === senha2 && senha.length >= 8) {
+    if (senha === senha2 && senha.length >= 4) {
       const password = sha256(senha).toString();
       const veiculo = axios.create({
         baseURL: process.env.REACT_APP_HOST,
@@ -126,7 +126,7 @@ const NewPassword = () => {
       setErrorSenha2(true);
       setErrorSenha(true);
       setMensagem(
-        "As senhas não coincidem ou não possuem o tamanho mínimo de 8 caracteres!"
+        "As senhas não coincidem ou não possuem o tamanho mínimo de 4 caracteres!"
       );
       setEstado(true);
       setTimeout(() => {
