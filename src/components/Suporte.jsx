@@ -179,6 +179,7 @@ const Suporte = () => {
                   Como habilitar o débito automático?
                 </Accordion.Control>
                 <Accordion.Panel>
+                <iframe width="100%" height="500" src="https://www.youtube.com/embed/bn9r5PDI4WE" title="Habilitando o débito automático" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
                 </Accordion.Panel>
               </Accordion.Item>

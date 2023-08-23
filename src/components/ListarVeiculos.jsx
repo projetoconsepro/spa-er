@@ -6,7 +6,7 @@ import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import { TbHandClick } from "react-icons/tb";
+import { TbHandClick, TbSquareRoundedPlusFilled } from "react-icons/tb";
 import "../pages/Style/styles.css";
 import Swal from "sweetalert2";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -16,6 +16,7 @@ import { IconParking, IconReload } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
+import { CarCrashOutlined } from "@mui/icons-material";
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -49,10 +50,14 @@ const ListarVeiculos = () => {
   };
 
   const calcularValidade = (horaInicio, duracao) => {
-    const [horas, minutos, segundos] = duracao.split(':').map(Number);
+    const [horas, minutos, segundos] = duracao.split(":").map(Number);
     const dataInicio = new Date(`2000-01-01T${horaInicio}`);
-    const dataValidade = new Date(dataInicio.getTime() + (horas * 3600000) + (minutos * 60000) + (segundos * 1000));
-    const horaValidade = dataValidade.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    const dataValidade = new Date(
+      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
+    );
+    const horaValidade = dataValidade.toLocaleTimeString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    });
     return horaValidade;
   };
 
@@ -95,9 +100,11 @@ const ListarVeiculos = () => {
   };
 
   const calcularValidade2 = (horaInicio, duracao) => {
-    const [horas, minutos, segundos] = duracao.split(':').map(Number);
+    const [horas, minutos, segundos] = duracao.split(":").map(Number);
     const dataInicio = new Date(`2000-01-01T${horaInicio}`);
-    const dataValidade = new Date(dataInicio.getTime() + (horas * 3600000) + (minutos * 60000) + (segundos * 1000));
+    const dataValidade = new Date(
+      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
+    );
 
     const dataAtual = new Date();
     dataAtual.setHours(dataValidade.getHours());
@@ -108,15 +115,15 @@ const ListarVeiculos = () => {
     return timestamp;
   };
 
-  const FormatDate =  (date) => {
+  const FormatDate = (date) => {
     const data = new Date(date);
     const year = data.getFullYear();
-    const month = String(data.getMonth() + 1).padStart(2, '0');
-    const day = String(data.getDate()).padStart(2, '0');
+    const month = String(data.getMonth() + 1).padStart(2, "0");
+    const day = String(data.getDate()).padStart(2, "0");
     const formattedDate = `${day}/${month}/${year}`;
 
     return formattedDate;
-  }
+  };
 
   const atualizacomp = async () => {
     const requisicao = createAPI();
@@ -150,33 +157,38 @@ const ListarVeiculos = () => {
               resposta[i].div = "card-body mb-2";
               resposta[i].numero_notificacoes_pendentes = "Sem notificações";
               notificacao[i] = { estado: true };
-            } else if (
-              response.data.data[i].numero_notificacoes_pendentes === 1
-            ) {
-              resposta[i].div = "card-body2 mb-2";
-              notificacao[i] = { estado: false };
-              resposta[i].numero_notificacoes_pendentes = "Uma notificação";
-              nofityvar[i] = { notifi: "notify2" };
             } else {
               resposta[i].div = "card-body2 mb-2";
               resposta[
                 i
-              ].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
+              ].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} ${response.data.data[i].numero_notificacoes_pendentes === 1 ?  "notificação" : "notificações"}`;
               nofityvar[i] = { notifi: "notify2" };
               notificacao[i] = { estado: false };
             }
           } else {
-            EnviarNotificacao(calcularValidade2(response.data.data[i].chegada, response.data.data[i].tempo), response.data.data[i].id_vaga_veiculo, response.data.data[i].usuario)
+            EnviarNotificacao(
+              calcularValidade2(
+                response.data.data[i].chegada,
+                response.data.data[i].tempo
+              ),
+              response.data.data[i].id_vaga_veiculo,
+              response.data.data[i].usuario
+            );
             resposta[i].div = "card-body2 mb-2";
             resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
             mostrardiv[i] = { estado: false };
-            resposta[i].notificacoesVaga = response.data.data[i].numero_notificacoes_pendentess;
+            resposta[i].notificacoesVaga =
+              response.data.data[i].numero_notificacoes_pendentess;
             resposta[i].vaga = response.data.data[i].numerovaga;
-            resposta[i].estacionado = "Estacionado - Vaga: " + response.data.data[i].numerovaga;
+            resposta[i].estacionado =
+              "Estacionado - Vaga: " + response.data.data[i].numerovaga;
             resposta[i].tempo = response.data.data[i].tempo;
             resposta[i].chegada = response.data.data[i].chegada;
             resposta[i].id_vaga_veiculo = response.data.data[i].id_vaga_veiculo;
-            resposta[i].temporestante = calcularValidade(response.data.data[i].chegada, response.data.data[i].tempo);
+            resposta[i].temporestante = calcularValidade(
+              response.data.data[i].chegada,
+              response.data.data[i].tempo
+            );
             const diffDate = FormatDate(response.data.data[i].date);
             resposta[i].data = `${diffDate} - ${resposta[i].temporestante}`;
             if (response.data.data[i].numero_notificacoes_pendentess > 0) {
@@ -185,16 +197,10 @@ const ListarVeiculos = () => {
             if (response.data.data[i].numero_notificacoes_pendentes === 0) {
               resposta[i].numero_notificacoes_pendentes = "Sem notificações";
               notificacao[i] = { estado: true };
-            } else if (
-              response.data.data[i].numero_notificacoes_pendentes === 1
-            ) {
-              notificacao[i] = { estado: false };
-              resposta[i].numero_notificacoes_pendentes = "Uma notificação";
-              nofityvar[i] = { notifi: "notify2" };
             } else {
               resposta[
                 i
-              ].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} notificações`;
+              ].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} ${response.data.data[i].numero_notificacoes_pendentes === 1 ?  "notificação" : "notificações"}`;
               nofityvar[i] = { notifi: "notify2" };
               notificacao[i] = { estado: false };
             }
@@ -242,7 +248,7 @@ const ListarVeiculos = () => {
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
         setValorCobranca2(response.data.data.param.estacionamento.valorHora);
-        setSelectedButton("01:00:00")
+        setSelectedButton("01:00:00");
       })
       .catch(function (error) {
         if (
@@ -262,16 +268,16 @@ const ListarVeiculos = () => {
 
   const atualizaHora = () => {
     const dataAtual = new Date();
-    const dia = dataAtual.getDate().toString().padStart(2, '0');
-    const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0'); 
+    const dia = dataAtual.getDate().toString().padStart(2, "0");
+    const mes = (dataAtual.getMonth() + 1).toString().padStart(2, "0");
     const ano = dataAtual.getFullYear();
-    const hora = dataAtual.getHours().toString().padStart(2, '0');
-    const minutos = dataAtual.getMinutes().toString().padStart(2, '0');
-    const segundos = dataAtual.getSeconds().toString().padStart(2, '0');
-    
+    const hora = dataAtual.getHours().toString().padStart(2, "0");
+    const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
+    const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
+
     const dataHoraAtual = `${dia}/${mes}/${ano} - ${hora}:${minutos}:${segundos}`;
     setHoraAgora(dataHoraAtual);
-  }
+  };
 
   useEffect(() => {
     if (contador >= 10) {
@@ -285,9 +291,8 @@ const ListarVeiculos = () => {
   useEffect(() => {
     if (cont != 0) {
       atualizacomp();
-    }
-    else {
-    setCont(1);
+    } else {
+      setCont(1);
     }
   }, [cont]);
 
@@ -305,7 +310,7 @@ const ListarVeiculos = () => {
     }
   }
 
-  function handleClick ( index ) {
+  function handleClick(index) {
     setMostrar(!mostrar);
     mostrar2[index].estado = !mostrar2[index].estado;
   }
@@ -320,7 +325,6 @@ const ListarVeiculos = () => {
     if (vaga.length === 0) {
       vaga[0] = 0;
     }
-
 
     const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
     if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
@@ -387,7 +391,8 @@ const ListarVeiculos = () => {
         footer: '<a href="">Clique aqui para adicionar crédito.</a>',
       });
     } else {
-      requisicao.post("/estacionamento", {
+      requisicao
+        .post("/estacionamento", {
           placa: placa,
           numero_vaga: vagaa,
           tempo: tempo1,
@@ -430,17 +435,17 @@ const ListarVeiculos = () => {
   };
 
   return (
-    <div className="col-12 px-3 mb-4">
-        <div className="row">
+    <div className="col-12 px-3 mb-7">
+      <div className="row">
         <div className="col-10">
-        <p className="text-start fs-2 fw-bold">
-        <VoltarComponente arrow={true} /> Meus veículos 
-        </p>
+          <p className="text-start fs-2 fw-bold">
+            <VoltarComponente arrow={true} /> Meus veículos
+          </p>
         </div>
         <div className="col-2" onClick={() => atualizacomp()}>
-        <IconReload className="text-end mt-2" />
+          <IconReload className="text-end mt-2" />
         </div>
-        </div>
+      </div>
       <div className="card border-0 shadow">
         <div className="card-body">
           <div className="d-flex align-items-center justify-content-between pb-3">
@@ -504,7 +509,7 @@ const ListarVeiculos = () => {
                     className="h6 d-flex align-items-center fs-6"
                     id="estacionadocarroo"
                   >
-                    <h6>
+                    <h6 className="text-danger">
                       <AiOutlineInfoCircle />‎{" "}
                       {link.numero_notificacoes_pendentes}
                     </h6>
@@ -775,18 +780,53 @@ const ListarVeiculos = () => {
           ) : null}
         </div>
       ))}
-
-      <Button
-        variant="gradient"
-        gradient={{ from: "blue", to: "indigo" }}
-        className="mt-5"
-        radius="md"
-        onClick={() => {
-          FuncTrocaComp("CadastrarVeiculo");
-        }}
-      >
-        <FaCarAlt size={20} />‎ ‎ ‎ ‎Cadastrar novo veículo
-      </Button>
+      <div className="row mx-0" id="footerButton">
+        <div className="row">
+        <div className="col-12">
+        <Button
+          variant="gradient"
+          gradient={{ from: "blue", to: "indigo" }}
+          radius="md"
+          fullWidth
+          onClick={() => {
+            FuncTrocaComp("CadastrarVeiculo");
+          }}
+        >
+          <FaCarAlt size={20} className="mx-1" /> Cadastrar novo veículo
+        </Button>
+        </div>
+        </div>
+        <div className="row">
+          <div className="col-8">
+            <Button
+              variant="gradient"
+              gradient={{ from: 'cyan', to: 'teal' }}
+              radius="md"
+              className="mt-2"
+              fullWidth
+              onClick={() => {
+                FuncTrocaComp("Configuracoes");
+              }}
+            >
+              <CarCrashOutlined size={20}  className="mx-1" /> Débito automático
+            </Button>
+          </div>
+          <div className="col-4">
+            <Button
+              variant="gradient"
+              gradient={{ from: "green", to: "teal" }}
+              radius="md"
+              fullWidth
+              className="mt-2"
+              onClick={() => {
+                FuncTrocaComp("InserirCreditos");
+              }}
+            >
+              <TbSquareRoundedPlusFilled size={20} className="mx-1" /> Saldo
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

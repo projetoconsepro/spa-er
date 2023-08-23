@@ -25369,6 +25369,11 @@ label {
     border-color: #222222;
 }
 
+#footerButton {
+    position: fixed;
+    bottom: 10px;
+}
+
 .btn-github.btn-link {
     color: #222222;
     background: transparent;

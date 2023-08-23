@@ -105,20 +105,20 @@ const RegisterPage = () => {
                 setEstado(false)
             }, 4000);
         }
-        else if (senha.length < 8) {
+        else if (senha.length < 4) {
             setEstado(true)
             setErrorSenha(true)
-            setMensagem("A senha deve conter no mínimo 8 caracteres!")
+            setMensagem("A senha deve conter no mínimo 4 caracteres!")
 
             setTimeout(() => {
                 setErrorSenha(false)
                 setEstado(false)
             }, 4000);
         }
-        else if (senha2.length < 8) {
+        else if (senha2.length < 4) {
             setEstado(true)
             setErrorSenha(true)
-            setMensagem("A senha deve conter no mínimo 8 caracteres!")
+            setMensagem("A senha deve conter no mínimo 4 caracteres!")
             setTimeout(() => {
                 setErrorSenha(false)
                 setEstado(false)
