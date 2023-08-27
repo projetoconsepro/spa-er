@@ -7,16 +7,17 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { BsCreditCard2Back } from "react-icons/bs";
 import createAPI from "../services/createAPI";
+import VoltarComponente from "../util/VoltarComponente";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const socketRef = useRef(null);
-  const [valor, setValor] = useState("");
+  const [valor, setValor] = useState("15.00");
   const [valor2, setValor2] = useState("");
   const [data, setData] = useState([]);
   const [notification, setNotification] = useState(true);
   const [tabsValue, setTabsValue] = useState("Meios de pagamento");
-  const [metodo, setMetodo] = useState(null);
+  const [metodo, setMetodo] = useState('pix');
   const [divAvancar, setDivAvancar] = useState(false);
   const [divAvancar2, setDivAvancar2] = useState(false);
   const [pixExpirado, setPixExpirado] = useState("Sucesso!");
@@ -55,7 +56,7 @@ const InserirCreditos = () => {
     ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
 
     if (
-      ValorFinal <= 0 ||
+      ValorFinal <= 2 ||
       ValorFinal == "" ||
       ValorFinal == "" ||
       ValorFinal == null ||
@@ -97,7 +98,6 @@ const InserirCreditos = () => {
   };
 
   const handleTabs = () => {
-    console.log(metodo);
     if (metodo === "pix") {
       setTabsValue("Valor");
     } else if (metodo === "") {
@@ -137,7 +137,7 @@ const InserirCreditos = () => {
 
   return (
     <div>
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Card shadow="sm" padding="lg" radius="md" className="mb-4" withBorder>
         <Tabs defaultValue={tabsValue} value={tabsValue} inverted>
           <Tabs.List>
             <Tabs.Tab
@@ -157,7 +157,9 @@ const InserirCreditos = () => {
               <Group position="apart" mt="md" mb="xs">
                 <Text weight={500}>1. Escolha o método de pagamento:</Text>
               </Group>
-              <Radio.Group>
+              <Radio.Group
+              defaultValue="pix"
+              >
                 {1 == 2  ? (
                 <Group mt="xs">
                   <Radio
@@ -231,27 +233,9 @@ const InserirCreditos = () => {
                   Quanto você quer recarregar?
                 </Text>
               </Group>
-              <Radio.Group>
-                <Group mt="xs">
-                  <Radio
-                    value="1"
-                    size="lg"
-                    label="R$ 5,00"
-                    onClick={() => {
-                      setValor("5.00");
-                    }}
-                  />
-                </Group>
-                <Group mt="xs">
-                  <Radio
-                    value="2"
-                    size="lg"
-                    label="R$ 10,00"
-                    onClick={() => {
-                      setValor("10.00");
-                    }}
-                  />
-                </Group>
+              <Radio.Group
+              defaultValue="3"
+              >
                 <Group mt="xs">
                   <Radio
                     value="3"
@@ -259,26 +243,6 @@ const InserirCreditos = () => {
                     label="R$ 15,00"
                     onClick={() => {
                       setValor("15.00");
-                    }}
-                  />
-                </Group>
-                <Group mt="xs">
-                  <Radio
-                    value="4"
-                    size="lg"
-                    label="R$ 20,00"
-                    onClick={() => {
-                      setValor("20.00");
-                    }}
-                  />
-                </Group>
-                <Group mt="xs">
-                  <Radio
-                    value="5"
-                    size="lg"
-                    label="R$ 25,00"
-                    onClick={() => {
-                      setValor("25.00");
                     }}
                   />
                 </Group>
@@ -372,6 +336,7 @@ const InserirCreditos = () => {
           />
         </Tabs>
       </Card>
+      <VoltarComponente />
     </div>
   );
 };

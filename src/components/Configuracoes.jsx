@@ -44,7 +44,7 @@ const Configuracoes = () => {
           id_veiculo: item.id_veiculo,
           debito: item.debito_automatico,
           debitoDisponivel: item.disponivel_debito_automatico,
-          estado: false,
+          estado: true,
           estadoOn: false,
           check: false,
           idVeiculo: item.id_veiculo,
@@ -54,6 +54,11 @@ const Configuracoes = () => {
             newData[index].check = true;
           } else {
             newData[index].check = false;
+          }
+
+          if ((newData[index].debitoDisponivel === "N" &&newData[index].debito === "N") ||
+          (newData[index].debitoDisponivel === "N" && newData[index].debito !== "S")) {
+            newData[index].estado = false;
           }
         }
         setData(newData);
@@ -223,7 +228,7 @@ const Configuracoes = () => {
                 <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
                   <h6 className="fs-6">
                     <TbHandClick />{" "}
-                    <small>Abrir configurações do veículo:</small>
+                    <small>Configuração débito automático:</small>
                   </h6>
                 </div>
               </div>
@@ -298,6 +303,7 @@ const Configuracoes = () => {
               )}
             </div>
           ) : null}
+          
           <h6
             style={{
               display:
@@ -313,6 +319,7 @@ const Configuracoes = () => {
               dispositivo.
             </small>
           </h6>
+
         </div>
       ))}
       <VoltarComponente />
@@ -328,6 +335,8 @@ const Configuracoes = () => {
         <small>d) Declaro ter ciência, que ao optar pela ativação automática, não terei direito ao período de tolerância de 10 minutos, sendo que na primeira fiscalização do monitor, será realizada a ativação de 30 minutos;</small> <br/>
         <Divider my="sm" size="md" variant="dashed" />
         <small>e) A ativação fica vinculada a placa do veículo.</small> <br/>
+        <Divider my="sm" size="md" variant="dashed" />
+        <small><strong> APÓS CONCORDAR COM OS TERMOS, HABILITE O DÉBITO AUTOMÁTICO NAS PLACAS DESEJADAS.</strong></small> <br/>
     </div>
     {estadoDiv2 ? 
     <>

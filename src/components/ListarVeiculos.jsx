@@ -17,6 +17,7 @@ import createAPI from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
 import { CarCrashOutlined } from "@mui/icons-material";
+import { BsConeStriped } from "react-icons/bs";
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -814,15 +815,15 @@ const ListarVeiculos = () => {
           <div className="col-4">
             <Button
               variant="gradient"
-              gradient={{ from: "green", to: "teal" }}
+              gradient={{ from: "red", to: "orange" }}
               radius="md"
               fullWidth
               className="mt-2"
               onClick={() => {
-                FuncTrocaComp("InserirCreditos");
+                FuncTrocaComp("Irregularidades");
               }}
             >
-              <TbSquareRoundedPlusFilled size={20} className="mx-1" /> Saldo
+              <BsConeStriped size={20} className="mx-1" /> Pagar
             </Button>
           </div>
         </div>
