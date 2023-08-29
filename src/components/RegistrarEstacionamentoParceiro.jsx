@@ -612,6 +612,7 @@ const RegistrarEstacionamentoParceiro = () => {
             </div>
             <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
               <input
+                autoFocus
                 type="text"
                 id={inputVazio}
                 className="mt-5 fs-1 justify-content-center align-items-center text-align-center"

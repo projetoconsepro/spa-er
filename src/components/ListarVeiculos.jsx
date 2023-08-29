@@ -529,7 +529,7 @@ const ListarVeiculos = () => {
                 <div className="d-flex align-items-center fw-bold">
                   {link.estacionado !== "Não estacionado" ?
                   <div>
-                    <img src="../../assets/img/estacionamento.png" alt="Rich Logo" />
+                    <img src="../../assets/img/estacionamento.png" alt="Rich Logo" className={window.innerWidth > 900 ? "w-25" : ""}/>
                   </div>
                   : null }
                 </div>
