@@ -105,18 +105,20 @@ const Configuracoes = () => {
     requisicao
       .put("/veiculo", {
         idVeiculo: idVeiculo,
-        debitoAutomatico: data[index].check ? "S" : "N",
+        debitoAutomatico: !data[index].check ? "S" : "N",
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          data[index].estadoOn = !data[index].estadoOn;
+          setData([...data]);
+          Atualizarequisicao();
           Swal.fire(
             "Confirmado!",
             "O débito automático foi alterado com sucesso!",
             "success"
-          );
-          data[index].estadoOn = !data[index].estadoOn;
-          setData([...data]);
-          Atualizarequisicao();
+          ).then((result) => {
+            FuncTrocaComp("MeusVeiculos");
+          })
         } else {
           setEstado(true);
           setMensagem(response.data.msg.msg);
@@ -255,38 +257,13 @@ const Configuracoes = () => {
                   value="option1"
                   checked={data[index].check}
                   onChange={() => {
-                    handleCheckboxChange(index);
+                    salvarAlteracoes(index);
                   }}
                 />
                 <label className="form-check-label">
                   ‎ ‎ Débito automático
                 </label>
               </div>
-              {data[index].estadoOn === true ? (
-                <div className="row mt-3">
-                  <div className="col-2"></div>
-                  <div className="col-8">
-                    <button
-                      type="button"
-                      className="btn3 botao"
-                      onClick={() => {
-                        salvarAlteracoes(index);
-                      }}
-                    >
-                      Salvar
-                    </button>
-                  </div>
-                  <div className="col-2">
-                    <BsFillTrashFill
-                      size={25}
-                      color="red"
-                      onClick={() => {
-                        removerVeiculo(link.id_veiculo);
-                      }}
-                    />
-                  </div>
-                </div>
-              ) : (
                 <div className="row mt-3">
                   <div className="col-2"></div>
                   <div className="col-8"></div>
@@ -300,7 +277,6 @@ const Configuracoes = () => {
                     />
                   </div>
                 </div>
-              )}
             </div>
           ) : null}
           

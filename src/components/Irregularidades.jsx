@@ -2,13 +2,13 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
 import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
-import { BsCalendarDate, BsCashCoin } from "react-icons/bs";
+import { BsCalendarDate, BsCashCoin, BsConeStriped } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import { IconReload } from "@tabler/icons-react";
+import { IconReload, IconX } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
@@ -114,9 +114,11 @@ const Irregularidades = () => {
               timer: 2000,
             });
             if (index !== undefined) {
+              FuncTrocaComp("MeusVeiculos");
               data[index].pago = "S";
               setData([...data]);
             } else {
+              FuncTrocaComp("MeusVeiculos");
               startNotificao();
             }
           } else {
@@ -161,9 +163,11 @@ const Irregularidades = () => {
             timer: 2000,
           });
           if (index !== undefined) {
+            FuncTrocaComp("MeusVeiculos");
             data[index].pago = "S";
             setData([...data]);
           } else {
+            FuncTrocaComp("MeusVeiculos");
             startNotificao();
           }
         } else {
@@ -425,15 +429,13 @@ const Irregularidades = () => {
         </div>
       </div>
 
-      {currentItems.map((link, index) => (
+      {data.map((link, index) => (
         <div className="card border-0 shadow mt-2 mb-3" key={index}>
           <div
-            className="card-body"
-            onClick={() => {
-              atualiza(index);
-            }}
+            className={link.pago === "S" ? "card-body10 mb-0 pb-0" : "card-body9"}
+            onClick={() => link.pago === "S" ? atualiza(index) : null}
           >
-            <div className="d-flex align-items-center justify-content-between pb-3">
+            <div className="d-flex align-items-center justify-content-between">
               <div>
                 <div className="h2 mb-0 d-flex align-items-center">
                   {link.placa}
@@ -449,10 +451,10 @@ const Irregularidades = () => {
                 </div>
                 {link.estado ? (
                   <div
-                    className="h6 d-flex align-items-center fs-6"
-                    id="bordaBaixo"
+                    className="h6 d-flex align-items-center fs-6 mb-0 pb-0"
                   >
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" ? (
+                    {link.tipo_notificacao === "Ocupando vaga de deficiente" 
+                    || link.tipo_notificacao === "Ocupando vaga de idoso" ? (
                       <h6>
                         {" "}
                         <FaClipboardList />‎{" "}
@@ -461,13 +463,18 @@ const Irregularidades = () => {
                     ) : (
                       <h6>
                         {" "}
-                        <FaClipboardList />‎ Motivo: {link.tipo_notificacao}
+                        <FaClipboardList />‎ 
+                        {window.innerWidth <= 360 ? 
+                        <small>Motivo: {link.tipo_notificacao}</small>
+                        :
+                        `Motivo: ${link.tipo_notificacao}`}
                       </h6>
                     )}
                   </div>
                 ) : (
-                  <div className="h6 d-flex align-items-center fs-6">
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" ? (
+                  <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
+                    {link.tipo_notificacao === "Ocupando vaga de deficiente" 
+                    || link.tipo_notificacao === "Ocupando vaga de idoso" ? (
                       <h6>
                         {" "}
                         <FaClipboardList />‎{" "}
@@ -476,24 +483,56 @@ const Irregularidades = () => {
                     ) : (
                       <h6>
                         {" "}
-                        <FaClipboardList />‎ Motivo: {link.tipo_notificacao}
+                        <FaClipboardList />‎ 
+                        {window.innerWidth <= 360 ? 
+                        <small>Motivo: {link.tipo_notificacao}</small>
+                        :
+                        `Motivo: ${link.tipo_notificacao}`}
                       </h6>
                     )}
                   </div>
                 )}
+               <div className="h6 d-flex align-items-center fs-6">
+               <FaClipboardList />{" "} Status: {" "}
+                  <h6 className={link.pago === "S" ? 'text-success mt-2 mx-1' : 'text-danger mt-2 mx-1' }>
+                  {" "} {link.pago === "S" ? "Quitado" : "Pendente"}
+                  </h6>
+              </div>
               </div>
               <div>
                 {link.pago === "N" ? (
-                  <div className="d-flex align-items-center fw-bold">
+                  <div className="d-flex align-items-center fw-bold mb-6">
                     <BiErrorCircle size={30} color="red" />
                   </div>
                 ) : (
-                  <div className="d-flex align-items-center fw-bold">
+                  <div className="d-flex align-items-center fw-bold mb-6">
                     <AiFillCheckCircle size={30} color="green" />
                   </div>
                 )}
               </div>
+              
             </div>
+            {link.pago === "N" ?
+              <div className="row">
+              <div className="col-12">
+                  <Button
+                    variant="outline"
+                    color="red"
+                    radius="md"
+                    fullWidth
+                    className="mt-2"
+                    leftIcon={
+                       link.estado ? <IconX size={20} /> :  <BsConeStriped size={20} />
+                    }
+                    onClick={() => {
+                      atualiza(index);
+                    }}
+                  >
+                    {link.estado ? "Fechar" : "Regularize aqui"}
+                  </Button>
+              </div>
+              </div>
+              : null }
           </div>
           {link.estado ? (
             <div className="justify-content-between pb-3 mb-1">
@@ -528,9 +567,8 @@ const Irregularidades = () => {
               {link.pago === "S" ? null : (
                 <div className="h6 mt-3 mx-5">
                   <select
-                    className="form-select form-select-lg mb-1"
-                    aria-label=".form-select-lg example"
-                    id="pagamentos"
+                    className="form-select2 form-select-md mb-1 text-black"
+                    aria-label=".form-select-md"
                     defaultValue="credito"
                   >
                     <option value="pix">PIX</option>
@@ -542,12 +580,14 @@ const Irregularidades = () => {
                         <Button
                           type="submit"
                           loading={loadingButton}
-                          className="btn4 botao align-itens-center fs-6"
+                          variant="gradient"
+                          gradient={{ from: "blue", to: "cyan" }}
+                          fullWidth
                           onClick={() => {
                             regularizar(index);
                           }}
                         >
-                          Regularizar
+                          Pagar
                         </Button>
                       </div>
                     </div>
@@ -565,10 +605,6 @@ const Irregularidades = () => {
       >
         {mensagem}
       </div>
-
-      <Group position="center" mb="md">
-            <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
-      </Group>
 
       <VoltarComponente />
 

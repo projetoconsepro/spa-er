@@ -4416,6 +4416,26 @@ textarea.form-control-lg {
     appearance: none;
 }
 
+.form-select2 {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #fff;
+    vertical-align: middle;
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231F2937' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+    border: 0.0625rem solid rgb(0, 102, 255);
+    border-radius: 0.5rem;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
 .form-select:focus {
     border-color: #4d6689;
     outline: 0;
@@ -8099,6 +8119,17 @@ textarea.form-control-lg {
 
 .card-body8 {
     height: 30rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-body9 {
+    height: 14rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+.card-body10 {
+    height: 10rem;
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
 }
