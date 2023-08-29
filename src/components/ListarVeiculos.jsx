@@ -12,12 +12,14 @@ import Swal from "sweetalert2";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Button, Grid, Group, Input, Text } from "@mantine/core";
-import { IconParking, IconReload } from "@tabler/icons-react";
+import { IconArrowRight, IconChevronRight, IconParking, IconPlus, IconReload, IconSquareRoundedPlusFilled } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
 import { CarCrashOutlined } from "@mui/icons-material";
 import { BsConeStriped } from "react-icons/bs";
+import { IconCirclePlus } from "@tabler/icons-react";
+import { IconX } from "@tabler/icons-react";
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -141,7 +143,7 @@ const ListarVeiculos = () => {
         }
         for (let i = 0; i < response?.data?.data.length; i++) {
           resposta[i] = {};
-          resposta[i].div = "card-body mb-2";
+          resposta[i].div = "card-body10 mb-2";
           notificacao[i] = { estado: true };
           mostrar2[i] = { estado: false };
           mostrardiv[i] = { estado: true };
@@ -149,17 +151,17 @@ const ListarVeiculos = () => {
           resposta[i].placa = response.data.data[i].usuario;
           resposta[i].id_veiculo = response.data.data[i].id_veiculo;
           if (response.data.data[i].estacionado === "N") {
-            resposta[i].div = "card-body mb-2";
+            resposta[i].div = "card-body10 mb-2";
             resposta[i].textoestacionado = "Clique aqui para estacionar";
             resposta[i].estacionado = "Não estacionado";
             resposta[i].temporestante = "";
             notificacao[i] = { estado: true };
             if (response.data.data[i].numero_notificacoes_pendentes === 0) {
-              resposta[i].div = "card-body mb-2";
+              resposta[i].div = "card-body10 mb-2";
               resposta[i].numero_notificacoes_pendentes = "Sem notificações";
               notificacao[i] = { estado: true };
             } else {
-              resposta[i].div = "card-body2 mb-2";
+              resposta[i].div = "card-body9 mb-2";
               resposta[
                 i
               ].numero_notificacoes_pendentes = `${response.data.data[i].numero_notificacoes_pendentes} ${response.data.data[i].numero_notificacoes_pendentes === 1 ?  "notificação" : "notificações"}`;
@@ -175,7 +177,7 @@ const ListarVeiculos = () => {
               response.data.data[i].id_vaga_veiculo,
               response.data.data[i].usuario
             );
-            resposta[i].div = "card-body2 mb-2";
+            resposta[i].div = "card-body9 mb-2";
             resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
             mostrardiv[i] = { estado: false };
             resposta[i].notificacoesVaga =
@@ -448,7 +450,7 @@ const ListarVeiculos = () => {
         </div>
       </div>
       <div className="card border-0 shadow">
-        <div className="card-body">
+        <div className="card-body10">
           <div className="d-flex align-items-center justify-content-between pb-3">
             <div>
               <div className="h6 mb-0 d-flex align-items-center">
@@ -457,15 +459,23 @@ const ListarVeiculos = () => {
               <div className="h1 mt-2 d-flex align-items-center">
                 R$ {saldoCredito}
               </div>
+              <Button
+              variant="gradient"
+              gradient={{ from: 'green', to: 'teal' }}
+              radius="xl"
+              className="mt-3"
+              fullWidth
+              onClick={() => {
+                FuncTrocaComp("InserirCreditos");
+              }}
+            >
+             <IconSquareRoundedPlusFilled className="mx-1" />
+             Adicionar saldo
+            </Button>
             </div>
             <div>
               <div className="d-flex align-items-center fw-bold">
-                <FcPlus
-                  size={40}
-                  onClick={() => {
-                    FuncTrocaComp("InserirCreditos");
-                  }}
-                />
+                <IconChevronRight size={30} className="mx-1 mb-5" onClick={() => FuncTrocaComp("HistoricoFinanceiro")}/>
               </div>
             </div>
           </div>
@@ -477,27 +487,16 @@ const ListarVeiculos = () => {
           <div
             id=""
             className={link.div}
-            onClick={() => {
-              handleClick(index);
-            }}
           >
-            <div className="d-flex align-items-center justify-content-between pb-3">
-              <div>
+            <div className="row d-flex align-items-center justify-content-between pb-3">
+              <div className="col-9">
                 <div className="h2 mb-0 d-flex align-items-center">
                   {link.placa}
                 </div>
-                <div
-                  className="h6 mt-2 d-flex align-items-center fs-6"
-                  id="estacionadocarro"
-                >
-                  <h6>
-                    <FaParking />‎ {link.estacionado}
-                  </h6>
-                </div>
                 {mostrardiv[index].estado ? null : (
                   <div
-                    className="h6 d-flex align-items-center fs-6"
-                    id="estacionadocarroo"
+                    className="h6 d-flex align-items-center mt-2 fs-6"
+                    id="estacionadocarro"
                   >
                     <h6 className={link.data < horaAgora ? "text-danger" : ""}>
                       <RxLapTimer />‎ Validade:{" "}
@@ -505,10 +504,19 @@ const ListarVeiculos = () => {
                     </h6>
                   </div>
                 )}
+                
+                <div
+                  className="h6 d-flex align-items-center mt-1 fs-6"
+                  id="estacionadocarro"
+                >
+                  <h6>
+                    <FaParking />‎ {link.estacionado}
+                  </h6>
+                </div>
                 {notificacao[index].estado ? null : (
                   <div
                     className="h6 d-flex align-items-center fs-6"
-                    id="estacionadocarroo"
+                    id="estacionadocarro"
                   >
                     <h6 className="text-danger">
                       <AiOutlineInfoCircle />‎{" "}
@@ -516,24 +524,40 @@ const ListarVeiculos = () => {
                     </h6>
                   </div>
                 )}
-                <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
-                  <h6 className="fs-6">
-                    <TbHandClick /> <small>{link.textoestacionado}</small>
-                  </h6>
-                </div>
               </div>
-              <div>
+              <div className="col-3">
                 <div className="d-flex align-items-center fw-bold">
-                  <FaCarAlt size={40} />
+                  {link.estacionado !== "Não estacionado" ?
+                  <div>
+                    <img src="../../assets/img/estacionamento.png" alt="Rich Logo" />
+                  </div>
+                  : null }
                 </div>
               </div>
             </div>
+            <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
+                <Button
+                  variant="outline"
+                  radius="md"
+                  fullWidth
+                  onClick={() => {
+                    handleClick(index);
+                  }}
+                >
+                  {mostrar2[index].estado ? (
+                    <IconX size={20} className="mx-1" />
+                  ) : (
+                  <FaCarAlt size={20} className="mx-1" /> 
+                  )}
+                  {mostrar2[index].estado ? "Fechar" : link.textoestacionado}
+                </Button>
+                </div>
           </div>
           {mostrar2[index].estado ? (
             <div className="mb-1">
               {link.notificacoesVaga > 0 ? (
                 <div className="card border-0">
-                  <div className="card-body2">
+                  <div className="card-body9">
                     <div className="d-flex align-items-center justify-content-between">
                       <div>
                         <div
@@ -798,7 +822,7 @@ const ListarVeiculos = () => {
         </div>
         </div>
         <div className="row">
-          <div className="col-8">
+          <div className="col-7">
             <Button
               variant="gradient"
               gradient={{ from: 'cyan', to: 'teal' }}
@@ -809,10 +833,10 @@ const ListarVeiculos = () => {
                 FuncTrocaComp("Configuracoes");
               }}
             >
-              <CarCrashOutlined size={20}  className="mx-1" /> Débito automático
+             Débito automático
             </Button>
           </div>
-          <div className="col-4">
+          <div className="col-5">
             <Button
               variant="gradient"
               gradient={{ from: "red", to: "orange" }}
@@ -823,7 +847,7 @@ const ListarVeiculos = () => {
                 FuncTrocaComp("Irregularidades");
               }}
             >
-              <BsConeStriped size={20} className="mx-1" /> Pagar
+              Notificação
             </Button>
           </div>
         </div>
