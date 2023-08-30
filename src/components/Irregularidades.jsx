@@ -568,6 +568,7 @@ const Irregularidades = () => {
                 <div className="h6 mt-3 mx-5">
                   <select
                     className="form-select2 form-select-md mb-1 text-black"
+                    id="pagamentos"
                     aria-label=".form-select-md"
                     defaultValue="credito"
                   >
