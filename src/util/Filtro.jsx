@@ -303,7 +303,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     let consulta = ''
     switch (selectedOption.value) {
       case 'Data':
-        if (nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
+        if (nome === 'HistoricoVeiculoAdmin'){
           consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "data", "operator": "LIKE", "value": "%${FormatDate(value)}%" }]}`
         } else {
         consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${FormatDate(value)}%" }]}`;
@@ -324,7 +324,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       case 'Periodo':
         const data = FormatDate(valuePeriodo[1]);
         const data2 = await calculateFinalDate(data);
-        if (nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
+        if (nome === 'HistoricoVeiculoAdmin'){
           consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${data2}"] }]}`
         } else {
         consulta = `{"where": [{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(valuePeriodo[0])}", "${data2}"] }]}`;
@@ -341,7 +341,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         }
         break;
       case 'Vaga':
-        if (nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
+        if (nome === 'HistoricoVeiculoAdmin'){
         consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`
         } else if(nome === 'OcupacaoVagasAdmin'){
           consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" },{ "field": "vaga", "operator": "=", "value": "${inputVaga}" }]}`;
@@ -351,7 +351,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         }
         break;
       case 'Tipo':
-        if(nome === 'HistoricoVeiculoAdmin' || nome === 'ListarNotificacoesAdmin'){
+        if(nome === 'HistoricoVeiculoAdmin'){
         consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "tipo", "operator": "=", "value": "${radioTipo}" }]}`;
         }
         else if(nome === 'OcupacaoVagasAdmin'){
