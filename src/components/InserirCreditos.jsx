@@ -24,10 +24,10 @@ const InserirCreditos = () => {
   const [txid, setTxId] = useState(null);
   const [onOpen, setOnOpen] = useState(false);
 
-  const inserirCreditos = (campo, valor) => {
-    const requisicao = createAPI();
+  const inserirCreditos = async (campo, valor) => {
+    const requisicao = await createAPI();
 
-    requisicao
+    await requisicao
       .post("/usuario/saldo/pix", {
         txid: campo,
         valor: valor,
