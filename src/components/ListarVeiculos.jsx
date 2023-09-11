@@ -11,8 +11,8 @@ import "../pages/Style/styles.css";
 import Swal from "sweetalert2";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
-import { Button, Grid, Group, Input, Text } from "@mantine/core";
-import { IconArrowRight, IconChevronRight, IconParking, IconPlus, IconReload, IconSquareRoundedPlusFilled } from "@tabler/icons-react";
+import { Button, Divider, Grid, Group, Input, Modal, Text } from "@mantine/core";
+import { IconArrowRight, IconChevronRight, IconParking, IconPlus, IconPrinter, IconReload, IconSquareRoundedPlusFilled } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
@@ -20,6 +20,9 @@ import { CarCrashOutlined } from "@mui/icons-material";
 import { BsConeStriped } from "react-icons/bs";
 import { IconCirclePlus } from "@tabler/icons-react";
 import { IconX } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import jsPDF from "jspdf";
+
 
 const ListarVeiculos = () => {
   const [resposta, setResposta] = useState([]);
@@ -37,6 +40,12 @@ const ListarVeiculos = () => {
   const [contador, setContador] = useState(0);
   const [horaAgora, setHoraAgora] = useState("");
   const [cont, setCont] = useState(0);
+  const [openedModal, { open: openModal, close: closeModal }] =
+  useDisclosure(false);
+  const [data2, setData2] = useState([]);
+  const [date, setDate] = useState("");
+  const [emissao, setEmissao] = useState("");
+  const [validade, setValidade] = useState("");
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -345,8 +354,14 @@ const ListarVeiculos = () => {
           tempo: tempo1,
           pagamento: "credito",
         })
-        .then((response) => {
+        .then(async (response) => {
           if (response.data.msg.resultado === true) {
+            setData2(response.data.data);
+            setDate(FormatDate(response.data.data.data));
+            setEmissao(response.data.data.chegada)
+            const validade = await calcularValidade(response.data.data.chegada, response.data.data.tempo)
+            setValidade(validade)
+            openModal();
             atualizacomp();
           } else {
             setBotaoOff(false);
@@ -402,8 +417,14 @@ const ListarVeiculos = () => {
           pagamento: "credito",
           id_vaga_veiculo: id_vaga_veiculo,
         })
-        .then((response) => {
+        .then(async (response) => {
           if (response.data.msg.resultado === true) {
+            setData2(response.data.data);
+            setDate(FormatDate(response.data.data.data));
+            setEmissao(response.data.data.chegada)
+            const validade = await calcularValidade(response.data.data.chegada, response.data.data.tempo)
+            setValidade(validade)
+            openModal();
             atualizacomp();
           } else {
             setBotaoOff(false);
@@ -437,7 +458,107 @@ const ListarVeiculos = () => {
     FuncTrocaComp("Irregularidades");
   };
 
+  async function gerarPDF() {
+    // Cria um novo objeto jsPDF
+    const pdfWidth = 80; // 100 mm
+    const pdfHeight = 100; // 150 mm
+    const pdf = new jsPDF({
+      unit: 'mm',
+      format: [pdfWidth, pdfHeight],
+    });
+
+    const tamanhoFonte = 12;
+
+    // Posições para posicionar o conteúdo do PDF
+    const x = 18 ;
+    const y = 15;
+
+    // Iniciar a criação do PDF e adicionar o conteúdo da div
+    pdf.setFontSize(tamanhoFonte);
+    pdf.text("CONSEPRO TAQUARA", x, y);
+    pdf.text("- - - - - - - - - - - - - - - - - - - - - - - -", 10 , y + 5);
+    pdf.setFontSize(tamanhoFonte - 2);
+    pdf.text("Tipo: Estacionamento avulso" , x, y + 12);
+    pdf.text(`Início: ${date} - ${emissao}` , x, y + 17);
+    pdf.text(`Validade: ${date} - ${await calcularValidade(data2.chegada, data2.tempo)}` , x, y + 22);
+    pdf.text("Placa: " + data2.placa , x, y + 27);
+    pdf.text("Tempo: " + data2.tempoCredito , x, y + 32);
+    pdf.text("Valor: R$ " + data2.valor , x, y + 37);
+    pdf.setFontSize(tamanhoFonte);
+    pdf.text("- - - - - - - - - - - - - - - - - - - - - - - -", 10 , y + 44);
+    pdf.setFontSize(tamanhoFonte - 2);
+    pdf.text("CNPJ: 89.668.040/0001-10", x, y + 49);
+    pdf.text("Rua Julio de Castilhos, 2500" , x, y + 54);
+    pdf.text("Taquara - RS" , x, y + 59);
+    pdf.text("(51) 9 8660-4241", x, y + 64);
+
+    // Gera o PDF
+    pdf.save("Comprovante_Ticket.pdf");
+  }
+
   return (
+    <>
+    <Modal
+    opened={openedModal}
+    onClose={() => {
+      closeModal()
+    }}
+    centered
+    size="xl"
+    title="Comprovante de estacionamento:"
+  >
+    <div
+      className="rounded border border-gray p-3 text-center"
+      id="conteudoParaPDF"
+    >
+      <div className="mb-4">CONSEPRO TAQUARA</div>
+      <Divider my="sm" size="md" variant="dashed" />
+      <div>
+        <h6>Tipo: Estacionamento avulso</h6>
+      </div>
+      <div>
+        <h6>Início: {date} - {emissao} </h6>
+      </div>
+      <div>
+        <h6>Validade: {date} - {validade} </h6>
+      </div>
+      <div>
+        <h6>Placa: {data2.placa}</h6>
+      </div>
+      <div>
+        <h6>Tempo: {data2.tempoCredito}</h6>
+      </div>
+      <div>
+        <h6>Valor: R$ {data2.valor}</h6>
+      </div>
+      <Divider my="sm" size="md" variant="dashed" />
+      CNPJ: 89.668.040/0001-10
+      <br />
+      Rua Julio de Castilhos, 2500
+      <br />
+      Taquara - RS
+      <br />
+      (51) 9 8660-4241
+      <br />
+    </div>
+
+    <div className="mt-4">
+      <Button
+        variant="gradient"
+        gradient={{ from: "teal", to: "indigo", deg: 300 }}
+        size="md"
+        radius="md"
+        fullWidth
+        rightIcon={<IconPrinter size={23} />}
+        loaderPosition="right"
+        onClick={() => {
+          gerarPDF(data2);
+        }}
+      >
+        Imprimir
+      </Button>
+    </div>
+  </Modal>
     <div className="col-12 px-3 mb-7">
       <div className="row">
         <div className="col-10">
@@ -853,6 +974,7 @@ const ListarVeiculos = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
