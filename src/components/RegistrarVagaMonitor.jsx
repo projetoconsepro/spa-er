@@ -11,6 +11,7 @@ import { Button, Divider, Loader } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
+import CalcularValidade from "../util/CalcularValidade";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -127,6 +128,32 @@ const RegistrarVagaMonitor = () => {
       .then((response) => {
         setLoadingButton(false);
         if (response.data.msg.resultado === true) {
+           console.log('PIX', response.data.data)
+           if (localStorage.getItem("listaVagas")) {
+            const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
+            const vagaAtualizada = response.data.data.numero_vagas[0];
+            const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaAtualizada);
+            if (indexVaga !== -1) {
+              listaVagas[indexVaga].placa = placaMaiuscula;
+              listaVagas[indexVaga].numero = parseInt(vagaAtualizada);
+              listaVagas[indexVaga].id_vaga_veiculo = response.data.data.id_vaga_veiculo;
+              listaVagas[indexVaga].chegada = response.data.data.chegada;
+              listaVagas[indexVaga].tempo = response.data.data.tempo;
+              listaVagas[indexVaga].temporestante = CalcularValidade(response.data.data.chegada, response.data.data.tempo);
+              listaVagas[indexVaga].variaDisplay = "aparece";
+              listaVagas[indexVaga].display = "testeNot2";
+              if (response.data.data.tempo === "00:10:00"){
+                listaVagas[indexVaga].corline = "#FFF3CD";
+                listaVagas[indexVaga].cor = "#664D03";
+              } else {
+                listaVagas[indexVaga].corline = "#D1E7DD";
+                listaVagas[indexVaga].cor = "#0F5132";
+              }
+              localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+            } else {
+              console.log('n achou')
+            }
+          }
           if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
@@ -214,9 +241,33 @@ const RegistrarVagaMonitor = () => {
         .then((response) => {
           console.log(response)
           if (response.data.msg.resultado === true) {
+            if (localStorage.getItem("listaVagas")) {
+              const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
+              const vagaAtualizada = vagaa;
+              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaAtualizada[0]);
+              if (indexVaga !== -1) {
+                listaVagas[indexVaga].placa = tirarTraco;
+                listaVagas[indexVaga].numero = parseInt(vagaAtualizada[0]);
+                listaVagas[indexVaga].id_vaga_veiculo = response.data.data.id_vaga_veiculo;
+                listaVagas[indexVaga].chegada = response.data.data.chegada;
+                listaVagas[indexVaga].tempo = response.data.data.tempo;
+                listaVagas[indexVaga].temporestante = CalcularValidade(response.data.data.chegada, response.data.data.tempo);
+                listaVagas[indexVaga].variaDisplay = "aparece";
+                listaVagas[indexVaga].display = "testeNot2";
+                if (response.data.data.tempo === "00:10:00"){
+                  listaVagas[indexVaga].corline = "#FFF3CD";
+                  listaVagas[indexVaga].cor = "#664D03";
+                } else {
+                  listaVagas[indexVaga].corline = "#D1E7DD";
+                  listaVagas[indexVaga].cor = "#0F5132";
+                }
+                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+              } else {
+                console.log('n achou')
+              }
+            }
             setLoadingButton(false);
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
-            console.log('a', response)
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -271,9 +322,33 @@ const RegistrarVagaMonitor = () => {
           pagamento: valor,
         })
         .then((response) => {
-          console.log(response)
           if (response.data.msg.resultado === true) {
-            console.log('b', response)
+            console.log(response.data.data)
+            if (localStorage.getItem("listaVagas")) {
+              const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
+              const vagaAtualizada = vagaa;
+              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaAtualizada[0]);
+              if (indexVaga !== -1) {
+                listaVagas[indexVaga].placa = tirarTraco;
+                listaVagas[indexVaga].numero = parseInt(vagaAtualizada[0]);
+                listaVagas[indexVaga].id_vaga_veiculo = response.data.data.id_vaga_veiculo;
+                listaVagas[indexVaga].chegada = response.data.data.chegada;
+                listaVagas[indexVaga].tempo = response.data.data.tempo;
+                listaVagas[indexVaga].temporestante = CalcularValidade(response.data.data.chegada, response.data.data.tempo);
+                listaVagas[indexVaga].variaDisplay = "aparece";
+                listaVagas[indexVaga].display = "testeNot2";
+                if (response.data.data.tempo === "00:10:00"){
+                  listaVagas[indexVaga].corline = "#FFF3CD";
+                  listaVagas[indexVaga].cor = "#664D03";
+                } else {
+                  listaVagas[indexVaga].corline = "#D1E7DD";
+                  listaVagas[indexVaga].cor = "#0F5132";
+                }
+                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+              } else {
+                console.log('n achou')
+              }
+            }
             setLoadingButton(false);
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
@@ -406,7 +481,7 @@ const RegistrarVagaMonitor = () => {
     } else if (tempoo === "01:00:00") {
       setValorCobranca2(valorCobranca);
     } else if (tempoo === "00:30:00") {
-      setValorCobranca2(valorCobranca / 2);
+      setValorCobranca2(0.01);
     } else if (tempoo === "01:30:00") {
       setValorCobranca2(valorCobranca * 1.5);
     } else if (tempoo === "00:10:00") {
