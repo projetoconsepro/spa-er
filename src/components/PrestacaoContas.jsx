@@ -62,21 +62,13 @@ const PrestacaoContas = () => {
       
     ];
 
-    const formatNumero = (numero) => {
-      if (Number.isInteger(numero)) {
-        return numero + ',00';
-      } else {
-        return numero.toString();
-      }
-    };
-
     regularizacaoData.push([{ content: 'MONITOR', colSpan: 21 }]);
 
     console.log(data[0].monitor)
     data[0].monitor.map((item) => {
       if(item.Regularizacao !== undefined){
       regularizacaoData.push(
-        [item.nome.length > 11 ? item.nome.substring(0, item.nome.indexOf(' ')) + ' ' + item.nome.split(' ')[1].charAt(0) + '.' : item.nome <= 11 ? item.nome.substring(0, 8) : item.nome.substring(0, 11),
+        [item.nome.length > 13 ? item.nome.substring(0, item.nome.indexOf(' ')) + ' ' + item.nome.split(' ')[1].charAt(0) + '.' : item.nome <= 13 ? item.nome.substring(0, 8) : item.nome.substring(0, 13),
         item.Regularizacao.quantidade,
         formatNumero(item.Regularizacao.dinheiro),
         formatNumero(item.Regularizacao.pix),
@@ -334,27 +326,22 @@ const PrestacaoContas = () => {
       ]);
 
     const columnStyles = {
-      0: { cellWidth: 18 },
-      1: { cellWidth: 14 },
-      2: { cellWidth: 18 },
-      3: { cellWidth: 18 },
-      4: { cellWidth: 18 },
-      5: { cellWidth: 14 },
-      6: { cellWidth: 18 },
-      7: { cellWidth: 18 },
-      8: { cellWidth: 18 },
-      9: { cellWidth: 14  },
-      10: { cellWidth: 18 },
-      11: { cellWidth: 18 },
-      12: { cellWidth: 18 },
-      13: { cellWidth: 14 },
-      14: { cellWidth: 18 },
-      15: { cellWidth: 18 },
-      16: { cellWidth: 18 },
-      17: { cellWidth: 14  },
-      18: { cellWidth: 18 },
-      19: { cellWidth: 18 },
-      20: { cellWidth: 18 },
+      0: { cellWidth: 19 },
+      1: { cellWidth: 15 },
+      2: { cellWidth: 19 },
+      3: { cellWidth: 19 },
+      4: { cellWidth: 19 },
+      5: { cellWidth: 15 },
+      6: { cellWidth: 19 },
+      7: { cellWidth: 19 },
+      8: { cellWidth: 19 },
+      9: { cellWidth: 15  },
+      10: { cellWidth: 19 },
+      11: { cellWidth: 19 },
+      12: { cellWidth: 19 },
+      13: { cellWidth: 19 },
+      14: { cellWidth: 19 },
+      15: { cellWidth: 19 },
     };
 
     let headStyles = {
