@@ -239,7 +239,7 @@ useEffect(() => {
 
     if (localStorage.getItem("turno") != "true") {
       FuncTrocaComp("AbrirTurno");
-    }
+    };
 
     const requisicao = createAPI();
     localStorage.removeItem("idVagaVeiculo");
