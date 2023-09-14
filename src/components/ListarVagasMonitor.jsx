@@ -11,6 +11,7 @@ import { Button, Group } from "@mantine/core";
 import { IconParking, IconReload } from "@tabler/icons-react";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import CalcularValidade from "../util/CalcularValidade";
+import CalcularHoras from "../util/CalcularHoras";
 
 const ListarVagasMonitor = () => {
   const [resposta, setResposta] = useState([]);
@@ -24,6 +25,7 @@ const ListarVagasMonitor = () => {
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [horaAgora, setHoraAgora] = useState("");
   const [localVagas, setLocalVagas] = useState(false);
+  const [attFunc, setAttFunc] = useState(false);
 
   const getVagas = async (setor) => {
     const requisicao = createAPI();
@@ -45,7 +47,6 @@ const ListarVagasMonitor = () => {
           setSalvaSetor(response.data.data[0].nome);
 
           if (response.data.data[i].numero !== 0) {
-            // Create an object with the updated properties
             const updatedItem = {
               numero: response.data.data[i].numero,
               corvaga: response.data.data[i].cor,
@@ -61,7 +62,7 @@ const ListarVagasMonitor = () => {
               updatedItem.variaDisplay = "escondido";
             } else {
               updatedItem.debito = response.data.data[i].debitar_automatico;
-              updatedItem.numero_notificaoes =
+              updatedItem.numero_notificacoes =
                 response.data.data[i].numero_notificacoes_pendentes;
               updatedItem.variaDisplay = "aparece";
               if (response.data.data[i].numero_notificacoes_pendentes !== 0) {
@@ -183,7 +184,10 @@ useEffect(() => {
   localStorage.removeItem("id_vagaveiculo");
     if (localStorage.getItem("numero_vaga")) {
       setVaga(localStorage.getItem("numero_vaga"));
-    }
+      setTimeout(() => {
+        localStorage.removeItem("numero_vaga");
+      }, 100);
+    } 
 
   const cardToScroll = document.querySelector(
     `.card-list[data-vaga="${vaga}"]`
@@ -193,7 +197,7 @@ useEffect(() => {
       cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 50);
   }
-  }, [vaga]);
+  }, [vaga, attFunc]);
 
 
   const horaAgoraFunc = async () => {
@@ -523,7 +527,6 @@ useEffect(() => {
               })
               .then((response) => {
                 if (response.data.msg.resultado === true) {
-                  console.log(response)
                   ImpressaoTicketEstacionamento('PRIMEIRA',
                   response.data.data.chegada,
                   response.data.data.tempo,
@@ -534,7 +537,19 @@ useEffect(() => {
                   '00:30:00',
                   response.data.data.notificacao_pendente
                   );
-                  getVagas(salvaSetor);
+                  const updatedResposta = [...resposta];
+                  let validade = CalcularHoras(CalcularValidade(response.data.data.chegada, response.data.data.tempo))
+                  updatedResposta[index] = {
+                    ...updatedResposta[index],
+                    temporestante: CalcularValidade(response.data.data.chegada, response.data.data.tempo),
+                    corline: validade.corline,
+                    cor: validade.cor,
+                  };
+                  console.log('updated', updatedResposta)
+                  const newArray = updatedResposta.filter((item) => item !== undefined);
+                  setResposta(newArray);
+                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
+
                 } else {
                   Swal.fire({
                     title: `${response.data.msg.msg}`,
@@ -924,9 +939,9 @@ useEffect(() => {
                               color: vaga.cor,
                             }}
                           >
-                            {vaga.placa}{" "}
+                            {vaga.placa == '0' ? null : vaga.placa}{" "}
                             <small id={vaga.display}>
-                              {vaga.numero_notificaoes}
+                              {vaga.numero_notificacoes}
                             </small>
                           </td>
                           <td

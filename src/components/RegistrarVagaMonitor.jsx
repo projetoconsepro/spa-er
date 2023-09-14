@@ -128,7 +128,6 @@ const RegistrarVagaMonitor = () => {
       .then((response) => {
         setLoadingButton(false);
         if (response.data.msg.resultado === true) {
-           console.log('PIX', response.data.data)
            if (localStorage.getItem("listaVagas")) {
             const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
             const vagaAtualizada = response.data.data.numero_vagas[0];
@@ -243,6 +242,22 @@ const RegistrarVagaMonitor = () => {
           if (response.data.msg.resultado === true) {
             if (localStorage.getItem("listaVagas")) {
               const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
+              
+              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa == tirarTraco);
+              console.log('indexplaca', indexByPlaca)
+              if (indexByPlaca !== -1) {
+                listaVagas[indexByPlaca].placa = "";
+                delete listaVagas[indexByPlaca].id_vaga_veiculo;
+                listaVagas[indexByPlaca].chegada = "";
+                listaVagas[indexByPlaca].variaDisplay = "escondido";
+                delete listaVagas[indexByPlaca].tempo;
+                listaVagas[indexByPlaca].temporestante = "";
+                delete listaVagas[indexByPlaca].display;
+                delete listaVagas[indexByPlaca].corline;
+                delete listaVagas[indexByPlaca].cor;
+              } else {
+                console.log('n achou placa')
+              }
               const vagaAtualizada = vagaa;
               const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaAtualizada[0]);
               if (indexVaga !== -1) {
@@ -261,6 +276,7 @@ const RegistrarVagaMonitor = () => {
                   listaVagas[indexVaga].corline = "#D1E7DD";
                   listaVagas[indexVaga].cor = "#0F5132";
                 }
+                console.log('olha', listaVagas)
                 localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
               } else {
                 console.log('n achou')
@@ -323,9 +339,27 @@ const RegistrarVagaMonitor = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado === true) {
-            console.log(response.data.data)
             if (localStorage.getItem("listaVagas")) {
               const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
+              
+              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa == tirarTraco);
+              console.log('indexplaca', indexByPlaca)
+              if (indexByPlaca !== -1) {
+                listaVagas[indexByPlaca].placa = "";
+                delete listaVagas[indexByPlaca].id_vaga_veiculo;
+                listaVagas[indexByPlaca].chegada = "";
+                listaVagas[indexByPlaca].variaDisplay = "escondido";
+                delete listaVagas[indexByPlaca].tempo;
+                listaVagas[indexByPlaca].temporestante = "";
+                delete listaVagas[indexByPlaca].display;
+                delete listaVagas[indexByPlaca].corline;
+                delete listaVagas[indexByPlaca].cor;
+                delete listaVagas[indexByPlaca]?.numero_notificacoes;
+                delete listaVagas[indexByPlaca]?.numero_notificacoes_pendentes;
+                delete listaVagas[indexByPlaca]?.numero_notificacoes_pendentess;
+              } else {
+                console.log('n achou placa')
+              }
               const vagaAtualizada = vagaa;
               const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaAtualizada[0]);
               if (indexVaga !== -1) {
@@ -344,6 +378,7 @@ const RegistrarVagaMonitor = () => {
                   listaVagas[indexVaga].corline = "#D1E7DD";
                   listaVagas[indexVaga].cor = "#0F5132";
                 }
+                console.log('olha', listaVagas)
                 localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
               } else {
                 console.log('n achou')
