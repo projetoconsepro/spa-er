@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import { FcPlus } from "react-icons/fc";
 import { FaBell, FaCarAlt, FaParking } from "react-icons/fa";

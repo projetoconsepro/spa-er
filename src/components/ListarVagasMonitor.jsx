@@ -10,6 +10,7 @@ import createAPI from "../services/createAPI";
 import { Button, Group } from "@mantine/core";
 import { IconParking, IconReload } from "@tabler/icons-react";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
+import CalcularValidade from "../util/CalcularValidade";
 
 const ListarVagasMonitor = () => {
   const [resposta, setResposta] = useState([]);
@@ -22,18 +23,7 @@ const ListarVagasMonitor = () => {
   const [vagasOcupadas, setVagasOcupadas] = useState(0);
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [horaAgora, setHoraAgora] = useState("");
-
-  const calcularValidade = (horaInicio, duracao) => {
-    const [horas, minutos, segundos] = duracao.split(":").map(Number);
-    const dataInicio = new Date(`2000-01-01T${horaInicio}`);
-    const dataValidade = new Date(
-      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
-    );
-    const horaValidade = dataValidade.toLocaleTimeString("pt-BR", {
-      timeZone: "America/Sao_Paulo",
-    });
-    return horaValidade;
-  };
+  const [localVagas, setLocalVagas] = useState(false);
 
   const getVagas = async (setor) => {
     const requisicao = createAPI();
@@ -86,7 +76,7 @@ const ListarVagasMonitor = () => {
                 response.data.data[i].id_vaga_veiculo;
               updatedItem.chegada = response.data.data[i].chegada;
               updatedItem.placa = response.data.data[i].placa;
-              updatedItem.temporestante = calcularValidade(
+              updatedItem.temporestante = CalcularValidade(
                 response.data.data[i].chegada,
                 response.data.data[i].tempo
               );
@@ -158,7 +148,11 @@ const ListarVagasMonitor = () => {
 
         vagas();
 
-        setResposta(updatedResposta);
+        if (updatedResposta.length > 1) {
+          const listaSemPrimeiroElemento = updatedResposta.slice(1);
+          localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
+          setResposta(listaSemPrimeiroElemento);
+        }
 
         let estacionadoSCount = 0;
         let estacionadoNCount = 0;
@@ -187,7 +181,6 @@ const ListarVagasMonitor = () => {
     });
   };
 
-
   const vagas = () => {
     if (localStorage.getItem("numero_vaga")) {
       setVaga(localStorage.getItem("numero_vaga"));
@@ -208,11 +201,9 @@ const ListarVagasMonitor = () => {
 
 useEffect(() => {
   localStorage.removeItem("id_vagaveiculo");
-  setTimeout(() => {
     if (localStorage.getItem("numero_vaga")) {
       setVaga(localStorage.getItem("numero_vaga"));
     }
-  }, 2300);
 
   const cardToScroll = document.querySelector(
     `.card-list[data-vaga="${vaga}"]`
@@ -237,6 +228,15 @@ useEffect(() => {
 
 
   useEffect(() => {
+    if (localStorage.getItem("listaVagas")) {
+      const items = localStorage.getItem("listaVagas");
+      setResposta(JSON.parse(items));
+      console.log('AQUIII', JSON.parse(localStorage.getItem("listaVagas")))
+      setLocalVagas(true)
+    } else {
+      setLocalVagas(false)
+    }
+
     if (localStorage.getItem("turno") != "true") {
       FuncTrocaComp("AbrirTurno");
     }
@@ -388,10 +388,8 @@ useEffect(() => {
                     display: "testeNot2",
                   };
                   const  newArray = updatedResposta.filter((item) => item !== undefined);
-                  
-                  console.log(newArray);
-
                   setResposta(newArray);
+                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -451,10 +449,8 @@ useEffect(() => {
                     display: "testeNot2",
                   };
                   const  newArray = updatedResposta.filter((item) => item !== undefined);
-                  
-                  console.log(newArray);
-
                   setResposta(newArray);
+                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -516,11 +512,9 @@ useEffect(() => {
                     display: "testeNot2",
                   };
 
-                  const  newArray = updatedResposta.filter((item) => item !== undefined);
-
-                  console.log(newArray);
-
+                  const newArray = updatedResposta.filter((item) => item !== undefined);
                   setResposta(newArray);
+                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -589,10 +583,9 @@ useEffect(() => {
 
 
                             const  newArray = updatedResposta.filter((item) => item !== undefined);
-
-                            console.log(newArray);
-
                             setResposta(newArray);
+                            localStorage.setItem("listaVagas", JSON.stringify(newArray));
+
                           } else {
                             Swal.fire(`${response.data.msg.msg}`, "", "error");
                           }
@@ -682,6 +675,7 @@ useEffect(() => {
                   const  newArray = updatedResposta.filter((item) => item !== undefined);
 
                   setResposta(newArray);
+                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -763,10 +757,9 @@ useEffect(() => {
                   };
 
                   const  newArray = updatedResposta.filter((item) => item !== undefined);
-
-                  console.log(newArray);
-
                   setResposta(newArray);
+                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
+                  
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
@@ -913,7 +906,8 @@ useEffect(() => {
                       </tr>
                     </thead>
                     <tbody>
-                      {resposta.map((vaga, index) => (
+                      {resposta.length !== 0 ? (
+                        resposta.map((vaga, index) => (
                         <tr
                           key={index}
                           className="card-list"
@@ -982,7 +976,8 @@ useEffect(() => {
                             </h6>
                           </td>
                         </tr>
-                      ))}
+                      ))) : ( null )}
+
                     </tbody>
                   </table>
                 </div>
