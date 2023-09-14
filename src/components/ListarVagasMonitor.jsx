@@ -146,8 +146,6 @@ const ListarVagasMonitor = () => {
           }
         }
 
-        vagas();
-
         if (updatedResposta.length > 1) {
           const listaSemPrimeiroElemento = updatedResposta.slice(1);
           localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
@@ -181,24 +179,6 @@ const ListarVagasMonitor = () => {
     });
   };
 
-  const vagas = () => {
-    if (localStorage.getItem("numero_vaga")) {
-      setVaga(localStorage.getItem("numero_vaga"));
-
-      const newVaga = localStorage.getItem("numero_vaga");
-
-      const cardToScroll = document.querySelector(
-        `.card-list[data-vaga="${newVaga}"]`
-      );
-      if (cardToScroll) {
-        console.log('oi')
-        setTimeout(() => {
-          cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 100);
-      }
-    }
-}
-
 useEffect(() => {
   localStorage.removeItem("id_vagaveiculo");
     if (localStorage.getItem("numero_vaga")) {
@@ -211,7 +191,7 @@ useEffect(() => {
   if (cardToScroll) {
     setTimeout(() => {
       cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 100);
+    }, 50);
   }
   }, [vaga]);
 
