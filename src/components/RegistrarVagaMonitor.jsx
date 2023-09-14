@@ -481,7 +481,7 @@ const RegistrarVagaMonitor = () => {
     } else if (tempoo === "01:00:00") {
       setValorCobranca2(valorCobranca);
     } else if (tempoo === "00:30:00") {
-      setValorCobranca2(0.01);
+      setValorCobranca2(valorCobranca / 2);
     } else if (tempoo === "01:30:00") {
       setValorCobranca2(valorCobranca * 1.5);
     } else if (tempoo === "00:10:00") {
