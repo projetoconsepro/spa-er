@@ -12,6 +12,8 @@ import { IconParking, IconReload } from "@tabler/icons-react";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import CalcularValidade from "../util/CalcularValidade";
 import CalcularHoras from "../util/CalcularHoras";
+import LiberarVaga from "../util/LiberarVaga";
+import ValidarRequisicao from "../util/ValidarRequisicao";
 
 const ListarVagasMonitor = () => {
   const [resposta, setResposta] = useState([]);
@@ -24,7 +26,7 @@ const ListarVagasMonitor = () => {
   const [vagasOcupadas, setVagasOcupadas] = useState(0);
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [horaAgora, setHoraAgora] = useState("");
-  const [localVagas, setLocalVagas] = useState(false);
+  const [localVagas, setLocalVagas] = useState(true);
   const [attFunc, setAttFunc] = useState(false);
 
   const getVagas = async (setor) => {
@@ -127,8 +129,6 @@ const ListarVagasMonitor = () => {
               }
               if (updatedItem.numero_notificacoes_pendentess !== 0) {
                 const horaOriginal = new Date(response.data.data[i].hora_notificacao);
-
-                // Adicione duas horas à hora original
                 horaOriginal.setHours(horaOriginal.getHours() + 2);
 
                 const horaOriginalFormatada = horaOriginal.toLocaleTimeString("pt-BR", {
@@ -141,15 +141,15 @@ const ListarVagasMonitor = () => {
                 updatedItem.cor = "#141619";
               }
             }
-
-            // Update the copy of the array at the specific index
             updatedResposta[i] = updatedItem;
           }
         }
 
-        if (updatedResposta.length > 1) {
+        if (!localVagas) {
+          console.log(localVagas)
           const listaSemPrimeiroElemento = updatedResposta.slice(1);
           localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
+          console.log('agr setou')
           setResposta(listaSemPrimeiroElemento);
         }
 
@@ -210,6 +210,16 @@ useEffect(() => {
     return horaAtual;
   };
 
+  useEffect(() => {
+
+      (async () => {
+        const setor = localStorage.getItem("setorTurno");
+        setSalvaSetor(setor);
+        console.log(localVagas);
+        await getVagas(setor);
+      })();
+    
+  }, [localVagas]);
 
   useEffect(() => {
     if (localStorage.getItem("listaVagas")) {
@@ -220,7 +230,6 @@ useEffect(() => {
     } else {
       setLocalVagas(false)
     }
-
     if (localStorage.getItem("turno") != "true") {
       FuncTrocaComp("AbrirTurno");
     };
@@ -235,23 +244,8 @@ useEffect(() => {
         }
       })
       .catch(function (error) {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("perfil");
-        } else {
-          console.log(error);
-        }
+      ValidarRequisicao(error)
       });
-
-    const setor = localStorage.getItem("setorTurno");
-    setSalvaSetor(setor);
-    getVagas(setor);
     localStorage.removeItem("idVagaVeiculo");
     localStorage.removeItem("placa");
     localStorage.removeItem("vaga");
@@ -360,37 +354,15 @@ useEffect(() => {
               .post(`/estacionamento/saida`, {
                 idvagaVeiculo: id_vaga,
               })
-              .then((response) => {
+              .then(async (response) => {
                 if (response.data.msg.resultado) {
-                  const updatedResposta = [...resposta];
-                  updatedResposta[index] = {
-                    ...updatedResposta[index],
-                    placa: "",
-                    chegada: "",
-                    temporestante: "",
-                    corline: "#fff",
-                    display: "testeNot2",
-                  };
-                  const  newArray = updatedResposta.filter((item) => item !== undefined);
-                  setResposta(newArray);
-                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
+                  await LiberarVaga(resposta, setResposta, index);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
               })
               .catch(function (error) {
-                if (
-                  error?.response?.data?.msg === "Cabeçalho inválido!" ||
-                  error?.response?.data?.msg === "Token inválido!" ||
-                  error?.response?.data?.msg ===
-                    "Usuário não possui o perfil mencionado!"
-                ) {
-                  localStorage.removeItem("user");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("perfil");
-                } else {
-                  console.log(error);
-                }
+                ValidarRequisicao(error)
               });
           } else if (result.isDenied) {
             localStorage.setItem("VagaVeiculoId", id_vaga);
@@ -421,37 +393,15 @@ useEffect(() => {
               .post(`/estacionamento/saida`, {
                 idvagaVeiculo: id_vaga,
               })
-              .then((response) => {
+              .then(async (response) => {
                 if (response.data.msg.resultado) {
-                  const updatedResposta = [...resposta];
-                  updatedResposta[index] = {
-                    ...updatedResposta[index],
-                    placa: "",
-                    chegada: "",
-                    temporestante: "",
-                    corline: "#fff",
-                    display: "testeNot2",
-                  };
-                  const  newArray = updatedResposta.filter((item) => item !== undefined);
-                  setResposta(newArray);
-                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
+                  await LiberarVaga(resposta, setResposta, index);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
               })
               .catch(function (error) {
-                if (
-                  error?.response?.data?.msg === "Cabeçalho inválido!" ||
-                  error?.response?.data?.msg === "Token inválido!" ||
-                  error?.response?.data?.msg ===
-                    "Usuário não possui o perfil mencionado!"
-                ) {
-                  localStorage.removeItem("user");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("perfil");
-                } else {
-                  console.log(error);
-                }
+                ValidarRequisicao(error)
               });
           } else if (result.isDenied) {
             localStorage.setItem("vaga", numero);
@@ -484,38 +434,15 @@ useEffect(() => {
               .post(`/estacionamento/saida`, {
                 idvagaVeiculo: id_vaga,
               })
-              .then((response) => {
+              .then(async (response) => {
                 if (response.data.msg.resultado) {
-                  const updatedResposta = [...resposta];
-                  updatedResposta[index] = {
-                    ...updatedResposta[index],
-                    placa: "",
-                    chegada: "",
-                    temporestante: "",
-                    corline: "#fff",
-                    display: "testeNot2",
-                  };
-
-                  const newArray = updatedResposta.filter((item) => item !== undefined);
-                  setResposta(newArray);
-                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
+                  await LiberarVaga(resposta, setResposta, index);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
               })
               .catch(function (error) {
-                if (
-                  error?.response?.data?.msg === "Cabeçalho inválido!" ||
-                  error?.response?.data?.msg === "Token inválido!" ||
-                  error?.response?.data?.msg ===
-                    "Usuário não possui o perfil mencionado!"
-                ) {
-                  localStorage.removeItem("user");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("perfil");
-                } else {
-                  console.log(error);
-                }
+                ValidarRequisicao(error)
               });
           } else if (result.isDenied) {
             requisicao
@@ -545,7 +472,6 @@ useEffect(() => {
                     corline: validade.corline,
                     cor: validade.cor,
                   };
-                  console.log('updated', updatedResposta)
                   const newArray = updatedResposta.filter((item) => item !== undefined);
                   setResposta(newArray);
                   localStorage.setItem("listaVagas", JSON.stringify(newArray));
@@ -564,41 +490,15 @@ useEffect(() => {
                         .post(`/estacionamento/saida`, {
                           idvagaVeiculo: id_vaga,
                         })
-                        .then((response) => {
+                        .then(async (response) => {
                           if (response.data.msg.resultado) {
-                            const updatedResposta = [...resposta];
-                            updatedResposta[index] = {
-                              ...updatedResposta[index],
-                              placa: "",
-                              chegada: "",
-                              temporestante: "",
-                              corline: "#fff",
-                              display: "testeNot2",
-                            };
-
-
-                            const  newArray = updatedResposta.filter((item) => item !== undefined);
-                            setResposta(newArray);
-                            localStorage.setItem("listaVagas", JSON.stringify(newArray));
-
+                            await LiberarVaga(resposta, setResposta, index);
                           } else {
                             Swal.fire(`${response.data.msg.msg}`, "", "error");
                           }
                         })
                         .catch(function (error) {
-                          if (
-                            error?.response?.data?.msg ===
-                              "Cabeçalho inválido!" ||
-                            error?.response?.data?.msg === "Token inválido!" ||
-                            error?.response?.data?.msg ===
-                              "Usuário não possui o perfil mencionado!"
-                          ) {
-                            localStorage.removeItem("user");
-                            localStorage.removeItem("token");
-                            localStorage.removeItem("perfil");
-                          } else {
-                            console.log(error);
-                          }
+                          ValidarRequisicao(error)
                         });
                     } else if (result.isDenied) {
                       localStorage.setItem("id_vagaveiculo", id_vaga);
@@ -611,18 +511,7 @@ useEffect(() => {
                 }
               })
               .catch(function (error) {
-                if (
-                  error?.response?.data?.msg === "Cabeçalho inválido!" ||
-                  error?.response?.data?.msg === "Token inválido!" ||
-                  error?.response?.data?.msg ===
-                    "Usuário não possui o perfil mencionado!"
-                ) {
-                  localStorage.removeItem("user");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("perfil");
-                } else {
-                  console.log(error);
-                }
+                ValidarRequisicao(error)
               });
           }
         });
@@ -654,41 +543,16 @@ useEffect(() => {
               .post(`/estacionamento/saida`, {
                 idvagaVeiculo: id_vaga,
               })
-              .then((response) => {
+              .then(async (response) => {
                 if (response.data.msg.resultado) {
-                  const updatedResposta = [...resposta];
-                  updatedResposta[index] = {
-                    ...updatedResposta[index],
-                    placa: "",
-                    chegada: "",
-                    temporestante: "",
-                    corline: "#fff",
-                    display: "testeNot2",
-                  };
-
-
-                  const  newArray = updatedResposta.filter((item) => item !== undefined);
-
-                  setResposta(newArray);
-                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
+                  await LiberarVaga(resposta, setResposta, index);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
               })
               .catch(function (error) {
-                if (
-                  error?.response?.data?.msg === "Cabeçalho inválido!" ||
-                  error?.response?.data?.msg === "Token inválido!" ||
-                  error?.response?.data?.msg ===
-                    "Usuário não possui o perfil mencionado!"
-                ) {
-                  localStorage.removeItem("user");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("perfil");
-                } else {
-                  console.log(error);
-                }
-              });
+                ValidarRequisicao(error)
+                });
           } else if (result.isDenied) {
             localStorage.setItem("id_vagaveiculo", id_vaga);
             localStorage.setItem("vaga", numero);
@@ -739,40 +603,16 @@ useEffect(() => {
               .post(`/estacionamento/saida`, {
                 idvagaVeiculo: id_vaga,
               })
-              .then((response) => {
+              .then(async (response) => {
                 if (response.data.msg.resultado) {
-                  const updatedResposta = [...resposta];
-                  updatedResposta[index] = {
-                    ...updatedResposta[index],
-                    placa: "",
-                    chegada: "",
-                    temporestante: "",
-                    corline: "#fff",
-                    display: "testeNot2",
-                  };
-
-                  const  newArray = updatedResposta.filter((item) => item !== undefined);
-                  setResposta(newArray);
-                  localStorage.setItem("listaVagas", JSON.stringify(newArray));
-                  
+                  await LiberarVaga(resposta, setResposta, index);
                 } else {
                   Swal.fire(`${response.data.msg.msg}`, "", "error");
                 }
               })
               .catch(function (error) {
-                if (
-                  error?.response?.data?.msg === "Cabeçalho inválido!" ||
-                  error?.response?.data?.msg === "Token inválido!" ||
-                  error?.response?.data?.msg ===
-                    "Usuário não possui o perfil mencionado!"
-                ) {
-                  localStorage.removeItem("user");
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("perfil");
-                } else {
-                  console.log(error);
-                }
-              });
+                ValidarRequisicao(error)
+                });
           } else if (result.isDenied) {
             localStorage.setItem("vaga", numero);
             localStorage.setItem("id_vagaveiculo", id_vaga);
