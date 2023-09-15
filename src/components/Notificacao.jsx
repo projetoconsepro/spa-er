@@ -147,7 +147,7 @@ const Notificacao = () => {
             modeloImpressao = modeloVeiculo;
             fabricanteImpressao = fabricanteVeiculo;
         }
-        if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") { 
+        if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") {
         requisicao.post('/notificacao', {
             "id_vaga_veiculo": vagaVeiculo,
             "placa" : placa,
@@ -185,6 +185,25 @@ const Notificacao = () => {
                      fabricanteImpressao, 
                      tipoNotificacaoNome, 
                      response.data.data.local)
+
+                    if (localStorage.getItem("listaVagas")) {
+                        const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
+                        
+                        const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa == placa);
+                        if (indexByPlaca !== -1) {
+                          console.log('achou placa')
+                          listaVagas[indexByPlaca].numero_notificacoes += 1;
+                          listaVagas[indexByPlaca].numero_notificacoes_pendentes += 1;
+                          listaVagas[indexByPlaca].numero_notificacoes_pendentess += 1;
+                          listaVagas[indexByPlaca].corline = "#D3D3D4";
+                          listaVagas[indexByPlaca].cor = "#141619";
+                          listaVagas[indexByPlaca].variaDisplay = "aparece";
+                          listaVagas[indexByPlaca].display = "testeNot";
+                        } else {
+                            console.log('n achou placa')
+                        }
+                        localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+                    }
 
 
                     FuncTrocaComp("CameraTicketNotificacao");
@@ -246,6 +265,35 @@ const Notificacao = () => {
                      fabricanteImpressao, 
                      tipoNotificacaoNome, 
                      response.data.data.local)
+
+                     if (localStorage.getItem("listaVagas")) {
+                     const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
+
+                     console.log(vaga)
+                     const indexByVaga = listaVagas.findIndex((item) => item.numero == vaga);
+
+                     if (indexByVaga !== -1) {
+                         const hora = new Date();
+                         const horaAtual = hora.getHours();
+                         const minutoAtual = hora.getMinutes();
+                         const segundosAtual = hora.getSeconds();
+                         const horaMinuto = `${horaAtual}:${minutoAtual}:${segundosAtual}`;
+                         listaVagas[indexByVaga].numero_notificacoes = 1;
+                         listaVagas[indexByVaga].numero_notificacoes_pendentes = 1;
+                         listaVagas[indexByVaga].numero_notificacoes_pendentess = 1;
+                         listaVagas[indexByVaga].corline = "#D3D3D4";
+                         listaVagas[indexByVaga].cor = "#141619";
+                         listaVagas[indexByVaga].chegada = horaMinuto;
+                         listaVagas[indexByVaga].tempo = horaMinuto;
+                         listaVagas[indexByVaga].variaDisplay = "aparece";
+                         listaVagas[indexByVaga].temporestante = horaMinuto;
+                         listaVagas[indexByVaga].display = "testeNot";
+                         listaVagas[indexByVaga].placa = placa;
+                     } else {
+                         console.log('n achou vaga')
+                     }
+                        localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+                    }
                      
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
