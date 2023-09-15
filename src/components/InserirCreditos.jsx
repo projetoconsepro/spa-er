@@ -2,7 +2,7 @@ import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs } fr
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowRight, IconCash, IconCheck, IconX } from "@tabler/icons-react";
 import axios from "axios";
-import { React, useState, useRef } from "react";
+import { React, useState, useRef, useEffect } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { BsCreditCard2Back } from "react-icons/bs";
@@ -23,6 +23,7 @@ const InserirCreditos = () => {
   const [pixExpirado, setPixExpirado] = useState("Sucesso!");
   const [txid, setTxId] = useState(null);
   const [onOpen, setOnOpen] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const inserirCreditos = async (campo, valor) => {
     const requisicao = await createAPI();
@@ -47,12 +48,12 @@ const InserirCreditos = () => {
   };
 
   const fazerPix = () => {
-    let ValorFinal = valor;
+    setButtonDisabled(true);
 
+    let ValorFinal = valor;
     if (ValorFinal === "outro") {
       ValorFinal = valor2;
     }
-
     ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
 
     if (
@@ -63,7 +64,7 @@ const InserirCreditos = () => {
       ValorFinal == undefined ||
       isNaN(ValorFinal)
     ) {
-      console.log("toma");
+      setButtonDisabled(false);
       setDivAvancar2(true);
       setTimeout(() => {
         setDivAvancar2(false);
@@ -78,6 +79,8 @@ const InserirCreditos = () => {
           campo: ValorFinal,
         })
         .then((resposta) => {
+          console.log(buttonDisabled, 'sadiojf')
+          setButtonDisabled(false);
           if (resposta.data.msg.resultado) {
             console.log(resposta.data.data);
             console.log(resposta.data.data.txid);
@@ -305,6 +308,7 @@ const InserirCreditos = () => {
                 gradient={{ from: "teal", to: "blue", deg: 60 }}
                 fullWidth
                 mt="md"
+                disabled={buttonDisabled}
                 radius="md"
                 onClick={() => {
                   fazerPix();
