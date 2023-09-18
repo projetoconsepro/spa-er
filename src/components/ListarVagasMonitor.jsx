@@ -1,8 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
-import Cronometro from "./Cronometro";
 import ScrollTopArrow from "./ScrollTopArrow";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -19,6 +17,7 @@ const ListarVagasMonitor = () => {
   const [resposta, setResposta] = useState([]);
   const [vaga, setVaga] = useState("");
   const [resposta2, setResposta2] = useState([]);
+  const [resposta3, setResposta3] = useState([]);
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [salvaSetor, setSalvaSetor] = useState("");
@@ -145,13 +144,29 @@ const ListarVagasMonitor = () => {
           }
         }
 
+        function objetosSaoDiferentes(obj1, obj2) {
+          // Converte os objetos para JSON e compara as strings JSON
+          const str1 = JSON.stringify(obj1);
+          const str2 = JSON.stringify(obj2);
+          return str1 !== str2;
+        }
+
         if (!localVagas) {
-          console.log(localVagas)
           const listaSemPrimeiroElemento = updatedResposta.slice(1);
           localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-          console.log('agr setou')
           setResposta(listaSemPrimeiroElemento);
-        }
+        } else {
+          const listaSemPrimeiroElemento = updatedResposta.slice(1);
+          const localS = JSON.parse(localStorage.getItem("listaVagas"));
+          console.log(listaSemPrimeiroElemento, localS)
+          if (objetosSaoDiferentes(listaSemPrimeiroElemento, localS)) {
+            localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
+            setResposta(listaSemPrimeiroElemento)
+          } else {
+            console.log('aqui')
+          }
+        
+          }
 
         let estacionadoSCount = 0;
         let estacionadoNCount = 0;
@@ -211,21 +226,18 @@ useEffect(() => {
   };
 
   useEffect(() => {
-
       (async () => {
         const setor = localStorage.getItem("setorTurno");
         setSalvaSetor(setor);
-        console.log(localVagas);
         await getVagas(setor);
       })();
-    
   }, [localVagas]);
 
   useEffect(() => {
     if (localStorage.getItem("listaVagas")) {
       const items = localStorage.getItem("listaVagas");
       setResposta(JSON.parse(items));
-      console.log('AQUIII', JSON.parse(localStorage.getItem("listaVagas")))
+      //console.log('AQUIII', JSON.parse(localStorage.getItem("listaVagas")))
       setLocalVagas(true)
     } else {
       setLocalVagas(false)
@@ -743,6 +755,7 @@ useEffect(() => {
                     <tbody>
                       {resposta.length !== 0 ? (
                         resposta.map((vaga, index) => (
+                        vaga !== null && (
                         <tr
                           key={index}
                           className="card-list"
@@ -811,6 +824,7 @@ useEffect(() => {
                             </h6>
                           </td>
                         </tr>
+                        )
                       ))) : ( null )}
 
                     </tbody>

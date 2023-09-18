@@ -3,13 +3,15 @@ import { React, useState, useEffect } from "react";
 import "../pages/Style/styles.css";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
-import { Button, Card, Divider, Grid, Group, Input, Text } from "@mantine/core";
+import { Button, Card, Divider, Grid, Group, Input, Modal, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { rem } from "@mantine/core";
-import { IconCar, IconCarOff, IconParking } from "@tabler/icons-react";
+import { IconCar, IconCarOff, IconParking, IconPrinter } from "@tabler/icons-react";
 import { FaCar, FaCarAlt } from "react-icons/fa";
 import { BiCar, BiSolidCarGarage } from "react-icons/bi";
 import createAPI from "../services/createAPI";
+import jsPDF from "jspdf";
+import { useDisclosure } from "@mantine/hooks";
 
 const RegistrarVagaCliente = () => {
   const [mensagem, setMensagem] = useState("");
@@ -24,6 +26,12 @@ const RegistrarVagaCliente = () => {
   const [selectedButton, setSelectedButton] = useState("01:00:00");
   const [placaSelecionada, setPlacaSelecionada] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
+  const [data2, setData2] = useState([]);
+  const [date, setDate] = useState("");
+  const [emissao, setEmissao] = useState("");
+  const [validade, setValidade] = useState("");
+  const [openedModal, { open: openModal, close: closeModal }] =
+  useDisclosure(false);
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -39,9 +47,81 @@ const RegistrarVagaCliente = () => {
     }
   };
 
+  const calcularValidade = (horaInicio, duracao) => {
+    const [horas, minutos, segundos] = duracao.split(":").map(Number);
+    const dataInicio = new Date(`2000-01-01T${horaInicio}`);
+    const dataValidade = new Date(
+      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
+    );
+    const horaValidade = dataValidade.toLocaleTimeString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+    });
+    return horaValidade;
+  };
+
+  async function gerarPDF() {
+    const pdfWidth = 80;
+    const pdfHeight = 100; 
+    const pdf = new jsPDF({
+      unit: 'mm',
+      format: [pdfWidth, pdfHeight],
+    });
+
+    const tamanhoFonte = 12;
+    const x = 18 ;
+    const y = 15;
+    pdf.setFontSize(tamanhoFonte);
+    pdf.text("CONSEPRO TAQUARA", x, y);
+    pdf.text("- - - - - - - - - - - - - - - - - - - - - - - -", 10 , y + 5);
+    pdf.setFontSize(tamanhoFonte - 2);
+    pdf.text("Tipo: Estacionamento avulso" , x, y + 12);
+    pdf.text(`Início: ${date} - ${emissao}` , x, y + 17);
+    pdf.text(`Validade: ${date} - ${await calcularValidade(data2.chegada, data2.tempo)}` , x, y + 22);
+    pdf.text("Placa: " + data2.placa , x, y + 27);
+    pdf.text("Tempo: " + data2.tempoCredito , x, y + 32);
+    pdf.text("Valor: R$ " + data2.valor , x, y + 37);
+    pdf.setFontSize(tamanhoFonte);
+    pdf.text("- - - - - - - - - - - - - - - - - - - - - - - -", 10 , y + 44);
+    pdf.setFontSize(tamanhoFonte - 2);
+    pdf.text("CNPJ: 89.668.040/0001-10", x, y + 49);
+    pdf.text("Rua Julio de Castilhos, 2500" , x, y + 54);
+    pdf.text("Taquara - RS" , x, y + 59);
+    pdf.text("(51) 9 8660-4241", x, y + 64);
+
+    // Gera o PDF
+    pdf.save("Comprovante_Ticket.pdf");
+  }
+
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });
+
+  async function saldo () {
+    const requisicao = createAPI();
+    requisicao
+      .get("/usuario/saldo-credito")
+      .then((response) => {
+        if (response.data.msg.resultado) {
+          setValor(response.data.data.saldo);
+        } else {
+          setValor(0);
+        }
+      })
+      .catch(function (error) {
+        if (
+          error?.response?.data?.msg === "Cabeçalho inválido!" ||
+          error?.response?.data?.msg === "Token inválido!" ||
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
+        } else {
+          console.log(error);
+        }
+      });
+  }
 
   useEffect(() => {
     const requisicao = createAPI();
@@ -71,30 +151,8 @@ const RegistrarVagaCliente = () => {
           console.log(error);
         }
       });
-
-    requisicao
-      .get("/usuario/saldo-credito")
-      .then((response) => {
-        if (response.data.msg.resultado) {
-          setValor(response.data.data.saldo);
-        } else {
-          setValor(0);
-        }
-      })
-      .catch(function (error) {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("perfil");
-        } else {
-          console.log(error);
-        }
-      });
+      
+    saldo()
 
     parametros
       .get("/parametros")
@@ -131,6 +189,16 @@ const RegistrarVagaCliente = () => {
       return valorcobranca / 2;
     }
   }
+
+  const FormatDate = (date) => {
+    const data = new Date(date);
+    const year = data.getFullYear();
+    const month = String(data.getMonth() + 1).padStart(2, "0");
+    const day = String(data.getDate()).padStart(2, "0");
+    const formattedDate = `${day}/${month}/${year}`;
+
+    return formattedDate;
+  };
 
   const handleSubmit = async () => {
     setLoadingButton(true);
@@ -194,10 +262,17 @@ const RegistrarVagaCliente = () => {
 
       await requisicao
         .post("/estacionamento", campo)
-        .then((response) => {
+        .then(async (response) => {
           setLoadingButton(false);
-          if (response.data.msg.resultado === true) {
-            FuncTrocaComp("MeusVeiculos");
+          if (response.data.msg.resultado) {
+            setData2(response.data.data);
+            setDate(FormatDate(response.data.data.data));
+            setEmissao(response.data.data.chegada)
+            const validade = await calcularValidade(response.data.data.chegada, response.data.data.tempo)
+            saldo()
+            setValidade(validade)
+            openModal();
+
           } else {
             setMensagem(response.data.msg.msg);
             setEstado(true);
@@ -226,6 +301,68 @@ const RegistrarVagaCliente = () => {
   };
 
   return (
+    <>
+    <Modal
+    opened={openedModal}
+    onClose={() => {
+      closeModal()
+    }}
+    centered
+    size="xl"
+    title="Comprovante de estacionamento:"
+  >
+    <div
+      className="rounded border border-gray p-3 text-center"
+      id="conteudoParaPDF"
+    >
+      <div className="mb-4">CONSEPRO TAQUARA</div>
+      <Divider my="sm" size="md" variant="dashed" />
+      <div>
+        <h6>Tipo: Estacionamento avulso</h6>
+      </div>
+      <div>
+        <h6>Início: {date} - {emissao} </h6>
+      </div>
+      <div>
+        <h6>Validade: {date} - {validade} </h6>
+      </div>
+      <div>
+        <h6>Placa: {data2.placa}</h6>
+      </div>
+      <div>
+        <h6>Tempo: {data2.tempoCredito}</h6>
+      </div>
+      <div>
+        <h6>Valor: R$ {data2.valor}</h6>
+      </div>
+      <Divider my="sm" size="md" variant="dashed" />
+      CNPJ: 89.668.040/0001-10
+      <br />
+      Rua Julio de Castilhos, 2500
+      <br />
+      Taquara - RS
+      <br />
+      (51) 9 8660-4241
+      <br />
+    </div>
+
+    <div className="mt-4">
+      <Button
+        variant="gradient"
+        gradient={{ from: "teal", to: "indigo", deg: 300 }}
+        size="md"
+        radius="md"
+        fullWidth
+        rightIcon={<IconPrinter size={23} />}
+        loaderPosition="right"
+        onClick={() => {
+          gerarPDF(data2);
+        }}
+      >
+        Imprimir
+      </Button>
+    </div>
+  </Modal>
     <div className="container">
       <div
         className="row justify-content-center form-bg-image"
@@ -421,6 +558,7 @@ const RegistrarVagaCliente = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

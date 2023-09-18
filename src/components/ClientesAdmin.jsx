@@ -253,6 +253,7 @@ const ClientesAdmin = () => {
     }).then((result) => {
       if (result.isConfirmed) {
       } else if (result.isDenied) {
+        open2();
       } else if (result.isDismissed) {
         Swal.close();
       }
@@ -547,7 +548,7 @@ const ClientesAdmin = () => {
     requisicao
       .get(`/usuario/listar/?query=${base64}`)
       .then((response) => {
-            
+        setEstadoLoading(false);
         console.log(response);
         const newData = response.data.data.map((item) => ({
           id_usuario: item.id_usuario,
