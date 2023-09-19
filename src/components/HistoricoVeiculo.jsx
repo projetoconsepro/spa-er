@@ -48,7 +48,7 @@ const HistoricoVeiculo = () => {
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
     ) {
-      FuncTrocaComp( "FecharTurno");
+      FuncTrocaComp( "AbrirTurno");
     }
     const requisicao = createAPI();
     setPerfil(user2.perfil[0]);

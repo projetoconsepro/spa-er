@@ -27,14 +27,17 @@ const ListarVagasMonitor = () => {
   const [horaAgora, setHoraAgora] = useState("");
   const [localVagas, setLocalVagas] = useState(true);
   const [attFunc, setAttFunc] = useState(false);
+  const [contador, setContador] = useState(0);
 
-  const getVagas = async (setor) => {
+  const getVagas = async (setor, timeout) => {
     const requisicao = createAPI();
     const setor2 = document.getElementById("setoresSelect").value;
     if (setor2 !== undefined && setor2 !== null && setor2 !== "") {
       setor = setor2;
+      if (timeout !== true && timeout !== null) {
       for (let i = 0; i < resposta.length; i++) {
         delete resposta[i];
+        }
       }
     }
     localStorage.setItem("setorTurno", setor);
@@ -145,28 +148,46 @@ const ListarVagasMonitor = () => {
         }
 
         function objetosSaoDiferentes(obj1, obj2) {
-          // Converte os objetos para JSON e compara as strings JSON
           const str1 = JSON.stringify(obj1);
           const str2 = JSON.stringify(obj2);
           return str1 !== str2;
         }
 
-        if (!localVagas) {
-          const listaSemPrimeiroElemento = updatedResposta.slice(1);
-          localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-          setResposta(listaSemPrimeiroElemento);
-        } else {
+        if (timeout) {
           const listaSemPrimeiroElemento = updatedResposta.slice(1);
           const localS = JSON.parse(localStorage.getItem("listaVagas"));
-          console.log(listaSemPrimeiroElemento, localS)
-          if (objetosSaoDiferentes(listaSemPrimeiroElemento, localS)) {
+          console.log('timeout', listaSemPrimeiroElemento, resposta)
+          if (objetosSaoDiferentes(listaSemPrimeiroElemento, resposta)) {
+            console.log('entrou aqui2')
             localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
             setResposta(listaSemPrimeiroElemento)
+          } if (objetosSaoDiferentes(resposta, localS)) {
+            console.log('entrou aqui')
+          }
+          else {
+            console.log('nao atualizou')
+          }
+        } else if (timeout === null){
+          console.log('timeout', timeout)
+          if (!localVagas) {
+            const listaSemPrimeiroElemento = updatedResposta.slice(1);
+            localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
+            setResposta(listaSemPrimeiroElemento);
           } else {
-            console.log('aqui')
+            const listaSemPrimeiroElemento = updatedResposta.slice(1);
+            const localS = JSON.parse(localStorage.getItem("listaVagas"));
+            console.log(listaSemPrimeiroElemento, localS)
+            if (objetosSaoDiferentes(listaSemPrimeiroElemento, localS)) {
+              localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
+              setResposta(listaSemPrimeiroElemento)
+            }
           }
-        
-          }
+        } else if (timeout === 'reset'){
+          const listaSemPrimeiroElemento = updatedResposta.slice(1);
+          localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
+          console.log('olha a lista', listaSemPrimeiroElemento)
+          setResposta(listaSemPrimeiroElemento);
+        }
 
         let estacionadoSCount = 0;
         let estacionadoNCount = 0;
@@ -214,6 +235,16 @@ useEffect(() => {
   }
   }, [vaga, attFunc]);
 
+  useEffect(() => {
+    if (contador === 20) {
+      console.log('atualizou')
+      setContador(0);
+      getVagas(salvaSetor, true);
+    }
+    setTimeout(() => {
+      setContador(contador + 1);
+    }, 1000);
+  }, [contador]);
 
   const horaAgoraFunc = async () => {
     const dataAtual = new Date();
@@ -229,7 +260,7 @@ useEffect(() => {
       (async () => {
         const setor = localStorage.getItem("setorTurno");
         setSalvaSetor(setor);
-        await getVagas(setor);
+        await getVagas(setor, null);
       })();
   }, [localVagas]);
 
@@ -670,7 +701,7 @@ useEffect(() => {
                     mb="md"
                     radius="md"
                     size="md"
-                    onClick={() => getVagas(salvaSetor)}
+                    onClick={() => getVagas(salvaSetor, 'reset')}
                   >
                     <IconReload color="white" size={20} />
                   </Button>
@@ -684,7 +715,7 @@ useEffect(() => {
                     aria-label=".form-select-lg example"
                     id="setoresSelect"
                     onChange={() => {
-                      getVagas(salvaSetor);
+                      getVagas(salvaSetor, 'reset');
                     }}
                   >
                     {resposta2.map((link, index) => (
