@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react';
-import { IconCash } from '@tabler/icons-react';
-import { Input } from '@mantine/core';
+import { IconCash, IconReceipt } from '@tabler/icons-react';
+import { Button, Input } from '@mantine/core';
 import Swal from 'sweetalert2';
 import createAPI from '../services/createAPI';
 import FuncTrocaComp from '../util/FuncTrocaComp';
@@ -43,6 +43,15 @@ function AbrirTurno() {
       setCaixa(true);
     }
   };
+
+  const testarImpressora = () => {
+    const json = {
+        tipo: 'TESTE',
+    }
+    if(window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify(json));
+    }
+}
 
   useEffect(() => {
     const requisicao = createAPI();
@@ -228,6 +237,9 @@ function AbrirTurno() {
   };
 
   const fecharTurno = () => {
+    // remove as vagas do localstorage para evitar erro de sincronização
+    localStorage.removeItem('listaVagas');
+
     const requisicao = createAPI();
     requisicao.post('/turno/fechar', {
       hora: tempoAtual,
@@ -261,6 +273,9 @@ function AbrirTurno() {
   };
 
   const fecharCaixa = () => {
+    // remove as vagas do localstorage para evitar erro de sincronização
+    localStorage.removeItem('listaVagas');
+    
     const requisicao = createAPI();
     requisicao.get('/turno/caixa').then(
       (response2) => {
@@ -395,6 +410,10 @@ function AbrirTurno() {
               <div>
                 <button type="button" className="btn5 botao mt-3" onClick={() => { fecharTurno(); }}>Fechar turno</button>
                 <button type="button" className="btn7 botao mt-3" onClick={() => { fecharCaixa(); }}>Fechar caixa</button>
+                <Button variant="gradient" gradient={{ from: 'orange', to: 'red' }} fullWidth mt="md" radius="md"
+                    onClick={() => testarImpressora()}>
+                    Testar impressão ‎ <IconReceipt size={18}/>
+                </Button>
               </div>
             ) : (
               <div>
