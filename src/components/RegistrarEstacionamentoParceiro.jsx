@@ -5,7 +5,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button, Divider, Input } from "@mantine/core";
+import { Button, Divider, Grid, Input, Text } from "@mantine/core";
 import { FaParking } from "react-icons/fa";
 import Swal from "sweetalert2";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
@@ -35,6 +35,7 @@ const RegistrarEstacionamentoParceiro = () => {
   const [onOpen, setOnOpen] = useState(false);
   const [divPagamento, setDivPagamento] = useState(true);
   const [loadingButton, setLoadingButton] = useState(false);
+  const [selectedButton, setSelectedButton] = useState("pix");
 
   const param = async () => {
     const requisicao = axios.create({
@@ -55,7 +56,7 @@ const RegistrarEstacionamentoParceiro = () => {
 
   const ValidaFormato = () => {
     setLoadingButton(true);
-    const clicado = document.getElementById("pagamentos").value;
+    const clicado = selectedButton;
 
     if (clicado === "pix") {
       fazerPix();
@@ -120,7 +121,7 @@ const RegistrarEstacionamentoParceiro = () => {
       return;
     }
 
-    const formaPagamentoo = document.getElementById("pagamentos").value;
+    const formaPagamentoo = selectedButton;
     if (placaMaiuscula === "" || placaMaiuscula.length < 7) {
       setMensagem("Preencha o campo placa");
       setEstado(true);
@@ -216,7 +217,7 @@ const RegistrarEstacionamentoParceiro = () => {
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = createAPI();
 
-    const formaPagamentoo = document.getElementById("pagamentos").value;
+    const formaPagamentoo = selectedButton;
       if (vaga === "") {
         setVaga(0);
       }
@@ -580,6 +581,7 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   return (
+    <>
     <div className="container">
       <div
         className="row justify-content-center form-bg-image"
@@ -605,8 +607,7 @@ const RegistrarEstacionamentoParceiro = () => {
                     id="flexSwitchCheckDefault"
                     onChange={() => {
                       jae();
-                    }}
-                  />
+                    } } />
                 </div>
               </div>
             </div>
@@ -618,10 +619,9 @@ const RegistrarEstacionamentoParceiro = () => {
                 className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
                 value={textoPlaca}
                 onChange={(e) => setTextoPlaca(e.target.value)}
-                maxLength={limite}
-              />
+                maxLength={limite} />
             </div>
-            <div className="text-start mt-3 mb-1 px-2" onChange={() => {atualiza();}}>
+            <div className="text-start mt-3 mb-1 px-2" onChange={() => { atualiza(); } }>
               <h6>Selecione o tempo:</h6>
               <select
                 className="form-select form-select-lg mb-2"
@@ -639,67 +639,82 @@ const RegistrarEstacionamentoParceiro = () => {
                 Valor a ser cobrado: R$ {valorcobranca2}{" "}
               </p>
             </div>
-            
-            <div className="h6 mt-1 mb-4 px-2" style={{ display: tempo !== "00:10:00" ? 'block' : 'none'}}>
-              <p className="text-start">Forma de pagamento:</p>
-              <select
-                className="form-select form-select-lg mb-3"
-                defaultValue="pix"
-                aria-label=".form-select-lg example"
-                id="pagamentos"
-              >
-                {user2 !== 'admin' ?
-                <>
-                <option value="pix">PIX</option>
-                <option value="dinheiro">Dinheiro</option>
-                </>
-                : null }
-                {user2 === 'admin' ?
-                <option value="parkimetro">Parkimetro</option>
-                : null
-                }
-              </select>
-            </div>
 
-            <div className="mb-2 mt-3 gap-2 d-md-block">
-              <VoltarComponente space={true} />
-              <Button
-                loading={loadingButton}
-                className="bg-blue-50"
-                size="md"
-                radius="md"
-                onClick={() => {
-                  ValidaFormato();
-                }}
-              >
-                Registrar
-              </Button>
-            </div>
-            <div
-              className="alert alert-danger mt-4"
-              role="alert"
-              style={{ display: estado ? "block" : "none" }}
+            <div className="h6 mt-1 mb-4 px-2" style={{ display: tempo !== "00:10:00" ? 'block' : 'none' }}>
+              <p className="text-start">Forma de pagamento:</p>
+              {user2 !== 'admin' ?
+                <>
+                  <Grid>
+                    <Grid.Col span={6}>
+                      <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "pix"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("pix")}
+                      value="pix">
+                        <Text fz="lg" weight={700}>
+                          PIX
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "dinheiro"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("dinheiro")}
+                      value="dinheiro">
+                        <Text fz="lg" weight={700}>
+                          Dinheiro
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                  </Grid>
+                  </>
+                : null }
+          </div>
+
+          <div className="mb-2 mt-3 gap-2 d-md-block">
+            <VoltarComponente space={true} />
+            <Button
+              loading={loadingButton}
+              className="bg-blue-50"
+              size="md"
+              radius="md"
+              onClick={() => {
+                ValidaFormato();
+              } }
             >
-              {mensagem}
-            </div>
-            <div
-              className="alert alert-success mt-4"
-              role="alert"
-              style={{ display: success ? "block" : "none" }}
-            >
-              {mensagem}
-            </div>
+              Registrar
+            </Button>
+          </div>
+          <div
+            className="alert alert-danger mt-4"
+            role="alert"
+            style={{ display: estado ? "block" : "none" }}
+          >
+            {mensagem}
+          </div>
+          <div
+            className="alert alert-success mt-4"
+            role="alert"
+            style={{ display: success ? "block" : "none" }}
+          >
+            {mensagem}
           </div>
         </div>
       </div>
-      <ModalPix
+    </div>
+    <ModalPix
         qrCode={data.brcode}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
-        onClose={onClose}
-      />
+        onClose={onClose} />
     </div>
+    </>
   );
 };
 
