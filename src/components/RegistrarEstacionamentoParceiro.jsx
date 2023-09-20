@@ -56,9 +56,22 @@ const RegistrarEstacionamentoParceiro = () => {
 
   const ValidaFormato = () => {
     setLoadingButton(true);
+    
     const clicado = selectedButton;
 
-    if (clicado === "pix") {
+    if (clicado === "pix" && user2 === 'admin'){
+      setLoadingButton(false);
+      setSelectedButton("parkimetro");
+      setEstado(true);
+      setMensagem('Por favor tente estacionar novamente.');
+      setTimeout(() => {
+        setEstado(false);
+        setMensagem("");
+      }, 2000);
+      return;
+    }
+
+    if (clicado === "pix" && user2 !== 'admin') {
       fazerPix();
     } else {
       handleRegistrar();
@@ -123,6 +136,7 @@ const RegistrarEstacionamentoParceiro = () => {
 
     const formaPagamentoo = selectedButton;
     if (placaMaiuscula === "" || placaMaiuscula.length < 7) {
+      setLoadingButton(false);
       setMensagem("Preencha o campo placa");
       setEstado(true);
       setTimeout(() => {
@@ -673,7 +687,23 @@ const RegistrarEstacionamentoParceiro = () => {
                     </Grid.Col>
                   </Grid>
                   </>
-                : null }
+                : 
+                <Grid>
+                    <Grid.Col span={12}>
+                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "parkimetro"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("parkimetro")}
+                      value="parkimetro">
+                        <Text fz="lg" weight={700}>
+                          Parkimetro
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                  </Grid>
+                   }
           </div>
 
           <div className="mb-2 mt-3 gap-2 d-md-block">
