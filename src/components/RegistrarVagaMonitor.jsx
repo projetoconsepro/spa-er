@@ -7,7 +7,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button, Divider, Loader } from "@mantine/core";
+import { Button, Divider, Grid, Loader, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
@@ -39,6 +39,7 @@ const RegistrarVagaMonitor = () => {
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
+  const [selectedButton, setSelectedButton] = useState("pix");
 
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
@@ -497,7 +498,7 @@ const RegistrarVagaMonitor = () => {
 
   const atualizafunc = () => {
     const tempoo = document.getElementById("tempos").value;
-    const valorr = document.getElementById("pagamentos").value;
+    const valorr = selectedButton;
     setTempo(tempoo);
     setValor(valorr);
     if (tempoo === "00:10:00") {
@@ -558,7 +559,7 @@ const RegistrarVagaMonitor = () => {
 
   const handleSubmit = async () => {
     setLoadingButton(true);
-    let select = document.getElementById("pagamentos").value;
+    let select = selectedButton;
     const tolerancia = document.getElementById("tempos").value;
 
     if (tolerancia === "notificacao" && textoPlaca !== ""){
@@ -713,14 +714,34 @@ const RegistrarVagaMonitor = () => {
                 onChange={atualizafunc}
               >
                 <p className="text-start">Forma de pagamento:</p>
-                <select
-                  className="form-select form-select-lg mb-3"
-                  aria-label=".form-select-lg example"
-                  id="pagamentos"
-                >
-                  <option value="pix">PIX</option>
-                  <option value="dinheiro">Dinheiro</option>
-                </select>
+                <Grid>
+                    <Grid.Col span={6}>
+                      <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "pix"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("pix")}
+                      value="pix">
+                        <Text fz="lg" weight={700}>
+                          PIX
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "dinheiro"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("dinheiro")}
+                      value="dinheiro">
+                        <Text fz="lg" weight={700}>
+                          Dinheiro
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                  </Grid>
               </div>
 
               <div className="pt-4 mb-4 gap-2 d-md-block">
