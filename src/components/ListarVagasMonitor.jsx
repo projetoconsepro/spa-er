@@ -177,6 +177,7 @@ const ListarVagasMonitor = () => {
             const listaSemPrimeiroElemento = updatedResposta.slice(1);
             const localS = JSON.parse(localStorage.getItem("listaVagas"));
             console.log(listaSemPrimeiroElemento, localS)
+            // aqui
             if (objetosSaoDiferentes(listaSemPrimeiroElemento, localS)) {
               localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
               setResposta(listaSemPrimeiroElemento)
@@ -236,7 +237,7 @@ useEffect(() => {
   }, [vaga, attFunc]);
 
   useEffect(() => {
-    if (contador === 20) {
+    if (contador === 60) {
       console.log('atualizou')
       setContador(0);
       getVagas(salvaSetor, true);
