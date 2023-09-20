@@ -788,7 +788,9 @@ const ListarVeiculos = () => {
                       <div></div>
                       <Button
                         type="submit"
-                        className="btn3 botao"
+                        variant="gradient" gradient={{ from: 'blue', to: 'indigo' }}
+                        fullWidth
+                        bold
                         onClick={() => {
                           hangleplaca(link.placa, index);
                         }}
@@ -796,7 +798,7 @@ const ListarVeiculos = () => {
                       >
                         Ativar
                       </Button>
-                      <div>
+                      <div className="mt-1">
                         <span>
                           <IoTrashSharp
                             color="red"
@@ -901,7 +903,9 @@ const ListarVeiculos = () => {
                             link.vaga
                           );
                         }}
-                        className="btn3 botao"
+                        fullWidth
+                        bold
+                        variant="gradient" gradient={{ from: 'blue', to: 'indigo' }}
                         loading={botaoOff}
                       >
                         Ativar

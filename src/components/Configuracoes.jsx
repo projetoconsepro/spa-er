@@ -1,6 +1,6 @@
 import axios from "axios";
 import { React, useState, useEffect, useRef } from "react";
-import { FaCarAlt, FaParking } from "react-icons/fa";
+import { FaCarAlt, FaCheck, FaParking } from "react-icons/fa";
 import { TbHandClick } from "react-icons/tb";
 import { BsFillTrashFill } from "react-icons/bs";
 import Swal from "sweetalert2";
@@ -11,6 +11,8 @@ import { Carousel } from '@mantine/carousel';
 import createAPI from "../services/createAPI";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import { BiErrorCircle } from "react-icons/bi";
+import { AiFillCheckCircle } from "react-icons/ai";
 
 const Configuracoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -56,8 +58,8 @@ const Configuracoes = () => {
             newData[index].check = false;
           }
 
-          if ((newData[index].debitoDisponivel === "N" &&newData[index].debito === "N") ||
-          (newData[index].debitoDisponivel === "N" && newData[index].debito !== "S")) {
+          if ((newData[index].debitoDisponivel === "N" && newData[index].debito === "N") ||
+            (newData[index].debitoDisponivel === "N" && newData[index].debito !== "S")) {
             newData[index].estado = false;
           }
         }
@@ -80,17 +82,17 @@ const Configuracoes = () => {
       setEstadoDiv2(false)
       close();
       Atualizarequisicao();
-  } else {
+    } else {
       setEstadoDiv(true)
       setTimeout(() => {
         setEstadoDiv(false)
       }, 3000);
-  }
+    }
   }
 
   useEffect(() => {
     const debito = localStorage.getItem("termosDebito");
-    if(debito == "true"){
+    if (debito == "true") {
       setEstadoDiv2(false)
       Atualizarequisicao();
     } else {
@@ -133,7 +135,7 @@ const Configuracoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -186,19 +188,19 @@ const Configuracoes = () => {
   return (
     <div className="col-12 px-3 mb-3">
       <div className="row">
-      <div className="col-9">
-      <p className="text-start fs-5 fw-bold">
-        <VoltarComponente arrow={true} /> Débito automático
-      </p>
-      </div>
-      <div className="col-3">
-      <Button variant="outline" size="xs" color="gray" onClick={() => open()}>
-        ?
-      </Button>
-      </div>
+        <div className="col-9">
+          <p className="text-start fs-5 fw-bold">
+            <VoltarComponente arrow={true} /> Débito automático
+          </p>
+        </div>
+        <div className="col-3">
+          <Button variant="outline" size="xs" color="gray" onClick={() => open()}>
+            ?
+          </Button>
+        </div>
       </div>
 
-      <Card className="border-0 shadow mt-2 mb-3" style={{ display: estadoDiv2 ? 'block' : 'none'}}>
+      <Card className="border-0 shadow mt-2 mb-3" style={{ display: estadoDiv2 ? 'block' : 'none' }}>
         <Group>
           <Text>Você precisa aceitar os termos de uso do débito automático para usar dessa funcionalidade. Clique no botão no canto superior direito para aceitar.</Text>
         </Group>
@@ -211,16 +213,13 @@ const Configuracoes = () => {
           id="divD"
           disabled={
             (link.debitoDisponivel === "N" && link.debito === "N") ||
-            (link.debitoDisponivel === "N" && link.debito !== "S")
+              (link.debitoDisponivel === "N" && link.debito !== "S")
               ? true
               : false
           }
         >
           <div
             className={cardBody}
-            onClick={() => {
-              abrirDiv(index);
-            }}
           >
             <div className="d-flex align-items-center justify-content-between">
               <div>
@@ -230,13 +229,18 @@ const Configuracoes = () => {
                 <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
                   <h6 className="fs-6">
                     <TbHandClick />{" "}
-                    <small>Configuração débito automático:</small>
+                    <small>Débito automático: {data[index].check ? "Ativado" : "Desativado"}</small>
                   </h6>
                 </div>
               </div>
               <div>
                 <div className="d-flex align-items-center fw-bold">
-                  <FaCarAlt size={40} />
+                  {data[index].check ? (
+                     <AiFillCheckCircle size={30} color="green" /> ) 
+                     : 
+                     (   
+                     <BiErrorCircle size={30} color="red" />
+                     )}
                 </div>
               </div>
             </div>
@@ -249,42 +253,39 @@ const Configuracoes = () => {
               }}
             >
               {data[index].estado ? <div id="bordaBaixo"></div> : null}
-              <div className="form-check2">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="exampleCheckbox"
-                  value="option1"
-                  checked={data[index].check}
-                  onChange={() => {
-                    salvarAlteracoes(index);
-                  }}
-                />
-                <label className="form-check-label">
-                  ‎ ‎ Débito automático
-                </label>
-              </div>
-                <div className="row mt-3">
-                  <div className="col-2"></div>
-                  <div className="col-8"></div>
-                  <div className="col-2">
-                    <BsFillTrashFill
-                      size={25}
-                      color="red"
-                      onClick={() => {
-                        removerVeiculo(link.id_veiculo);
-                      }}
-                    />
-                  </div>
+              <Button
+                type="submit"
+                className="mt-4"
+                variant="outline" color={data[index].check ? "red" : "blue"}
+                fullWidth
+                bold
+                onClick={() => {
+                  salvarAlteracoes(index);
+                }}
+              >
+                {data[index].check ? "Desativar débito automático" : "Ativar débito automático"}
+              </Button>
+              <div className="row mt-3">
+                <div className="col-2"></div>
+                <div className="col-8"></div>
+                <div className="col-2">
+                  <BsFillTrashFill
+                    size={25}
+                    color="red"
+                    onClick={() => {
+                      removerVeiculo(link.id_veiculo);
+                    }}
+                  />
                 </div>
+              </div>
             </div>
           ) : null}
-          
+
           <h6
             style={{
               display:
                 (link.debitoDisponivel === "N" && link.debito === "N") ||
-                (link.debitoDisponivel === "N" && link.debito !== "S")
+                  (link.debitoDisponivel === "N" && link.debito !== "S")
                   ? "block"
                   : "none",
             }}
@@ -299,27 +300,27 @@ const Configuracoes = () => {
         </div>
       ))}
       <VoltarComponente />
-    <Modal opened={opened} onClose={() => { close() }} closeOnClickOutside={false} style={{ zIndex: 51 }} centered title="Termos de uso débito automático">
-    <div>
-        <small><strong>Ao solicitar a ativação automática do estacionamento, o usuário concorda com os seguintes termos:</strong></small> <br/>
-        <small>a) Quando o monitor fiscalizar, será realizada uma ativação de 30 minutos, sendo repetida a ativação por um período máximo de 2 horas em cada vaga;</small> <br/>
-        <Divider my="sm" size="md" variant="dashed" />
-        <small>b) Permanecendo por mais de 2 horas na mesma vaga, será emitida tarifa de regularização;</small> <br/>
-        <Divider my="sm" size="md" variant="dashed" />
-        <small>c) Quando não possuir saldo mínimo de crédito para ativação no aplicativo CONSEPRO Taquara, será efetuado a notificação conforme a legislação vigente.</small> <br/>
-        <Divider my="sm" size="md" variant="dashed" />
-        <small>d) Declaro ter ciência, que ao optar pela ativação automática, não terei direito ao período de tolerância de 10 minutos, sendo que na primeira fiscalização do monitor, será realizada a ativação de 30 minutos;</small> <br/>
-        <Divider my="sm" size="md" variant="dashed" />
-        <small>e) A ativação fica vinculada a placa do veículo.</small> <br/>
-        <Divider my="sm" size="md" variant="dashed" />
-        <small><strong> APÓS CONCORDAR COM OS TERMOS, HABILITE O DÉBITO AUTOMÁTICO NAS PLACAS DESEJADAS.</strong></small> <br/>
-    </div>
-    {estadoDiv2 ? 
-    <>
-    <div className="form-check mt-3">
-            <input type="checkbox" className="form-check-input" id="termsCheckbox" />
-            <label className={estadoDiv ? 'form-check-label text-danger' : 'form-check-label'} htmlFor="termsCheckbox">Concordo com os termos de uso</label>
-          </div><div className="alert alert-danger mt-2" style={{ display: estadoDiv ? 'block' : 'none' }}>
+      <Modal opened={opened} onClose={() => { close() }} closeOnClickOutside={false} style={{ zIndex: 51 }} centered title="Termos de uso débito automático">
+        <div>
+          <small><strong>Ao solicitar a ativação automática do estacionamento, o usuário concorda com os seguintes termos:</strong></small> <br />
+          <small>a) Quando o monitor fiscalizar, será realizada uma ativação de 30 minutos, sendo repetida a ativação por um período máximo de 2 horas em cada vaga;</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
+          <small>b) Permanecendo por mais de 2 horas na mesma vaga, será emitida tarifa de regularização;</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
+          <small>c) Quando não possuir saldo mínimo de crédito para ativação no aplicativo CONSEPRO Taquara, será efetuado a notificação conforme a legislação vigente.</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
+          <small>d) Declaro ter ciência, que ao optar pela ativação automática, não terei direito ao período de tolerância de 10 minutos, sendo que na primeira fiscalização do monitor, será realizada a ativação de 30 minutos;</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
+          <small>e) A ativação fica vinculada a placa do veículo.</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
+          <small><strong> APÓS CONCORDAR COM OS TERMOS, HABILITE O DÉBITO AUTOMÁTICO NAS PLACAS DESEJADAS.</strong></small> <br />
+        </div>
+        {estadoDiv2 ?
+          <>
+            <div className="form-check mt-3">
+              <input type="checkbox" className="form-check-input" id="termsCheckbox" />
+              <label className={estadoDiv ? 'form-check-label text-danger' : 'form-check-label'} htmlFor="termsCheckbox">Concordo com os termos de uso</label>
+            </div><div className="alert alert-danger mt-2" style={{ display: estadoDiv ? 'block' : 'none' }}>
               <small>É necessário concordar com os termos de uso para ativar o débito automático.</small>
             </div><div className="mt-3 d-flex justify-content-between px-4">
               <Button
@@ -328,7 +329,7 @@ const Configuracoes = () => {
                 radius="md"
                 onClick={() => {
                   cancelarTermos();
-                } }
+                }}
               >
                 Não aceito ‎
                 <IconX size="1.125rem" />
@@ -340,15 +341,15 @@ const Configuracoes = () => {
                 radius="md"
                 onClick={() => {
                   confirmarTermos();
-                } }
+                }}
               >
                 Confirmar ‎
                 <IconCheck size="1.125rem" />
               </Button>
             </div>
-            </>
-    : null}
-    </Modal>
+          </>
+          : null}
+      </Modal>
     </div>
   );
 };
