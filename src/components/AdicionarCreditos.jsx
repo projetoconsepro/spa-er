@@ -10,6 +10,7 @@ import { Button, Divider, Input } from "@mantine/core";
 import { IconCash, IconUser } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketCredito from "../util/ImpressaoTicketCredito";
+import ModalErroBanco from "./ModalErroBanco";
 
 const AdicionarCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -25,6 +26,8 @@ const AdicionarCreditos = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [txid, setTxId] = useState("");
   const [estado2, setEstado2] = useState(false);
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   async function getInfoPix(TxId) {
     const requisicao = createAPI();
@@ -50,7 +53,8 @@ const AdicionarCreditos = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setEstado2(false);
+        setOnOpenError(true);
       });
   }
 
@@ -109,7 +113,8 @@ const AdicionarCreditos = () => {
               }
             })
             .catch((err) => {
-              console.log(err);
+              setEstado2(false);
+              setOnOpenError(true);
             });
         } else {
           setInputPlaca("form-control fs-5 is-invalid");
@@ -351,6 +356,10 @@ const AdicionarCreditos = () => {
           </div>
         </div>
       </div>
+      <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+        />
       <ModalPix
         qrCode={data.brcode}
         status={notification}

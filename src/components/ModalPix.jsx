@@ -104,30 +104,33 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
           <Group position="center" mt="md" mb="xs">
             <QRCode value={qrCode === undefined ? "a" : qrCode} />
           </Group>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ alignItems: "center" }}>
             <Input
               ref={inputRef}
               type="text"
               value={qrCode}
               readOnly
-              style={{ flex: 1, padding: "0.5rem" }}
+              style={{ flex: 1, }}
             />
-            <button
+            <Button
+              mt={4}
               onClick={copyToClipboard}
               style={{
-                border: "none",
-                background: "none",
+                color: icon === "FaCopy" ? "white" : "white",
+                backgroundColor: icon === "FaCopy" ? "" : "green",
                 padding: "8px",
                 cursor: "pointer",
               }}
+              fullWidth
             >
               <span className="material-icons"
-              style={{color: icon === "FaCopy" ? "gray" : "green", 
+              style={{color: icon === "FaCopy" ? "white" : "white", 
             }}
               >
-                {icon === "FaCopy" ? <FaCopy /> : <FaCheck  color="green"/>}
+                {icon === "FaCopy" ? 'Clique para copiar o código': 'Código copiado'} {" "} 
+                {icon === "FaCopy" ? <FaCopy /> : <FaCheck  color="white"/>}
               </span>
-            </button>
+            </Button>
           </div>
           <div className="mt-3">
             {status ? (

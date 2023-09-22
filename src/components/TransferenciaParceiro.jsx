@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import createAPI from "../services/createAPI";
+import ModalErroBanco from "./ModalErroBanco";
 
 const TransferenciaParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -25,6 +26,8 @@ const TransferenciaParceiro = () => {
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
   const options = [{ value: "pix", label: "Pix" }, { value: "dinheiro", label: "Dinheiro" }];
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   const FuncArrumaInput = (e) => {
     let valor = e.target.value;
@@ -142,7 +145,7 @@ const TransferenciaParceiro = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setOnOpenError(true);
       });
   }
 
@@ -166,6 +169,8 @@ const TransferenciaParceiro = () => {
         setNotification(false);
         setPixExpirado("Pix expirado");
       }
+    }).catch((err) => {
+      setOnOpenError(true);
     });
   }
 
@@ -305,6 +310,10 @@ const TransferenciaParceiro = () => {
           </div>
         </div>
       )}
+        <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+        />
        <ModalPix
         qrCode={data.brcode}
         status={notification}

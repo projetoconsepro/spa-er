@@ -12,6 +12,7 @@ import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento
 import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
 import CalcularValidade from "../util/CalcularValidade";
+import ModalErroBanco from "./ModalErroBanco";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -40,6 +41,10 @@ const RegistrarVagaMonitor = () => {
   const [onOpen, setOnOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
+
+
 
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
@@ -51,6 +56,7 @@ const RegistrarVagaMonitor = () => {
     const vagaa = [];
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
+      setLoadingButton(false);
       setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
@@ -64,6 +70,7 @@ const RegistrarVagaMonitor = () => {
     const sim = document.getElementById("flexSwitchCheckDefault").checked;
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
+        setLoadingButton(false);
         setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
@@ -114,7 +121,8 @@ const RegistrarVagaMonitor = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setLoadingButton(false);
+        setOnOpenError(true);
       });
   };
   async function getInfoPix(TxId) {
@@ -182,7 +190,8 @@ const RegistrarVagaMonitor = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setLoadingButton(false);
+        setOnOpenError(true);
       });
   }
 
@@ -766,6 +775,11 @@ const RegistrarVagaMonitor = () => {
             </div>
           </div>
         </div>
+        <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+          setOnOpen={setOnOpenError}
+        />
         <ModalPix
           qrCode={data.brcode}
           status={notification}

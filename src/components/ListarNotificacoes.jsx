@@ -19,6 +19,8 @@ import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
 import createAPI from "../services/createAPI";
 import { IconPrinter, IconReceipt } from "@tabler/icons-react";
 import ImpressaoTicketRegularizacao from "../util/ImpressaoTicketRegularizacao";
+import ModalErroBanco from "./ModalErroBanco";
+
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -36,6 +38,8 @@ const ListarNotificacoes = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [perfil, setPerfil] = useState("");
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -74,7 +78,8 @@ const ListarNotificacoes = () => {
           }
         })
         .catch((err) => {
-          console.log(err);
+          setButtonLoading(false);
+          setOnOpenError(true);
         });
     }
   };
@@ -109,7 +114,8 @@ const ListarNotificacoes = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setButtonLoading(false);
+        setOnOpenError(true);
       });
   }
 
@@ -626,6 +632,10 @@ const ListarNotificacoes = () => {
         {mensagem}
       </div>
       <VoltarComponente />
+      <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+      />
       <ModalPix
         qrCode={data2.brcode}
         status={notification}
