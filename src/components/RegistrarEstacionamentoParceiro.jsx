@@ -10,6 +10,7 @@ import { FaParking } from "react-icons/fa";
 import Swal from "sweetalert2";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import createAPI from "../services/createAPI";
+import ModalErroBanco from "./ModalErroBanco";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -36,6 +37,8 @@ const RegistrarEstacionamentoParceiro = () => {
   const [divPagamento, setDivPagamento] = useState(true);
   const [loadingButton, setLoadingButton] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   const param = async () => {
     const requisicao = axios.create({
@@ -222,7 +225,8 @@ const RegistrarEstacionamentoParceiro = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setLoadingButton(false);
+        setOnOpenError(true);
       });
   };
 
@@ -537,7 +541,8 @@ const RegistrarEstacionamentoParceiro = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setLoadingButton(false);
+        setOnOpenError(true);
       });
   }
 
@@ -737,6 +742,10 @@ const RegistrarEstacionamentoParceiro = () => {
         </div>
       </div>
     </div>
+    <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+        />
     <ModalPix
         qrCode={data.brcode}
         status={notification}

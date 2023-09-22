@@ -8,6 +8,7 @@ import ModalPix from "./ModalPix";
 import { BsCreditCard2Back } from "react-icons/bs";
 import createAPI from "../services/createAPI";
 import VoltarComponente from "../util/VoltarComponente";
+import ModalErroBanco from "./ModalErroBanco";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -24,6 +25,8 @@ const InserirCreditos = () => {
   const [txid, setTxId] = useState(null);
   const [onOpen, setOnOpen] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   const inserirCreditos = async (campo, valor) => {
     const requisicao = await createAPI();
@@ -43,7 +46,8 @@ const InserirCreditos = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setButtonDisabled(false);
+        setOnOpenError(true);
       });
   };
 
@@ -92,7 +96,8 @@ const InserirCreditos = () => {
           }
         })
         .catch((err) => {
-          console.log(err);
+          setButtonDisabled(false);
+          setOnOpenError(true);
         });
     }
   };
@@ -329,6 +334,10 @@ const InserirCreditos = () => {
             </Card>
           </Tabs.Panel>
 
+          <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+        />
           <ModalPix
             qrCode={data.brcode}
             status={notification}

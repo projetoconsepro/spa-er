@@ -13,6 +13,7 @@ import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
 import { Button, Group, Pagination } from "@mantine/core";
+import ModalErroBanco from "./ModalErroBanco";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -30,6 +31,8 @@ const Irregularidades = () => {
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
     
   const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
@@ -92,7 +95,8 @@ const Irregularidades = () => {
           }
         })
         .catch((err) => {
-          console.log(err);
+          setLoadingButton(false);
+          setOnOpenError(true);
         });
     }
   };
@@ -128,7 +132,8 @@ const Irregularidades = () => {
           }
         })
         .catch((err) => {
-          console.log(err);
+          setLoadingButton(false);
+          setOnOpenError(true);
         });
     }
 
@@ -609,6 +614,10 @@ const Irregularidades = () => {
 
       <VoltarComponente />
 
+      <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+      />
       <ModalPix
         qrCode={data2.brcode}
         status={notification}
