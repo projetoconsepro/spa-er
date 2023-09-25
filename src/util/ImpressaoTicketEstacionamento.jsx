@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao) => {
-    console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao)
         const obterHoraAtual = () => {
             const dataAtual = new Date();
             const hora = dataAtual.getHours().toString().padStart(2, '0');
@@ -64,7 +63,6 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                   } else {
                     valorCobrar = valorCobranca * 0
                   }
-                  console.log('valor', valorCobrar)
                   return valorCobrar;
 
                 } catch(error) {
@@ -97,7 +95,6 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 notificacaoPendente: notificacao
           }
           
-          console.log('toma', json)
           if(window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(JSON.stringify(json));
           }
@@ -117,7 +114,6 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                 notificacaoPendente: notificacao
             } 
 
-          console.log('toma', json)
           if(window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(JSON.stringify(json));
          }

@@ -95,7 +95,6 @@ const OcupacaoVagasAdmin = () => {
     const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
     const passar = btoa(idrequisicao)
       requisicao.get(`/veiculo/historico/?query=${passar}`).then((response) => {
-          console.log(response)
           setEstado3(true)
           if (response.data.msg.resultado) {
             setEstado2(false);
@@ -162,7 +161,6 @@ const OcupacaoVagasAdmin = () => {
 
   const base64 = btoa(consulta)
   requisicao.get(`/veiculo/historico/?query=${base64}`).then((response) => {
-    console.log(response)
     setEstadoLoading(false)
     if (response.data.msg.resultado) {
       setEstado2(false);
@@ -193,7 +191,6 @@ const OcupacaoVagasAdmin = () => {
         tempo: item.tempo,
       }));
       setData(newData);
-      console.log('nerwdatra', newData)
     } else {
       setEstado2(false);
       setEstado(true);

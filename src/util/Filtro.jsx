@@ -270,10 +270,6 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
   }, [nome]);
 
   useEffect(() => {
-    console.log('mkdjkf', dataHora)
-  }, [dataHora]);
-
-  useEffect(() => {
     if(selectedOption !== null) {
     if(selectedOption.value === 'Data' || selectedOption.value === 'Periodo' || selectedOption.value === 'Tipo financeiro'
       || selectedOption.value === 'Perfil' || selectedOption.value === 'DataHora'  || selectedOption.value === 'PeriodoHora') {

@@ -18,7 +18,6 @@ const ImpressaoTicketNotificacao = async (via, monitor, vaga, placa, modelo, fab
       }
   };
 
-  console.log(via, monitor, vaga, placa, modelo, fabricante, motivo, endereco, await param())
   const obterHoraAtual = () => {
       const dataAtual = new Date();
       const dia = dataAtual.getDate().toString().padStart(2, '0');

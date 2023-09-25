@@ -25,7 +25,6 @@ function AbrirTurno() {
   const verificarTurno = () => {
     const requisicao = createAPI();
     requisicao.get('/turno/verificar').then((response) => {
-      console.log(response);
       if (response.data.msg.resultado) {
         localStorage.setItem('turno', true);
         localStorage.setItem('caixa', true);
@@ -37,7 +36,6 @@ function AbrirTurno() {
     });
 
     if (localStorage.getItem('caixa') == 'true') {
-      console.log('aqui');
       setCaixa(false);
     } else {
       setCaixa(true);
@@ -197,7 +195,6 @@ function AbrirTurno() {
           localStorage.setItem('horaTurno', horaAtual);
           FuncTrocaComp('ListarVagasMonitor');
         } else {
-          console.log(response);
           localStorage.setItem('turno', true);
           setMensagem(response.data.msg.msg);
           setEstado2(true);
@@ -245,12 +242,10 @@ function AbrirTurno() {
       hora: tempoAtual,
     }).then(
       (response) => {
-        console.log(response);
         if (response.data.msg.resultado) {
           verificarTurno();
           setAbTurno(false);
         } else {
-          console.log(response);
           setEstado2(true);
           setMensagem(response.data.msg.msg);
           setTimeout(() => {
@@ -280,7 +275,6 @@ function AbrirTurno() {
     requisicao.get('/turno/caixa').then(
       (response2) => {
         if (response2.data.msg.resultado) {
-          console.log(response2);
           const sim = parseFloat(response2.data.caixa.valor_abertura) + parseFloat(response2.data.caixa.valor_movimentos);
           Swal.fire({
             title: 'Confirmar fechamento de caixa',
@@ -321,7 +315,6 @@ function AbrirTurno() {
                 },
               }).then(
                 (response) => {
-                  console.log(response);
                   if (response.data.msg.resultado === true && result.value === 1) {
                     localStorage.setItem('turno', false);
                     localStorage.setItem('caixa', false);
@@ -335,7 +328,6 @@ function AbrirTurno() {
                     verificarTurno();
                   } else {
                     Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error');
-                    console.log(response);
                   }
                 },
               ).catch((error) => {
@@ -359,7 +351,6 @@ function AbrirTurno() {
             hora: tempoAtual,
           }).then(
             (response) => {
-              console.log(response);
               if (response.data.msg.resultado) {
                 setAbTurno(false);
                 setCaixa(true);

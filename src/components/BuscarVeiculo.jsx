@@ -113,8 +113,6 @@ const BuscarVeiculo = () => {
                     setMensagem("")
                     setDiv(true)
 
-                    console.log(response.data.data)
-
                     const newData = response?.data.data.map((item) => ({
                         placa: item.placa,
                         modelo: item.modelo.modelo,

@@ -88,7 +88,6 @@ const HistoricoFinanceiro = () => {
     requisicao
       .get(`/financeiro/cliente/?query=${base64}`)
       .then((response) => {
-        console.log(response);
         if (response.data.msg.resultado) {
           setEstadoLoading(false);
           setSaldo(response?.data.dados.saldo);
@@ -97,7 +96,6 @@ const HistoricoFinanceiro = () => {
             data: ArrumaHora(item.data),
             tipo: item.tipo,
           }));
-          console.log("essa é a newdata", newData);
           for (let i = 0; i < newData.length; i++) {
             if (newData[i].tipo === "credito") {
               newData[i].debito = "S";

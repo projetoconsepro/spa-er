@@ -64,7 +64,6 @@ const PrestacaoContas = () => {
 
     regularizacaoData.push([{ content: 'MONITOR', colSpan: 21 }]);
 
-    console.log(data[0].monitor)
     data[0].monitor.map((item) => {
       if(item.Regularizacao !== undefined){
       regularizacaoData.push(
@@ -87,7 +86,6 @@ const PrestacaoContas = () => {
         ]);
       }
       else {
-        console.log('creito', item.total.creditosInseridos)
         regularizacaoData.push(
           ['Total',
           item.total.Regularizacao.quantidade,
@@ -157,7 +155,6 @@ const PrestacaoContas = () => {
 
     const BoldLine = regularizacaoData.length - 2 ;
 
-    console.log(data[0].aplicativo)
     regularizacaoData.push([{ content: 'Clientes APP  ', colSpan: 21 }]);
     data[0].aplicativo.map((item) => {
       if(item.Regularizacao !== undefined){
@@ -183,8 +180,6 @@ const PrestacaoContas = () => {
           ])
       }
     });
-
-    console.log(data[0].avulso)
     regularizacaoData.push([{ content: 'AVULSO', colSpan: 21 }]);
     data[0].avulso.map((item) => {
       if(item.Regularizacao !== undefined){
@@ -211,7 +206,6 @@ const PrestacaoContas = () => {
       }
     });
 
-    console.log(data[0].chatbot)
     regularizacaoData.push([{ content: 'CHATBOT', colSpan: 21 }]);
     data[0].chatbot.map((item) => {
       if(item.Regularizacao !== undefined){
@@ -484,7 +478,6 @@ doc.autoTable({
     const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
     const passar = btoa(idrequisicao)
     requisicao.get(`/financeiro/admin/?query=${passar}`).then((res) => {
-    console.log(res)
     setEstado(true);
     setData(res.data.data);
     let newData = res.data.data[0].monitor.map((item) => {
@@ -678,7 +671,6 @@ doc.autoTable({
     };
 
     newData = newData.concat(newData2, newData3, newData5, newData6, newData4);
-    console.log('sdf', newData5)
     setData2(newData);
   }).catch((err) => {
     console.log(err);
@@ -691,7 +683,6 @@ doc.autoTable({
     const requisicao = createAPI();
   const base64 = btoa(consulta)
   requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
-    console.log(res)
     if(res.data.msg.resultado){
     setEstadoLoading(false);
     setEstado(true);
@@ -887,7 +878,6 @@ doc.autoTable({
     };
 
     newData = newData.concat(newData2, newData3, newData5, newData6, newData4);
-    console.log('sdf', newData5)
     setData2(newData);
   }
   else{

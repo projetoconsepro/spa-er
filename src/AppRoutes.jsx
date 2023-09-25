@@ -8,11 +8,11 @@ const AppRoutes = () => {
     const Private = ({children}) => {
         const { authenticated, loading } = useContext(AuthContext);
         
-        if(loading){
+        if (loading) {
             return <div className="loading">Carregando...</div>
         }
 
-        if(!authenticated){
+        if (!authenticated) {
             return <Navigate to="/" />
         }
 

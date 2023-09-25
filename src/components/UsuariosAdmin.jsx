@@ -214,7 +214,6 @@ const UsuariosAdmin = () => {
         Swal.getConfirmButton().disabled = false;
       },
     }).then((result) => {
-      console.log(result)
       if (result.isConfirmed) {
         Swal.fire({
           icon: result.value.message === "Usuário Cadastrado com Sucesso!" ? "success" : "error",
@@ -619,7 +618,6 @@ const UsuariosAdmin = () => {
       requisicao.get(`/usuario/listar/?query=${base64}`).then(
         response => {
             setEstadoLoading(false)
-            console.log(response)
                 const newData = response.data.data.map((item) => ({
                   nome: item.nome,
                   placa: item.veiculos

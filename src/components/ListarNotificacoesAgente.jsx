@@ -92,7 +92,6 @@ const ListarNotificacoesAgente = () => {
       setMensagem("")
       const requisicao = createAPI();
       requisicao.get('/notificacao').then((response) => {
-        console.log(response.data)
         if (response.data.msg.resultado){
           setEstado(false)
           const newData = response.data.data.map((item) => ({
@@ -155,7 +154,6 @@ const ListarNotificacoesAgente = () => {
     const base64 = btoa(where)
     requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
       if (response.data.data.length !== 0){
-      console.log(response)
       setEstadoLoading(false)
       setEstado(false)
       const newData = response.data.data.map((item) => ({
@@ -178,7 +176,6 @@ const ListarNotificacoesAgente = () => {
       setData(newData)
     }
     else {
-      console.log(response)
       setEstadoLoading(false)
       setData([])
       setEstado(true)

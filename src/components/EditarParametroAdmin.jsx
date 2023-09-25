@@ -49,10 +49,8 @@ const EditarParametroAdmin = () => {
       turno: inputValues2,
       usuario: data.usuario
     };
-console.log(requestBody)  
 requisicao.put('/parametros', requestBody).then(
   response => {
-    console.log(response)
     setEnabledInputs(false)
   }).catch(
   error => {

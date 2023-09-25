@@ -221,7 +221,6 @@ const RegistrarEstacionamentoParceiro = () => {
           setOnOpen(true);
           open();
         } else {
-          console.log("n abriu nkk");
         }
       })
       .catch((err) => {
@@ -334,7 +333,6 @@ const RegistrarEstacionamentoParceiro = () => {
                     }
                   });
               } else {
-                console.log(vagaa);
                 requisicao
                   .post("/estacionamento", {
                     placa: placaMaiuscula,
@@ -474,7 +472,6 @@ const RegistrarEstacionamentoParceiro = () => {
   const atualiza = () => {
     const tempoo = document.getElementById("tempos").value;
     setTempo(tempoo);
-    console.log(tempoo)
     if (tempoo === "02:00:00") {
       setValorCobranca2(valorCobranca * 2);
     } else if (tempoo === "01:00:00") {

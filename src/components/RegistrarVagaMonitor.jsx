@@ -84,7 +84,6 @@ const RegistrarVagaMonitor = () => {
     }
     const valor = valorcobranca2.toString();
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
-    console.log(valor2);
     const requisicao = createAPI();
 
     let campo = "";
@@ -135,33 +134,7 @@ const RegistrarVagaMonitor = () => {
         txid: TxId,
       })
       .then((response) => {
-        setLoadingButton(false);
         if (response.data.msg.resultado === true) {
-           if (localStorage.getItem("listaVagas")) {
-            const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
-            const vagaAtualizada = response.data.data.numero_vagas[0];
-            const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaAtualizada);
-            if (indexVaga !== -1) {
-              listaVagas[indexVaga].placa = placaMaiuscula;
-              listaVagas[indexVaga].numero = parseInt(vagaAtualizada);
-              listaVagas[indexVaga].id_vaga_veiculo = response.data.data.id_vaga_veiculo;
-              listaVagas[indexVaga].chegada = response.data.data.chegada;
-              listaVagas[indexVaga].tempo = response.data.data.tempo;
-              listaVagas[indexVaga].temporestante = CalcularValidade(response.data.data.chegada, response.data.data.tempo);
-              listaVagas[indexVaga].variaDisplay = "aparece";
-              listaVagas[indexVaga].display = "testeNot2";
-              if (response.data.data.tempo === "00:10:00"){
-                listaVagas[indexVaga].corline = "#FFF3CD";
-                listaVagas[indexVaga].cor = "#664D03";
-              } else {
-                listaVagas[indexVaga].corline = "#D1E7DD";
-                listaVagas[indexVaga].cor = "#0F5132";
-              }
-              localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
-            } else {
-              console.log('n achou')
-            }
-          }
           if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
@@ -175,6 +148,52 @@ const RegistrarVagaMonitor = () => {
             response.data.data.notificacao_pendente
           );
           }
+
+          const listaVagasString = localStorage.getItem("listaVagas");
+            let listaVagas = [];
+
+              try {
+                listaVagas = JSON.parse(listaVagasString) || [];
+              } catch (error) {
+                console.error("Erro ao analisar JSON:", error);
+              }
+
+              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
+
+              if (indexByPlaca !== -1) {
+                const vaga = listaVagas[indexByPlaca];
+                vaga.placa = "";
+                vaga.id_vaga_veiculo = "";
+                vaga.chegada = "";
+                vaga.variaDisplay = "aparece";
+                vaga.tempo = "";
+                vaga.temporestante = "";
+                vaga.display = "testeNot2";
+                vaga.corline = "";
+                vaga.cor = "";
+              }
+
+              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == response.data.data.numero_vagas[0]);
+
+              if (indexVaga !== -1) {
+                const resposta = response.data.data;
+                const vaga = listaVagas[indexVaga];
+                vaga.placa = tirarTraco;
+                vaga.numero = parseInt(response.data.data.numero_vagas[0]);
+                vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
+                vaga.chegada = resposta.chegada;
+                vaga.tempo = resposta.tempo;
+                vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
+                vaga.variaDisplay = "aparece";
+                vaga.display = "testeNot2";
+                vaga.corline = resposta.tempo === "00:10:00" ? "#FFF3CD" : "#D1E7DD";
+                vaga.cor = resposta.tempo === "00:10:00" ? "#664D03" : "#0F5132";
+                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+              }
+
+          setLoadingButton(false);
+
+
           localStorage.removeItem("vaga");
           localStorage.removeItem("popup");
           localStorage.removeItem("id_vagaveiculo");
@@ -248,51 +267,7 @@ const RegistrarVagaMonitor = () => {
           id_vaga_veiculo: idvaga,
         })
         .then((response) => {
-          console.log(response)
           if (response.data.msg.resultado === true) {
-            if (localStorage.getItem("listaVagas")) {
-              const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
-              
-              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa == tirarTraco);
-              console.log('indexplaca', indexByPlaca)
-              if (indexByPlaca !== -1) {
-                listaVagas[indexByPlaca].placa = "";
-                delete listaVagas[indexByPlaca].id_vaga_veiculo;
-                listaVagas[indexByPlaca].chegada = "";
-                listaVagas[indexByPlaca].variaDisplay = "escondido";
-                delete listaVagas[indexByPlaca].tempo;
-                listaVagas[indexByPlaca].temporestante = "";
-                delete listaVagas[indexByPlaca].display;
-                delete listaVagas[indexByPlaca].corline;
-                delete listaVagas[indexByPlaca].cor;
-              } else {
-                console.log('n achou placa')
-              }
-              const vagaAtualizada = vagaa;
-              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaAtualizada[0]);
-              if (indexVaga !== -1) {
-                listaVagas[indexVaga].placa = tirarTraco;
-                listaVagas[indexVaga].numero = parseInt(vagaAtualizada[0]);
-                listaVagas[indexVaga].id_vaga_veiculo = response.data.data.id_vaga_veiculo;
-                listaVagas[indexVaga].chegada = response.data.data.chegada;
-                listaVagas[indexVaga].tempo = response.data.data.tempo;
-                listaVagas[indexVaga].temporestante = CalcularValidade(response.data.data.chegada, response.data.data.tempo);
-                listaVagas[indexVaga].variaDisplay = "aparece";
-                listaVagas[indexVaga].display = "testeNot2";
-                if (response.data.data.tempo === "00:10:00"){
-                  listaVagas[indexVaga].corline = "#FFF3CD";
-                  listaVagas[indexVaga].cor = "#664D03";
-                } else {
-                  listaVagas[indexVaga].corline = "#D1E7DD";
-                  listaVagas[indexVaga].cor = "#0F5132";
-                }
-                console.log('olha', listaVagas)
-                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
-              } else {
-                console.log('n achou')
-              }
-            }
-            setLoadingButton(false);
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
@@ -306,10 +281,55 @@ const RegistrarVagaMonitor = () => {
               response.data.data.notificacao_pendente
             );
             }
+
+            const listaVagasString = localStorage.getItem("listaVagas");
+            let listaVagas = [];
+
+              try {
+                listaVagas = JSON.parse(listaVagasString) || [];
+              } catch (error) {
+                console.error("Erro ao analisar JSON:", error);
+              }
+
+              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
+
+              if (indexByPlaca !== -1) {
+                const vaga = listaVagas[indexByPlaca];
+                vaga.placa = "";
+                vaga.id_vaga_veiculo = "";
+                vaga.chegada = "";
+                vaga.variaDisplay = "aparece";
+                vaga.tempo = "";
+                vaga.temporestante = "";
+                vaga.display = "testeNot2";
+                vaga.corline = "";
+                vaga.cor = "";
+              }
+
+              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaa[0]);
+
+              if (indexVaga !== -1) {
+                const resposta = response.data.data;
+                const vaga = listaVagas[indexVaga];
+                vaga.placa = tirarTraco;
+                vaga.numero = parseInt(vagaa[0]);
+                vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
+                vaga.chegada = resposta.chegada;
+                vaga.tempo = resposta.tempo;
+                vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
+                vaga.variaDisplay = "aparece";
+                vaga.display = "testeNot2";
+                vaga.corline = resposta.tempo === "00:10:00" ? "#FFF3CD" : "#D1E7DD";
+                vaga.cor = resposta.tempo === "00:10:00" ? "#664D03" : "#0F5132";
+                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+              }
+
  
             localStorage.removeItem("vaga");
             localStorage.removeItem("popup");
             localStorage.removeItem("id_vagaveiculo");
+
+            setLoadingButton(false);
 
             if (user2.perfil[0] === "monitor") {
               FuncTrocaComp("ListarVagasMonitor");
@@ -349,52 +369,6 @@ const RegistrarVagaMonitor = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado === true) {
-            if (localStorage.getItem("listaVagas")) {
-              const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
-              
-              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa == tirarTraco);
-              console.log('indexplaca', indexByPlaca)
-              if (indexByPlaca !== -1) {
-                listaVagas[indexByPlaca].placa = "";
-                delete listaVagas[indexByPlaca].id_vaga_veiculo;
-                listaVagas[indexByPlaca].chegada = "";
-                listaVagas[indexByPlaca].variaDisplay = "escondido";
-                delete listaVagas[indexByPlaca].tempo;
-                listaVagas[indexByPlaca].temporestante = "";
-                delete listaVagas[indexByPlaca].display;
-                delete listaVagas[indexByPlaca].corline;
-                delete listaVagas[indexByPlaca].cor;
-                delete listaVagas[indexByPlaca]?.numero_notificacoes;
-                delete listaVagas[indexByPlaca]?.numero_notificacoes_pendentes;
-                delete listaVagas[indexByPlaca]?.numero_notificacoes_pendentess;
-              } else {
-                console.log('n achou placa')
-              }
-              const vagaAtualizada = vagaa;
-              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaAtualizada[0]);
-              if (indexVaga !== -1) {
-                listaVagas[indexVaga].placa = tirarTraco;
-                listaVagas[indexVaga].numero = parseInt(vagaAtualizada[0]);
-                listaVagas[indexVaga].id_vaga_veiculo = response.data.data.id_vaga_veiculo;
-                listaVagas[indexVaga].chegada = response.data.data.chegada;
-                listaVagas[indexVaga].tempo = response.data.data.tempo;
-                listaVagas[indexVaga].temporestante = CalcularValidade(response.data.data.chegada, response.data.data.tempo);
-                listaVagas[indexVaga].variaDisplay = "aparece";
-                listaVagas[indexVaga].display = "testeNot2";
-                if (response.data.data.tempo === "00:10:00"){
-                  listaVagas[indexVaga].corline = "#FFF3CD";
-                  listaVagas[indexVaga].cor = "#664D03";
-                } else {
-                  listaVagas[indexVaga].corline = "#D1E7DD";
-                  listaVagas[indexVaga].cor = "#0F5132";
-                }
-                console.log('olha', listaVagas)
-                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
-              } else {
-                console.log('n achou')
-              }
-            }
-            setLoadingButton(false);
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
@@ -408,6 +382,51 @@ const RegistrarVagaMonitor = () => {
               response.data.data.notificacao_pendente
             );
             }
+
+            const listaVagasString = localStorage.getItem("listaVagas");
+            let listaVagas = [];
+
+              try {
+                listaVagas = JSON.parse(listaVagasString) || [];
+              } catch (error) {
+                console.error("Erro ao analisar JSON:", error);
+              }
+
+              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
+
+              if (indexByPlaca !== -1) {
+                const vaga = listaVagas[indexByPlaca];
+                vaga.placa = "";
+                vaga.id_vaga_veiculo = "";
+                vaga.chegada = "";
+                vaga.variaDisplay = "aparece";
+                vaga.tempo = "";
+                vaga.temporestante = "";
+                vaga.display = "testeNot2";
+                vaga.corline = "";
+                vaga.cor = "";
+              }
+
+              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaa[0]);
+
+              if (indexVaga !== -1) {
+                const resposta = response.data.data;
+                const vaga = listaVagas[indexVaga];
+                vaga.placa = tirarTraco;
+                vaga.numero = parseInt(vagaa[0]);
+                vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
+                vaga.chegada = resposta.chegada;
+                vaga.tempo = resposta.tempo;
+                vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
+                vaga.variaDisplay = "aparece";
+                vaga.display = "testeNot2";
+                vaga.corline = resposta.tempo === "00:10:00" ? "#FFF3CD" : "#D1E7DD";
+                vaga.cor = resposta.tempo === "00:10:00" ? "#664D03" : "#0F5132";
+                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+              }
+
+            setLoadingButton(false);
+
             localStorage.removeItem("vaga");
 
             if (user2.perfil[0] === "monitor") {

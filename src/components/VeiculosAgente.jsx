@@ -50,7 +50,6 @@ const VeiculosAgente = () => {
                         status: item.status,
                         id_status_vaga: item.id_status_vaga,
                     }))
-                    console.log(newData)
                     setData(newData);
                 }
                 else {

@@ -49,7 +49,6 @@ const ResetPassword = () => {
     })
     veiculo.get(`/verificar?email=${metodo}`).then(
         response => {
-          console.log(response)
             const resposta = response.data.msg.resultado;
             if (resposta === false){
                 setMensagem(response.data.msg.msg);

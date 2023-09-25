@@ -191,7 +191,6 @@ const Notificacao = () => {
                         
                         const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa == placa);
                         if (indexByPlaca !== -1) {
-                          console.log('achou placa')
                           listaVagas[indexByPlaca].numero_notificacoes += 1;
                           listaVagas[indexByPlaca].numero_notificacoes_pendentes += 1;
                           listaVagas[indexByPlaca].numero_notificacoes_pendentess += 1;
@@ -199,9 +198,8 @@ const Notificacao = () => {
                           listaVagas[indexByPlaca].cor = "#141619";
                           listaVagas[indexByPlaca].variaDisplay = "aparece";
                           listaVagas[indexByPlaca].display = "testeNot";
-                        } else {
-                            console.log('n achou placa')
                         }
+
                         localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
                     }
 
@@ -235,27 +233,12 @@ const Notificacao = () => {
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
     }).then(response => {
-        console.log(response)
                 setEstado2(false)
-                if(response.data.msg.resultado === true){
+                if(response.data.msg.resultado === true) {
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    const primeiraParam = "PRIMEIRA";
-                    const idUsuario = response.config.headers.id_usuario;
-                    const local = response.data.data.local;
-
-                    localStorage.setItem('parametrosImpressaoTicket', JSON.stringify({
-                        primeiraParam: primeiraParam,
-                        idUsuario: idUsuario,
-                        vaga: vaga,
-                        placa: placa,
-                        modeloImpressao: modeloImpressao,
-                        fabricanteImpressao: fabricanteImpressao,
-                        tipoNotificacaoNome: tipoNotificacaoNome,
-                        local: local,
-                      }));
 
                     ImpressaoTicketNotificacao("PRIMEIRA",
                      response.config.headers.id_usuario, 
@@ -266,34 +249,50 @@ const Notificacao = () => {
                      tipoNotificacaoNome, 
                      response.data.data.local)
 
-                     if (localStorage.getItem("listaVagas")) {
-                     const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
+                     const primeiraParam = "PRIMEIRA";
+                     const idUsuario = response.config.headers.id_usuario;
+                     const local = response.data.data.local;
+ 
+                     localStorage.setItem('parametrosImpressaoTicket', JSON.stringify({
+                         primeiraParam: primeiraParam,
+                         idUsuario: idUsuario,
+                         vaga: vaga,
+                         placa: placa,
+                         modeloImpressao: modeloImpressao,
+                         fabricanteImpressao: fabricanteImpressao,
+                         tipoNotificacaoNome: tipoNotificacaoNome,
+                         local: local,
+                       }));
 
-                     console.log(vaga)
+                       const listaVagasString = localStorage.getItem("listaVagas");
+                       let listaVagas = [];
+           
+                         try {
+                           listaVagas = JSON.parse(listaVagasString) || [];
+                         } catch (error) {
+                           console.error("Erro ao analisar JSON:", error);
+                         }
+
                      const indexByVaga = listaVagas.findIndex((item) => item.numero == vaga);
 
                      if (indexByVaga !== -1) {
                          const hora = new Date();
-                         const horaAtual = hora.getHours();
-                         const minutoAtual = hora.getMinutes();
-                         const segundosAtual = hora.getSeconds();
-                         const horaMinuto = `${horaAtual}:${minutoAtual}:${segundosAtual}`;
-                         listaVagas[indexByVaga].numero_notificacoes = 1;
-                         listaVagas[indexByVaga].numero_notificacoes_pendentes = 1;
-                         listaVagas[indexByVaga].numero_notificacoes_pendentess = 1;
-                         listaVagas[indexByVaga].corline = "#D3D3D4";
-                         listaVagas[indexByVaga].cor = "#141619";
-                         listaVagas[indexByVaga].chegada = horaMinuto;
-                         listaVagas[indexByVaga].tempo = horaMinuto;
-                         listaVagas[indexByVaga].variaDisplay = "aparece";
-                         listaVagas[indexByVaga].temporestante = horaMinuto;
-                         listaVagas[indexByVaga].display = "testeNot";
-                         listaVagas[indexByVaga].placa = placa;
-                     } else {
-                         console.log('n achou vaga')
+                         const horaMinuto = `${hora.getHours()}:${hora.getMinutes()}:${hora.getSeconds()}`;
+
+                         const vaga = listaVagas[indexByVaga];
+                            vaga.numero_notificacoes = 1;
+                            vaga.numero_notificacoes_pendentes = 1;
+                            vaga.numero_notificacoes_pendentess = 1;
+                            vaga.corline = "#D3D3D4";
+                            vaga.cor = "#141619";
+                            vaga.chegada = horaMinuto;
+                            vaga.tempo = horaMinuto;
+                            vaga.variaDisplay = "aparece";
+                            vaga.temporestante = horaMinuto;
+                            vaga.display = "testeNot";
+                            vaga.placa = placa;
                      }
                         localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
-                    }
                      
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
@@ -302,7 +301,7 @@ const Notificacao = () => {
                     for (let i = 0; i < 6; i++) {
                         localStorage.removeItem(`foto${i}`);
                     }
-                    
+
                 }
                 else {
                     setMensagem(response.data.msg.msg)
@@ -464,7 +463,6 @@ setTimeout(() => {
         requisicao.get(`/veiculo/${placaSemTraco}`).then(
             response => {
                 if(response.data.msg.resultado === true){
-                    console.log(response)
                     setInfoBanco(true);
                     setCorVeiculo(response.data.data[0].cor)
                     setModeloVeiculo(response.data.data[0].modelo.modelo)

@@ -46,7 +46,6 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
 
   useEffect(() => {
     if (opened){
-      console.log('aberto')
     } else {
       if (onClose !== undefined){
       onClose()
