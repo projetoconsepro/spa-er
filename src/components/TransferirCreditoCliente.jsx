@@ -156,7 +156,6 @@ const TransferirCreditoCliente = () => {
           valor: valor2,
         })
         .then((response) => {
-          console.log(response);
           if (response.data.msg.resultado) {
             open();
             setReadyTransfer(true);

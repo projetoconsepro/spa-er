@@ -154,29 +154,25 @@ const ListarVagasMonitor = () => {
         }
 
         if (timeout) {
-          const listaSemPrimeiroElemento = updatedResposta
+          const listaSemPrimeiroElemento = updatedResposta;
           const localS = JSON.parse(localStorage.getItem("listaVagas"));
-          console.log('timeout', listaSemPrimeiroElemento, resposta)
           if (objetosSaoDiferentes(listaSemPrimeiroElemento, resposta)) {
-            console.log('entrou aqui2')
             localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
             setResposta(listaSemPrimeiroElemento)
-          } if (objetosSaoDiferentes(resposta, localS)) {
-            console.log('entrou aqui')
+          } 
+          if (objetosSaoDiferentes(resposta, localS)) {
+
           }
           else {
-            console.log('nao atualizou')
           }
         } else if (timeout === null){
-          console.log('timeout', timeout)
           if (!localVagas) {
-            const listaSemPrimeiroElemento = updatedResposta
+            const listaSemPrimeiroElemento = updatedResposta;
             localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
             setResposta(listaSemPrimeiroElemento);
           } else {
-            const listaSemPrimeiroElemento = updatedResposta
+            const listaSemPrimeiroElemento = updatedResposta;
             const localS = JSON.parse(localStorage.getItem("listaVagas"));
-            console.log(listaSemPrimeiroElemento, localS)
             // aqui
             if (objetosSaoDiferentes(listaSemPrimeiroElemento, localS)) {
               localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
@@ -184,9 +180,8 @@ const ListarVagasMonitor = () => {
             }
           }
         } else if (timeout === 'reset'){
-          const listaSemPrimeiroElemento = updatedResposta
+          const listaSemPrimeiroElemento = updatedResposta;
           localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-          console.log('olha a lista', listaSemPrimeiroElemento)
           setResposta(listaSemPrimeiroElemento);
         }
 
@@ -238,7 +233,6 @@ useEffect(() => {
 
   useEffect(() => {
     if (contador === 60) {
-      console.log('atualizou')
       setContador(0);
       getVagas(salvaSetor, true);
     }
@@ -269,7 +263,6 @@ useEffect(() => {
     if (localStorage.getItem("listaVagas")) {
       const items = localStorage.getItem("listaVagas");
       setResposta(JSON.parse(items));
-      //console.log('AQUIII', JSON.parse(localStorage.getItem("listaVagas")))
       setLocalVagas(true)
     } else {
       setLocalVagas(false)

@@ -21,7 +21,7 @@ const ImpressaoTicketCredito = async (cpf, valor, pagamento, monitor) => {
             cpf: cpf[0],
             pagamento: pagamento
         }
-        console.log(json)
+
         if(window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(JSON.stringify(json));
 

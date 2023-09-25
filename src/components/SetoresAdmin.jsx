@@ -37,7 +37,6 @@ const SetoresAdmin = () => {
                   requisicao.post('/setores', {
                     nome: setor,
                     }).then((response) => {
-                        console.log(response)
                         requisicaoSetores();
                         if(response.data.msg.resultado){
                         Swal.fire({
@@ -129,7 +128,6 @@ const SetoresAdmin = () => {
                                 setSetor(e.target.value);
                             } else {
                             const upperCase = e.target.value.toUpperCase();
-                            console.log(upperCase)
                             const newData = data.filter((item) => item.nome_setor === upperCase);
                                 if(newData.length === 0) {
                                     setEstado(true)

@@ -74,7 +74,6 @@ const ListarNotificacoes = () => {
             getInfoPix(resposta.data.data.txid, index, data[index]);
             open();
           } else {
-            console.log("n abriu nkk");
           }
         })
         .catch((err) => {
@@ -94,7 +93,6 @@ const ListarNotificacoes = () => {
         setButtonLoading(false);
         if (response.data.msg.resultado) {
           ImpressaoTicketRegularizacao('PRIMEIRA', item)
-          console.log(response.data.data)
           setOnOpen(false);
           Swal.fire({
             title: "Regularizado!",
@@ -125,13 +123,11 @@ const ListarNotificacoes = () => {
 
   const regularizar = async (idVagaVeiculo, index, pagamento, item) => {
     const requisicao = createAPI();
-    console.log(idVagaVeiculo);
     requisicao.put("/notificacao/", {
       id_vaga_veiculo: idVagaVeiculo,
       tipoPagamento: pagamento,
     }).then((response) => {
       setButtonLoading(false);
-      console.log(response);
       if (response.data.msg.resultado) {
         ImpressaoTicketRegularizacao('PRIMEIRA', item)
         Swal.fire({
@@ -423,7 +419,6 @@ const ListarNotificacoes = () => {
   };
 
   const imprimirSegundaVia = (item) => {
-    console.log(item);
     ImpressaoTicketNotificacao(
       "SEGUNDA",
       item.monitor,

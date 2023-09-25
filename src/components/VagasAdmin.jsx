@@ -70,7 +70,6 @@ const VagasAdmin = () => {
 
         await requisicao.get(`/vagas/status`).then(
             response => {
-                console.log('b', response)
                 const newData = response.data.data.map((item) => ({
                     status: item.status,
                     id_status_vaga: item.id_status_vaga,
@@ -93,7 +92,6 @@ const VagasAdmin = () => {
 
 
     const FuncFiltroNumber = (vagaNew) => {
-        console.log(vagaNew)
         const requisicao = createAPI();
 
         setVaga(vagaNew);
@@ -116,7 +114,6 @@ const VagasAdmin = () => {
                     setData(newData);
                 }
                 else {
-                    console.log('a', response.data.msg.msg)
                     setEstado(true);
                     setMensagem(response.data.msg.msg);
                     setData([]);

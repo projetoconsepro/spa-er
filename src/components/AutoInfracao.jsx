@@ -73,7 +73,6 @@ const AutoInfracao = () => {
 
 
     if ((imagemLocal !== '') && imagemLocal !== undefined && imagemLocal !== null){
-      console.log(data[0].id_notificacao)
     requisicao.post('/notificacao/ticket', {
       id_notificacao: data[0].id_notificacao,
       foto: imagemLocal,

@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const ImpressaoTicketRegularizacao = async (via, item) => {
-    console.log(via, item)
 
     const obterHoraAtual = () => {
       const dataAtual = new Date();
@@ -28,7 +27,6 @@ const ImpressaoTicketRegularizacao = async (via, item) => {
             valor: item.valor,
             via: via
         }
-        console.log(json)
         if(window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(JSON.stringify(json));
         }
@@ -48,7 +46,6 @@ const ImpressaoTicketRegularizacao = async (via, item) => {
           via: via
       }
 
-      console.log(json)
       if(window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(JSON.stringify(json));
       }

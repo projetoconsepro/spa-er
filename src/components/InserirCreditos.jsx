@@ -92,7 +92,6 @@ const InserirCreditos = () => {
             setNotification(true)
             open();
           } else {
-            console.log("n abriu nkk");
           }
         })
         .catch((err) => {

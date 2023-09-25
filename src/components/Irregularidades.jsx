@@ -91,7 +91,6 @@ const Irregularidades = () => {
             open();
             setOnOpen(true);
           } else {
-            console.log("n abriu nkk");
           }
         })
         .catch((err) => {

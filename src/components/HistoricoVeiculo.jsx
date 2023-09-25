@@ -181,7 +181,6 @@ const HistoricoVeiculo = () => {
     const requisicao = createAPI();
     const base64 = btoa(where)
     requisicao.get(`veiculo/historico/?query=${base64}`).then((response) => {
-      console.log(response)
       if (response.data.data.length > 0) {
         setEstadoLoading(false)
         setEstado2(false);

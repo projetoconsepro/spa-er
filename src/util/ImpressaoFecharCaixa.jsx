@@ -12,7 +12,6 @@ const ImpressaoFecharCaixa = async (item, valor, monitor) => {
         return formattedDate;
       }
 
-        console.log(item)
 
         const json = {
             tipo: 'FECHAMENTO DE CAIXA',
@@ -22,7 +21,6 @@ const ImpressaoFecharCaixa = async (item, valor, monitor) => {
             valorAbertura: item.valor_abertura,
             valorFechamento: valor,
         }
-        console.log(json)
         if(window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(JSON.stringify(json));
 

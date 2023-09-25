@@ -248,7 +248,6 @@ const ListarNotificacoesAdmin = () => {
             idVagaVeiculo: item.id_vaga_veiculo,
             descricao: motivo
           }).then((response) => {
-            console.log(response)
             if(response.data.msg.resultado){
             Swal.fire(
               'Cancelado!',
@@ -287,7 +286,6 @@ const ListarNotificacoesAdmin = () => {
       const base64 = btoa(where)
       requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
         setEstadoLoading(false)
-        console.log(response.data.msg.resultado)
         if (response.data.msg.resultado){
           setEstado(false)
           const newData = response.data.data.map((item) => ({

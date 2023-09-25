@@ -41,7 +41,6 @@ const HistoricoFinanceiroParceiro = () => {
     requisicao
       .get("/financeiro/parceiro")
       .then((response) => {
-        console.log(response.data.dados);
         setSaldo(response?.data.dados.saldo);
         const newData = response?.data.dados.movimentos.map((item) => ({
           valor: item.valor,
@@ -51,7 +50,6 @@ const HistoricoFinanceiroParceiro = () => {
           cnpj: item.cnpj === undefined ? "" : item.cnpj,
           placa: item.placa === undefined ? "" : item.placa,
         }));
-        console.log("essa é a newdata", newData);
 
         for (let i = 0; i < newData.length; i++) {
           if (newData[i].tipo === "credito") {
@@ -93,7 +91,6 @@ const HistoricoFinanceiroParceiro = () => {
     requisicao
       .get(`/financeiro/parceiro/?query=${base64}`)
       .then((response) => {
-        console.log(response);
         if (response.data.msg.resultado) {
           setEstadoLoading(false);
           setSaldo(response?.data.dados.saldo);

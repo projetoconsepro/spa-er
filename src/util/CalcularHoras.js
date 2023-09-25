@@ -43,7 +43,6 @@ function converterParaSegundos(tempo) {
     cor: "#000",
     }
   }
-  console.log('json', json, tempoRestante, horaAtual)
   return json;
 }
 

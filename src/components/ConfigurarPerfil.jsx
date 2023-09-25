@@ -80,7 +80,6 @@ const ConfigurarPerfil = () => {
       nome: user,
       telefone: telefone,
     }).then(response => {
-      console.log(response)
         if (response.data.msg.resultado) {
           setIsUsernameEnabled(false);
           setIsTelefoneEnabled(false);
@@ -129,7 +128,6 @@ const ConfigurarPerfil = () => {
     requisicao.put('/usuario', {
       senha: password,
     }).then(response => {
-      console.log(response)
         if (response.data.msg.resultado) {
           Swal.fire({
             icon: 'success',

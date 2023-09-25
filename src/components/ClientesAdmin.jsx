@@ -96,17 +96,14 @@ const ClientesAdmin = () => {
 
   useEffect(() => {
     if (step >= 1 && step <= 4) {
-      console.log(step);
       setTimeout(() => {
         nextStep();
         setStep(step + 1);
       }, 1000);
     }
     if (step === 4) {
-      console.log("chegou");
       setMensagemStep(true);
     } else if (step === 0) {
-      console.log(step);
       for (let i = 0; i < 3; i++) {
         setTimeout(() => {
           prevStep();
@@ -265,7 +262,6 @@ const ClientesAdmin = () => {
     requisicao
       .get(`/veiculo/${selectedOption}`)
       .then((response) => {
-        console.log(response.data);
         if (
           response.data.msg.resultado === false &&
           response.data.msg.msg !== "Dados encontrados"
@@ -376,7 +372,6 @@ const ClientesAdmin = () => {
           id_usuario: infoRemetente,
         })
         .then((response) => {
-          console.log(response);
           if (response.data.msg.resultado) {
             setReadyTransfer(true);
             setStep(1);
@@ -410,7 +405,6 @@ const ClientesAdmin = () => {
           id_usuario: infoRemetente,
         })
         .then((response) => {
-          console.log(response);
           if (response.data.msg.resultado) {
             setReadyTransfer(true);
             setStep(1);
@@ -500,14 +494,12 @@ const ClientesAdmin = () => {
 
   const handleConsultaSelected = (consulta) => {
     setEstadoLoading(true);
-    console.log(consulta);
     const requisicao = createAPI();
     const base64 = btoa(consulta);
     requisicao
       .get(`/usuario/listar/?query=${base64}`)
       .then((response) => {
         setEstadoLoading(false);
-        console.log(response);
         const newData = response.data.data.map((item) => ({
           id_usuario: item.id_usuario,
           nome: item.nome,
@@ -549,7 +541,6 @@ const ClientesAdmin = () => {
       .get(`/usuario/listar/?query=${base64}`)
       .then((response) => {
         setEstadoLoading(false);
-        console.log(response);
         const newData = response.data.data.map((item) => ({
           id_usuario: item.id_usuario,
           nome: item.nome,

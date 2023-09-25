@@ -45,7 +45,6 @@ const FecharTurno = () => {
         requisicao.get('/setores'
         ).then(
             response => {
-                console.log(response)
                 for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
                     resposta2[i] = {};
                     resposta2[i].setores = response.data.data.setores[i].nome;
@@ -72,7 +71,6 @@ const FecharTurno = () => {
 
         const setorA = resposta2.find((setor) => setor.setores === setor2);
         const setorId2 = setorA && setorA.id_setores;
-        console.log(setorId2)
         setSetorSelecionado(setorId2)
     }
 
@@ -88,7 +86,6 @@ const FecharTurno = () => {
             }
         ).then(
             response => {
-               console.log(response)
                if(response.data.msg.resultado === true){
                     localStorage.setItem("turno", false)
                     setEstadoTurno(false)
@@ -96,7 +93,6 @@ const FecharTurno = () => {
                     setAbrirTurno(true)
                }
                else{
-                console.log(response)
                 setEstadoTurno(false)
                 setEstadoSelect(true)
                 setEstadoDiv(true)
@@ -150,7 +146,6 @@ const FecharTurno = () => {
                 FuncTrocaComp( "ListarVagasMonitor")
                }
                else{
-                console.log(response)
                 localStorage.setItem("turno", true)
                 setEstadoTurno(true)
                 setEstadoDiv(true)
@@ -199,7 +194,6 @@ const FecharTurno = () => {
         requisicao.get('/turno/caixa').then(
             response => {
                 if(response.data.msg.resultado){
-                    console.log(response)
                     const sim = parseFloat(response.data.caixa.valor_abertura) + parseFloat(response.data.caixa.valor_movimentos);
                     Swal.fire({
                         title: 'Confirmar fechamento de caixa',
@@ -219,7 +213,6 @@ const FecharTurno = () => {
                                 }
                             ).then(
                                 response => {
-                                    console.log(response)
                                 if(response.data.msg.resultado === true){
                                     Swal.fire('Caixa fechado com sucesso', '', 'success')
                                     localStorage.setItem("caixa", false)
@@ -228,7 +221,6 @@ const FecharTurno = () => {
                                 }
                                 else{
                                     Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error')
-                                    console.log(response)
                                 }
                                 }
                             ).catch(function (error) {
@@ -248,7 +240,7 @@ const FecharTurno = () => {
             }
             })
             }
-            else {console.log(response)}
+            else {}
             }
         ).catch(function (error) {
                         if(error?.response?.data?.msg === "Cabeçalho inválido!" 
