@@ -154,7 +154,7 @@ const ListarVagasMonitor = () => {
         }
 
         if (timeout) {
-          const listaSemPrimeiroElemento = updatedResposta.slice(1);
+          const listaSemPrimeiroElemento = updatedResposta
           const localS = JSON.parse(localStorage.getItem("listaVagas"));
           console.log('timeout', listaSemPrimeiroElemento, resposta)
           if (objetosSaoDiferentes(listaSemPrimeiroElemento, resposta)) {
@@ -170,11 +170,11 @@ const ListarVagasMonitor = () => {
         } else if (timeout === null){
           console.log('timeout', timeout)
           if (!localVagas) {
-            const listaSemPrimeiroElemento = updatedResposta.slice(1);
+            const listaSemPrimeiroElemento = updatedResposta
             localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
             setResposta(listaSemPrimeiroElemento);
           } else {
-            const listaSemPrimeiroElemento = updatedResposta.slice(1);
+            const listaSemPrimeiroElemento = updatedResposta
             const localS = JSON.parse(localStorage.getItem("listaVagas"));
             console.log(listaSemPrimeiroElemento, localS)
             // aqui
@@ -184,7 +184,7 @@ const ListarVagasMonitor = () => {
             }
           }
         } else if (timeout === 'reset'){
-          const listaSemPrimeiroElemento = updatedResposta.slice(1);
+          const listaSemPrimeiroElemento = updatedResposta
           localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
           console.log('olha a lista', listaSemPrimeiroElemento)
           setResposta(listaSemPrimeiroElemento);
