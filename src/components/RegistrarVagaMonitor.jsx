@@ -1,13 +1,13 @@
 import axios from "axios";
 import { React, useState, useEffect, useRef } from "react";
-import { FaUserInjured, FaWheelchair } from "react-icons/fa";
+import { FaWheelchair } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../pages/Style/styles.css";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button, Divider, Grid, Loader, Text } from "@mantine/core";
+import { Button, Divider, Grid, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
@@ -158,6 +158,10 @@ const RegistrarVagaMonitor = () => {
                 console.error("Erro ao analisar JSON:", error);
               }
 
+              listaVagas = listaVagas.filter((element) => element !== null);
+
+              console.log(listaVagas);
+
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
               if (indexByPlaca !== -1) {
@@ -222,7 +226,7 @@ const RegistrarVagaMonitor = () => {
     baseURL: process.env.REACT_APP_HOST,
   });
 
-  const registrarEstacionamento = (campo) => {
+  const registrarEstacionamento = async (campo) => {
     const estacionamento = createAPI();
     const placaString = textoPlaca.toString();
     const placaMaiuscula = placaString.toUpperCase();
@@ -266,7 +270,7 @@ const RegistrarVagaMonitor = () => {
           pagamento: valor,
           id_vaga_veiculo: idvaga,
         })
-        .then((response) => {
+        .then(async(response) => {
           if (response.data.msg.resultado === true) {
             if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
@@ -290,6 +294,11 @@ const RegistrarVagaMonitor = () => {
               } catch (error) {
                 console.error("Erro ao analisar JSON:", error);
               }
+
+
+              listaVagas = listaVagas.filter((element) => element !== null);
+
+              console.log(listaVagas);
 
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
@@ -391,6 +400,10 @@ const RegistrarVagaMonitor = () => {
               } catch (error) {
                 console.error("Erro ao analisar JSON:", error);
               }
+
+              listaVagas = listaVagas.filter((element) => element !== null);
+
+              console.log(listaVagas);
 
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
