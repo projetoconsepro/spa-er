@@ -221,6 +221,10 @@ const RegistrarVagaMonitor = () => {
   const onClose = () => {
     setLoadingButton(false);
   }
+
+  useEffect(() => {
+    console.log(selectedButton)
+  }, [selectedButton]);
   
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
@@ -267,7 +271,7 @@ const RegistrarVagaMonitor = () => {
           placa: tirarTraco,
           numero_vaga: vagaa,
           tempo: tempo,
-          pagamento: valor,
+          pagamento: selectedButton,
           id_vaga_veiculo: idvaga,
         })
         .then(async(response) => {
@@ -280,7 +284,7 @@ const RegistrarVagaMonitor = () => {
               response.config.headers.id_usuario,
               vagaa,
               tirarTraco,
-              valor,
+              selectedButton,
               tempo,
               response.data.data.notificacao_pendente
             );
@@ -374,7 +378,7 @@ const RegistrarVagaMonitor = () => {
           placa: tirarTraco,
           numero_vaga: vagaa,
           tempo: tempo,
-          pagamento: valor,
+          pagamento: selectedButton,
         })
         .then((response) => {
           if (response.data.msg.resultado === true) {
@@ -386,7 +390,7 @@ const RegistrarVagaMonitor = () => {
               response.config.headers.id_usuario,
               vagaa,
               tirarTraco,
-              response.data.msg.msg === "Debito" ? 'debito' : valor,
+              response.data.msg.msg === "Debito" ? 'debito' : selectedButton,
               response.data.msg.msg === "Debito" ? response.data.data.tempoDebito : tempo,
               response.data.data.notificacao_pendente
             );
@@ -540,6 +544,7 @@ const RegistrarVagaMonitor = () => {
   const atualizafunc = () => {
     const tempoo = document.getElementById("tempos").value;
     const valorr = selectedButton;
+    console.log(selectedButton)
     setTempo(tempoo);
     setValor(valorr);
     if (tempoo === "00:10:00") {
@@ -601,6 +606,7 @@ const RegistrarVagaMonitor = () => {
   const handleSubmit = async () => {
     setLoadingButton(true);
     let select = selectedButton;
+    setValor(selectedButton);
     const tolerancia = document.getElementById("tempos").value;
 
     if (tolerancia === "notificacao" && textoPlaca !== ""){
@@ -752,7 +758,6 @@ const RegistrarVagaMonitor = () => {
               <div
                 className="h6 mt-3 "
                 style={{ display: mostrapag ? "block" : "none" }}
-                onChange={atualizafunc}
               >
                 <p className="text-start">Forma de pagamento:</p>
                 <Grid>
