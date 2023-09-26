@@ -158,20 +158,6 @@ const Grafico = () => {
       });
   };
 
-  useEffect(() => {
-    requisicaoSetores();
-  }, []);
-
-  useEffect(() => {
-    if (contador === 60) {
-      setContador(0);
-      requisicaoSetores();
-    }
-    setTimeout(() => {
-      setContador(contador + 1);
-    }, 1000);
-  }, [contador]);
-
   return (
     <>
       <h4 style={{ textAlign: "start", margin: "1rem" }}>

@@ -85,6 +85,7 @@ const ListarVagasMonitor = () => {
                 response.data.data[i].chegada,
                 response.data.data[i].tempo
               );
+              response.data.data[i].temporestante = updatedItem.temporestante;
               updatedItem.tempo = response.data.data[i].tempo;
 
               updatedItem.numero_notificacoes_pendentess =
@@ -113,6 +114,7 @@ const ListarVagasMonitor = () => {
               const segundosTempoRestante = converterParaSegundos(
                 updatedItem.temporestante
               );
+
               const diffSegundos = segundosTempoRestante - segundosHoraAtual;
               const diffMinutos = diffSegundos / 60;
 
@@ -189,11 +191,23 @@ const ListarVagasMonitor = () => {
         let estacionadoNCount = 0;
         let estacionadoPCount = 0;
 
+        const dataAtual = new Date();
+        const hora = dataAtual.getHours().toString().padStart(2, "0");
+        const minutos = dataAtual
+          .getMinutes()
+          .toString()
+          .padStart(2, "0");
+        const segundos = dataAtual
+          .getSeconds()
+          .toString()
+          .padStart(2, "0");
+        const horaAtual = `${hora}:${minutos}:${segundos}`;
+
         response.data.data.forEach((objeto) => {
           if (objeto.numero !== 0) {
             if (objeto.estacionado === "S") {
               estacionadoSCount++;
-              if (objeto.temporestante === "00:00:00" && objeto.numero_notificacoes_pendentess === 0) {
+              if (objeto.temporestante < horaAtual && objeto.numero_notificacoes_pendentess === 0) {
                 estacionadoPCount++;
               }
             } else if (objeto.estacionado === "N") {
