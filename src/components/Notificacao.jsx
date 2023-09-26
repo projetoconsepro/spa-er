@@ -162,6 +162,15 @@ const Notificacao = () => {
                         localStorage.setItem('id_notificacao', id)
                     }
 
+                    ImpressaoTicketNotificacao("PRIMEIRA",
+                    response.config.headers.id_usuario, 
+                    vaga, 
+                    placa, 
+                    modeloImpressao,
+                    fabricanteImpressao, 
+                    tipoNotificacaoNome, 
+                    response.data.data.local)
+
                     const primeiraParam = "PRIMEIRA";
                     const idUsuario = response.config.headers.id_usuario;
                     const local = response.data.data.local;
@@ -177,31 +186,39 @@ const Notificacao = () => {
                         local: local,
                       }));
 
-                    ImpressaoTicketNotificacao("PRIMEIRA",
-                     response.config.headers.id_usuario, 
-                     vaga, 
-                     placa, 
-                     modeloImpressao,
-                     fabricanteImpressao, 
-                     tipoNotificacaoNome, 
-                     response.data.data.local)
-
-                    if (localStorage.getItem("listaVagas")) {
-                        const listaVagas = JSON.parse(localStorage.getItem('listaVagas')) || [];
-                        
-                        const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa == placa);
-                        if (indexByPlaca !== -1) {
-                          listaVagas[indexByPlaca].numero_notificacoes += 1;
-                          listaVagas[indexByPlaca].numero_notificacoes_pendentes += 1;
-                          listaVagas[indexByPlaca].numero_notificacoes_pendentess += 1;
-                          listaVagas[indexByPlaca].corline = "#D3D3D4";
-                          listaVagas[indexByPlaca].cor = "#141619";
-                          listaVagas[indexByPlaca].variaDisplay = "aparece";
-                          listaVagas[indexByPlaca].display = "testeNot";
+                      const listaVagasString = localStorage.getItem("listaVagas");
+                      let listaVagas = [];
+          
+                        try {
+                          listaVagas = JSON.parse(listaVagasString) || [];
+                        } catch (error) {
+                          console.error("Erro ao analisar JSON:", error);
                         }
 
-                        localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+                        listaVagas = listaVagas.filter((element) => element !== null);
+
+                        console.log(listaVagas);
+
+                    const indexByVaga = listaVagas.findIndex((item) => item.numero == vaga);
+
+                    if (indexByVaga !== -1) {
+                        const hora = new Date();
+                        const horaMinuto = `${hora.getHours()}:${hora.getMinutes()}:${hora.getSeconds()}`;
+
+                        const vaga = listaVagas[indexByVaga];
+                           vaga.numero_notificacoes = 1;
+                           vaga.numero_notificacoes_pendentes = 1;
+                           vaga.numero_notificacoes_pendentess = 1;
+                           vaga.corline = "#D3D3D4";
+                           vaga.cor = "#141619";
+                           vaga.chegada = horaMinuto;
+                           vaga.tempo = horaMinuto;
+                           vaga.variaDisplay = "aparece";
+                           vaga.temporestante = horaMinuto;
+                           vaga.display = "testeNot";
+                           vaga.placa = placa;
                     }
+                       localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
 
 
                     FuncTrocaComp("CameraTicketNotificacao");
@@ -272,6 +289,10 @@ const Notificacao = () => {
                          } catch (error) {
                            console.error("Erro ao analisar JSON:", error);
                          }
+
+                         listaVagas = listaVagas.filter((element) => element !== null);
+
+                         console.log(listaVagas);
 
                      const indexByVaga = listaVagas.findIndex((item) => item.numero == vaga);
 
