@@ -277,7 +277,7 @@ const RegistrarEstacionamentoParceiro = () => {
                     placa: placaMaiuscula,
                     numero_vaga: vagaa,
                     tempo: tempo,
-                    pagamento: formaPagamentoo,
+                    pagamento: selectedButton,
                     id_vaga_veiculo:
                       response.data.data[0].estacionado[0].id_vaga_veiculo,
                   })
@@ -338,7 +338,7 @@ const RegistrarEstacionamentoParceiro = () => {
                     placa: placaMaiuscula,
                     numero_vaga: vagaa,
                     tempo: tempo,
-                    pagamento: formaPagamentoo,
+                    pagamento: selectedButton,
                   })
                   .then((response) => {
                     setLoadingButton(false);
