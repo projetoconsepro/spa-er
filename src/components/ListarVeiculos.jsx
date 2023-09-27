@@ -554,7 +554,7 @@ const ListarVeiculos = () => {
           gerarPDF(data2);
         }}
       >
-        Imprimir
+        Salvar
       </Button>
     </div>
   </Modal>

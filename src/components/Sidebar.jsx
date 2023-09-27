@@ -236,6 +236,12 @@ const Sidebar = () => {
                 },
                 {
                     className: styles.className,
+                    icon: <FaCar />,
+                    name: "‎ Adicionar veículo",
+                    componente: "AdicionarModelo",
+                },
+                {
+                    className: styles.className,
                     icon: <MdAddLocationAlt />,
                     name: "‎ Setores",
                     componente: "SetoresAdmin",
