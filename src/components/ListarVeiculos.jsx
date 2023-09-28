@@ -45,6 +45,7 @@ const ListarVeiculos = () => {
   const [date, setDate] = useState("");
   const [emissao, setEmissao] = useState("");
   const [validade, setValidade] = useState("");
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -457,43 +458,32 @@ const ListarVeiculos = () => {
     FuncTrocaComp("Irregularidades");
   };
 
-  async function gerarPDF() {
-    // Cria um novo objeto jsPDF
-    const pdfWidth = 80; // 100 mm
-    const pdfHeight = 100; // 150 mm
-    const pdf = new jsPDF({
-      unit: 'mm',
-      format: [pdfWidth, pdfHeight],
-    });
+  window.addEventListener("message", message => {
+    closeModal();
+    setPdfLoading(false);
+  });
 
-    const tamanhoFonte = 12;
+  async function gerarJSON(data2) {
+    setPdfLoading(true);
+    const data = {
+        tipo: 'Estacionamento avulso',
+        inicio: `${date} - ${emissao}`,
+        validade: `${date} - ${await calcularValidade(data2.chegada, data2.tempo)}`,
+        placa: data2.placa,
+        tempo: data2.tempoCredito,
+        valor: `R$ ${data2.valor}`,
+        cnpj: '89.668.040/0001-10',
+        endereco: 'Rua Julio de Castilhos, 2500',
+        cidade: 'Taquara - RS',
+        telefone: '(51) 9 8660-4241'
+    };
+  
+    console.log('JSON gerado:', data);
 
-    // Posições para posicionar o conteúdo do PDF
-    const x = 18 ;
-    const y = 15;
-
-    // Iniciar a criação do PDF e adicionar o conteúdo da div
-    pdf.setFontSize(tamanhoFonte);
-    pdf.text("CONSEPRO TAQUARA", x, y);
-    pdf.text("- - - - - - - - - - - - - - - - - - - - - - - -", 10 , y + 5);
-    pdf.setFontSize(tamanhoFonte - 2);
-    pdf.text("Tipo: Estacionamento avulso" , x, y + 12);
-    pdf.text(`Início: ${date} - ${emissao}` , x, y + 17);
-    pdf.text(`Validade: ${date} - ${await calcularValidade(data2.chegada, data2.tempo)}` , x, y + 22);
-    pdf.text("Placa: " + data2.placa , x, y + 27);
-    pdf.text("Tempo: " + data2.tempoCredito , x, y + 32);
-    pdf.text("Valor: R$ " + data2.valor , x, y + 37);
-    pdf.setFontSize(tamanhoFonte);
-    pdf.text("- - - - - - - - - - - - - - - - - - - - - - - -", 10 , y + 44);
-    pdf.setFontSize(tamanhoFonte - 2);
-    pdf.text("CNPJ: 89.668.040/0001-10", x, y + 49);
-    pdf.text("Rua Julio de Castilhos, 2500" , x, y + 54);
-    pdf.text("Taquara - RS" , x, y + 59);
-    pdf.text("(51) 9 8660-4241", x, y + 64);
-
-    // Gera o PDF
-    pdf.save("Comprovante_Ticket.pdf");
-  }
+      if(window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify(data));
+      }
+}
 
   return (
     <>
@@ -550,8 +540,9 @@ const ListarVeiculos = () => {
         fullWidth
         rightIcon={<IconPrinter size={23} />}
         loaderPosition="right"
+        loading={pdfLoading}
         onClick={() => {
-          gerarPDF(data2);
+          gerarJSON(data2);
         }}
       >
         Salvar
