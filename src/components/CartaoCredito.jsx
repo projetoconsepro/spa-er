@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import VoltarComponente from '../util/VoltarComponente';
+import { Button, Group } from '@mantine/core';
+import { IconArrowRight } from '@tabler/icons-react';
 
 const CartaoCredito = () => {
   const [cardNumber, setCardNumber] = useState('#### #### #### ####');
@@ -10,9 +13,13 @@ const CartaoCredito = () => {
   const [logoMarca, setLogoMarca] = useState('');
 
   const handleCardNumberChange = (e) => {
-    setCardNumber(e.target.value);
     let valorInput = e.target.value;
     let formattedValue = '';
+
+
+
+    if (valorInput.length > 19) return;
+
 
     const numericValue = valorInput.replace(/\D/g, '');
 
@@ -94,6 +101,20 @@ const CartaoCredito = () => {
     handleCvvMouseEnter();
   };
 
+
+  const handleRegistrar = () => {
+    console.log(cardNumber)
+    console.log(cardHolder)
+    console.log(expMonth)
+    console.log(expYear)
+    console.log(cvv)
+    if (cardNumber.includes('#') || cardHolder === '' || expMonth === 'mm' || expYear === 'yy' || cvv === '') {
+      alert('Preencha todos os campos');
+    } else {
+      alert('Cartão registrado com sucesso');
+    }
+  }
+
   return (
 
     <div className="container2 text-start">
@@ -137,24 +158,30 @@ const CartaoCredito = () => {
         </div>
         </div>
       </div>
-      <form action="">
-        <div className="inputBox">
+      <form className="mt-3">
+        <div className="inputBox mb-3">
           <span>Número do cartão</span>
           <input
-            type="number"
-            maxLength="16"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*" 
+            maxLength={16}
             className="card-number-input"
-            onChange={handleCardNumberChange}
+            onChange={(e) => handleCardNumberChange(e)}
+            onInput={(e) => {
+              // Remove caracteres não numéricos
+              e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            }}
           />
         </div>
-        <div className="inputBox">
+        <div className="inputBox mb-2">
           <span>Nome do titular</span>
           <input
             type="text"
             className="card-holder-input"
-            onChange={handleCardHolderChange}
+            onChange={(e) => handleCardHolderChange(e)}
             value={cardHolder}
-            maxLength={26}
+            maxLength={20}
           />
         </div>
 
@@ -241,12 +268,26 @@ const CartaoCredito = () => {
           </div>
         <div>
           <div className="row">
-                <div className="col-12 d-flex justify-content-center mt-4">
-        <button className="btn3 botao">Salvar</button>
-        </div>
-        </div>
+              <div className="col-12 d-flex justify-content-center mt-4">
+              <Button
+                variant="gradient"
+                gradient={{ from: "indigo", to: "grape.8", deg: 45 }}
+                size="md"
+                fullWidth
+                mt="md"
+                radius="md"
+                onClick={()=>{handleRegistrar()}}
+              >
+                Salvar ‎
+                <IconArrowRight size="1.3rem" className=""/>
+              </Button>
+              </div>
+          </div>
         </div>
       </form>
+      <Group position="center" mt="lg">
+        <VoltarComponente />
+      </Group>
     </div>
   );
 };

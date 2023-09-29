@@ -1,4 +1,4 @@
-import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs } from "@mantine/core";
+import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs, Stack, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowRight, IconCash, IconCheck, IconX } from "@tabler/icons-react";
 import axios from "axios";
@@ -9,6 +9,8 @@ import { BsCreditCard2Back } from "react-icons/bs";
 import createAPI from "../services/createAPI";
 import VoltarComponente from "../util/VoltarComponente";
 import ModalErroBanco from "./ModalErroBanco";
+import { MdPix } from "react-icons/md";
+import { FaTrash } from "react-icons/fa";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -27,6 +29,11 @@ const InserirCreditos = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
+  const [creditCard, setCreditCard] = useState([
+  
+]);
+
+    
 
   const inserirCreditos = async (campo, valor) => {
     const requisicao = await createAPI();
@@ -118,6 +125,7 @@ const InserirCreditos = () => {
     }
   };
 
+
   const FuncArrumaInput = (e) => {
     let valor = e.target.value;
 
@@ -159,50 +167,95 @@ const InserirCreditos = () => {
           <Tabs.Panel value="Meios de pagamento" pt="xs">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Group position="apart" mt="md" mb="xs">
-                <Text weight={500}>1. Escolha o método de pagamento:</Text>
+                <Text weight={500}>1. Selecione o método de pagamento:</Text>
               </Group>
-              <Radio.Group
-              defaultValue="pix"
-              >
-                {1 == 2  ? (
-                <Group mt="xs">
-                  <Radio
-                    value="cartaoCredito"
-                    onClick={() => {
-                      setMetodo("cartaoCredito");
-                    }}
+
+
+              <Group position="apart" mt="lg">
+
+                <Group position="apart" className="d-block">
+                <div className="col-3 d-flex align-items-center justify-content-center border border-success rounded" style={{ height: '75px', width: '80px',  background: metodo === 'pix' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
+                  onClick={() => setMetodo('pix')}>
+
+                  <MdPix className="mx-1" size={35}
+                  color={metodo === 'pix' ? 'white' : 'black'}
                   />
-                  <BsCreditCard2Back  className="mx-1" size={25}/>
-                  <Text weight={200}> Cartão de crédito</Text>
+
+                </div>
+                <Text weight={500} color='green'>Pix</Text>
                 </Group>
+
+                <Group position="apart" className="d-block">
+                <div className='col-3 d-flex align-items-center justify-content-center border border-success rounded' style={{ height: '75px', width: '80px',background: metodo === 'cartaoDeb' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
+                onClick={() => setMetodo('cartaoDeb')}>
+                  <BsCreditCard2Back className="mx-1" size={35}
+                    style={{ color: metodo === 'cartaoDeb' ? 'white' : 'black' }}
+                  />
+                </div>
+                <Text weight={500} color='green'>Débito</Text>
+                </Group>
+                <Group position="apart" className="d-block">
+                <div className="col-3 d-flex align-items-center justify-content-center border border-success rounded" style={{ height: '75px', width: '80px', background: metodo === 'cartaoCred' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
+                onClick={() => setMetodo('cartaoCred')}>
+                <BsCreditCard2Back className="mx-1" size={35}
+                style={{ color: metodo === 'cartaoCred' ? 'white' : 'black' }}
+                />
+                </div>
+                 <Text weight={500} color='green'>Crédito</Text>
+              </Group>
+              </Group>
+
+              {metodo !== "pix" ? (
+                <Group position="apart" mt="md" mb="xs">
+                  <Text weight={500}>2. Selecione seu cartão:</Text>
+                </Group>
+              ) : ( null )}
+
+                {metodo !== "pix" && creditCard.length > 0 ? (
+                  <div>
+                    {creditCard.map((item, index) => (
+                      <div key={index}>
+                        <div className="border border-black rounded mb-2" style={{ maxWidth: '400px'}}>
+                        <div className="d-flex align-items-center">
+                              <div className="">
+                              <BsCreditCard2Back className="mx-2" size={30}
+                                color='black'
+                              />
+                              </div>
+                              <div className="text-start mx-2">
+                                <Text weight={500}>{item.name}</Text>
+                                <Text weight={500} style={{marginTop: '-3px'}}>{item.number}</Text>
+                              </div>
+                              <div className="me-auto justify-content-end">
+                              <FaTrash className="mx-2" size={20}
+                                color='red'
+                              />
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : metodo !== "pix" && creditCard.length === 0 ? (
+                  <div>
+                <div mt="2" >
+                  <div className="d-flex align-items-center justify-content-center" onClick={()=> FuncTrocaComp('CartaoCredito')}>
+                    <Box >
+                    <Image
+                        src='https://media.discordapp.net/attachments/894696108926832711/1140737633958498314/creditCardPayment.png?width=364&height=367'
+                        alt="image"
+                        style={{ width: 160, height: 160 }}
+                      />
+                    </Box>
+                  </div>
+                </div>
+                <div mt="2">
+                  <Text mt="2"> Você não possui cartão registrado </Text>
+                  <Text fontSize="2xl" color="#65A059" mt="1"> Adicionar um cartão </Text>
+                </div>
+                  </div>
                 ) : null}
-                <Group mt="xs">
-                  <Radio
-                    value="pix"
-                    onClick={() => {
-                      setMetodo("pix");
-                    }}
-                  />
-                  <Image
-                    width={35}
-                    height={35}
-                    src="../../assets/img/cartaoCredito/pixxx.png"
-                  />
-                  <Text weight={200}> PIX</Text>
-                </Group>
-                {1 == 2 ? (
-                <Group mt="xs">
-                  <Radio
-                    value="cartaoDebito"
-                    onClick={() => {
-                      setMetodo("cartaoDebito");
-                    }}
-                  />
-                  <BsCreditCard2Back className="mx-1" size={25}/>
-                  <Text weight={200}> Cartão de débito</Text>
-                </Group>
-                ) : null}
-              </Radio.Group>
+
               <Button
                 variant="gradient"
                 gradient={{ from: "teal", to: "blue", deg: 60 }}
