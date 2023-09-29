@@ -478,11 +478,44 @@ const ListarVeiculos = () => {
         telefone: '(51) 9 8660-4241'
     };
   
-    console.log('JSON gerado:', data);
+      console.log('JSON gerado:', data);
 
       if(window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(JSON.stringify(data));
-      }
+      } else {
+          const pdfWidth = 80;
+          const pdfHeight = 100; 
+          const pdf = new jsPDF({
+            unit: 'mm',
+            format: [pdfWidth, pdfHeight],
+          });
+      
+          const tamanhoFonte = 12;
+
+          const x = 18 ;
+          const y = 15;
+
+          pdf.setFontSize(tamanhoFonte);
+          pdf.text("CONSEPRO TAQUARA", x, y);
+          pdf.text("- - - - - - - - - - - - - - - - - - - - - - - -", 10 , y + 5);
+          pdf.setFontSize(tamanhoFonte - 2);
+          pdf.text("Tipo: Estacionamento avulso" , x, y + 12);
+          pdf.text(`Início: ${date} - ${emissao}` , x, y + 17);
+          pdf.text(`Validade: ${date} - ${await calcularValidade(data2.chegada, data2.tempo)}` , x, y + 22);
+          pdf.text("Placa: " + data2.placa , x, y + 27);
+          pdf.text("Tempo: " + data2.tempoCredito , x, y + 32);
+          pdf.text("Valor: R$ " + data2.valor , x, y + 37);
+          pdf.setFontSize(tamanhoFonte);
+          pdf.text("- - - - - - - - - - - - - - - - - - - - - - - -", 10 , y + 44);
+          pdf.setFontSize(tamanhoFonte - 2);
+          pdf.text("CNPJ: 89.668.040/0001-10", x, y + 49);
+          pdf.text("Rua Julio de Castilhos, 2500" , x, y + 54);
+          pdf.text("Taquara - RS" , x, y + 59);
+          pdf.text("(51) 9 8660-4241", x, y + 64);
+      
+          pdf.save("Comprovante_Ticket.pdf");
+          setPdfLoading(false);
+    }
 }
 
   return (
