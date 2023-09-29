@@ -279,7 +279,7 @@ const CartaoCredito = () => {
                 onClick={()=>{handleRegistrar()}}
               >
                 Salvar ‎
-                <IconArrowRight size="1.3rem" className=""/>
+                <IconArrowRight size="1.3rem" />
               </Button>
               </div>
           </div>
