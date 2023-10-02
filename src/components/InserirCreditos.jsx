@@ -30,7 +30,26 @@ const InserirCreditos = () => {
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
   const [creditCard, setCreditCard] = useState([
-  
+    {
+      number: '**** **** **** 0000',
+      form: 'Crédito',
+      name : 'João da Silva'
+    },
+    {
+      number: '**** **** **** 4245',
+      form: 'Crédito',
+      name : 'João da Silva'
+    },
+    {
+      number: '**** **** **** 4242',
+      form: 'Débito',
+      name : 'João da Silva'
+    },
+    {
+      number: '**** **** **** 5256',
+      form: 'Débito',
+      name : 'João da Silva'
+    }
 ]);
 
     
@@ -251,7 +270,7 @@ const InserirCreditos = () => {
                 </div>
                 <div mt="2">
                   <Text mt="2"> Você não possui cartão registrado </Text>
-                  <Text fontSize="2xl" color="#65A059" mt="1"> Adicionar um cartão </Text>
+                  <Text fontSize="2xl" color="#65A059" mt="1" onClick={()=> FuncTrocaComp('CartaoCredito')}> Adicionar um cartão </Text>
                 </div>
                   </div>
                 ) : null}

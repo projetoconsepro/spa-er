@@ -12,11 +12,22 @@ const CartaoCredito = () => {
   const [cvv, setCvv] = useState('');
   const [logoMarca, setLogoMarca] = useState('');
 
-  const handleCardNumberChange = (e) => {
+
+  const getCardFlag = (cardNumber) => {
+    const cardNumberRegex = [
+    {regex: /^4[0-9]{12}(?:[0-9]{3})?$/, label: 'visa'},
+    {regex: /^5[1-5][0-9]{14}$/, label: 'mastercard'},
+    {regex: /^(4(0117[89]|3(1274|8935)|5(1416|7(393|63[12])))|50(4175|6(699|7([0-6]\d|7[0-8]))|9\d{3})|6(27780|36(297|368)|5(0(0(3[1-35-9]|4\d|5[01])|4(0[5-9]|([1-3]\d|8[5-9]|9\d))|5([0-2]\d|3[0-8]|4[1-9]|[5-8]\d|9[0-8])|7(0\d|1[0-8]|2[0-7])|9(0[1-9]|[1-6]\d|7[0-8]))|16(5[2-9]|[67]\d)|50([01]\d|2[1-9]|[34]\d|5[0-8]))))/, label: 'elocard'},
+    ];
+  
+    const resp = cardNumberRegex.find((cardRegex) => cardNumber.match(cardRegex.regex));
+
+    return resp;
+  };
+
+  const handleCardNumberChange =  async (e) => {
     let valorInput = e.target.value;
     let formattedValue = '';
-
-
 
     if (valorInput.length > 19) return;
 
@@ -32,15 +43,14 @@ const CartaoCredito = () => {
 
     setCardNumber(formattedValue);
 
-    if (valorInput === '') {
-      setLogoMarca('');
-      setCardNumber('#### #### #### ####');
-    }
+    const bandeira = await getCardFlag(numericValue);
 
-    if (valorInput[0] === '4') {
-      setLogoMarca("../../assets/img/cartaoCredito/visa.png");
-    } else if (valorInput[0] === '5') {
-      setLogoMarca("../../assets/img/cartaoCredito/mastercard.png");
+    console.log(bandeira);
+
+    if (bandeira) {
+      setLogoMarca(`../../assets/img/cartaoCredito/${bandeira.label}.png`);
+    } else {
+      setLogoMarca('');
     }
     
 
@@ -123,7 +133,7 @@ const CartaoCredito = () => {
         <div className="front">
           <div className="image">
             <img src="../../assets/img/cartaoCredito/chip.png" alt="" />
-            {logoMarca && <img src={logoMarca} alt="" className="logo" />}
+            {logoMarca && <img src={logoMarca} alt="" style={{ width :  logoMarca.includes('elo') ? '85px' : '',  height: logoMarca.includes('elo') ? '40px' : '', }} className="logo" />}
           </div>
           <div className="card-number-box">{cardNumber}</div>
           <div className="flexbox">
