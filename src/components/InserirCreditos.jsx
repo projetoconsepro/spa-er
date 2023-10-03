@@ -415,7 +415,7 @@ const InserirCreditos = () => {
                   color="red"
                   withBorder={false}
                 >
-                  {valor !== ""
+                  {valor !== ''
                     ? "Você precisa selecionar um valor acima de R$ 2,00!"
                     : "Você precisa selecionar algum valor!"}
                 </Notification>
