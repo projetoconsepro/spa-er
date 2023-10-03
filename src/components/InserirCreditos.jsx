@@ -10,7 +10,7 @@ import createAPI from "../services/createAPI";
 import VoltarComponente from "../util/VoltarComponente";
 import ModalErroBanco from "./ModalErroBanco";
 import { MdPix } from "react-icons/md";
-import { FaTrash } from "react-icons/fa";
+import { FaSave, FaTrash } from "react-icons/fa";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -29,27 +29,9 @@ const InserirCreditos = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
+  const [CreditCardSelected, setCreditCardSelected] = useState(0);
   const [creditCard, setCreditCard] = useState([
-    {
-      number: '**** **** **** 0000',
-      form: 'Crédito',
-      name : 'João da Silva'
-    },
-    {
-      number: '**** **** **** 4245',
-      form: 'Crédito',
-      name : 'João da Silva'
-    },
-    {
-      number: '**** **** **** 4242',
-      form: 'Débito',
-      name : 'João da Silva'
-    },
-    {
-      number: '**** **** **** 5256',
-      form: 'Débito',
-      name : 'João da Silva'
-    }
+
 ]);
 
     
@@ -130,11 +112,15 @@ const InserirCreditos = () => {
   const handleTabs = () => {
     if (metodo === "pix") {
       setTabsValue("Valor");
-    } else if (metodo === "") {
-      setDivAvancar(true);
-      setTimeout(() => {
-        setDivAvancar(false);
-      }, 5000);
+    } else if (metodo === "cartaoDeb" || metodo === "cartaoCred") {
+      if (creditCard.length > 0) {
+        setTabsValue("Valor");
+      } else {
+        setDivAvancar(true);
+        setTimeout(() => {
+          setDivAvancar(false);
+        }, 5000);
+      }
     }
     else {
       setDivAvancar(true);
@@ -232,32 +218,53 @@ const InserirCreditos = () => {
 
                 {metodo !== "pix" && creditCard.length > 0 ? (
                   <div>
-                    {creditCard.map((item, index) => (
-                      <div key={index}>
-                        <div className="border border-black rounded mb-2" style={{ maxWidth: '400px'}}>
-                        <div className="d-flex align-items-center">
-                              <div className="">
-                              <BsCreditCard2Back className="mx-2" size={30}
-                                color='black'
-                              />
-                              </div>
-                              <div className="text-start mx-2">
-                                <Text weight={500}>{item.name}</Text>
-                                <Text weight={500} style={{marginTop: '-3px'}}>{item.number}</Text>
-                              </div>
-                              <div className="me-auto justify-content-end">
-                              <FaTrash className="mx-2" size={20}
-                                color='red'
-                              />
-                              </div>
-                            </div>
+                  {creditCard.map((item, index) => (
+                    <div key={index}>
+                    <Box className="border border-black rounded mb-2" 
+                    style={{ maxWidth: '400px', backgroundImage: CreditCardSelected === index ?'linear-gradient(45deg, #0CA678,  #1098AD)' : 'none'  }}
+                    onClick={() => setCreditCardSelected(index)}
+                    >
+                      <div className="d-flex align-items-center">
+                        <div>
+                        {item.number[0] === '4' ? (
+                              CreditCardSelected !== index ? (
+                                <Image
+                                  src='../../assets/img/cartaoCredito/visa-unselected.png'
+                                  alt="image"
+                                  style={{ width: 45, height: 45, display: 'flex', alignItems: 'center', marginLeft: '5px'  }}
+                                />
+                              ) : (
+                                <Image
+                                  src='../../assets/img/cartaoCredito/visa.png'
+                                  alt="image"
+                                  style={{ width: 45, height: 45, display: 'flex', alignItems: 'center', marginLeft: '5px'  }}
+                                />
+                              )
+                          ) : item.number[0] === '5' ? (
+                            <Image
+                              src='../../assets/img/cartaoCredito/mastercard.png'
+                              alt="image"
+                              style={{ width: 50, height: 50, display: 'flex', alignItems: 'center'}}
+                            />
+                          ) :
+                          <BsCreditCard2Back className="mx-2"
+                          size={30}
+                          color={CreditCardSelected === index ? 'white' : 'black' }
+                          />
+                          }
+                        </div>
+                        <div className={CreditCardSelected === index ? "text-start text-white mx-2" : "text-start mx-2" }>
+                          <Text weight={300} >{item.name}</Text>
+                          <Text weight={400}  style={{ marginTop: '-3px' }}>{item.number}</Text>
                         </div>
                       </div>
-                    ))}
+                    </Box>
                   </div>
+                  ))}
+                </div>
                 ) : metodo !== "pix" && creditCard.length === 0 ? (
-                  <div>
-                <div mt="2" >
+                  <div className="mb-5">
+                <div>
                   <div className="d-flex align-items-center justify-content-center" onClick={()=> FuncTrocaComp('CartaoCredito')}>
                     <Box >
                     <Image
@@ -268,9 +275,20 @@ const InserirCreditos = () => {
                     </Box>
                   </div>
                 </div>
-                <div mt="2">
-                  <Text mt="2"> Você não possui cartão registrado </Text>
-                  <Text fontSize="2xl" color="#65A059" mt="1" onClick={()=> FuncTrocaComp('CartaoCredito')}> Adicionar um cartão </Text>
+                <div className="mt-1">
+                  <Text> Você não possui cartão registrado </Text>
+                  <Button color="#65A059"
+                  fullWidth
+                  mt="md"
+                  radius="md"
+                  rightIcon={<FaSave />}
+
+
+                  onClick={()=> FuncTrocaComp('CartaoCredito')}
+                  >
+                  <Text> Adicionar um cartão </Text> 
+                  </Button>
+                  
                 </div>
                   </div>
                 ) : null}
@@ -295,7 +313,7 @@ const InserirCreditos = () => {
                 >
                   <Text weight={500} color="red">
                     {metodo === null ? "Você precisa selecionar um método de pagamento!" :
-                    "Método de pagamento ainda não implementado! Estamos trabalhando nisso. "}
+                    "Você precisa cadastrar um cartão! "}
                   </Text>
                 </Notification>
               ) : null}
