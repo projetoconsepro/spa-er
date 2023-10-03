@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import VoltarComponente from '../util/VoltarComponente';
-import { Button, Group } from '@mantine/core';
+import { Button, Group, Notification } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
+import createAPI from '../services/createAPI';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const CartaoCredito = () => {
   const [cardNumber, setCardNumber] = useState('#### #### #### ####');
@@ -11,9 +13,10 @@ const CartaoCredito = () => {
   const [expYear, setExpYear] = useState('yy');
   const [cvv, setCvv] = useState('');
   const [logoMarca, setLogoMarca] = useState('');
+  const [divMensagem, setDivmMensagem] = useState(false);
 
 
-  const getCardFlag = (cardNumber) => {
+  const getCardFlag = async (cardNumber) => {
     const cardNumberRegex = [
     {regex: /^4[0-9]{12}(?:[0-9]{3})?$/, label: 'visa'},
     {regex: /^5[1-5][0-9]{14}$/, label: 'mastercard'},
@@ -111,19 +114,93 @@ const CartaoCredito = () => {
     handleCvvMouseEnter();
   };
 
+  function shuffleString(inputString, numPositions, order) {
+    const array = inputString.split(''); // Converte a string em um array de caracteres
+  
+    for (let i = 0; i < order.length; i += 2) {
+      const pos1 = order[i] % numPositions;
+      const pos2 = order[i + 1] % numPositions;
+  
+      // Troca os elementos nas posições especificadas
+      const temp = array[pos1];
+      array[pos1] = array[pos2];
+      array[pos2] = temp;
+    }
+  
+    return array.join(''); // Converte o array de volta para uma string
+  }
 
-  const handleRegistrar = () => {
-    console.log(cardNumber)
-    console.log(cardHolder)
-    console.log(expMonth)
-    console.log(expYear)
-    console.log(cvv)
+
+  const handleRegistrar = async () => {
     if (cardNumber.includes('#') || cardHolder === '' || expMonth === 'mm' || expYear === 'yy' || cvv === '') {
-      alert('Preencha todos os campos');
+    
+      setDivmMensagem(true);
+
+      setTimeout(() => {
+        setDivmMensagem(false);
+      }, 5000);
+      
     } else {
-      alert('Cartão registrado com sucesso');
+      const user = localStorage.getItem("user");
+      const user2 = JSON.parse(user);
+
+      const bandeira = await getCardFlag(cardNumber).label || '';
+      const cardNumberText = cardNumber.replace(/\s/g, '');
+
+      const dados = {
+          "numero_cartao": cardNumberText,
+          "ccv": cvv,
+          "validade": `${expMonth},${expYear}`,
+          "bandeira": bandeira
+      };
+
+      const stringDados = JSON.stringify(dados);
+
+      let dadosBase64 = btoa(stringDados);
+
+      dadosBase64 = dadosBase64.replace(/=/g, '._.');
+
+      dadosBase64 = dadosBase64.replace(/i/g, '@');
+
+      dadosBase64 = dadosBase64.replace(/Y/g, '=');
+
+      dadosBase64 = dadosBase64.replace(/j/g, 'i');
+
+      dadosBase64 = btoa(dadosBase64);
+
+      dadosBase64 = dadosBase64.split('').reverse().join('');
+      
+      const idString = user2.id_usuario.toString();
+
+      const numPositions = parseInt(idString.length) + parseInt(idString[0]) * 2;
+
+      const data = new Date();
+
+      let orderString = `${data.getDate()},${data.getMonth()},${data.getFullYear()},${data.getHours()}`;
+
+      orderString = btoa(orderString);
+
+      const order = [data.getDate(), data.getMonth(), data.getFullYear(), data.getHours()];
+
+      const shuffledString = shuffleString(dadosBase64, numPositions, order);
+
+      const requisicao = createAPI()
+
+      requisicao.post('/cartao/', {
+        "dados": `${shuffledString}$${orderString}`
+      }).then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          FuncTrocaComp('InserirCreditos');
+        } else {
+          alert('Erro ao cadastrar o cartão de crédito')
+        }
+      }
+      ).catch((erro) => {
+        console.log(erro);
+      });
     }
   }
+
 
   return (
 
@@ -248,16 +325,16 @@ const CartaoCredito = () => {
               <option value="ano" disabled>
                 ano
               </option>
-              <option value="2021">2021</option>
-              <option value="2022">2022</option>
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-              <option value="2027">2027</option>
-              <option value="2028">2028</option>
-              <option value="2029">2029</option>
-              <option value="2030">2030</option>
+              <option value="21">2021</option>
+              <option value="22">2022</option>
+              <option value="23">2023</option>
+              <option value="24">2024</option>
+              <option value="25">2025</option>
+              <option value="26">2026</option>
+              <option value="27">2027</option>
+              <option value="28">2028</option>
+              <option value="29">2029</option>
+              <option value="30">2030</option>
             </select>
           </div>
           </div>
@@ -278,6 +355,13 @@ const CartaoCredito = () => {
           </div>
         <div>
           <div className="row">
+            {divMensagem &&
+            <div className="col-12">
+            <Notification color="red" title="Aviso!" mt={12}>
+              Por favor, preencha todos os campos
+            </Notification>
+            </div>
+            }
               <div className="col-12 d-flex justify-content-center mt-4">
               <Button
                 variant="gradient"

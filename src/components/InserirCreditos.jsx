@@ -29,12 +29,37 @@ const InserirCreditos = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
-  const [CreditCardSelected, setCreditCardSelected] = useState(0);
-  const [creditCard, setCreditCard] = useState([
+  const [CreditCardSelected, setCreditCardSelected] = useState(null);
+  const [creditCard, setCreditCard] = useState([]);
 
-]);
 
+
+  const getCreditCardFUNC = async () => {
+    const requisicao = createAPI();
+
+    await requisicao
+      .get("/cartao/")
+      .then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          const newData = resposta.data.data.map((item) => ({
+            cartao: item.id_cartao,
+            bandeira: item.bandeira,
+            numero:  `#### #### #### ${item.cartao}`,
+          }));
+          setCreditCard(newData);
+        } else {
+          setCreditCard([]);
+        }
+      })
+      .catch((err) => {
+        setCreditCard([]);
+      });
+    }
     
+  useEffect(() => {
+    getCreditCardFUNC();
+  }, []);
+
 
   const inserirCreditos = async (campo, valor) => {
     const requisicao = await createAPI();
@@ -226,7 +251,7 @@ const InserirCreditos = () => {
                     >
                       <div className="d-flex align-items-center">
                         <div>
-                        {item.number[0] === '4' ? (
+                        {item.bandeira === 'visa' ? (
                               CreditCardSelected !== index ? (
                                 <Image
                                   src='../../assets/img/cartaoCredito/visa-unselected.png'
@@ -240,7 +265,7 @@ const InserirCreditos = () => {
                                   style={{ width: 45, height: 45, display: 'flex', alignItems: 'center', marginLeft: '5px'  }}
                                 />
                               )
-                          ) : item.number[0] === '5' ? (
+                          ) : item.bandeira === 'mastercard' ? (
                             <Image
                               src='../../assets/img/cartaoCredito/mastercard.png'
                               alt="image"
@@ -254,8 +279,7 @@ const InserirCreditos = () => {
                           }
                         </div>
                         <div className={CreditCardSelected === index ? "text-start text-white mx-2" : "text-start mx-2" }>
-                          <Text weight={300} >{item.name}</Text>
-                          <Text weight={400}  style={{ marginTop: '-3px' }}>{item.number}</Text>
+                          <Text weight={400}  style={{ marginTop: '-3px' }}>{item.numero}</Text>
                         </div>
                       </div>
                     </Box>
