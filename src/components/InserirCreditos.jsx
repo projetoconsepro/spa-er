@@ -216,8 +216,6 @@ const InserirCreditos = () => {
 
 
     const requisicao = createAPI();
-
-    alert('passa no cu pix')
   };
 
 
