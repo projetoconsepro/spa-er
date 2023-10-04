@@ -14,10 +14,12 @@ import {
   Accordion,
   ActionIcon,
   Badge,
+  Box,
   Button,
   Card,
   Grid,
   Group,
+  Image,
   Input,
   PasswordInput,
   Text,
@@ -30,7 +32,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import { IconLockCheck } from "@tabler/icons-react";
 import Swal from "sweetalert2";
 import createAPI from "../services/createAPI";
-import { FaTrash } from "react-icons/fa";
+import { FaCreditCard, FaSave, FaTrash } from "react-icons/fa";
 
 const ConfigurarPerfil = () => {
   const [saldo, setSaldo] = useState([]);
@@ -50,36 +52,7 @@ const ConfigurarPerfil = () => {
   const [isTelefoneEnabled, setIsTelefoneEnabled] = useState(false);
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
-
-  const cartoesData = [
-    {
-      id: 1,
-      value: "1",
-      bandeira: "mastercard",
-      numero: "4321 **** **** 2678",
-      nome: "VINICIUS KRUMMENAUER",
-      validade: "10/25",
-      background: 'linear-gradient(to right, #F4796B, #f79e21)'
-    },
-    {
-      id: 2,
-      value: "2",
-      bandeira: "visa",
-      numero: "4321 **** **** 2678",
-      nome: "VINICIUS KRUMMENAUER",
-      validade: "10/25",
-      background: 'linear-gradient(to right, #064789, #427AA1)'
-    },
-    {
-      id: 3,
-      value: "3",
-      bandeira: "elocard",
-      numero: "4321 **** **** 2678",
-      nome: "VINICIUS KRUMMENAUER",
-      validade: "10/25",
-      background: 'linear-gradient(to right, #322214, #2E282A)'
-    },
-  ]
+  const [cartoesData, setCartoesData] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -99,6 +72,26 @@ const ConfigurarPerfil = () => {
     requisicao.get("/usuario/saldo-credito").then((response) => {
       setSaldo(response?.data?.data?.saldo);
     });
+
+    requisicao
+      .get("/cartao/")
+      .then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          const newData = resposta.data.data.map((item) => ({
+            cartao: `${item.id_cartao}`,
+            bandeira: item.bandeira,
+            numero:  `#### #### #### ${item.cartao}`,
+            background: item.bandeira === 'visa' ? 'linear-gradient(to right, #064789, #427AA1)' : item.bandeira === 'mastercard' ? 'linear-gradient(to right, #F4796B, #f79e21)' : item.bandeira === 'elo' ? 'linear-gradient(to right, #322214, #2E282A)' :  'white'
+          }));
+          console.log(newData)
+          setCartoesData(newData);
+        } else {
+          setCartoesData([]);
+        }
+      })
+      .catch((err) => {
+        setCartoesData([]);
+      });
   }, []);
 
   const handleUsernameIconClick = () => {
@@ -167,6 +160,33 @@ const ConfigurarPerfil = () => {
       }, 3000);
     }
   };
+
+  const apagarCartao = (cartao) => {
+    const requisicao = createAPI();
+    requisicao
+    .delete(`/cartao/${parseInt(cartao.cartao)}`)
+    .then((response) => {
+      if (response.data.msg.resultado){
+        Swal.fire({
+          icon: "success",
+          title: response.data.msg.msg,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        const newData = cartoesData.filter((item) => item.cartao !== cartao.cartao);
+        setCartoesData(newData);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: response.data.msg.msg,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
 
   const handleCancelClickSenha = () => {
     setSenha("");
@@ -456,7 +476,7 @@ const ConfigurarPerfil = () => {
         {perfil === "cliente" ? (
           <Accordion.Item value="cartao">
             <Accordion.Control icon={<IconCreditCard size={rem(20)} />}>
-              Meus cartões de crédito
+              Meus cartões 
             </Accordion.Control>
             <Accordion.Panel>
               <Accordion
@@ -464,59 +484,63 @@ const ConfigurarPerfil = () => {
                 styles={{ item: { backgroundColor: "white" } }}
                 className="text-start"
               >
-                {cartoesData.map((cartao) => (
+
+                {cartoesData.length !== 0 ? 
+                cartoesData.map((cartao) => (
                 <Accordion.Item
                   style={{ background: cartao.background }}
                   className="text-white"
-                  key={cartao.id}
-                  value={cartao.value}
+                  key={cartao.cartao}
+                  value={cartao.cartao}
                 >
-                  <Accordion.Control style={{ background: cartao.background }} className="text-white">
+                  <Accordion.Control style={{ background: cartao.background }} className={cartao.background === 'white' ? 'text-black' : 'text-white'}>
                     <div className="row">
                       <div className="">
+                        {cartao.bandeira === "mastercard" || cartao.bandeira === "visa" || cartao.bandeira === "elocard" ? (
                         <img
                           src={`../../assets/img/cartaoCredito/${cartao.bandeira}.png`}
                           alt="logo"
                           className="bandeira"
-                        />{" "}
+                        />
+                        ) : (
+                          <FaCreditCard size={rem(20)} />
+                        )}
                         <span className="mx-2">{cartao.numero}</span>
                       </div>
                     </div>
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <div className="row">
-                      <div className="col-8">
-                        <div className="column">
-                          <div className="col-8">
-                            <span>Nome do titular:</span>
-                          </div>
-                          <div className="col-8">
-                            <span>{cartao.nome}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-4">
-                        <div className="column">
-                          <div>
-                            <span>Validade:</span>
-                          </div>
-                          <div>
-                            <span>{cartao.validade}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-end justify-content-end">
-                        <FaTrash className="mx-2" size={16}
-                        color='red'
-                        />
-                      </div>
+                    <div className="row align-items-center justify-content-center">
+                    <Button
+                        variant="gradient"
+                        gradient={{ from: 'red', to: 'red', deg: 90 }}
+                        className="w-50"
+                        onClick={() => apagarCartao(cartao)}
+                      >
+                        Apagar cartão
+                      </Button>
                     </div>
                   </Accordion.Panel>
                 </Accordion.Item>
-                ))}
+                )) : (
+                  <div>
+                  <div className="d-flex align-items-center justify-content-center" onClick={()=> FuncTrocaComp('CartaoCredito')}>
+                    <Box>
+                    <Image
+                        src='https://media.discordapp.net/attachments/894696108926832711/1140737633958498314/creditCardPayment.png?width=364&height=367'
+                        alt="image"
+                        style={{ width: 160, height: 160 }}
+                      />
+                    </Box>
+                  </div>
+                  <div className="mt-3">
+                  <Text className="text-center"> Você não possui cartão registrado </Text>
+                </div>
+                </div>
+                )}
               </Accordion>
               <Button className='mt-3' leftIcon={<IconArrowForwardUpDouble size="1rem" />} onClick={() => { FuncTrocaComp('CartaoCredito') }}>
-                  Adioconar cartão de crédito
+                  Adicionar cartão 
               </Button>
             </Accordion.Panel>
           </Accordion.Item>

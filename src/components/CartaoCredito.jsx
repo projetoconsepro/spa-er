@@ -14,9 +14,12 @@ const CartaoCredito = () => {
   const [cvv, setCvv] = useState('');
   const [logoMarca, setLogoMarca] = useState('');
   const [divMensagem, setDivmMensagem] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [ mensagemApi , setMensagemApi ] = useState(false);
 
 
   const getCardFlag = async (cardNumber) => {
+    console.log(cardNumber);
     const cardNumberRegex = [
     {regex: /^4[0-9]{12}(?:[0-9]{3})?$/, label: 'visa'},
     {regex: /^5[1-5][0-9]{14}$/, label: 'mastercard'},
@@ -133,6 +136,7 @@ const CartaoCredito = () => {
 
   const handleRegistrar = async () => {
     if (cardNumber.includes('#') || cardHolder === '' || expMonth === 'mm' || expYear === 'yy' || cvv === '') {
+      setMensagemApi(false);
     
       setDivmMensagem(true);
 
@@ -141,17 +145,19 @@ const CartaoCredito = () => {
       }, 5000);
       
     } else {
+      setLoadingButton(true);
       const user = localStorage.getItem("user");
       const user2 = JSON.parse(user);
 
-      const bandeira = await getCardFlag(cardNumber).label || '';
       const cardNumberText = cardNumber.replace(/\s/g, '');
+
+      const bandeira = await getCardFlag(cardNumberText);
 
       const dados = {
           "numero_cartao": cardNumberText,
           "ccv": cvv,
           "validade": `${expMonth},${expYear}`,
-          "bandeira": bandeira
+          "bandeira": bandeira && bandeira.label ? bandeira.label : '',
       };
 
       const stringDados = JSON.stringify(dados);
@@ -189,10 +195,18 @@ const CartaoCredito = () => {
       requisicao.post('/cartao/', {
         "dados": `${shuffledString}$${orderString}`
       }).then((resposta) => {
+        setLoadingButton(false);
         if (resposta.data.msg.resultado) {
           FuncTrocaComp('InserirCreditos');
         } else {
-          alert('Erro ao cadastrar o cartão de crédito')
+          setMensagemApi(true);
+          setDivmMensagem(true);
+
+          setTimeout(() => {
+            setDivmMensagem(false);
+          }, 6000);
+
+          
         }
       }
       ).catch((erro) => {
@@ -358,7 +372,7 @@ const CartaoCredito = () => {
             {divMensagem &&
             <div className="col-12">
             <Notification color="red" title="Aviso!" mt={12}>
-              Por favor, preencha todos os campos
+              {mensagemApi ? 'Não conseguimos salvar seu cartão. Por favor, verifique as informações e tente novamente.' : 'Por favor, preencha todos os campos!' }
             </Notification>
             </div>
             }
@@ -370,6 +384,7 @@ const CartaoCredito = () => {
                 fullWidth
                 mt="md"
                 radius="md"
+                loading={loadingButton}
                 onClick={()=>{handleRegistrar()}}
               >
                 Salvar ‎

@@ -1,6 +1,6 @@
 import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs, Stack, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowRight, IconCash, IconCheck, IconX } from "@tabler/icons-react";
+import { IconArrowForwardUpDouble, IconArrowRight, IconCash, IconCheck, IconX } from "@tabler/icons-react";
 import axios from "axios";
 import { React, useState, useRef, useEffect } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -139,7 +139,17 @@ const InserirCreditos = () => {
       setTabsValue("Valor");
     } else if (metodo === "cartaoDeb" || metodo === "cartaoCred") {
       if (creditCard.length > 0) {
-        setTabsValue("Valor");
+
+        if (CreditCardSelected !== null) {
+          setTabsValue("Valor");
+        } else {
+          setDivAvancar(true);
+          setTimeout(() => {
+            setDivAvancar(false);
+          }, 5000);
+        }
+
+        
       } else {
         setDivAvancar(true);
         setTimeout(() => {
@@ -176,6 +186,53 @@ const InserirCreditos = () => {
 
     setValor2(valor);
   };
+
+  const pagamentoCartao = () => {
+    setButtonDisabled(true);
+
+    let ValorFinal = valor;
+
+    if (ValorFinal === "outro") {
+      ValorFinal = valor2;
+    }
+
+    ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
+
+    if (
+      ValorFinal <= 20 ||
+      ValorFinal == "" ||
+      ValorFinal == "" ||
+      ValorFinal == null ||
+      ValorFinal == undefined ||
+      isNaN(ValorFinal)
+    ) {
+      setButtonDisabled(false);
+      setDivAvancar2(true);
+      setTimeout(() => {
+        setDivAvancar2(false);
+      }, 5000);
+      return;
+    } 
+
+
+    const requisicao = createAPI();
+
+    alert('passa no cu pix')
+  };
+
+
+
+
+
+
+  const validaFormato = () => {
+    if ( metodo === 'pix' ) {
+      fazerPix();
+    } else {
+      pagamentoCartao();
+    }
+  }
+
 
   return (
     <div>
@@ -245,12 +302,12 @@ const InserirCreditos = () => {
                   <div>
                   {creditCard.map((item, index) => (
                     <div key={index}>
-                    <Box className="border border-black rounded mb-2" 
-                    style={{ maxWidth: '400px', backgroundImage: CreditCardSelected === index ?'linear-gradient(45deg, #0CA678,  #1098AD)' : 'none'  }}
+                    <Box className="border border-black rounded mb-2 align-items-center" 
+                    style={{ maxWidth: '400px', minHeight : '50px', backgroundImage: CreditCardSelected === index ?'linear-gradient(45deg, #0CA678,  #1098AD)' : 'none'  }}
                     onClick={() => setCreditCardSelected(index)}
                     >
                       <div className="d-flex align-items-center">
-                        <div>
+                        <div className="align-items-center">
                         {item.bandeira === 'visa' ? (
                               CreditCardSelected !== index ? (
                                 <Image
@@ -272,7 +329,7 @@ const InserirCreditos = () => {
                               style={{ width: 50, height: 50, display: 'flex', alignItems: 'center'}}
                             />
                           ) :
-                          <BsCreditCard2Back className="mx-2"
+                          <BsCreditCard2Back className="m-2"
                           size={30}
                           color={CreditCardSelected === index ? 'white' : 'black' }
                           />
@@ -285,6 +342,9 @@ const InserirCreditos = () => {
                     </Box>
                   </div>
                   ))}
+                      <Button className='mt-3 mb-3' variant="outline" leftIcon={<IconArrowForwardUpDouble size="1rem" />} onClick={() => { FuncTrocaComp('CartaoCredito') }}>
+                            Adicionar novo cartão
+                      </Button>
                 </div>
                 ) : metodo !== "pix" && creditCard.length === 0 ? (
                   <div className="mb-5">
@@ -337,6 +397,8 @@ const InserirCreditos = () => {
                 >
                   <Text weight={500} color="red">
                     {metodo === null ? "Você precisa selecionar um método de pagamento!" :
+                    metodo !== 'pix' && CreditCardSelected === null ?
+                    "Você precisa selecionar um cartão!" :
                     "Você precisa cadastrar um cartão! "}
                   </Text>
                 </Notification>
@@ -352,8 +414,9 @@ const InserirCreditos = () => {
                 </Text>
               </Group>
               <Radio.Group
-              defaultValue="3"
+              defaultValue={ metodo === 'pix' ? '3' : '4' }
               >
+                {metodo === 'pix' ? (
                 <Group mt="xs">
                   <Radio
                     value="3"
@@ -364,6 +427,18 @@ const InserirCreditos = () => {
                     }}
                   />
                 </Group>
+                ) :                 
+                <Group mt="xs">
+                <Radio
+                  value="4"
+                  size="lg"
+                  label="R$ 20,00"
+                  onClick={() => {
+                    setValor("20.00");
+                  }}
+                />
+              </Group> 
+              }
                 <Group mt="xs">
                   <Radio
                     value="6"
@@ -426,7 +501,7 @@ const InserirCreditos = () => {
                 disabled={buttonDisabled}
                 radius="md"
                 onClick={() => {
-                  fazerPix();
+                  validaFormato();
                 }}
               >
                 Registrar transferência ‎
@@ -439,9 +514,11 @@ const InserirCreditos = () => {
                   color="red"
                   withBorder={false}
                 >
-                  {valor !== ''
-                    ? "Você precisa selecionar um valor acima de R$ 2,00!"
-                    : "Você precisa selecionar algum valor!"}
+                  {valor !== '' && metodo === 'pix' ? 
+                   "Você precisa selecionar um valor acima de R$ 2,00!" :
+                    valor !== '' && metodo !== 'pix' ?
+                    "Você precisa selecionar um valor acima de R$ 20,00!" :
+                    "Você precisa selecionar algum valor!"}
                 </Notification>
               ) : null}
             </Card>
