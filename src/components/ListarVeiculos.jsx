@@ -152,7 +152,7 @@ const ListarVeiculos = () => {
         }
         for (let i = 0; i < response?.data?.data.length; i++) {
           resposta[i] = {};
-          resposta[i].div = "card-body10 mb-2";
+          resposta[i].div = `card-body10 mb-2`;
           notificacao[i] = { estado: true };
           mostrar2[i] = { estado: false };
           mostrardiv[i] = { estado: true };
@@ -673,13 +673,12 @@ const ListarVeiculos = () => {
                 <div className="d-flex align-items-center fw-bold">
                   {link.estacionado !== "Não estacionado" ?
                   <div>
-                    <img src="../../assets/img/estacionamento.png" alt="Rich Logo" className={window.innerWidth > 900 ? "w-25" : ""}/>
+                    <img src="../../assets/img/estacionamento.png" alt="Rich Logo" className={ window.innerWidth > 1500 ? 'w-25' : window.innerWidth > 760 ? "w-50" : ""}/>
                   </div>
                   : null }
                 </div>
               </div>
-            </div>
-            <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
+              <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
                 <Button
                   variant="outline"
                   radius="md"
@@ -696,6 +695,7 @@ const ListarVeiculos = () => {
                   {mostrar2[index].estado ? "Fechar" : link.textoestacionado}
                 </Button>
                 </div>
+            </div>
           </div>
           {mostrar2[index].estado ? (
             <div className="mb-1">

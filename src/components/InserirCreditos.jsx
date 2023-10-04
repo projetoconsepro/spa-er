@@ -326,10 +326,25 @@ const InserirCreditos = () => {
                               alt="image"
                               style={{ width: 50, height: 50, display: 'flex', alignItems: 'center'}}
                             />
-                          ) :
+                          ) : item.bandeira === 'elocard' ? (
+                            CreditCardSelected === index ? (
+                            <Image
+                              src='../../assets/img/cartaoCredito/elocard.png'
+                              alt="image"
+                              style={{ width: 50, height: 50, display: 'flex', alignItems: 'center', marginLeft: '2px'}}
+                            />
+                            ) : (
+                              <Image
+                              src='../../assets/img/cartaoCredito/elocard-unselected.png'
+                              alt="image"
+                              style={{ width: 50, height: 50, display: 'flex', alignItems: 'center', marginLeft: '2px'}}
+                            />
+                          )
+                          )
+                          :
                           <BsCreditCard2Back className="m-2"
                           size={30}
-                          color={CreditCardSelected === index ? 'white' : 'black' }
+                          color={CreditCardSelected === index ? 'white' : 'black'}
                           />
                           }
                         </div>

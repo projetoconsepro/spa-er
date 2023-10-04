@@ -81,7 +81,7 @@ const ConfigurarPerfil = () => {
             cartao: `${item.id_cartao}`,
             bandeira: item.bandeira,
             numero:  `#### #### #### ${item.cartao}`,
-            background: item.bandeira === 'visa' ? 'linear-gradient(to right, #064789, #427AA1)' : item.bandeira === 'mastercard' ? 'linear-gradient(to right, #F4796B, #f79e21)' : item.bandeira === 'elo' ? 'linear-gradient(to right, #322214, #2E282A)' :  'white'
+            background: item.bandeira === 'visa' ? 'linear-gradient(to right, #064789, #427AA1)' : item.bandeira === 'mastercard' ? 'linear-gradient(to right, #F4796B, #f79e21)' : item.bandeira === 'elocard' ? 'linear-gradient(to right, #322214, #2E282A)' :  'white'
           }));
           console.log(newData)
           setCartoesData(newData);
@@ -162,31 +162,47 @@ const ConfigurarPerfil = () => {
   };
 
   const apagarCartao = (cartao) => {
-    const requisicao = createAPI();
-    requisicao
-    .delete(`/cartao/${parseInt(cartao.cartao)}`)
-    .then((response) => {
-      if (response.data.msg.resultado){
-        Swal.fire({
-          icon: "success",
-          title: response.data.msg.msg,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        const newData = cartoesData.filter((item) => item.cartao !== cartao.cartao);
-        setCartoesData(newData);
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: response.data.msg.msg,
-          showConfirmButton: false,
-          timer: 1500,
-        });
+    const finalDoNumero = cartao.numero.slice(-4);
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: `Você deseja apagar o cartão de final ${finalDoNumero}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, apagar!',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const requisicao = createAPI();
+        requisicao
+          .delete(`/cartao/${parseInt(cartao.cartao)}`)
+          .then((response) => {
+            if (response.data.msg.resultado) {
+              Swal.fire({
+                icon: 'success',
+                title: response.data.msg.msg,
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              const newData = cartoesData.filter((item) => item.cartao !== cartao.cartao);
+              setCartoesData(newData);
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: response.data.msg.msg,
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
-    }).catch((err) => {
-      console.log(err)
-    })
-  }
+    });
+  };
+  
 
   const handleCancelClickSenha = () => {
     setSenha("");
