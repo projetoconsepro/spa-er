@@ -15,8 +15,9 @@ const CartaoCredito = () => {
   const [logoMarca, setLogoMarca] = useState('');
   const [divMensagem, setDivmMensagem] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
-  const [ mensagemApi , setMensagemApi ] = useState(false);
-
+  const [mensagemApi , setMensagemApi ] = useState(false);
+  const [typeCard , setTypeCard ] = useState('');
+  const [respostaAPI , setRespostaAPI ] = useState('');
 
   const getCardFlag = async (cardNumber) => {
     console.log(cardNumber);
@@ -80,15 +81,25 @@ const CartaoCredito = () => {
   };
 
   const handleExpMonthChange = (e) => {
-    setExpMonth(e.target.value);
+    if (e.target.value !== 'mes') {
+      setExpMonth(e.target.value);
+    }
 
     handleCvvMouseLeave();
   };
 
   const handleExpYearChange = (e) => {
+    if (e.target.value !== 'ano') {
     setExpYear(e.target.value);
+    }
 
     handleCvvMouseLeave();
+  };
+
+  const handleTypeCardChange = (e) => {
+    if (e.target.value !== 'tipo') {
+      setTypeCard(e.target.value);
+    }
   };
 
   const handleCvvMouseEnter = () => {
@@ -130,14 +141,14 @@ const CartaoCredito = () => {
       array[pos2] = temp;
     }
   
-    return array.join(''); // Converte o array de volta para uma string
+    return array.join(''); 
   }
 
 
   const handleRegistrar = async () => {
-    if (cardNumber.includes('#') || cardHolder === '' || expMonth === 'mm' || expYear === 'yy' || cvv === '') {
+    if (cardNumber.includes('#') || cardHolder === '' || expMonth === 'mm' || expYear === 'yy' || cvv === '' || typeCard === '' || typeCard === 'tipo' ) {
       setMensagemApi(false);
-    
+      setRespostaAPI('');
       setDivmMensagem(true);
 
       setTimeout(() => {
@@ -158,6 +169,7 @@ const CartaoCredito = () => {
           "ccv": cvv,
           "validade": `${expMonth},${expYear}`,
           "bandeira": bandeira && bandeira.label ? bandeira.label : '',
+          "tipo": typeCard,
       };
 
       const stringDados = JSON.stringify(dados);
@@ -199,14 +211,16 @@ const CartaoCredito = () => {
         if (resposta.data.msg.resultado) {
           FuncTrocaComp('InserirCreditos');
         } else {
+          if ( resposta.data.msg.msg === 'Cartão já cadastrado!' ) {
+            setRespostaAPI(resposta.data.msg.msg);
+          } else {
+          setRespostaAPI('');
+          }
           setMensagemApi(true);
           setDivmMensagem(true);
-
           setTimeout(() => {
             setDivmMensagem(false);
           }, 6000);
-
-          
         }
       }
       ).catch((erro) => {
@@ -214,7 +228,6 @@ const CartaoCredito = () => {
       });
     }
   }
-
 
   return (
 
@@ -270,7 +283,6 @@ const CartaoCredito = () => {
             className="card-number-input"
             onChange={(e) => handleCardNumberChange(e)}
             onInput={(e) => {
-              // Remove caracteres não numéricos
               e.target.value = e.target.value.replace(/[^0-9]/g, '');
             }}
           />
@@ -285,7 +297,6 @@ const CartaoCredito = () => {
             maxLength={20}
           />
         </div>
-
           <div className="row">
           <div className="col-12">
             <div className="row mt-3 inputBox">
@@ -307,9 +318,9 @@ const CartaoCredito = () => {
               id=""
               className="month-input"
               onChange={handleExpMonthChange}
-              defaultValue='month'
+              defaultValue='mes'
             >
-              <option value="month"  disabled>
+              <option value="mes" disabled readOnly>
                 mês
               </option>
               <option value="01">01</option>
@@ -339,8 +350,6 @@ const CartaoCredito = () => {
               <option value="ano" disabled>
                 ano
               </option>
-              <option value="21">2021</option>
-              <option value="22">2022</option>
               <option value="23">2023</option>
               <option value="24">2024</option>
               <option value="25">2025</option>
@@ -349,6 +358,16 @@ const CartaoCredito = () => {
               <option value="28">2028</option>
               <option value="29">2029</option>
               <option value="30">2030</option>
+              <option value="31">2031</option>
+              <option value="32">2032</option>
+              <option value="33">2033</option>
+              <option value="34">2034</option>
+              <option value="35">2035</option>
+              <option value="36">2036</option>
+              <option value="37">2037</option>
+              <option value="38">2038</option>
+              <option value="39">2039</option>
+              <option value="40">2040</option>
             </select>
           </div>
           </div>
@@ -367,12 +386,36 @@ const CartaoCredito = () => {
           </div>
           </div>
           </div>
+          <div className="row mt-2">
+            <div className="col-12">
+              <div className="inputBox">
+                <span>Tipo do cartão: </span>
+                <select
+                name=""
+                id=""
+                className="tipo-input"
+                onChange={handleTypeCardChange}
+                defaultValue='tipo'
+              >
+                <option value="tipo" disabled>
+                  tipo
+                </option>
+                <option value="credito">crédito</option>
+                <option value="debito">débito</option>
+                <option value="debito,credito">crédito e débito</option>
+              </select>
+              </div>
+            </div>
+          </div>
         <div>
           <div className="row">
             {divMensagem &&
             <div className="col-12">
             <Notification color="red" title="Aviso!" mt={12}>
-              {mensagemApi ? 'Não conseguimos salvar seu cartão. Por favor, verifique as informações e tente novamente.' : 'Por favor, preencha todos os campos!' }
+              {mensagemApi && respostaAPI !== '' ? 
+              'Cartão já cadastrado por este usuário!' 
+              : mensagemApi ? 'Não conseguimos salvar seu cartão. Por favor, verifique as informações e tente novamente.'
+              : 'Por favor, preencha todos os campos!' }
             </Notification>
             </div>
             }

@@ -45,6 +45,8 @@ const InserirCreditos = () => {
             cartao: item.id_cartao,
             bandeira: item.bandeira,
             numero:  `#### #### #### ${item.cartao}`,
+            debito: item.debito,
+            credito: item.credito,
           }));
           setCreditCard(newData);
         } else {
@@ -299,6 +301,7 @@ const InserirCreditos = () => {
                 {metodo !== "pix" && creditCard.length > 0 ? (
                   <div>
                   {creditCard.map((item, index) => (
+                    item.credito === 'S' && metodo === 'cartaoCred' || item.debito === 'S' && metodo === 'cartaoDeb' ? (
                     <div key={index}>
                     <Box className="border border-black rounded mb-2 align-items-center" 
                     style={{ maxWidth: '400px', minHeight : '50px', backgroundImage: CreditCardSelected === index ?'linear-gradient(45deg, #0CA678,  #1098AD)' : 'none'  }}
@@ -354,6 +357,7 @@ const InserirCreditos = () => {
                       </div>
                     </Box>
                   </div>
+                    ) : null 
                   ))}
                       <Button className='mt-3 mb-3' variant="outline" leftIcon={<IconArrowForwardUpDouble size="1rem" />} onClick={() => { FuncTrocaComp('CartaoCredito') }}>
                             Adicionar novo cartão
