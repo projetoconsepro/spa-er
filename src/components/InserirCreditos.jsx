@@ -218,6 +218,8 @@ const InserirCreditos = () => {
 
 
     const requisicao = createAPI();
+
+    
   };
 
 
@@ -226,6 +228,7 @@ const InserirCreditos = () => {
 
 
   const validaFormato = () => {
+    console.log('safdsaf', metodo)
     if ( metodo === 'pix' ) {
       fazerPix();
     } else {
