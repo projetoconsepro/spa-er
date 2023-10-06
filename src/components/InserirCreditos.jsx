@@ -32,15 +32,16 @@ const InserirCreditos = () => {
   const [onCloseError, setOnCloseError] = useState(false);
   const [CreditCardSelected, setCreditCardSelected] = useState(null);
   const [creditCard, setCreditCard] = useState([]);
+  const [valorPadrao, setValorPadrao] = useState('3');
 
-  const handleMetodo = (e) => {
-    if (CreditCardSelected !== null && e !== metodo) {
-      console.log('vai se fuder')
+  useEffect(() => {
+    if (metodo === 'pix') {
+      setValorPadrao('3');
     } else {
-      console.log('adorei')
+      setValorPadrao('4');
     }
-  
-  }
+  }, [metodo]);
+
 
   const getCreditCardFUNC = async () => {
     const requisicao = createAPI();
@@ -465,7 +466,8 @@ const InserirCreditos = () => {
                 </Text>
               </Group>
               <Radio.Group
-              defaultValue={ metodo === 'pix' ? '3' : '4' }>
+                value={valorPadrao}
+                >
                 {metodo === 'pix' ? (
                 <Group mt="xs">
                   <Radio
@@ -474,6 +476,7 @@ const InserirCreditos = () => {
                     label="R$ 15,00"
                     onClick={() => {
                       setValor("15.00");
+                      setValorPadrao('3');
                     }}
                   />
                 </Group>
@@ -485,6 +488,7 @@ const InserirCreditos = () => {
                   label="R$ 20,00"
                   onClick={() => {
                     setValor("20.00");
+                    setValorPadrao('4');
                   }}
                 />
                 </Group> 
@@ -496,6 +500,7 @@ const InserirCreditos = () => {
                     label="R$ 30,00"
                     onClick={() => {
                       setValor("30.00");
+                      setValorPadrao('6');
                     }}
                   />
                 </Group>
@@ -506,6 +511,7 @@ const InserirCreditos = () => {
                     label="R$ 50,00"
                     onClick={() => {
                       setValor("50.00");
+                      setValorPadrao('7');
                     }}
                   />
                 </Group>
@@ -516,6 +522,7 @@ const InserirCreditos = () => {
                     label="R$ 100,00"
                     onClick={() => {
                       setValor("100.00");
+                      setValorPadrao('9');
                     }}
                   />
                 </Group>
@@ -526,6 +533,7 @@ const InserirCreditos = () => {
                     label="Outro valor:"
                     onClick={() => {
                       setValor("outro");
+                      setValorPadrao('8');
                     }}
                   />
                 </Group>

@@ -814,7 +814,6 @@ const ListarVeiculos = () => {
                         type="submit"
                         variant="gradient" gradient={{ from: 'blue', to: 'indigo' }}
                         fullWidth
-                        bold
                         onClick={() => {
                           hangleplaca(link.placa, index);
                         }}
@@ -927,14 +926,13 @@ const ListarVeiculos = () => {
                             link.vaga
                           );
                         }}
-                        fullWidth
-                        bold
+                        fullWidth                        
                         variant="gradient" gradient={{ from: 'blue', to: 'indigo' }}
                         loading={botaoOff}
                       >
                         Ativar
                       </Button>
-                      <div>
+                      <div className="mt-1 text-end">
                         <span>
                           <IoTrashSharp
                             color="red"

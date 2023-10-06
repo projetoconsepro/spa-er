@@ -20,7 +20,6 @@ const CartaoCredito = () => {
   const [respostaAPI , setRespostaAPI ] = useState('');
 
   const getCardFlag = async (cardNumber) => {
-    console.log(cardNumber);
     const cardNumberRegex = [
     {regex: /^4[0-9]{12}(?:[0-9]{3})?$/, label: 'visa'},
     {regex: /^5[1-5][0-9]{14}$/, label: 'mastercard'},
@@ -51,8 +50,6 @@ const CartaoCredito = () => {
     setCardNumber(formattedValue);
 
     const bandeira = await getCardFlag(numericValue);
-
-    console.log(bandeira);
 
     if (bandeira) {
       setLogoMarca(`../../assets/img/cartaoCredito/${bandeira.label}.png`);
