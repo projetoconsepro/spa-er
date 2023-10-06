@@ -5,12 +5,13 @@ import axios from "axios";
 import { React, useState, useRef, useEffect } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
-import { BsCreditCard2Back } from "react-icons/bs";
+import { BsCreditCard2Back, BsCreditCard2Front } from "react-icons/bs";
 import createAPI from "../services/createAPI";
 import VoltarComponente from "../util/VoltarComponente";
 import ModalErroBanco from "./ModalErroBanco";
 import { MdPix } from "react-icons/md";
 import { FaSave, FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -32,7 +33,14 @@ const InserirCreditos = () => {
   const [CreditCardSelected, setCreditCardSelected] = useState(null);
   const [creditCard, setCreditCard] = useState([]);
 
-
+  const handleMetodo = (e) => {
+    if (CreditCardSelected !== null && e !== metodo) {
+      console.log('vai se fuder')
+    } else {
+      console.log('adorei')
+    }
+  
+  }
 
   const getCreditCardFUNC = async () => {
     const requisicao = createAPI();
@@ -141,7 +149,6 @@ const InserirCreditos = () => {
       setTabsValue("Valor");
     } else if (metodo === "cartaoDeb" || metodo === "cartaoCred") {
       if (creditCard.length > 0) {
-
         if (CreditCardSelected !== null) {
           setTabsValue("Valor");
         } else {
@@ -150,8 +157,6 @@ const InserirCreditos = () => {
             setDivAvancar(false);
           }, 5000);
         }
-
-        
       } else {
         setDivAvancar(true);
         setTimeout(() => {
@@ -190,18 +195,16 @@ const InserirCreditos = () => {
   };
 
   const pagamentoCartao = () => {
+    const id_cartao = creditCard[CreditCardSelected].cartao;
     setButtonDisabled(true);
-
     let ValorFinal = valor;
-
     if (ValorFinal === "outro") {
       ValorFinal = valor2;
     }
-
     ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
-
+    console.log(ValorFinal, ValorFinal < 20)
     if (
-      ValorFinal <= 20 ||
+      ValorFinal < 20 ||
       ValorFinal == "" ||
       ValorFinal == "" ||
       ValorFinal == null ||
@@ -219,17 +222,45 @@ const InserirCreditos = () => {
 
     const requisicao = createAPI();
 
-    
-  };
+    requisicao.post("/cartao/credito", {
+      cartao: id_cartao,
+      valor: ValorFinal,
+      tipo: metodo === 'cartaoDeb' ? 'debit' : 'credit',
+    }).then((resposta) => {
+      if (resposta.data.msg.resultado){
+        setButtonDisabled(false);
+        Swal.fire({
+          icon: 'success',
+          title: 'Sucesso!',
+          text: 'Crédito inserido com sucesso!',
+          showConfirmButton: true,
+          confirmButtonText: 'Ok',
+        }).then(() => {
+          FuncTrocaComp('MeusVeiculos')
+        })
+      } else {
+        setButtonDisabled(false);
+        Swal.fire({
+          icon: 'warning',
+          title: 'Aviso!',
+          text: 'Ops, parece que o pagamento não foi concluído como esperado. Por favor, revise suas informações e tente realizar o pagamento novamente quando possível.',
+          showConfirmButton: true,
+          confirmButtonText: 'Ok',
+        })
+      }
+  })
+}
 
-
-
-
-
+  useEffect(() => {
+    if (metodo === 'pix') {
+      setValor('15.00');
+    } else {
+      setValor('20.00');
+    }
+  }, [metodo]);
 
   const validaFormato = () => {
-    console.log('safdsaf', metodo)
-    if ( metodo === 'pix' ) {
+    if (metodo === 'pix' ) {
       fazerPix();
     } else {
       pagamentoCartao();
@@ -287,7 +318,7 @@ const InserirCreditos = () => {
                 <Group position="apart" className="d-block">
                 <div className="col-3 d-flex align-items-center justify-content-center border border-success rounded" style={{ height: '75px', width: '80px', background: metodo === 'cartaoCred' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
                 onClick={() => setMetodo('cartaoCred')}>
-                <BsCreditCard2Back className="mx-1" size={35}
+                <BsCreditCard2Front className="mx-1" size={35}
                 style={{ color: metodo === 'cartaoCred' ? 'white' : 'black' }}
                 />
                 </div>
@@ -434,8 +465,7 @@ const InserirCreditos = () => {
                 </Text>
               </Group>
               <Radio.Group
-              defaultValue={ metodo === 'pix' ? '3' : '4' }
-              >
+              defaultValue={ metodo === 'pix' ? '3' : '4' }>
                 {metodo === 'pix' ? (
                 <Group mt="xs">
                   <Radio
@@ -457,8 +487,8 @@ const InserirCreditos = () => {
                     setValor("20.00");
                   }}
                 />
-              </Group> 
-              }
+                </Group> 
+                }
                 <Group mt="xs">
                   <Radio
                     value="6"
@@ -518,14 +548,19 @@ const InserirCreditos = () => {
                 gradient={{ from: "teal", to: "blue", deg: 60 }}
                 fullWidth
                 mt="md"
-                disabled={buttonDisabled}
+                loading={buttonDisabled} 
+                loaderPosition="right"
                 radius="md"
                 onClick={() => {
                   validaFormato();
                 }}
               >
                 Registrar transferência ‎
+                {buttonDisabled ? (
+                  null
+                ) : (
                 <IconCheck size="1.125rem" />
+                )}
               </Button>
               {divAvancar2 ? (
                 <Notification
