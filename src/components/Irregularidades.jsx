@@ -57,7 +57,8 @@ const Irregularidades = () => {
     setLoadingButton(true);
     const select = document.getElementById("pagamentos").value;
     if (select === "credito") {
-      const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
+      let numeroCorrigido = saldoCredito.replace(".", "");
+      numeroCorrigido = parseFloat(numeroCorrigido.replace(",", "."));
       if (parseFloat(numeroCorrigido) < parseFloat(data[index].valor)) {
         setLoadingButton(false);
         Swal.fire({
@@ -167,11 +168,9 @@ const Irregularidades = () => {
             timer: 2000,
           });
           if (index !== undefined) {
-            FuncTrocaComp("MeusVeiculos");
             data[index].pago = "S";
             setData([...data]);
           } else {
-            FuncTrocaComp("MeusVeiculos");
             startNotificao();
           }
         } else {

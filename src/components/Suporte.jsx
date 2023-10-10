@@ -92,6 +92,20 @@ const Suporte = () => {
               variant="contained"
               styles={{ item: { backgroundColor: "white" } }}
             >
+                <Accordion.Item value="perguntaCartao">
+                <Accordion.Control>
+                 Por que minha compra no cartão não foi aprovada?
+                </Accordion.Control>
+                <Accordion.Panel>
+                <Text size="sm" color="dimmed">
+                  1. Pode haver um limite de crédito insuficiente em seu cartão. <br />
+                  2. Verifique se os detalhes do cartão estão corretos, como número, data de validade e código de segurança. <br />
+                  3. O vendedor ou a plataforma de pagamento pode ter problemas técnicos temporários. <br />
+                  4. O produto ou serviço pode estar fora das diretrizes de compra do seu cartão. <br />
+                  5. Verifique se há fundos suficientes na conta associada ao cartão. 
+                </Text>
+                </Accordion.Panel>
+              </Accordion.Item>
               <Accordion.Item value="pergunta6">
                 <Accordion.Control>
                   Qual é o horário de funcionamento do estacionamento rotativo?

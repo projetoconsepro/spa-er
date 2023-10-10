@@ -13,6 +13,23 @@
     border: 1px solid black !important;
 }
 
+.bandeira {
+    width: 20%;
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 767px) {
+    .bandeira {
+        width: 20%; 
+    }
+}
+
+@media (min-width: 768px) {
+    .bandeira {
+        width: 10%;
+    }
+}
 
 .app-container {
     width: 100%;

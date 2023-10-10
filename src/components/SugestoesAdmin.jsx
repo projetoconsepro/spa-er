@@ -41,7 +41,7 @@ const SugestoesAdmin = () => {
         const minutos = String(data.getMinutes()).padStart(2, '0');
         const segundos = String(data.getSeconds()).padStart(2, '0');
       
-        return `${mes}/${dia}/${ano} - ${hora}:${minutos}:${segundos}`;
+        return `${dia}/${mes}/${ano} - ${hora}:${minutos}:${segundos}`;
       }
 
   return (

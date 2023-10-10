@@ -10,7 +10,7 @@ import "../pages/Style/styles.css";
 import Swal from "sweetalert2";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
-import { Button, Divider, Grid, Group, Input, Modal, Text } from "@mantine/core";
+import { Button, Divider, Grid, Group, Input, Modal, Notification, Text } from "@mantine/core";
 import { IconArrowRight, IconChevronRight, IconParking, IconPlus, IconPrinter, IconReload, IconSquareRoundedPlusFilled } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
@@ -31,7 +31,7 @@ const ListarVeiculos = () => {
   const [mostrar2, setMostrar2] = useState([]);
   const [mostrardiv, setMostrarDiv] = useState([]);
   const [nofityvar, setNotifyVar] = useState([]);
-  const [saldoCredito, setSaldoCredito] = useState("");
+  const [saldoCredito, setSaldoCredito] = useState("0.00");
   const [vaga, setVaga] = useState([]);
   const [notificacao, setNotificacao] = useState([]);
   const [selectedButton, setSelectedButton] = useState("01:00:00");
@@ -46,6 +46,7 @@ const ListarVeiculos = () => {
   const [emissao, setEmissao] = useState("");
   const [validade, setValidade] = useState("");
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [divError, setDivError] = useState(false);
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -138,6 +139,7 @@ const ListarVeiculos = () => {
   };
 
   const atualizacomp = async () => {
+    setDivError(false);
     const requisicao = createAPI();
     atualizaHora();
     await requisicao
@@ -152,7 +154,7 @@ const ListarVeiculos = () => {
         }
         for (let i = 0; i < response?.data?.data.length; i++) {
           resposta[i] = {};
-          resposta[i].div = "card-body10 mb-2";
+          resposta[i].div = `card-body10 mb-2`;
           notificacao[i] = { estado: true };
           mostrar2[i] = { estado: false };
           mostrardiv[i] = { estado: true };
@@ -221,6 +223,7 @@ const ListarVeiculos = () => {
         setBotaoOff(false);
       })
       .catch(function (error) {
+        setDivError(true);
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
@@ -626,6 +629,12 @@ const ListarVeiculos = () => {
         </div>
       </div>
 
+      {divError ? (
+        <Notification color="red" title="Aviso!" mt={12}>
+            Não foi possível carregar seus veículos! <br /> Por favor, tente novamente.
+        </Notification>
+      ) : null}
+
       {resposta.map((link, index) => (
         <div className="card border-0 shadow mt-5" key={index}>
           <div
@@ -673,13 +682,12 @@ const ListarVeiculos = () => {
                 <div className="d-flex align-items-center fw-bold">
                   {link.estacionado !== "Não estacionado" ?
                   <div>
-                    <img src="../../assets/img/estacionamento.png" alt="Rich Logo" className={window.innerWidth > 900 ? "w-25" : ""}/>
+                    <img src="../../assets/img/estacionamento.png" alt="Rich Logo" className={ window.innerWidth > 1500 ? 'w-25' : window.innerWidth > 760 ? "w-50" : ""}/>
                   </div>
                   : null }
                 </div>
               </div>
-            </div>
-            <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
+              <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
                 <Button
                   variant="outline"
                   radius="md"
@@ -696,6 +704,7 @@ const ListarVeiculos = () => {
                   {mostrar2[index].estado ? "Fechar" : link.textoestacionado}
                 </Button>
                 </div>
+            </div>
           </div>
           {mostrar2[index].estado ? (
             <div className="mb-1">
@@ -814,7 +823,6 @@ const ListarVeiculos = () => {
                         type="submit"
                         variant="gradient" gradient={{ from: 'blue', to: 'indigo' }}
                         fullWidth
-                        bold
                         onClick={() => {
                           hangleplaca(link.placa, index);
                         }}
@@ -927,14 +935,13 @@ const ListarVeiculos = () => {
                             link.vaga
                           );
                         }}
-                        fullWidth
-                        bold
+                        fullWidth                        
                         variant="gradient" gradient={{ from: 'blue', to: 'indigo' }}
                         loading={botaoOff}
                       >
                         Ativar
                       </Button>
-                      <div>
+                      <div className="mt-1 text-end">
                         <span>
                           <IoTrashSharp
                             color="red"

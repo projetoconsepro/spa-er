@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import VoltarComponente from '../util/VoltarComponente';
+import { Button, Group, Notification } from '@mantine/core';
+import { IconArrowRight } from '@tabler/icons-react';
+import createAPI from '../services/createAPI';
+import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const CartaoCredito = () => {
   const [cardNumber, setCardNumber] = useState('#### #### #### ####');
@@ -8,11 +13,30 @@ const CartaoCredito = () => {
   const [expYear, setExpYear] = useState('yy');
   const [cvv, setCvv] = useState('');
   const [logoMarca, setLogoMarca] = useState('');
+  const [divMensagem, setDivmMensagem] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [mensagemApi , setMensagemApi ] = useState(false);
+  const [typeCard , setTypeCard ] = useState('');
+  const [respostaAPI , setRespostaAPI ] = useState('');
 
-  const handleCardNumberChange = (e) => {
-    setCardNumber(e.target.value);
+  const getCardFlag = async (cardNumber) => {
+    const cardNumberRegex = [
+    {regex: /^4[0-9]{12}(?:[0-9]{3})?$/, label: 'visa'},
+    {regex: /^5[1-5][0-9]{14}$/, label: 'mastercard'},
+    {regex: /^(4(0117[89]|3(1274|8935)|5(1416|7(393|63[12])))|50(4175|6(699|7([0-6]\d|7[0-8]))|9\d{3})|6(27780|36(297|368)|5(0(0(3[1-35-9]|4\d|5[01])|4(0[5-9]|([1-3]\d|8[5-9]|9\d))|5([0-2]\d|3[0-8]|4[1-9]|[5-8]\d|9[0-8])|7(0\d|1[0-8]|2[0-7])|9(0[1-9]|[1-6]\d|7[0-8]))|16(5[2-9]|[67]\d)|50([01]\d|2[1-9]|[34]\d|5[0-8]))))/, label: 'elocard'},
+    ];
+  
+    const resp = cardNumberRegex.find((cardRegex) => cardNumber.match(cardRegex.regex));
+
+    return resp;
+  };
+
+  const handleCardNumberChange =  async (e) => {
     let valorInput = e.target.value;
     let formattedValue = '';
+
+    if (valorInput.length > 19) return;
+
 
     const numericValue = valorInput.replace(/\D/g, '');
 
@@ -25,15 +49,12 @@ const CartaoCredito = () => {
 
     setCardNumber(formattedValue);
 
-    if (valorInput === '') {
-      setLogoMarca('');
-      setCardNumber('#### #### #### ####');
-    }
+    const bandeira = await getCardFlag(numericValue);
 
-    if (valorInput[0] === '4') {
-      setLogoMarca("../../assets/img/cartaoCredito/visa.png");
-    } else if (valorInput[0] === '5') {
-      setLogoMarca("../../assets/img/cartaoCredito/mastercard.png");
+    if (bandeira) {
+      setLogoMarca(`../../assets/img/cartaoCredito/${bandeira.label}.png`);
+    } else {
+      setLogoMarca('');
     }
     
 
@@ -57,15 +78,25 @@ const CartaoCredito = () => {
   };
 
   const handleExpMonthChange = (e) => {
-    setExpMonth(e.target.value);
+    if (e.target.value !== 'mes') {
+      setExpMonth(e.target.value);
+    }
 
     handleCvvMouseLeave();
   };
 
   const handleExpYearChange = (e) => {
+    if (e.target.value !== 'ano') {
     setExpYear(e.target.value);
+    }
 
     handleCvvMouseLeave();
+  };
+
+  const handleTypeCardChange = (e) => {
+    if (e.target.value !== 'tipo') {
+      setTypeCard(e.target.value);
+    }
   };
 
   const handleCvvMouseEnter = () => {
@@ -94,6 +125,107 @@ const CartaoCredito = () => {
     handleCvvMouseEnter();
   };
 
+  function shuffleString(inputString, numPositions, order) {
+    const array = inputString.split(''); // Converte a string em um array de caracteres
+  
+    for (let i = 0; i < order.length; i += 2) {
+      const pos1 = order[i] % numPositions;
+      const pos2 = order[i + 1] % numPositions;
+  
+      // Troca os elementos nas posições especificadas
+      const temp = array[pos1];
+      array[pos1] = array[pos2];
+      array[pos2] = temp;
+    }
+  
+    return array.join(''); 
+  }
+
+
+  const handleRegistrar = async () => {
+    if (cardNumber.includes('#') || cardHolder === '' || expMonth === 'mm' || expYear === 'yy' || cvv === '' || typeCard === '' || typeCard === 'tipo' ) {
+      setMensagemApi(false);
+      setRespostaAPI('');
+      setDivmMensagem(true);
+
+      setTimeout(() => {
+        setDivmMensagem(false);
+      }, 5000);
+      
+    } else {
+      setLoadingButton(true);
+      const user = localStorage.getItem("user");
+      const user2 = JSON.parse(user);
+
+      const cardNumberText = cardNumber.replace(/\s/g, '');
+
+      const bandeira = await getCardFlag(cardNumberText);
+
+      const dados = {
+          "numero_cartao": cardNumberText,
+          "ccv": cvv,
+          "validade": `${expMonth},${expYear}`,
+          "bandeira": bandeira && bandeira.label ? bandeira.label : '',
+          "tipo": typeCard,
+      };
+
+      const stringDados = JSON.stringify(dados);
+
+      let dadosBase64 = btoa(stringDados);
+
+      dadosBase64 = dadosBase64.replace(/=/g, '._.');
+
+      dadosBase64 = dadosBase64.replace(/i/g, '@');
+
+      dadosBase64 = dadosBase64.replace(/Y/g, '=');
+
+      dadosBase64 = dadosBase64.replace(/j/g, 'i');
+
+      dadosBase64 = btoa(dadosBase64);
+
+      dadosBase64 = dadosBase64.split('').reverse().join('');
+      
+      const idString = user2.id_usuario.toString();
+
+      const numPositions = parseInt(idString.length) + parseInt(idString[0]) * 2;
+
+      const data = new Date();
+
+      let orderString = `${data.getDate()},${data.getMonth()},${data.getFullYear()},${data.getHours()}`;
+
+      orderString = btoa(orderString);
+
+      const order = [data.getDate(), data.getMonth(), data.getFullYear(), data.getHours()];
+
+      const shuffledString = shuffleString(dadosBase64, numPositions, order);
+
+      const requisicao = createAPI()
+
+      requisicao.post('/cartao/', {
+        "dados": `${shuffledString}$${orderString}`
+      }).then((resposta) => {
+        setLoadingButton(false);
+        if (resposta.data.msg.resultado) {
+          FuncTrocaComp('InserirCreditos');
+        } else {
+          if ( resposta.data.msg.msg === 'Cartão já cadastrado!' ) {
+            setRespostaAPI(resposta.data.msg.msg);
+          } else {
+          setRespostaAPI('');
+          }
+          setMensagemApi(true);
+          setDivmMensagem(true);
+          setTimeout(() => {
+            setDivmMensagem(false);
+          }, 6000);
+        }
+      }
+      ).catch((erro) => {
+        console.log(erro);
+      });
+    }
+  }
+
   return (
 
     <div className="container2 text-start">
@@ -102,7 +234,7 @@ const CartaoCredito = () => {
         <div className="front">
           <div className="image">
             <img src="../../assets/img/cartaoCredito/chip.png" alt="" />
-            {logoMarca && <img src={logoMarca} alt="" className="logo" />}
+            {logoMarca && <img src={logoMarca} alt="" style={{ width :  logoMarca.includes('elo') ? '85px' : '',  height: logoMarca.includes('elo') ? '40px' : '', }} className="logo" />}
           </div>
           <div className="card-number-box">{cardNumber}</div>
           <div className="flexbox">
@@ -137,27 +269,31 @@ const CartaoCredito = () => {
         </div>
         </div>
       </div>
-      <form action="">
-        <div className="inputBox">
+      <form className="mt-3">
+        <div className="inputBox mb-3">
           <span>Número do cartão</span>
           <input
-            type="number"
-            maxLength="16"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*" 
+            maxLength={16}
             className="card-number-input"
-            onChange={handleCardNumberChange}
+            onChange={(e) => handleCardNumberChange(e)}
+            onInput={(e) => {
+              e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            }}
           />
         </div>
-        <div className="inputBox">
+        <div className="inputBox mb-2">
           <span>Nome do titular</span>
           <input
             type="text"
             className="card-holder-input"
-            onChange={handleCardHolderChange}
+            onChange={(e) => handleCardHolderChange(e)}
             value={cardHolder}
-            maxLength={26}
+            maxLength={20}
           />
         </div>
-
           <div className="row">
           <div className="col-12">
             <div className="row mt-3 inputBox">
@@ -179,9 +315,9 @@ const CartaoCredito = () => {
               id=""
               className="month-input"
               onChange={handleExpMonthChange}
-              defaultValue='month'
+              defaultValue='mes'
             >
-              <option value="month"  disabled>
+              <option value="mes" disabled readOnly>
                 mês
               </option>
               <option value="01">01</option>
@@ -211,16 +347,24 @@ const CartaoCredito = () => {
               <option value="ano" disabled>
                 ano
               </option>
-              <option value="2021">2021</option>
-              <option value="2022">2022</option>
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-              <option value="2027">2027</option>
-              <option value="2028">2028</option>
-              <option value="2029">2029</option>
-              <option value="2030">2030</option>
+              <option value="23">2023</option>
+              <option value="24">2024</option>
+              <option value="25">2025</option>
+              <option value="26">2026</option>
+              <option value="27">2027</option>
+              <option value="28">2028</option>
+              <option value="29">2029</option>
+              <option value="30">2030</option>
+              <option value="31">2031</option>
+              <option value="32">2032</option>
+              <option value="33">2033</option>
+              <option value="34">2034</option>
+              <option value="35">2035</option>
+              <option value="36">2036</option>
+              <option value="37">2037</option>
+              <option value="38">2038</option>
+              <option value="39">2039</option>
+              <option value="40">2040</option>
             </select>
           </div>
           </div>
@@ -239,14 +383,60 @@ const CartaoCredito = () => {
           </div>
           </div>
           </div>
+          <div className="row mt-2">
+            <div className="col-12">
+              <div className="inputBox">
+                <span>Tipo do cartão: </span>
+                <select
+                name=""
+                id=""
+                className="tipo-input"
+                onChange={handleTypeCardChange}
+                defaultValue='tipo'
+              >
+                <option value="tipo" disabled>
+                  tipo
+                </option>
+                <option value="credito">crédito</option>
+                <option value="debito">débito</option>
+                <option value="debito,credito">crédito e débito</option>
+              </select>
+              </div>
+            </div>
+          </div>
         <div>
           <div className="row">
-                <div className="col-12 d-flex justify-content-center mt-4">
-        <button className="btn3 botao">Salvar</button>
-        </div>
-        </div>
+            {divMensagem &&
+            <div className="col-12">
+            <Notification color="red" title="Aviso!" mt={12}>
+              {mensagemApi && respostaAPI !== '' ? 
+              'Cartão já cadastrado por este usuário!' 
+              : mensagemApi ? 'Não conseguimos salvar seu cartão. Por favor, verifique as informações e tente novamente.'
+              : 'Por favor, preencha todos os campos!' }
+            </Notification>
+            </div>
+            }
+              <div className="col-12 d-flex justify-content-center mt-4">
+              <Button
+                variant="gradient"
+                gradient={{ from: "indigo", to: "grape.8", deg: 45 }}
+                size="md"
+                fullWidth
+                mt="md"
+                radius="md"
+                loading={loadingButton}
+                onClick={()=>{handleRegistrar()}}
+              >
+                Salvar ‎
+                <IconArrowRight size="1.3rem" />
+              </Button>
+              </div>
+          </div>
         </div>
       </form>
+      <Group position="center" mt="lg">
+        <VoltarComponente />
+      </Group>
     </div>
   );
 };
