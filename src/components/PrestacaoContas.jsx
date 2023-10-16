@@ -57,12 +57,11 @@ const PrestacaoContas = () => {
     header()
 
     const regularizacaoData = [
-      ['', { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 4 }, { content: 'Total arrecadado', colSpan: 3 },],
-      ['', 'Quant' ,'Din', 'Pix', 'Total', 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix', 'Total' , 'Din', 'Pix', 'Total'],
-      
+      ['', { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 5 }, { content: 'Total arrecadado', colSpan: 4 },],
+      ['', 'Quant' ,'Din', 'Pix', 'Total', 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix','Cartão', 'Total' , 'Din', 'Pix', 'Cartão', 'Total'],
     ];
 
-    regularizacaoData.push([{ content: 'MONITOR', colSpan: 21 }]);
+    regularizacaoData.push([{ content: 'MONITOR', colSpan: 22 }]);
 
     data[0].monitor.map((item) => {
       if(item.Regularizacao !== undefined){
@@ -79,9 +78,11 @@ const PrestacaoContas = () => {
         item.creditosInseridos.quantidade,
         formatNumero(item.creditosInseridos.dinheiro),
         formatNumero(item.creditosInseridos.pix),
+        formatNumero(0),
         formatNumero(item.creditosInseridos.TotalValor),
         formatNumero(item.finalTotal.dinheiro),
         formatNumero(item.finalTotal.pix),
+        formatNumero(0),
         formatNumero(item.finalTotal.TotalValor),
         ]);
       }
@@ -99,9 +100,11 @@ const PrestacaoContas = () => {
           item.total.creditosInseridos.quantidade,
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(0),
           formatNumero(item.total.creditosInseridos.TotalValor),
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
+          formatNumero(0),
           formatNumero(item.total.finalTotal.TotalValor),
           ]);
 
@@ -109,7 +112,7 @@ const PrestacaoContas = () => {
     });
     const BoldCol = regularizacaoData.length -2;
 
-    regularizacaoData.push([{ content: 'PARCEIRO', colSpan: 21 }]);
+    regularizacaoData.push([{ content: 'PARCEIRO', colSpan: 22 }]);
     data[0].parceiro.map((item) => {
       if(item.Regularizacao !== undefined){
       regularizacaoData.push(
@@ -125,9 +128,11 @@ const PrestacaoContas = () => {
         item.creditosInseridos.quantidade,
         formatNumero(item.creditosInseridos.dinheiro),
         formatNumero(item.creditosInseridos.pix),
+        formatNumero(0),
         formatNumero(item.creditosInseridos.TotalValor),
         formatNumero(item.finalTotal.dinheiro),
         formatNumero(item.finalTotal.pix),
+        formatNumero(0),
         formatNumero(item.finalTotal.TotalValor),
         ]);
       }
@@ -145,9 +150,11 @@ const PrestacaoContas = () => {
           item.total.creditosInseridos.quantidade,
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(0),
           formatNumero(item.total.creditosInseridos.TotalValor),
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
+          formatNumero(0),
           formatNumero(item.total.finalTotal.TotalValor),
           ])
       }
@@ -155,7 +162,7 @@ const PrestacaoContas = () => {
 
     const BoldLine = regularizacaoData.length - 2 ;
 
-    regularizacaoData.push([{ content: 'Clientes APP  ', colSpan: 21 }]);
+    regularizacaoData.push([{ content: 'Clientes APP  ', colSpan: 22 }]);
     data[0].aplicativo.map((item) => {
       if(item.Regularizacao !== undefined){
       }
@@ -173,14 +180,16 @@ const PrestacaoContas = () => {
           item.total.creditosInseridos.quantidade,
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(item.total.creditosInseridos.cartao),
           formatNumero(item.total.creditosInseridos.TotalValor),
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
+          formatNumero(item.total.finalTotal.cartao),
           formatNumero(item.total.finalTotal.TotalValor),
           ])
       }
     });
-    regularizacaoData.push([{ content: 'AVULSO', colSpan: 21 }]);
+    regularizacaoData.push([{ content: 'AVULSO', colSpan: 22 }]);
     data[0].avulso.map((item) => {
       if(item.Regularizacao !== undefined){
       }
@@ -198,15 +207,17 @@ const PrestacaoContas = () => {
           item.total.creditosInseridos.quantidade,
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(0),
           formatNumero(item.total.creditosInseridos.TotalValor),
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
+          formatNumero(0),
           formatNumero(item.total.finalTotal.TotalValor),
           ])
       }
     });
 
-    regularizacaoData.push([{ content: 'CHATBOT', colSpan: 21 }]);
+    regularizacaoData.push([{ content: 'CHATBOT', colSpan: 22 }]);
     data[0].chatbot.map((item) => {
       if(item.Regularizacao !== undefined){
       }
@@ -224,15 +235,17 @@ const PrestacaoContas = () => {
           item.total.creditosInseridos.quantidade,
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
+          formatNumero(0),
           formatNumero(item.total.creditosInseridos.TotalValor),
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
+          formatNumero(0),
           formatNumero(item.total.finalTotal.TotalValor),
           ])
       }
     });
 
-    regularizacaoData.push([{ content: 'TOTAL GERAL', colSpan: 21 }]);
+    regularizacaoData.push([{ content: 'TOTAL GERAL', colSpan: 22 }]);
 
     const iParceiro = data[0].parceiro.length - 1;
     const iMonitor = data[0].monitor.length - 1;
@@ -297,6 +310,7 @@ const PrestacaoContas = () => {
       + data[0].aplicativo[iAplicativo].total.creditosInseridos.pix
       + data[0].avulso[iAvulso].total.creditosInseridos.pix
       + data[0].chatbot[iChatbot].total.creditosInseridos.pix),
+      formatNumero(data[0].aplicativo[iAplicativo].total.creditosInseridos.cartao),
       formatNumero(data[0].parceiro[iParceiro].total.creditosInseridos.TotalValor
       + data[0].monitor[iMonitor].total.creditosInseridos.TotalValor
       + data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor
@@ -312,6 +326,7 @@ const PrestacaoContas = () => {
       + data[0].aplicativo[iAplicativo].total.finalTotal.pix
       + data[0].avulso[iAvulso].total.finalTotal.pix
       + data[0].chatbot[iChatbot].total.finalTotal.pix),
+      formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.cartao),
       formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor
       + data[0].monitor[iMonitor].total.finalTotal.TotalValor
       + data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor
@@ -320,22 +335,24 @@ const PrestacaoContas = () => {
       ]);
 
     const columnStyles = {
-      0: { cellWidth: 19 },
-      1: { cellWidth: 15 },
-      2: { cellWidth: 19 },
-      3: { cellWidth: 19 },
-      4: { cellWidth: 19 },
-      5: { cellWidth: 15 },
-      6: { cellWidth: 19 },
-      7: { cellWidth: 19 },
-      8: { cellWidth: 19 },
-      9: { cellWidth: 15  },
-      10: { cellWidth: 19 },
-      11: { cellWidth: 19 },
-      12: { cellWidth: 19 },
-      13: { cellWidth: 19 },
-      14: { cellWidth: 19 },
-      15: { cellWidth: 19 },
+      0: { cellWidth: 17 },
+      1: { cellWidth: 12 },
+      2: { cellWidth: 17 },
+      3: { cellWidth: 17 },
+      4: { cellWidth: 17 },
+      5: { cellWidth: 12 },
+      6: { cellWidth: 17 },
+      7: { cellWidth: 17 },
+      8: { cellWidth: 17 },
+      9: { cellWidth: 12  },
+      10: { cellWidth: 17 },
+      11: { cellWidth: 17 },
+      12: { cellWidth: 17 },
+      13: { cellWidth: 17 },
+      14: { cellWidth: 17 },
+      15: { cellWidth: 17 },
+      16: { cellWidth: 17 },
+      17: { cellWidth: 17 },
     };
 
     let headStyles = {
@@ -381,29 +398,29 @@ const PrestacaoContas = () => {
 
 
     const resumoData = [
-    [{ content: 'Resumo', colSpan: 4 }],
-    ['Receita','Dinheiro', 'Pix', 'Total'],
+    [{ content: 'Resumo', colSpan: 5 }],
+    ['Receita','Dinheiro', 'Pix', 'Cartão','Total'],
     ];
 
 
     resumoData.push(
-    ['Monitores', formatNumero(data[0].monitor[iMonitor].total.finalTotal.dinheiro) , formatNumero(data[0].monitor[iMonitor].total.finalTotal.pix) , formatNumero(data[0].monitor[iMonitor].total.finalTotal.TotalValor)],
+    ['Monitores', formatNumero(data[0].monitor[iMonitor].total.finalTotal.dinheiro) , formatNumero(data[0].monitor[iMonitor].total.finalTotal.pix) , formatNumero(0) , formatNumero(data[0].monitor[iMonitor].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
-    ['Parceiros', formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.pix) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor)],
+    ['Parceiros', formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.pix) , formatNumero(0) , formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
-    ['CLIENTES APP', formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.pix) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor)],
+    ['CLIENTES APP', formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro) , formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.pix) ,formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.cartao), formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
-    ['Avulso', formatNumero(data[0].avulso[iAvulso].total.finalTotal.dinheiro) , formatNumero(data[0].avulso[iAvulso].total.finalTotal.pix) , formatNumero(data[0].avulso[iAvulso].total.finalTotal.TotalValor)],
+    ['Avulso', formatNumero(data[0].avulso[iAvulso].total.finalTotal.dinheiro) , formatNumero(data[0].avulso[iAvulso].total.finalTotal.pix) ,formatNumero(0), formatNumero(data[0].avulso[iAvulso].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
-    ['Chatbot', formatNumero(data[0].chatbot[iChatbot].total.finalTotal.dinheiro) , formatNumero(data[0].chatbot[iChatbot].total.finalTotal.pix) , formatNumero(data[0].chatbot[iChatbot].total.finalTotal.TotalValor)],
+    ['Chatbot', formatNumero(data[0].chatbot[iChatbot].total.finalTotal.dinheiro) , formatNumero(data[0].chatbot[iChatbot].total.finalTotal.pix) ,formatNumero(0), formatNumero(data[0].chatbot[iChatbot].total.finalTotal.TotalValor)],
     );
 
     resumoData.push(
@@ -417,7 +434,8 @@ const PrestacaoContas = () => {
     + data[0].monitor[iMonitor].total.finalTotal.pix 
     + data[0].aplicativo[iAplicativo].total.finalTotal.pix 
     + data[0].avulso[iAvulso].total.finalTotal.pix 
-    + data[0].chatbot[iChatbot].total.finalTotal.pix), 
+    + data[0].chatbot[iChatbot].total.finalTotal.pix),
+    formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.cartao),
     formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor 
     + data[0].monitor[iMonitor].total.finalTotal.TotalValor 
     + data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor 
