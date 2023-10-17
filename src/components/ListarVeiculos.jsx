@@ -341,15 +341,16 @@ const ListarVeiculos = () => {
       vaga[0] = 0;
     }
 
-    const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
-    if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
-      setBotaoOff(false);
-      Swal.fire({
-        icon: "error",
-        title: "Saldo insuficiente",
-        footer: '<a href="">Clique aqui para adicionar crédito.</a>',
-      });
-    } else {
+      let numeroCorrigido = saldoCredito.replace(".", "");
+      numeroCorrigido = parseFloat(numeroCorrigido.replace(",", "."));
+      if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
+        setBotaoOff(false);
+        Swal.fire({
+          icon: "error",
+          title: "Saldo insuficiente",
+          footer: '<a href="">Clique aqui para adicionar crédito.</a>',
+        });
+      }  else {
       requisicao
         .post("/estacionamento", {
           placa: placa,
@@ -403,7 +404,8 @@ const ListarVeiculos = () => {
 
     const resposta = await mexerValores();
 
-    const numeroCorrigido = parseFloat(saldoCredito.replace(",", "."));
+    let numeroCorrigido = saldoCredito.replace(".", "");
+    numeroCorrigido = parseFloat(numeroCorrigido.replace(",", "."));
     if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
       setBotaoOff(false);
       Swal.fire({
