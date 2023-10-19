@@ -207,6 +207,7 @@ const CartaoCredito = () => {
         setLoadingButton(false);
         if (resposta.data.msg.resultado) {
           FuncTrocaComp('InserirCreditos');
+          localStorage.setItem('cartaoCredito', 'true');
         } else {
           if ( resposta.data.msg.msg === 'Cartão já cadastrado!' ) {
             setRespostaAPI(resposta.data.msg.msg);
