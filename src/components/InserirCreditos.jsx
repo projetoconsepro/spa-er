@@ -68,6 +68,20 @@ const InserirCreditos = () => {
     }
     
   useEffect(() => {
+    if (localStorage.getItem("cartaoCredito") == 'true') {
+
+
+      const tipoCard = localStorage.getItem("tipoCard");
+      console.log(tipoCard);
+      if (tipoCard == 'debito') {
+        setMetodo('cartaoDeb');
+      } else {
+        setMetodo('cartaoCred');
+      }
+
+      localStorage.removeItem("cartaoCredito");
+
+    }
     getCreditCardFUNC();
   }, []);
 
@@ -309,7 +323,7 @@ const InserirCreditos = () => {
 
                 <Group position="apart" className="d-block">
                 <div className='col-3 d-flex align-items-center justify-content-center border border-success rounded' style={{ height: '75px', width: '80px',background: metodo === 'cartaoDeb' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
-                onClick={() => setMetodo('cartaoDeb')}>
+                onClick={() => { setMetodo('cartaoDeb'); localStorage.setItem('tipoCard', 'debito')}}>
                   <BsCreditCard2Back className="mx-1" size={35}
                     style={{ color: metodo === 'cartaoDeb' ? 'white' : 'black' }}
                   />
@@ -318,7 +332,7 @@ const InserirCreditos = () => {
                 </Group>
                 <Group position="apart" className="d-block">
                 <div className="col-3 d-flex align-items-center justify-content-center border border-success rounded" style={{ height: '75px', width: '80px', background: metodo === 'cartaoCred' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
-                onClick={() => setMetodo('cartaoCred')}>
+                onClick={() => {setMetodo('cartaoCred'); localStorage.setItem('tipoCard', 'credito')}}>
                 <BsCreditCard2Front className="mx-1" size={35}
                 style={{ color: metodo === 'cartaoCred' ? 'white' : 'black' }}
                 />
