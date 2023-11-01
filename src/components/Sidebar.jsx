@@ -1,4 +1,4 @@
-import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint, FaConnectdevelop } from "react-icons/fa";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint, FaConnectdevelop, FaCalendar, FaCalendarAlt } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
@@ -302,6 +302,12 @@ const Sidebar = () => {
             icon: <AiFillPrinter />,
             name: "‎ Prestação de Contas",
             componente: "PrestacaoContas",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaCalendarAlt />,
+            name: "‎ Feriados",
+            componente: "Feriados",
         })
         links.push({
             className: styles.className,
