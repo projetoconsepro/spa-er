@@ -49,6 +49,7 @@ import Suporte from '../../components/Suporte';
 import CameraAutoInfracao from '../../components/CameraAutoInfracao';
 import SugestoesAdmin from '../../components/SugestoesAdmin';
 import AdicionarModelo from '../../components/AdicionarModelo';
+import Feriados from '../../components/Feriados';
 
 export default function Veiculos({Componente}) {
     switch(Componente) {
@@ -150,6 +151,8 @@ export default function Veiculos({Componente}) {
             return <Suporte />;
         case "CameraAutoInfracao":
             return <CameraAutoInfracao />;
+        case "Feriados":
+            return <Feriados />;
         default:
             return <Error />;
     }
