@@ -1,0 +1,6 @@
+/node_modules
+.env.production
+.env.development
+/build
+localhost-key.pem
+localhost.pem
