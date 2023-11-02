@@ -1,19 +1,26 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
-import { AiFillCheckCircle, AiFillPrinter, AiOutlineReload } from "react-icons/ai";
+import {
+  AiFillCheckCircle,
+  AiFillPrinter,
+  AiOutlineReload,
+} from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import { ActionIcon, Loader } from "@mantine/core";
+import { ActionIcon, Button, Loader } from "@mantine/core";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
 import createAPI from "../services/createAPI";
-import { IconPrinter } from "@tabler/icons-react";
+import { IconPrinter, IconReceipt } from "@tabler/icons-react";
+import ImpressaoTicketRegularizacao from "../util/ImpressaoTicketRegularizacao";
+import ModalErroBanco from "./ModalErroBanco";
+
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -23,15 +30,16 @@ const ListarNotificacoes = () => {
   const [placaSetada, setPlacaSetada] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
   const [cont, setCont] = useState(0);
   const [filtro, setFiltro] = useState("");
   const [data2, setData2] = useState([]);
   const [onOpen, setOnOpen] = useState(false);
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
+  const [perfil, setPerfil] = useState("");
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -39,83 +47,53 @@ const ListarNotificacoes = () => {
   };
 
   const pagamento = (index) => {
+    setButtonLoading(true);
     const select = document.getElementById("pagamentos").value;
 
     if (select === "dinheiro") {
-      regularizar(data[index].id_vaga_veiculo, index, select);
+      regularizar(data[index].id_vaga_veiculo, index, select, data[index]);
     } else {
       const valor = data[index].valor.toString();
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
       const requisicao = createAPI();
 
-      const campo = { 
+      const campo = {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
-        tipoPagamento: 'pix',
-      }
+        tipoPagamento: "pix",
+      };
 
       requisicao
         .post("/gerarcobranca", {
           valor: valor2,
-          campo: JSON.stringify(campo)
+          campo: JSON.stringify(campo),
         })
         .then((resposta) => {
           if (resposta.data.msg.resultado) {
             setOnOpen(true);
             setData2(resposta.data.data);
-            getInfoPix(resposta.data.data.txid, index);
+            getInfoPix(resposta.data.data.txid, index, data[index]);
             open();
           } else {
-            console.log("n abriu nkk");
           }
         })
         .catch((err) => {
-          console.log(err);
+          setButtonLoading(false);
+          setOnOpenError(true);
         });
     }
   };
 
-  async function getInfoPix(TxId, index) {
+  async function getInfoPix(TxId, index, item) {
     const requisicao = createAPI();
-      await requisicao
-        .put(`/notificacao/pix`,{
-          txid: TxId,
-        })
-        .then((response) => {
-          if (response.data.msg.resultado) {
-            setOnOpen(false);
-            Swal.fire({
-              title: "Regularizado!",
-              text: "A notificação foi regularizada.",
-              icon: "success",
-              timer: 2000,
-            });
-            if (index !== undefined) {
-              data[index].pago = "S";
-              setData([...data]);
-            } else {
-              startNotificao();
-            }
-          } else {
-            setNotification(false);
-            setPixExpirado(response.data.msg.msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-
-  const regularizar = async (idVagaVeiculo, index, pagamento) => {
-    const requisicao = createAPI();
-    console.log(idVagaVeiculo);
-    requisicao
-      .put("/notificacao/", {
-        id_vaga_veiculo: idVagaVeiculo,
-        tipoPagamento: pagamento,
+    await requisicao
+      .put(`/notificacao/pix`, {
+        txid: TxId,
       })
       .then((response) => {
-        console.log(response);
+        setButtonLoading(false);
         if (response.data.msg.resultado) {
+          ImpressaoTicketRegularizacao('PRIMEIRA', item)
+          setOnOpen(false);
           Swal.fire({
             title: "Regularizado!",
             text: "A notificação foi regularizada.",
@@ -129,20 +107,56 @@ const ListarNotificacoes = () => {
             startNotificao();
           }
         } else {
-          setEstado(true);
-          setMensagem(response.data.msg.msg);
-          setTimeout(() => {
-            setEstado(false);
-            setMensagem("");
-          }, 5000);
+          setNotification(false);
+          setPixExpirado("Pix expirado");
         }
       })
+      .catch((err) => {
+        setButtonLoading(false);
+        setOnOpenError(true);
+      });
+  }
+
+  const regularizacaoSegundaVia = (item) => {
+    ImpressaoTicketRegularizacao('SEGUNDA', item)
+  }
+
+  const regularizar = async (idVagaVeiculo, index, pagamento, item) => {
+    const requisicao = createAPI();
+    requisicao.put("/notificacao/", {
+      id_vaga_veiculo: idVagaVeiculo,
+      tipoPagamento: pagamento,
+    }).then((response) => {
+      setButtonLoading(false);
+      if (response.data.msg.resultado) {
+        ImpressaoTicketRegularizacao('PRIMEIRA', item)
+        Swal.fire({
+          title: "Regularizado!",
+          text: "A notificação foi regularizada.",
+          icon: "success",
+          timer: 2000,
+        });
+        if (index !== undefined) {
+          data[index].pago = "S";
+          setData([...data]);
+        } else {
+          startNotificao();
+        }
+      } else {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("");
+        }, 5000);
+      }
+    })
       .catch((error) => {
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -170,14 +184,13 @@ const ListarNotificacoes = () => {
     await requisicao
       .get(`/notificacao/?query=${passar}`)
       .then((response) => {
-        console.log(response, "response");
         if (response.data.msg.resultado) {
           const newData = response?.data.data.map((item) => ({
             data: ArrumaHora(item.data),
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
+            monitor: item.monitor.id_usuario,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
             fabricante: item.veiculo.modelo.fabricante.nome,
@@ -204,7 +217,7 @@ const ListarNotificacoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -220,6 +233,8 @@ const ListarNotificacoes = () => {
   };
 
   const startNotificao = async () => {
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
     setEstado2(false);
     const requisicao = createAPI();
     const idrequisicao = `{"where": [{ "field": "usuario", "operator": "=", "value": "${user2.id_usuario}" }]}`;
@@ -235,7 +250,7 @@ const ListarNotificacoes = () => {
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
+            monitor: item.monitor.id_usuario,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
             fabricante: item.veiculo.modelo.fabricante.nome,
@@ -256,7 +271,7 @@ const ListarNotificacoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -266,6 +281,10 @@ const ListarNotificacoes = () => {
         }
       });
   };
+
+  const onClose = () => {
+    setButtonLoading(false)
+  }
 
   const startPlaca = async (placa) => {
     setEstado2(false);
@@ -282,7 +301,7 @@ const ListarNotificacoes = () => {
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
+            monitor: item.monitor.id_usuario,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
             fabricante: item.veiculo.modelo.fabricante.nome,
@@ -307,7 +326,7 @@ const ListarNotificacoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -319,11 +338,17 @@ const ListarNotificacoes = () => {
   };
 
   useEffect(() => {
+
+    const user = localStorage.getItem("user");
+    const user2 = JSON.parse(user);
+
+    setPerfil(user2.perfil[0])
+
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
     ) {
-      FuncTrocaComp("FecharTurno");
+      FuncTrocaComp("AbrirTurno");
     }
     const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
     const placa = localStorage.getItem("placaCarro");
@@ -359,7 +384,7 @@ const ListarNotificacoes = () => {
             data: ArrumaHora(item.data),
             id_notificacao: item.id_notificacao,
             tipo_notificacao: item.tipo_notificacao.nome,
-            monitor: item.monitor.nome,
+            monitor: item.monitor.id_usuario,
             id_vaga_veiculo: item.id_vaga_veiculo,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
@@ -382,7 +407,7 @@ const ListarNotificacoes = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -394,13 +419,26 @@ const ListarNotificacoes = () => {
   };
 
   const imprimirSegundaVia = (item) => {
-    console.log(item)
-    ImpressaoTicketNotificacao("SEGUNDA", item.monitor, item.vaga, item.placa, item.modelo, item.fabricante, item.tipo_notificacao, item.endereco, item.valor)
-  }
+    ImpressaoTicketNotificacao(
+      "SEGUNDA",
+      item.monitor,
+      item.vaga,
+      item.placa,
+      item.modelo,
+      item.fabricante,
+      item.tipo_notificacao,
+      item.endereco,
+      item.valor,
+      item.data,
+    );
+  };
 
   return (
     <div className="col-12 px-3 mb-3">
-      <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
+      {perfil === "monitor" ? (
+        <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
+      ) :
+        <p className="text-start fs-2 fw-bold">Notificações:</p>}
       <div className="row mb-3">
         <div className="col-12">
           <div className="row">
@@ -453,35 +491,19 @@ const ListarNotificacoes = () => {
                         className="h6 d-flex align-items-center fs-6"
                         id="bordaBaixo"
                       >
-                        {link.tipo_notificacao ===
-                        "Ocupando vaga de deficiente" ? (
-                          <h6>
-                            {" "}
-                            <FaClipboardList />‎{" "}
-                            <small>Motivo: {link.tipo_notificacao}</small>
-                          </h6>
-                        ) : (
-                          <h6>
-                            {" "}
-                            <FaClipboardList />‎ Motivo: {link.tipo_notificacao}
-                          </h6>
-                        )}
+                        <h6>
+                          {" "}
+                          <FaClipboardList />‎{" "}
+                          <small>Motivo: {link.tipo_notificacao}</small>
+                        </h6>
                       </div>
                     ) : (
                       <div className="h6 d-flex align-items-center fs-6">
-                        {link.tipo_notificacao ===
-                        "Ocupando vaga de deficiente" ? (
-                          <h6>
-                            {" "}
-                            <FaClipboardList />‎{" "}
-                            <small>Motivo: {link.tipo_notificacao}</small>
-                          </h6>
-                        ) : (
-                          <h6>
-                            {" "}
-                            <FaClipboardList />‎ Motivo: {link.tipo_notificacao}
-                          </h6>
-                        )}
+                        <h6>
+                          {" "}
+                          <FaClipboardList />‎{" "}
+                          <small>Motivo: {link.tipo_notificacao}</small>
+                        </h6>
                       </div>
                     )}
                   </div>
@@ -537,37 +559,56 @@ const ListarNotificacoes = () => {
                     </h6>
                   </div>
 
-                  {link.pago === "S" ? null : (
-                    <div className="h6 mt-3 mx-5">
-                      <select
-                        className="form-select form-select-lg mb-1"
-                        aria-label=".form-select-lg example"
-                        id="pagamentos"
-                        defaultValue="01:00:00"
-                      >
-                        <option value="pix">PIX</option>
-                        <option value="dinheiro">Dinheiro</option>
-                      </select>
-                      <div className="pt-3 gap-6 d-md-block">
-                        <div className="row">
-                          <div className="col-10">
-                            <button
-                              type="submit"
-                              className="btn5 botao align-itens-center fs-6"
-                              onClick={() => {
-                                pagamento(index);
-                              }}
-                            >
-                              Regularizar
-                            </button>
-                          </div>
-                          <div className="col-2 pt-1">
-                          <ActionIcon variant="outline" color="indigo" size="lg"><IconPrinter onClick={() => imprimirSegundaVia(link)}/></ActionIcon>
+                  {link.pago === "S" ?
+                    <div className="px-3">
+                      {perfil === "monitor" ? (
+                        <Button variant="gradient" gradient={{ from: 'indigo', to: 'cyan' }} fullWidth mt="md" radius="md"
+                          onClick={() => regularizacaoSegundaVia(link)}>
+                          IMPRIMIR SEGUNDA VIA ‎ <IconReceipt size={18} />
+                        </Button>
+                      ) : null}
+                    </div>
+                    : (
+                      <div className="h6 mt-3 mx-5">
+                        <select
+                          className="form-select form-select-lg mb-1"
+                          aria-label=".form-select-lg example"
+                          id="pagamentos"
+                          defaultValue="01:00:00"
+                        >
+                          <option value="pix">PIX</option>
+                          <option value="dinheiro">Dinheiro</option>
+                        </select>
+                        <div className="pt-3 gap-6 d-md-block">
+                          <div className="row">
+                            <div className="col-10">
+                              <Button
+                                className="btn5 botao align-itens-center fs-6"
+                                onClick={() => {
+                                  pagamento(index);
+                                }}
+                                loading={buttonLoading}
+                              >
+                                Regularizar
+                              </Button>
+                            </div>
+                            {perfil === "monitor" ? (
+                              <div className="col-2 pt-1">
+                                <ActionIcon
+                                  variant="outline"
+                                  color="indigo"
+                                  size="lg"
+                                >
+                                  <IconPrinter
+                                    onClick={() => imprimirSegundaVia(link)}
+                                  />
+                                </ActionIcon>
+                              </div>
+                            ) : null}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               ) : null}
             </div>
@@ -586,11 +627,16 @@ const ListarNotificacoes = () => {
         {mensagem}
       </div>
       <VoltarComponente />
+      <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+      />
       <ModalPix
         qrCode={data2.brcode}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
+        onClose={onClose}
       />
     </div>
   );

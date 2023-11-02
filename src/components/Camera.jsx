@@ -3,7 +3,8 @@ import Swal from 'sweetalert2'
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from 'webrtc-adapter';
 import { Button, Card, Text } from "@mantine/core";
-import { IconCamera, IconCheck } from "@tabler/icons-react";
+import { IconCamera, IconCheck, IconReload } from "@tabler/icons-react";
+import VoltarComponente from "../util/VoltarComponente";
 
 function Camera() {
   const videoRef = useRef(null);
@@ -13,11 +14,11 @@ function Camera() {
   const [cont2, setCont2] = useState(0);
   const [tamanho, setTamanho] = useState(90);
   const [divErro, setDivErro] = useState(false);
+  const [cameraLoaded, setCameraLoaded] = useState(false); 
 
   const getVideo = async () => {
     try {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // O navegador suporta getUserMedia()
         console.log("O navegador suporta getUserMedia");
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
@@ -28,6 +29,7 @@ function Camera() {
         if (video) {
           video.srcObject = stream;
           video.play();
+          setCameraLoaded(true);
         }
       } else {
         console.log("O navegador não suporta getUserMedia");
@@ -37,6 +39,7 @@ function Camera() {
             if (video) {
               video.srcObject = stream;
               video.play();
+              setCameraLoaded(true); // Set cameraLoaded to true when the camera is loaded
             }
           },
           function (error) {
@@ -71,8 +74,6 @@ function Camera() {
     const updatedPhotos = [...photos, { id: cont, photo: photoDataUrl }];
     setPhotos(updatedPhotos);
     setCont(cont + 1);
-    setTamanho(tamanho + 30)
-    mainDivRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
 
   const deletePhoto = (id) => {
@@ -105,12 +106,28 @@ function Camera() {
     }
   };
 
+  const stopVideoCapture = () => {
+    setCameraLoaded(false);
+    let video = videoRef.current;
+    if (video && video.srcObject) {
+      const stream = video.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop());
+      video.srcObject = null;
+  
+      // Aguarda 1 segundo antes de chamar novamente a função getVideo.
+      setTimeout(() => {
+        getVideo(); // Chama a função getVideo novamente para iniciar a captura após 1 segundo.
+      }, 1000);
+    }
+  };
+
   const savePhotosToLocalStorage = () => {
-    if (photos.length < 4) {
+    if (photos.length < 2) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Mínimo de 4 fotos!',
+        text: 'Mínimo de 3 fotos!',
         footer: '<a href>Tire no mínimo 4 fotos, por favor.</a>'
       });
     } else {
@@ -122,53 +139,72 @@ function Camera() {
   };
 
   return (
-    <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
-      {photos.length > 0 && (
-      <Card shadow="sm" className="mt-3 mb-2">
-      {photos.map((item) => (
-        <img
-          key={item.id}
-          src={item.photo}
-          alt="foto"
-          className="mt-2 mb-2"
-          onClick={() => abrirModal(item.id)}
-        />
-      ))}
-      </Card>
-      )}
-      <Card shadow="sm" className="mt-3 mb-2">
-      {divErro ?
-      <Text>Erro ao capturar vídeo, tente reiniciar a aplicação.</Text>
-      :
-      <video ref={videoRef} className="w-100"></video>
-      }
-      </Card>
-      <div className="container" id="testeRolagem">
-        <div className="mb-6">
-          <div className="text-middle mt-3">
-            <Button
-            variant="gradient"
-            size="md"
-            gradient={{ from: 'indigo', to: 'cyan' }}
-            rightIcon={<IconCamera />}
-            onClick={takePicture}
-            >Tirar foto
-            </Button>
-            {photos.length > 3 && (
-            <Button
-            className="mx-2"
-            variant="gradient"
-            size="md"
-            gradient={{ from: 'teal', to: 'lime'}}
-            rightIcon={<IconCheck />}
-            onClick={savePhotosToLocalStorage}
-            >Salvar fotos
-            </Button>
-            )}
+    <>
+      <div ref={mainDivRef} style={{ height: tamanho+'vh' , overflowY: 'scroll' }}>
+        {photos.length > 0 && (
+          <div className='row pb-1'>
+            {photos.map((imagem, key) => (
+              <div key={key} className="col-4">
+                <img
+                  key={imagem.id}
+                  src={imagem.photo}
+                  alt="foto"
+                  className="mt-2 mb-2"
+                  onClick={() => abrirModal(imagem.id)}
+                />
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+        <Card shadow="sm" className="mt-1 mb-2">
+          {divErro ?
+            <Text>Erro ao capturar vídeo, tente reiniciar a aplicação.</Text>
+            :
+            <video ref={videoRef} className="w-100"></video>
+          }
+          <div className="container" id="testeRolagem">
+            <div className="mb-3">
+              <div className="text-middle mt-3">
+                <Button
+                  variant="gradient"
+                  size="md"
+                  className="mb-4"
+                  gradient={{ from: 'indigo', to: 'cyan' }}
+                  rightIcon={<IconCamera />}
+                  onClick={takePicture}
+                  disabled={!cameraLoaded} 
+                >
+                  Tirar foto
+                </Button>
+                <Button
+                  variant="gradient"
+                  size="md"
+                  className="mx-2 mb-4"
+                  gradient={{ from: 'yellow', to: 'orange' }}
+                  rightIcon={<IconReload />}
+                  onClick={() => stopVideoCapture()}
+                >
+                  Reiniciar
+                </Button>
+                <VoltarComponente space={true} />
+                {photos.length >= 2 && (
+                  <Button
+                    className="mt-2"
+                    variant="gradient"
+                    size="md"
+                    gradient={{ from: 'teal', to: 'lime'}}
+                    rightIcon={<IconCheck />}
+                    onClick={savePhotosToLocalStorage}
+                  >
+                    Salvar fotos
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
-    </div>
+    </>
   );
 }
 

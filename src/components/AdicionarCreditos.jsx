@@ -9,6 +9,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { Button, Divider, Input } from "@mantine/core";
 import { IconCash, IconUser } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
+import ImpressaoTicketCredito from "../util/ImpressaoTicketCredito";
+import ModalErroBanco from "./ModalErroBanco";
 
 const AdicionarCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -24,6 +26,8 @@ const AdicionarCreditos = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [txid, setTxId] = useState("");
   const [estado2, setEstado2] = useState(false);
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   async function getInfoPix(TxId) {
     const requisicao = createAPI();
@@ -33,6 +37,7 @@ const AdicionarCreditos = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          ImpressaoTicketCredito(cpf, valor, pagamentos, response.config.headers.id_usuario)
           setValor("")
           setCPF("")
           setOnOpen(false);
@@ -44,11 +49,12 @@ const AdicionarCreditos = () => {
           });
         } else {
           setNotification(false);
-          setPixExpirado(response.data.msg.msg);
+          setPixExpirado("Pix expirado");
         }
       })
       .catch((err) => {
-        console.log(err);
+        setEstado2(false);
+        setOnOpenError(true);
       });
   }
 
@@ -107,7 +113,8 @@ const AdicionarCreditos = () => {
               }
             })
             .catch((err) => {
-              console.log(err);
+              setEstado2(false);
+              setOnOpenError(true);
             });
         } else {
           setInputPlaca("form-control fs-5 is-invalid");
@@ -127,7 +134,7 @@ const AdicionarCreditos = () => {
 
   const handleSubmit = async () => {
     const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
-    if (Newvalor < 2) {
+    if (Newvalor < 2 || isNaN(Newvalor)) {
       setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Valor mínimo de R$ 2,00!");
@@ -151,14 +158,16 @@ const AdicionarCreditos = () => {
     const requisicao = createAPI();
     if (cpf !== "" && valor !== "0") {
       setEstado2(true);
+      const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
       requisicao
         .post("usuario/credito", {
           user: cpf,
-          valor: valor,
+          valor: Newvalor,
           pagamento: pagamentos,
         })
         .then((response) => {
           if (response.data.msg.resultado) {
+            ImpressaoTicketCredito(cpf, Newvalor, pagamentos, response.config.headers.id_usuario)
             setEstado2(false);
             setValor("")
             setCPF("")
@@ -224,14 +233,13 @@ const AdicionarCreditos = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
     ) {
-      FuncTrocaComp("FecharTurno");
+      FuncTrocaComp("AbrirTurno");
     }
     setValor("");
   }, []);
@@ -348,6 +356,10 @@ const AdicionarCreditos = () => {
           </div>
         </div>
       </div>
+      <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+        />
       <ModalPix
         qrCode={data.brcode}
         status={notification}

@@ -15,7 +15,6 @@ const Mapa = ({ address }) => {
       try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`);
         const data = await response.json();
-        console.log(data)
 
         if (data.length > 0) {
           setLatitude(data[0].lat);

@@ -9,6 +9,7 @@ import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Divider } from '@mantine/core';
 import createAPI from '../services/createAPI';
+import ImpressaoTicketEstacionamento from '../util/ImpressaoTicketEstacionamento';
 
 
 const BuscarVeiculo = () => {
@@ -21,8 +22,7 @@ const BuscarVeiculo = () => {
     const [estado2, setEstado2] = useState(false);
     const [cont, setCont] = useState(0);
     const [div , setDiv] = useState(false)
-    const [data, setData] = useState([])
-    const token = localStorage.getItem('token');
+    const [data, setData] = useState([]);
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
 
@@ -31,7 +31,6 @@ const BuscarVeiculo = () => {
         const upperCase = tirarTraco.toUpperCase();
         localStorage.setItem('placaCarro', upperCase)
         FuncTrocaComp('HistoricoVeiculo')
-        
     }
 
 
@@ -51,7 +50,7 @@ const BuscarVeiculo = () => {
 
         useEffect(() => {
             if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
-                FuncTrocaComp( "FecharTurno");
+                FuncTrocaComp( "AbrirTurno");
             }
             const clicado = document.getElementById("flexSwitchCheckDefault").checked
             if(clicado === false){
@@ -114,8 +113,6 @@ const BuscarVeiculo = () => {
                     setMensagem("")
                     setDiv(true)
 
-                    console.log(response.data.data)
-
                     const newData = response?.data.data.map((item) => ({
                         placa: item.placa,
                         modelo: item.modelo.modelo,
@@ -152,7 +149,16 @@ const BuscarVeiculo = () => {
             const upperCase = tirarTraco.toUpperCase();
             localStorage.setItem('placaCarro', upperCase)
             FuncTrocaComp('ListarNotificacoes')
-            
+        }
+
+        const imprimirSegundaVia = (link) => {
+            if(link.estacionado === 'S'){
+                ImpressaoTicketEstacionamento('SEGUNDA', link.chegada, link.tempo, 
+                'Nao informado', link.vaga, link.placa, 'Nao informado', 'Nao informado',
+                link.numero_notificacoes_pendentes)
+            } else {
+                
+            }
         }
 
   return (
@@ -198,7 +204,7 @@ const BuscarVeiculo = () => {
                         <div>
                          {data.map((link, index) => (
                             <div className="card border-3 shadow mt-5" key={index} >
-                                <div className={link.numero_notificacoes_pendentes !== 0 && link.estacionado === 'S' ? 'card-body4 h-75' : 'card-body4'}>
+                                <div className={link.numero_notificacoes_pendentes !== 0 && link.estacionado === 'S' ? 'card-body8 h-75' : 'card-body8'}>
                                     <div className="d-flex align-items-center justify-content-between pb-3">
                                         <div>
                                             <div className="h2 mb-0 d-flex align-items-center">
@@ -276,6 +282,7 @@ const BuscarVeiculo = () => {
                                         :
                                         null
                                     }
+                                        <button type="submit" className="btn4 mb-2 botao" onClick={() => {imprimirSegundaVia(link)}}>Imprimir via</button>
                                         <button type="submit" className="btn4 bg-gray-400 botao" onClick={() => {goHistorico()}}>Histórico</button>
                                     </div>
                                 </div>

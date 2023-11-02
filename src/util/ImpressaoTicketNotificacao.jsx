@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const ImpressaoTicketNotificacao = async (via, monitor, vaga, placa, modelo, fabricante, motivo, endereco, valor) => {
+const ImpressaoTicketNotificacao = async (via, monitor, vaga, placa, modelo, fabricante, motivo, endereco, valor, tempo) => {
 
   const param = async () => {
     try {
@@ -18,7 +18,6 @@ const ImpressaoTicketNotificacao = async (via, monitor, vaga, placa, modelo, fab
       }
   };
 
-  console.log(via, monitor, vaga, placa, modelo, fabricante, motivo, endereco, await param())
   const obterHoraAtual = () => {
       const dataAtual = new Date();
       const dia = dataAtual.getDate().toString().padStart(2, '0');
@@ -39,7 +38,7 @@ const ImpressaoTicketNotificacao = async (via, monitor, vaga, placa, modelo, fab
           endereco: endereco,
           fabricante: fabricante,
           motivo: motivo,
-          vaga: vaga[0],
+          vaga: vaga,
           placa: placa,
           valor: await param(),
           via: via
@@ -52,7 +51,7 @@ const ImpressaoTicketNotificacao = async (via, monitor, vaga, placa, modelo, fab
   } else {
     const json = {
       tipo: 'NOTIFICACAO',
-      dataEmissao: obterHoraAtual(),
+      dataEmissao: tempo,
       monitor: monitor,
       modelo: modelo,
       endereco: endereco,

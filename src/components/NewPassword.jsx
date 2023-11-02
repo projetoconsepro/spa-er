@@ -1,172 +1,225 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import sha256 from 'crypto-js/sha256';
-import FuncTrocaComp from '../util/FuncTrocaComp';
-import VoltarComponente from '../util/VoltarComponente';
-import { Button } from '@mantine/core';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import sha256 from "crypto-js/sha256";
+import FuncTrocaComp from "../util/FuncTrocaComp";
+import VoltarComponente from "../util/VoltarComponente";
+import { Button, Input, PasswordInput } from "@mantine/core";
+import { IconLock, IconPhone } from "@tabler/icons-react";
+import { IconLockCheck } from "@tabler/icons-react";
+import ReactInputMask from "react-input-mask";
 
 const NewPassword = () => {
-    const [inputSenha, setInputSenha] = useState("form-control");
-    const [inputSenha2, setInputSenha2] = useState("form-control");
-    const [passwordType, setPasswordType] = useState("password");
-    const [classolho, setClassolho] = useState("olho");
-    const [senha, setSenha] = useState("");
-    const [senha2, setSenha2] = useState("");
-    const codigoConfirm = localStorage.getItem('codigoConfirm');
-    const [mensagem, setMensagem] = useState("");
-    const [estado, setEstado] = useState(false);
+  const [senha, setSenha] = useState("");
+  const [senha2, setSenha2] = useState("");
+  const codigoConfirm = localStorage.getItem("codigoConfirm");
+  const [mensagem, setMensagem] = useState("");
+  const [estado, setEstado] = useState(false);
+  const [errorSenha, setErrorSenha] = useState(false);
+  const [errorSenha2, setErrorSenha2] = useState(false);
+  const [telefone] = useState(localStorage.getItem("telefone"));
+  const [input, setInput] = useState("");
+  const [errorSenhaTelefone, setErrorSenhaTelefone] = useState(false);
 
-    const handleSubmit = async () => {
-        if (senha === senha2 && senha.length >= 8) {
-            const password = sha256(senha).toString();
-            const veiculo = axios.create({
-                baseURL: process.env.REACT_APP_HOST,
-            })
-            if (localStorage.getItem('SenhaDefault') === 'true'){
-                veiculo.post('/usuario/senha',{
-                    senha: password,
-                    id_usuario: localStorage.getItem('id_usuario')
-                }).then(
-                    response => {
-                        const resposta = response.data.msg.resultado;
-                        if (resposta === false){
-                            setMensagem(response.data.msg.msg);
-                            setEstado(true);
-                            setTimeout(() => {
-                            setMensagem("");
-                            setEstado(false);
-                            }, 4000);
-                        }
-                        else{
-                            localStorage.removeItem('codigoConfirm');
-                            FuncTrocaComp( 'LoginPage')
-                        }
-                    }
-                ).catch(function (error) {
-                                if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-                || error?.response?.data?.msg === "Token inválido!" 
-                || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                    localStorage.removeItem("user")
-                localStorage.removeItem("token")
-                localStorage.removeItem("perfil");
-                } else {
-                    console.log(error)
-                }
-                });
-            } else {
-            veiculo.post('/usuario/senha',{
-                codigo_seguranca: codigoConfirm,
-                senha: password
-            }).then(
-                response => {
-                    const resposta = response.data.msg.resultado;
-                    if (resposta === false){
-                        setMensagem(response.data.msg.msg);
-                        setEstado(true);
-                        setTimeout(() => {
-                        setMensagem("");
-                        setEstado(false);
-                        }, 4000);
-                    }
-                    else{
-                        localStorage.removeItem('codigoConfirm');
-                        FuncTrocaComp( 'LoginPage')
-                    }
-                }
-            ).catch(function (error) {
-                            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-            });
-        }
-        } else {
-            setInputSenha("form-control is-invalid");
-            setInputSenha2("form-control is-invalid");
-            setClassolho("olho is-invalid");
-            setMensagem("As senhas não coincidem ou não possuem o tamanho mínimo de 8 caracteres!");
+  function extrairNumeros(string) {
+    return string ? string.replace(/\D/g, '') : string;
+}
+
+  const handleSubmit = async () => {
+
+    if (telefone === "Não cadastrado") {
+        if (input === "") {
+            setErrorSenhaTelefone(true);
+            setMensagem("Digite seu telefone!");
             setEstado(true);
             setTimeout(() => {
-                setClassolho("olho");
-                setInputSenha("form-control");
-                setInputSenha2("form-control");
+                setErrorSenhaTelefone(false);
                 setMensagem("");
                 setEstado(false);
             }, 4000);
-        }
-    }
-
-    const togglePassword = () => {
-        if (passwordType === "password") {
-            setPasswordType("text")
             return;
         }
-        setPasswordType("password")
     }
 
-    return (
-        <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
-            <div className="container">
-                <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
-                    <div className="col-12 d-flex align-items-center justify-content-center">
-                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
-                            <div className="text-center text-md-center mb-3 pt-3 mt-4mt-md-0">
-                                <img src="../../assets/img/logoconseproof2.png" alt="logo" className="mb-4" />
-                            </div>
-                            <p className="pt-2 pb-3 fs-5"><strong>Digite sua nova senha:</strong></p>
-                            <div className="form-group mb-4">
-                                        <label id="labelLogin">Senha:</label>
-                                        <div className="input-group">
-                                            <input className={inputSenha} type={passwordType} name="password" id="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Digite sua senha" />
-                                            <button onClick={togglePassword} type="button" className={classolho}>
-                                                {passwordType === "password" ? <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-slash-fill" viewBox="0 0 16 16">
-                                                    <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.029 7.029 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.089z" />
-                                                    <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12-.708.708z" />
-                                                </svg> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-                                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-                                                </svg>}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group mb-4">
-                                        <label id="labelLogin">Confirme sua senha:</label>
-                                        <div className="input-group">
-                                            <input className={inputSenha2} type="password" name="password" id="password" value={senha2} onChange={(e) => setSenha2(e.target.value)} placeholder="Digite sua senha novamente" />
-                                        </div>
-                                    </div>
-                            <div className="mt-5 mb-5 gap-2 d-md-block">
-                                    <VoltarComponente space={true} />
-                                    <Button
-                                    onClick={() => handleSubmit()}
-                                    loaderPosition="right"
-                                    className="bg-blue-50"
-                                    size="md"
-                                    radius="md"
-                                    >
-                                    Confirmar
-                                </Button>
-                                </div>
-                                <div
+    if (senha === senha2 && senha.length >= 4) {
+      const password = sha256(senha).toString();
+      const veiculo = axios.create({
+        baseURL: process.env.REACT_APP_HOST,
+      });
+      if (localStorage.getItem("SenhaDefault") === "true") {
+        veiculo
+          .post("/usuario/senha", {
+            senha: password,
+            id_usuario: localStorage.getItem("id_usuario"),
+          })
+          .then((response) => {
+            const resposta = response.data.msg.resultado;
+            if (resposta === false) {
+              setMensagem(response.data.msg.msg);
+              setEstado(true);
+              setTimeout(() => {
+                setMensagem("");
+                setEstado(false);
+              }, 4000);
+            } else {
+              localStorage.removeItem("codigoConfirm");
+              FuncTrocaComp("LoginPage");
+            }
+          })
+          .catch(function (error) {
+            if (
+              error?.response?.data?.msg === "Cabeçalho inválido!" ||
+              error?.response?.data?.msg === "Token inválido!" ||
+              error?.response?.data?.msg ===
+                "Usuário não possui o perfil mencionado!"
+            ) {
+              localStorage.removeItem("user");
+              localStorage.removeItem("token");
+              localStorage.removeItem("perfil");
+            } else {
+              console.log(error);
+            }
+          });
+      } else {
+        let cell = ''
+        if (telefone === "Não cadastrado") {
+            cell = extrairNumeros(input);
+        }
+        veiculo
+          .post("/usuario/senha", {
+            codigo_seguranca: codigoConfirm,
+            senha: password,
+            ...(cell !== 'Não cadastrado' ? { telefone: cell } : {})
+          })
+          .then((response) => {
+            const resposta = response.data.msg.resultado;
+            if (resposta === false) {
+              setMensagem(response.data.msg.msg);
+              setEstado(true);
+              setTimeout(() => {
+                setMensagem("");
+                setEstado(false);
+              }, 4000);
+            } else {
+              localStorage.removeItem("codigoConfirm");
+              localStorage.removeItem("SenhaDefault");
+              localStorage.removeItem("telefone");
+              FuncTrocaComp("LoginPage");
+            }
+          })
+          .catch(function (error) {
+            if (
+              error?.response?.data?.msg === "Cabeçalho inválido!" ||
+              error?.response?.data?.msg === "Token inválido!" ||
+              error?.response?.data?.msg ===
+                "Usuário não possui o perfil mencionado!"
+            ) {
+              localStorage.removeItem("user");
+              localStorage.removeItem("token");
+              localStorage.removeItem("perfil");
+            } else {
+              console.log(error);
+            }
+          });
+      }
+    } else {
+      setErrorSenha2(true);
+      setErrorSenha(true);
+      setMensagem(
+        "As senhas não coincidem ou não possuem o tamanho mínimo de 4 caracteres!"
+      );
+      setEstado(true);
+      setTimeout(() => {
+        setErrorSenha2(false);
+        setErrorSenha(false);
+        setMensagem("");
+        setEstado(false);
+      }, 4000);
+    }
+  };
+
+  return (
+    <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+      <div className="container">
+        <div
+          className="row justify-content-center form-bg-image"
+          data-background-lg="../../assets/img/illustrations/signin.svg"
+        >
+          <div className="col-12 d-flex align-items-center justify-content-center">
+            <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+              <div className="text-center text-md-center mb-3 pt-3 mt-4mt-md-0">
+                <img
+                  src="../../assets/img/logoconseproof2.png"
+                  alt="logo"
+                  className="mb-4"
+                />
+              </div>
+              <p className="pt-2 pb-3 fs-5">
+                <strong>Digite sua nova senha{telefone === "Não cadastrado" ? ' e telefone: ' : ': '}</strong>
+              </p>
+              
+              {telefone === "Não cadastrado" ? (
+                <div className="form-group mb-4 text-start">
+                <small><span>Telefone:</span></small>
+                  <Input
+                    icon={<IconPhone size={18} />}
+                    placeholder="Digite seu telefone"
+                    autocomplete="off"
+                    value={input}
+                    component={ReactInputMask} mask={'(99) 99999-9999'}
+                    onChange={(e) => setInput(e.target.value)}
+                    error={setErrorSenhaTelefone}
+                    className="mt-1"
+                  />
+                </div>
+              ) : null}
+              <div className="form-group mb-4 text-start">
+                <PasswordInput
+                  label="Senha:"
+                  autocomplete="off"
+                  icon={<IconLock size={18} />}
+                  placeholder="Digite sua senha"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  error={errorSenha}
+                />
+              </div>
+              <div className="form-group mb-4">
+                <Input
+                  icon={<IconLockCheck size={18} />}
+                  type="password"
+                  autocomplete="off"
+                  placeholder="Digite sua senha novamente"
+                  value={senha2}
+                  onChange={(e) => setSenha2(e.target.value)}
+                  error={errorSenha2}
+                />
+              </div>
+              <div className="mt-5 mb-5 gap-2 d-md-block">
+                <VoltarComponente space={true} />
+                <Button
+                  onClick={() => handleSubmit()}
+                  loaderPosition="right"
+                  className="bg-blue-50"
+                  size="md"
+                  radius="md"
+                >
+                  Confirmar
+                </Button>
+              </div>
+              <div
                 className="alert alert-danger"
                 role="alert"
                 style={{ display: estado ? "block" : "none" }}
               >
                 {mensagem}
               </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </section>
-    )
-}
-
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 export default NewPassword;

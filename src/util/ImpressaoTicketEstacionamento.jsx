@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao) => {
-    console.log(via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao)
         const obterHoraAtual = () => {
             const dataAtual = new Date();
             const hora = dataAtual.getHours().toString().padStart(2, '0');
@@ -17,13 +16,11 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
             const horaValidade = dataValidade.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
             return horaValidade;
           };
-        
-          const horaInicio = obterHoraAtual();
+
           const duracao = tempo;
-          const horaValidade = calcularValidade(tempoChegada, duracao);
-          console.log('TEMPÇO CHEGADA', horaInicio, horaValidade)
+          let horaValidade = calcularValidade(tempoChegada, duracao); 
           
-          const tipoEstacionamento = (tempo) => {
+          const tipoEstacionamento = () => {
             let tipo2 = tempo
             if(tempo === '00:10:00'){
                 tipo2 = 'TOLERANCIA'
@@ -33,8 +30,18 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
             return tipo2
         }
 
+        const forma = () => {
+          let forma2 = metodo
+          if(tempo === '00:10:00'){
+            forma2 = 'TOLERANCIA'
+          }
+          else {
+            forma2 = metodo
+          }
+          return forma2
+        }
+
         const valorTicket = async () => {
-          console.log(tempoValor)
             try {
                 const requisicao = axios.create({
                   baseURL: process.env.REACT_APP_HOST,
@@ -56,7 +63,6 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
                   } else {
                     valorCobrar = valorCobranca * 0
                   }
-                  console.log('valor', valorCobrar)
                   return valorCobrar;
 
                 } catch(error) {
@@ -72,43 +78,42 @@ const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, 
             const mes = String(data.getMonth() + 1).padStart(2, '0');
             const ano = data.getFullYear();
             return `${dia}/${mes}/${ano}`;
-          }
+        }
 
-
-          if(via === "PRIMEIRA"){
+          if(via === 'PRIMEIRA'){
           const json = {
+                via: via,
                 tipo: tipoEstacionamento(),
                 dataHoje: getDataDeHoje(),
                 horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
-                metodo: metodo,
-                vaga: vaga[0],
+                metodo: forma(),
+                vaga: metodo === 'PIX' ? vaga : vaga[0],
                 placa: placa,
                 valor: await valorTicket(),
                 notificacaoPendente: notificacao
           }
-
-          console.log('toma', json)
+          
           if(window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(JSON.stringify(json));
           }
 
         } else {
             const json = {
-                tipo: tipoEstacionamento(),
+                via: via,
+                tipo: 'EXTRATO DE PLACA',
                 dataHoje: getDataDeHoje(),
                 horaInicio: tempoChegada,
                 horaValidade: horaValidade,
                 monitor: monitor,
-                metodo: metodo,
-                vaga: vaga[0],
+                metodo: forma(),
+                vaga: vaga,
                 placa: placa,
                 valor: await valorTicket(),
                 notificacaoPendente: notificacao
             } 
 
-          console.log('toma', json)
           if(window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(JSON.stringify(json));
          }

@@ -3,6 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import { Input } from "@mantine/core";
+import { IconUser } from "@tabler/icons-react";
 
 const ResetPassword = () => {
   const [metodo, setMetodo] = useState("");
@@ -10,42 +12,20 @@ const ResetPassword = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [checkValidate1] = useState(false);
-  const [checkValidate2] = useState(false);
-  const [checkValidate3] = useState(false);
   const [sucesso, setSucesso] = useState(false);
-
-  const checkBoxValidate = () => {
-    const checks = document.querySelectorAll('input[type="checkbox"]');
-    if (checks[0].checked === true) {
-      checks[1].disabled = true;
-      checks[2].disabled = true;
-    } else if (checks[1].checked === true) {
-      checks[0].disabled = true;
-      checks[2].disabled = true;
-    } else if (checks[2].checked === true) {
-      checks[0].disabled = true;
-      checks[1].disabled = true;
-    } else {
-      checks[0].disabled = false;
-      checks[1].disabled = false;
-      checks[2].disabled = false;
-    }
-  };
 
   const handleSubmit = async (e) => {
     const checks = document.querySelectorAll('input[type="checkbox"]');
     if(!sucesso){
       if (
-        checks[0].checked === false &&
-        checks[1].checked === false &&
-        checks[2].checked === false
+        checks[0].checked === false
       ) {
         setMensagem("Selecione um método de recuperação de senha");
         setEstado(true);
         setTimeout(() => {
           setEstado(false);
         }, 4000);
-      } else if (checks[1].checked || checks[2].checked) {
+      } else if (1 == 2 ) {
         setMensagem("Método de recuperação de senha não implementado");
         setEstado(true);
         setTimeout(() => {
@@ -96,7 +76,7 @@ const ResetPassword = () => {
                       FuncTrocaComp('Confirmation')
                     }
                 }
-            ).catch(function (error) {
+          ).catch(function (error) {
               if(error?.response?.data?.msg === "Cabeçalho inválido!" 
               || error?.response?.data?.msg === "Token inválido!" 
               || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
@@ -149,7 +129,7 @@ const ResetPassword = () => {
                   registrado abaixo.
                 </strong>
               </p>
-              <div onChange={checkBoxValidate}>
+              <div>
                 <div className="form-check">
                   <input
                     className="form-check-input"
@@ -161,38 +141,14 @@ const ResetPassword = () => {
                     <small>Receber código por Email</small>
                   </span>
                 </div>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    value={checkValidate2}
-                    type="checkbox"
-                    id="flexCheckDefault2"
-                  />
-                  <span className="form-check-label" >
-                    <small>Receber código por WhatsApp</small>
-                  </span>
-                </div>
-                <div className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value={checkValidate3}
-                    id="flexCheckDefault3"
-                  />
-                  <span className="form-check-label">
-                    <small>Receber código por SMS</small>
-                  </span>
-                </div>
               </div>
-              <div className="form-group mb-4 pt-5" style={{ display: sucesso ? 'block' : 'none' }}>
-                <label id="labelLogin">
-                  Email ou Telefone:
-                </label>
-                <div className="input-group">
-                  <input
-                    className={inputLogin}
+              <div className="text-start" style={{ display: sucesso ? 'block' : 'none' }}>
+                <div>
+                  <label className="mt-3 text-start">Email:</label>
+                  <Input
+                    icon={<IconUser  />}
+                    label= "Email"
                     name="email"
-                    id="email"
                     value={metodo}
                     onChange={(e) => setMetodo(e.target.value)}
                     placeholder="Digite seu email ou telefone"

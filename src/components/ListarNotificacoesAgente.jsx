@@ -7,18 +7,28 @@ import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import Filtro from '../util/Filtro'
 import createAPI from '../services/createAPI'
+import { Group, Pagination } from '@mantine/core'
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
-    const [data2, setData2] = useState([])
-    const [data3, setData3] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState('')
     const [sortAsc, setSortAsc] = useState(true);
     const [estadoLoading, setEstadoLoading] = useState(false)
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
+      
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
+
+  const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
+
 
     function ArrumaHora(data, hora ) {
         const data2 = data.split("T");
@@ -82,7 +92,6 @@ const ListarNotificacoesAgente = () => {
       setMensagem("")
       const requisicao = createAPI();
       requisicao.get('/notificacao').then((response) => {
-        console.log(response.data)
         if (response.data.msg.resultado){
           setEstado(false)
           const newData = response.data.data.map((item) => ({
@@ -145,7 +154,6 @@ const ListarNotificacoesAgente = () => {
     const base64 = btoa(where)
     requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
       if (response.data.data.length !== 0){
-      console.log(response)
       setEstadoLoading(false)
       setEstado(false)
       const newData = response.data.data.map((item) => ({
@@ -168,7 +176,6 @@ const ListarNotificacoesAgente = () => {
       setData(newData)
     }
     else {
-      console.log(response)
       setEstadoLoading(false)
       setData([])
       setEstado(true)
@@ -246,7 +253,7 @@ const ListarNotificacoesAgente = () => {
                       </thead>
                       <tbody>
 
-                    {data.map((item, index) => (
+                    {currentItems.map((item, index) => (
                         <tr key={index} onClick={()=>{mostrar(item)}}>
                           <td>{item.data}</td>
                           <td>{item.placa}</td>
@@ -269,7 +276,11 @@ const ListarNotificacoesAgente = () => {
                     </div>
                 </div>
               </div>
+
             </div>
+            <Group position="center" mb="md">
+                <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
+            </Group>
             <VoltarComponente />
           </div>
         </div>

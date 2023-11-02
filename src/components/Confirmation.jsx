@@ -3,12 +3,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import VoltarComponente from '../util/VoltarComponente'
-import { Button, Divider, Group, Input, Text } from '@mantine/core';
+import { Button, Divider, Group, Input, Modal, Text } from '@mantine/core';
 import { IconLockAccess } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import { FaWhatsapp } from 'react-icons/fa';
+import { FiMap } from 'react-icons/fi';
 
 const Confirmation = () => {
+    const [opened, { open, close }] = useDisclosure(false);
     const [codigo, setCodigo] = useState("");
-    const [inputLogin, setInputLogin] = useState("form-control");
     const [mensagem, setMensagem] = useState("");
     const [estado, setEstado] = useState(false);
 
@@ -74,6 +77,15 @@ const Confirmation = () => {
         });
     }
 
+    const voltar = () => {
+        if (localStorage.getItem('componenteAnterior') === "ResetPassword"){
+            FuncTrocaComp("ResetPassword");
+        }
+        else {
+            FuncTrocaComp("LoginPage");
+        }
+    }
+
     return (
         <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
             <div className="container">
@@ -93,9 +105,14 @@ const Confirmation = () => {
                                  value={codigo} onChange={(e) => setCodigo(e.target.value)}
                                 />       
                             </div>
-                            <p className="text-start mx-1" style={{cursor: "pointer", color: "#3A58C8"}} onClick={reenviarCodigo}><small><u>Clique para reenviar</u></small></p>
+                            <Group position="left">
+                            <p className="text-start m-0" style={{cursor: "pointer", color: "#3A58C8"}} onClick={reenviarCodigo}><small><u>Clique para reenviar</u></small></p>
+                            </Group>
+                            <Group position="left">
+                            <p className="text-end mt-1" style={{cursor: "pointer", color: "#3A58C8"}} onClick={() => open()}><small><u>Não tenho acesso ao email</u></small></p>
+                            </Group>
                             <div className="mt-5 mb-5 gap-2 d-md-block">
-                                <VoltarComponente space={true} />
+                                <Button className="bg-gray-500 mx-2" size="md" radius="md" onClick={() => {voltar()}}>Voltar</Button> 
                                 <Button
                                 onClick={() => handleSubmit()}
                                 loaderPosition="right"
@@ -112,6 +129,43 @@ const Confirmation = () => {
                         </div>
                     </div>
                 </div>
+                <Modal opened={opened} onClose={close} title="Entre em contato conosco!" centered>
+                <div className="mt-2">
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <FaWhatsapp
+                  size={20}
+                  style={{ marginRight: "5px", color: "green" }}
+                />
+                <span>Contato via WhatsApp</span>
+              </div>
+            </div>
+            <div className={window.innerWidth > 768 ? "text-start mt-3 mx-3" : "text-start mt-3 mx-3"}>
+              <a href="https://api.whatsapp.com/send?phone=5186604241&text=Olá!">
+                <Button 
+                  radius="sm"
+                  className="text-start" 
+                  variant="gradient"
+                  size="md"
+                  gradient={{ from: 'teal', to: 'green'}}>
+                  Iniciar conversa
+                </Button>
+              </a>
+            </div>
+            <div className="mt-4">
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <FiMap
+                  size={20}
+                  style={{ marginRight: "5px", color: "blue" }}
+                />
+                <span>Endereço</span>
+              </div>
+            </div>
+            <div className="text-start mt-3 mx-3">
+              <Text size="sm" color="dimmed">
+                Condominio Viena Shopping - R. Júlio de Castilhos, 2500 - 12 - Centro, Taquara - RS, 95600-000
+              </Text>
+            </div>
+                </Modal>
             </div>
         </section>
     )

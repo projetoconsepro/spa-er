@@ -8,7 +8,7 @@ import { FaSearch } from "react-icons/fa";
 import RelatoriosPDF from "../util/RelatoriosPDF";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
-import { Loader } from "@mantine/core";
+import { Group, Loader, Pagination } from "@mantine/core";
 import createAPI from "../services/createAPI";
 
 const OcupacaoVagasAdmin = () => {
@@ -19,11 +19,17 @@ const OcupacaoVagasAdmin = () => {
   const [mensagem, setMensagem] = useState("");
   const [dataHoje, setDataHoje] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
-  const [cont, setCont] = useState(0);
-  const [filtro, setFiltro] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
+
+  const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+  };
+
+  
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
   function ArrumaHora(data, hora) {
     const data2 = data.split("T");
@@ -89,7 +95,6 @@ const OcupacaoVagasAdmin = () => {
     const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
     const passar = btoa(idrequisicao)
       requisicao.get(`/veiculo/historico/?query=${passar}`).then((response) => {
-          console.log(response)
           setEstado3(true)
           if (response.data.msg.resultado) {
             setEstado2(false);
@@ -156,7 +161,6 @@ const OcupacaoVagasAdmin = () => {
 
   const base64 = btoa(consulta)
   requisicao.get(`/veiculo/historico/?query=${base64}`).then((response) => {
-    console.log(response)
     setEstadoLoading(false)
     if (response.data.msg.resultado) {
       setEstado2(false);
@@ -187,7 +191,6 @@ const OcupacaoVagasAdmin = () => {
         tempo: item.tempo,
       }));
       setData(newData);
-      console.log('nerwdatra', newData)
     } else {
       setEstado2(false);
       setEstado(true);
@@ -262,7 +265,7 @@ const OcupacaoVagasAdmin = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.map((item, index) => (
+                      {currentItems.map((item, index) => (
                         <tr
                           key={index}
                           style={{
@@ -402,6 +405,9 @@ const OcupacaoVagasAdmin = () => {
               </div>}
             </div>
           </div>
+          <Group position="center" mb="md">
+                <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
+            </Group>
           <VoltarComponente />
         </div>
       </div>

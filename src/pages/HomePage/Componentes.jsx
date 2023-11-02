@@ -48,152 +48,112 @@ import CameraTicketNotificacao from '../../components/CameraTicketNotificacao';
 import Suporte from '../../components/Suporte';
 import CameraAutoInfracao from '../../components/CameraAutoInfracao';
 import SugestoesAdmin from '../../components/SugestoesAdmin';
+import AdicionarModelo from '../../components/AdicionarModelo';
+import Feriados from '../../components/Feriados';
 
 export default function Veiculos({Componente}) {
-        if(Componente === "MeusVeiculos"){
-            return <ListarVeiculos />
-        }
-        else if (Componente === "RegistrarEstacionamento"){
-            return <RegistrarVagaCliente />
-        }
-        else if(Componente === "CadastrarVeiculo"){
-            return <RegistrarVeiculo />
-        }
-        else if (Componente === "SetoresAdmin"){
-            return <SetoresAdmin />
-        }
-        else if(Componente === "RegistrarVagaMonitor"){
-            return <RegistrarVagaMonitor />
-        }
-        else if (Componente === "ListarVagasMonitor"){
-            return <ListarVagasMonitor />
-        }
-        else if ( Componente === "Notificacao"){
-            return <Notificacao />
-        }
-        else if ( Componente === "Camera"){
-            return <Camera />
-        }
-        else if ( Componente === "ListarNotificacoes"){
-            return <ListarNotificacoes />
-        }
-        else if ( Componente === "BuscarVeiculo"){
-            return <BuscarVeiculo />
-        }
-        else if ( Componente === "Irregularidades"){
-            return <Irregularidades />
-        }
-        else if ( Componente === "ResetPassword"){
-            return <ResetPassword />
-        }
-        else if ( Componente === "Confirmation"){
-            return <Confirmation />
-        }
-        else if ( Componente === "NewPassword"){
-            return <NewPassword />
-        }else if ( Componente === "RegistrarEstacionamentoParceiro"){
-            return <RegistrarEstacionamentoParceiro />
-        }
-        else if ( Componente === "HistoricoFinanceiroParceiro"){
-            return <HistoricoFinanceiroParceiro />
-        }
-        else if ( Componente === "HistoricoVeiculo"){
-            return <HistoricoVeiculo />
-        }
-        else if ( Componente === "RegisterPage"){
-            return <RegisterPage />
-        }
-        else if(Componente === "LoginPage"){
-            return <LoginPage />
-        }
-        else if ( Componente === "EscolherPerfil"){
-            return <DoisPerfis />
-        }
-        else if(Componente === "AdicionarCreditos"){
-            return <AdicionarCreditos />
-        }
-        else if(Componente === "AbrirTurno"){
-            return <AbrirTurno />
-        }
-        else if(Componente === "FecharTurno"){
-            return <FecharTurno />
-        }
-        else if(Componente === "HistoricoFinanceiro"){
-            return <HistoricoFinanceiro />
-        }
-        else if(Componente === "Configuracoes"){
-            return <Configuracoes />
-        }
-        else if(Componente === "Regularizacao"){
-            return <Regularizacao />
-        }
-        else if (Componente === "SugestoesAdmin"){
-            return <SugestoesAdmin />
-        }
-        else if(Componente === "UsuariosAdmin"){
-            return <UsuariosAdmin />
-        }
-        else if (Componente === "VagasAdmin"){
-            return <VagasAdmin />
-        }
-        else if(Componente === "HistoricoCaixa"){
-            return <HistoricoCaixa />
-        }
-        else if(Componente === "ListarNotificacoesAdmin"){
-            return <ListarNotificacoesAdmin />
-        }
-        else if(Componente === "ListarNotificacoesAgente"){
-            return <ListarNotificacoesAgente />
-        }
-        else if(Componente === "AutoInfracao"){
-            return <AutoInfracao />
-        }
-        else if(Componente === "Dashboard"){
-            return <Dashboard />
-        }
-        else if(Componente === "VeiculosAdmin"){
-            return <VeiculosAdmin />
-        }
-        else if(Componente === "ClientesAdmin"){
-            return <ClientesAdmin />
-        }
-        else if(Componente === "OcupacaoVagasAdmin"){
-            return <OcupacaoVagasAdmin />
-        }
-        else if(Componente === "TransferirCreditoCliente"){
-            return <TransferirCreditoCliente />
-        }
-        else if(Componente === "VeiculosAgente"){
-            return <VeiculosAgente />
-        }
-        else if(Componente === "PrestacaoContas"){
-            return <PrestacaoContas />
-        }
-        else if(Componente === "ConfigurarPerfil"){
-            return <ConfigurarPerfil />
-        }
-        else if(Componente === "EditarParametroAdmin"){
-            return <EditarParametroAdmin />
-        }
-        else if (Componente === "TransferenciaParceiro"){
-            return <TransferenciaParceiro />
-        }
-        else if (Componente === "CartaoCredito"){
-            return <CartaoCredito />
-        }
-        else if (Componente === "InserirCreditos"){
-            return <InserirCreditos />
-        }
-        else if (Componente === "CameraTicketNotificacao"){
-            return <CameraTicketNotificacao />
-        }
-        else if (Componente === "Suporte"){
-            return <Suporte />
-        }
-        else if (Componente === "CameraAutoInfracao"){
-            return <CameraAutoInfracao />
-        }
-        else {
-            return <Error />
-        }
+    switch(Componente) {
+        case "MeusVeiculos":
+            return <ListarVeiculos />;
+        case "AdicionarModelo":
+            return <AdicionarModelo />;
+        case "RegistrarEstacionamento":
+            return <RegistrarVagaCliente />;
+        case "CadastrarVeiculo":
+            return <RegistrarVeiculo />;
+        case "SetoresAdmin":
+            return <SetoresAdmin />;
+        case "RegistrarVagaMonitor":
+            return <RegistrarVagaMonitor />;
+        case "ListarVagasMonitor":
+            return <ListarVagasMonitor />;
+        case "Notificacao":
+            return <Notificacao />;
+        case "Camera":
+            return <Camera />;
+        case "ListarNotificacoes":
+            return <ListarNotificacoes />;
+        case "BuscarVeiculo":
+            return <BuscarVeiculo />;
+        case "Irregularidades":
+            return <Irregularidades />;
+        case "ResetPassword":
+            return <ResetPassword />;
+        case "Confirmation":
+            return <Confirmation />;
+        case "NewPassword":
+            return <NewPassword />;
+        case "RegistrarEstacionamentoParceiro":
+            return <RegistrarEstacionamentoParceiro />;
+        case "HistoricoFinanceiroParceiro":
+            return <HistoricoFinanceiroParceiro />;
+        case "HistoricoVeiculo":
+            return <HistoricoVeiculo />;
+        case "RegisterPage":
+            return <RegisterPage />;
+        case "LoginPage":
+            return <LoginPage />;
+        case "EscolherPerfil":
+            return <DoisPerfis />;
+        case "AdicionarCreditos":
+            return <AdicionarCreditos />;
+        case "AbrirTurno":
+            return <AbrirTurno />;
+        case "FecharTurno":
+            return <FecharTurno />;
+        case "HistoricoFinanceiro":
+            return <HistoricoFinanceiro />;
+        case "Configuracoes":
+            return <Configuracoes />;
+        case "Regularizacao":
+            return <Regularizacao />;
+        case "SugestoesAdmin":
+            return <SugestoesAdmin />;
+        case "UsuariosAdmin":
+            return <UsuariosAdmin />;
+        case "VagasAdmin":
+            return <VagasAdmin />;
+        case "HistoricoCaixa":
+            return <HistoricoCaixa />;
+        case "ListarNotificacoesAdmin":
+            return <ListarNotificacoesAdmin />;
+        case "ListarNotificacoesAgente":
+            return <ListarNotificacoesAgente />;
+        case "AutoInfracao":
+            return <AutoInfracao />;
+        case "Dashboard":
+            return <Dashboard />;
+        case "VeiculosAdmin":
+            return <VeiculosAdmin />;
+        case "ClientesAdmin":
+            return <ClientesAdmin />;
+        case "OcupacaoVagasAdmin":
+            return <OcupacaoVagasAdmin />;
+        case "TransferirCreditoCliente":
+            return <TransferirCreditoCliente />;
+        case "VeiculosAgente":
+            return <VeiculosAgente />;
+        case "PrestacaoContas":
+            return <PrestacaoContas />;
+        case "ConfigurarPerfil":
+            return <ConfigurarPerfil />;
+        case "EditarParametroAdmin":
+            return <EditarParametroAdmin />;
+        case "TransferenciaParceiro":
+            return <TransferenciaParceiro />;
+        case "CartaoCredito":
+            return <CartaoCredito />;
+        case "InserirCreditos":
+            return <InserirCreditos />;
+        case "CameraTicketNotificacao":
+            return <CameraTicketNotificacao />;
+        case "Suporte":
+            return <Suporte />;
+        case "CameraAutoInfracao":
+            return <CameraAutoInfracao />;
+        case "Feriados":
+            return <Feriados />;
+        default:
+            return <Error />;
     }
+}

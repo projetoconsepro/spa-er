@@ -3,6 +3,8 @@ import {React, useState, useEffect} from 'react'
 import Swal from 'sweetalert2'
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import createAPI from '../services/createAPI';
+import { Button } from '@mantine/core';
+import { IconReceipt } from '@tabler/icons-react';
 
 const FecharTurno = () => {
     const [estadoTurno, setEstadoTurno] = useState(true);
@@ -43,7 +45,6 @@ const FecharTurno = () => {
         requisicao.get('/setores'
         ).then(
             response => {
-                console.log(response)
                 for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
                     resposta2[i] = {};
                     resposta2[i].setores = response.data.data.setores[i].nome;
@@ -70,7 +71,6 @@ const FecharTurno = () => {
 
         const setorA = resposta2.find((setor) => setor.setores === setor2);
         const setorId2 = setorA && setorA.id_setores;
-        console.log(setorId2)
         setSetorSelecionado(setorId2)
     }
 
@@ -86,7 +86,6 @@ const FecharTurno = () => {
             }
         ).then(
             response => {
-               console.log(response)
                if(response.data.msg.resultado === true){
                     localStorage.setItem("turno", false)
                     setEstadoTurno(false)
@@ -94,7 +93,6 @@ const FecharTurno = () => {
                     setAbrirTurno(true)
                }
                else{
-                console.log(response)
                 setEstadoTurno(false)
                 setEstadoSelect(true)
                 setEstadoDiv(true)
@@ -148,7 +146,6 @@ const FecharTurno = () => {
                 FuncTrocaComp( "ListarVagasMonitor")
                }
                else{
-                console.log(response)
                 localStorage.setItem("turno", true)
                 setEstadoTurno(true)
                 setEstadoDiv(true)
@@ -197,12 +194,11 @@ const FecharTurno = () => {
         requisicao.get('/turno/caixa').then(
             response => {
                 if(response.data.msg.resultado){
-                    console.log(response)
                     const sim = parseFloat(response.data.caixa.valor_abertura) + parseFloat(response.data.caixa.valor_movimentos);
                     Swal.fire({
                         title: 'Confirmar fechamento de caixa',
                         showDenyButton: true,
-                        html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response.data.caixa.valor_abertura},00</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response.data.caixa.valor_movimentos},00</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim},00</h4></div><div className="col-12"></div></div></div>`,
+                        html: `<div className="row justify-content-center align-items-center"> <div className="col-12"> <h6 class="text-start">Confirmar fechamento de caixa:</h6> </div> </div> <div className="row justify-content-center align-items-center"><div className="col-12"><h6 class="mt-4 text-start">Você inicou o caixa com: R$${response.data.caixa.valor_abertura}</h6></div><div className="col-12"><h6 class="mt-4 text-start">Saldo movimentos: R$${response.data.caixa.valor_movimentos}</h6></div><div className="col-12"><h4 class="mt-4 text-start">Saldo final: R$${sim}</h4></div><div className="col-12"></div></div></div>`,
                         confirmButtonText: `Confirmar`,
                         confirmButtonColor: '#28a745',
                         denyButtonText: `Cancelar`,
@@ -217,7 +213,6 @@ const FecharTurno = () => {
                                 }
                             ).then(
                                 response => {
-                                    console.log(response)
                                 if(response.data.msg.resultado === true){
                                     Swal.fire('Caixa fechado com sucesso', '', 'success')
                                     localStorage.setItem("caixa", false)
@@ -226,7 +221,6 @@ const FecharTurno = () => {
                                 }
                                 else{
                                     Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error')
-                                    console.log(response)
                                 }
                                 }
                             ).catch(function (error) {
@@ -246,7 +240,7 @@ const FecharTurno = () => {
             }
             })
             }
-            else {console.log(response)}
+            else {}
             }
         ).catch(function (error) {
                         if(error?.response?.data?.msg === "Cabeçalho inválido!" 
@@ -260,6 +254,15 @@ const FecharTurno = () => {
             }
         }
         );
+    }
+
+    const testarImpressora = () => {
+        const json = {
+            tipo: 'TESTE',
+        }
+        if(window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(JSON.stringify(json));
+        }
     }
 
   return (
@@ -290,20 +293,25 @@ const FecharTurno = () => {
                 <div className="col-6">
                 <select className="form-select form-select-sm mb-3 mt-2" aria-label=".form-select-lg example" id="setoresSelect2"
                 onChange={() => {setarSetor()}}>
-
                     {resposta2.map((link, index) => (
                     <option value={link.setores} key={index}>Setor: {link.setores}</option>
                     ))}
                     </select>
                 </div>
                 </div> : null}
-
                 </div>
                     <div>
-                    {estadoTurno === true ? <button type="button" className="btn4 botao mt-3" onClick={() => {fecharTurno()}}>Fechar turno</button> : <button type="button" className="btn4 botao mt-3" onClick={() => {abrirTurno2()}}>Abrir turno</button>}
+                    {estadoTurno === true ? 
+                    <button type="button" className="btn4 botao mt-3" onClick={() => {fecharTurno()}}>Fechar turno</button> 
+                    : 
+                    <button type="button" className="btn4 botao mt-3" onClick={() => {abrirTurno2()}}>Abrir turno</button>}
                     {estadoTurno === true ? 
                     <div>{estadoCaixa === true ? <button type="button" className="btn7 botao mt-3" onClick={() => {fecharCaixa()}}>Fechar caixa</button> : null}
                     </div>: null }   
+                    <Button variant="gradient" gradient={{ from: 'orange', to: 'red' }} fullWidth mt="md" radius="md"
+                    onClick={() => testarImpressora()}>
+                    Testar impressão ‎ <IconReceipt size={18}/>
+                    </Button>
                     </div>
                 </div>
             </div>

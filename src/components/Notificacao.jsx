@@ -35,19 +35,11 @@ const Notificacao = () => {
     const [outro, setOutro] = useState (true);
     const [estado2, setEstado2] = useState(false);
     let [cont, setCont] = useState(0);
-    const [fabricanteSelecionado, setFabricanteSelecionado] = useState('');
     const [fabricanteCerto, setFabricanteCerto] = useState('');
     const [modeloSelecionado, setModeloSelecionado] = useState('');
     const [modeloCerto, setModeloCerto] = useState('');
     const [tipoNotificacaoNome, setTipoNotificacaoNome] = useState("Tempo limite excedido");
     const [disabled, setDisabled] = useState(false);
-
-  const handleFabricanteChange = (value) => {
-    setFabricanteSelecionado(value);
-    setTimeout(() => {
-      getModelos(value);
-    }, 0);
-  };
 
   const handleModeloChange = (value) => {
     setModeloSelecionado(value);
@@ -77,32 +69,67 @@ const Notificacao = () => {
                     setEstado(false);
                     setMensagem("");
                 }, 4000);
-        } else {
-            const requisicao = createAPI();
+            return;
+        } 
+
+        if (!infoBanco){
+            if (modeloCerto === "" || cor === "") {
+                setEstado2(false)
+                setMensagem("Necessário selecionar modelo, fabricante e cor")
+                setEstado(true)
+                setTimeout(() => {
+                    setEstado(false);
+                    setMensagem("");
+                }, 4000);
+                return;
+            }
+        }
+
+        const requisicao = createAPI();
         if (!infoBanco) {
                 const getmodelo = modeloCerto;
-                const getfabricante = fabricanteCerto;
-                console.log(getmodelo, getfabricante)
-            if (outro === true) {
-                const getcor = document.getElementById("selectCores").value;
-                if (getmodelo === "" || getfabricante === "" || getcor === "") {
-                    setMensagem("Necessário selecionar modelo, fabricante e cor")
-                    setEstado(true)
-                    setTimeout(() => {
+                if (document.getElementById('selectCores') !== null && document.getElementById('selectCores') !== undefined){
+                    const corSelect = document.getElementById('selectCores').value;
+                    if(corSelect === ""){
+                        setEstado2(false)
+                        setMensagem("Necessário selecionar modelo, fabricante e cor")
+                        setEstado(true)
+                        setTimeout(() => {
                         setEstado(false);
                         setMensagem("");
                     }, 4000);
                     return;
+                    }
+                }
+                
+
+
+                if((document.getElementById('selectCores') === null || document.getElementById('selectCores') === undefined) && cor2 === ''){
+                    setEstado2(false)
+                    setMensagem("Necessário selecionar modelo, fabricante e cor")
+                    setEstado(true)
+                    setTimeout(() => {
+                    setEstado(false);
+                    setMensagem("");
+                }, 4000);
+                return;
+                }
+                let corNova = '';
+                if(cor2 !== ""){
+                    corNova = cor2
+                } else {
+                    const corSelect = document.getElementById('selectCores').value;
+                    corNova = corSelect
                 }
         requisicao.post(`/veiculo/${placa}`, {
             "placa": placa,
              "modelo": {
                 "idModelo": getmodelo,
                 "fabricante": {
-                    "idFabricante": getfabricante,
+                    "idFabricante": ''
                 }
             },
-            "cor": getcor,
+            "cor": corNova,
     }).then(
             response => {
                 modeloImpressao = response.data.data.reposta.modelo.modelo
@@ -114,54 +141,87 @@ const Notificacao = () => {
             localStorage.removeItem("perfil");
         });
     }
-    else{
-        if (getmodelo === "" || getfabricante === ""){
-            setMensagem("Necessário selecionar modelo e fabricante")
-            setEstado(true)
-            setTimeout(() => {
-                setEstado(false);
-                setMensagem("");
-            }, 4000);
-            return;
-        }
-        requisicao.post(`/veiculo/${placa}`, {
-            "placa": placa,
-             "modelo": {
-                "idModelo": getmodelo,
-                "fabricante": {
-                    "idFabricante": getfabricante,
-                }
-            },
-            "cor": cor2,
-        }).then(
-            response => {
-            console.log(response, 'olha só em2')
-        }
-        ).catch(function (error) {
-            localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-        });
-    }
-    }
+   
     if (imagens.length !== 0) {
-        if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") { 
+        if(infoBanco){
+            modeloImpressao = modeloVeiculo;
+            fabricanteImpressao = fabricanteVeiculo;
+        }
+        if (vagaVeiculo !== null && vagaVeiculo !== undefined && vagaVeiculo !== "") {
         requisicao.post('/notificacao', {
             "id_vaga_veiculo": vagaVeiculo,
+            "placa" : placa,
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
     }).then(
             response => {
-                console.log(response)
                 setEstado2(false)
                 if(response.data.msg.resultado === true){
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao("PRIMEIRA", response.config.headers.id_usuario, vaga, placa, 
-                    modeloImpressao, fabricanteImpressao, tipoNotificacaoNome, response.data.data.local)
-                    FuncTrocaComp( "CameraTicketNotificacao");
+
+                    ImpressaoTicketNotificacao("PRIMEIRA",
+                    response.config.headers.id_usuario, 
+                    vaga, 
+                    placa, 
+                    modeloImpressao,
+                    fabricanteImpressao, 
+                    tipoNotificacaoNome, 
+                    response.data.data.local)
+
+                    const primeiraParam = "PRIMEIRA";
+                    const idUsuario = response.config.headers.id_usuario;
+                    const local = response.data.data.local;
+
+                    localStorage.setItem('parametrosImpressaoTicket', JSON.stringify({
+                        primeiraParam: primeiraParam,
+                        idUsuario: idUsuario,
+                        vaga: vaga,
+                        placa: placa,
+                        modeloImpressao: modeloImpressao,
+                        fabricanteImpressao: fabricanteImpressao,
+                        tipoNotificacaoNome: tipoNotificacaoNome,
+                        local: local,
+                      }));
+
+                      const listaVagasString = localStorage.getItem("listaVagas");
+                      let listaVagas = [];
+          
+                        try {
+                          listaVagas = JSON.parse(listaVagasString) || [];
+                        } catch (error) {
+                          console.error("Erro ao analisar JSON:", error);
+                        }
+
+                        listaVagas = listaVagas.filter((element) => element !== null);
+
+                        console.log(listaVagas);
+
+                    const indexByVaga = listaVagas.findIndex((item) => item.numero == vaga);
+
+                    if (indexByVaga !== -1) {
+                        const hora = new Date();
+                        const horaMinuto = `${hora.getHours()}:${hora.getMinutes()}:${hora.getSeconds()}`;
+
+                        const vaga = listaVagas[indexByVaga];
+                           vaga.numero_notificacoes = 1;
+                           vaga.numero_notificacoes_pendentes = 1;
+                           vaga.numero_notificacoes_pendentess = 1;
+                           vaga.corline = "#D3D3D4";
+                           vaga.cor = "#141619";
+                           vaga.chegada = horaMinuto;
+                           vaga.tempo = horaMinuto;
+                           vaga.variaDisplay = "aparece";
+                           vaga.temporestante = horaMinuto;
+                           vaga.display = "testeNot";
+                           vaga.placa = placa;
+                    }
+                       localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+
+
+                    FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
                     localStorage.removeItem("placa");
@@ -190,15 +250,71 @@ const Notificacao = () => {
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
     }).then(response => {
-        console.log(response)
                 setEstado2(false)
-                if(response.data.msg.resultado === true){
+                if(response.data.msg.resultado === true) {
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
                         localStorage.setItem('id_notificacao', id)
                     }
-                    ImpressaoTicketNotificacao("PRIMEIRA", response.config.headers.id_usuario, vaga, placa, 
-                    modeloImpressao, fabricanteImpressao, tipoNotificacaoNome, response.data.data.local)
+
+                    ImpressaoTicketNotificacao("PRIMEIRA",
+                     response.config.headers.id_usuario, 
+                     vaga, 
+                     placa, 
+                     modeloImpressao,
+                     fabricanteImpressao, 
+                     tipoNotificacaoNome, 
+                     response.data.data.local)
+
+                     const primeiraParam = "PRIMEIRA";
+                     const idUsuario = response.config.headers.id_usuario;
+                     const local = response.data.data.local;
+ 
+                     localStorage.setItem('parametrosImpressaoTicket', JSON.stringify({
+                         primeiraParam: primeiraParam,
+                         idUsuario: idUsuario,
+                         vaga: vaga,
+                         placa: placa,
+                         modeloImpressao: modeloImpressao,
+                         fabricanteImpressao: fabricanteImpressao,
+                         tipoNotificacaoNome: tipoNotificacaoNome,
+                         local: local,
+                       }));
+
+                       const listaVagasString = localStorage.getItem("listaVagas");
+                       let listaVagas = [];
+           
+                         try {
+                           listaVagas = JSON.parse(listaVagasString) || [];
+                         } catch (error) {
+                           console.error("Erro ao analisar JSON:", error);
+                         }
+
+                         listaVagas = listaVagas.filter((element) => element !== null);
+
+                         console.log(listaVagas);
+
+                     const indexByVaga = listaVagas.findIndex((item) => item.numero == vaga);
+
+                     if (indexByVaga !== -1) {
+                         const hora = new Date();
+                         const horaMinuto = `${hora.getHours()}:${hora.getMinutes()}:${hora.getSeconds()}`;
+
+                         const vaga = listaVagas[indexByVaga];
+                            vaga.numero_notificacoes = 1;
+                            vaga.numero_notificacoes_pendentes = 1;
+                            vaga.numero_notificacoes_pendentess = 1;
+                            vaga.corline = "#D3D3D4";
+                            vaga.cor = "#141619";
+                            vaga.chegada = horaMinuto;
+                            vaga.tempo = horaMinuto;
+                            vaga.variaDisplay = "aparece";
+                            vaga.temporestante = horaMinuto;
+                            vaga.display = "testeNot";
+                            vaga.placa = placa;
+                     }
+                        localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+                     
                     FuncTrocaComp("CameraTicketNotificacao");
                     localStorage.removeItem("vaga");
                     localStorage.removeItem("id_vagaveiculo");
@@ -206,7 +322,7 @@ const Notificacao = () => {
                     for (let i = 0; i < 6; i++) {
                         localStorage.removeItem(`foto${i}`);
                     }
-                    
+
                 }
                 else {
                     setMensagem(response.data.msg.msg)
@@ -232,10 +348,10 @@ const Notificacao = () => {
  }
 }
 
+
 setTimeout(() => {
     setDisabled(false);
 }, 2000);
-}
 
     const back = () => {
         FuncTrocaComp( "ListarVagasMonitor");
@@ -245,7 +361,6 @@ setTimeout(() => {
         for (let i = 0; i < 6; i++) {
             localStorage.removeItem(`foto${i}`);
         }
-        
     }
 
     const renderCamera = () => {
@@ -283,13 +398,7 @@ setTimeout(() => {
 
     const getModelos = () => {
         const requisicao = createAPI();
-        setModeloSelecionado('')
-        if(document.getElementById('selectFabricantes').value !== ""){
-        const fabricanteSelecionado = document.getElementById('selectFabricantes').value.toLowerCase();
-        const fabricanteEncontrado = fabricante.find(item => item.label.toLowerCase() === fabricanteSelecionado);
-            if(fabricanteEncontrado !== undefined){
-            setFabricanteCerto(fabricanteEncontrado.value);
-            requisicao.get(`/veiculo/modelos/${fabricanteEncontrado.value}`).then(
+            requisicao.get(`/veiculo/modelos/`).then(
                 response => {
                     const newData = response?.data?.data?.modelos.map(item => ({
                         label: item.nome,
@@ -308,8 +417,6 @@ setTimeout(() => {
                     console.log(error)
                 }
             });
-            }
-        }
     }
 
     const getCor = () => {
@@ -318,7 +425,6 @@ setTimeout(() => {
     }));
     setCor(newData);
 }
-
 
     const SetdadosTrue = () => {
         setEstado2(true)
@@ -352,11 +458,13 @@ setTimeout(() => {
             })
     }
 
+
     useEffect(() => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
-            FuncTrocaComp("FecharTurno");
+            FuncTrocaComp("AbrirTurno");
         }
         const requisicao = createAPI();
+        getModelos();
         getCor();
         if (localStorage.getItem("placa") !== null && localStorage.getItem("placa") !== undefined && localStorage.getItem("placa") !== "" || localStorage.getItem("vaga") !== null) {
         
@@ -400,8 +508,6 @@ setTimeout(() => {
     else {
         setDados(false);
     }
-
-
         requisicao.get('/notificacao/tipos').then(
             response => {
                 const newData = response?.data?.data?.map(item => ({
@@ -422,45 +528,6 @@ setTimeout(() => {
             }
         });
         
-        requisicao.get('/veiculo/fabricantes').then(
-            response => {
-                const newData = response?.data?.data?.fabricantes.map(item => ({
-                    label: item.nome,
-                    value: item.id_fabricante_veiculo
-                    }));
-                setFabricante(newData);
-            }
-        ).catch(function (error){
-            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-            localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-        });
-
-        requisicao.get(`/veiculo/modelos/1`).then(
-            response => {
-                const newData = response?.data?.data?.modelos.map(item => ({
-                    label: item.nome,
-                    value: item.id_modelo
-                }));
-                setModelo(newData);
-            }
-        ).catch(function (error){
-            if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-            } else {
-                console.log(error)
-            }
-        });
         if (cont === 0) {
             pegarFotos();
         }
@@ -482,9 +549,7 @@ setTimeout(() => {
                     <div className="col-12 d-flex align-items-center justify-content-center">
                         <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                             <Text fw={500} fz="lg" className="text-center"> Notificar veículo:</Text>
-
                             <Divider my="sm" size="md" variant="dashed" />
-
                             {dados ?
                                 <div>
                                     <div className="h5 mt-2 align-items-center">
@@ -502,7 +567,6 @@ setTimeout(() => {
                                                     : null}
                                             </div>
                                         ))}
-
                                     </div>
                                     {imagensSalvas ? 
                                     <div>
@@ -518,9 +582,9 @@ setTimeout(() => {
                                     {infoBanco ?
                                         <div className="row justify-content-center">
                                             <div className="col-7">
-                                                <h6 className='mx-3 pt-2'><small>Modelo: {modeloVeiculo}</small></h6>
-                                                <h6 className='mx-3'><small>Cor: {corVeiculo}</small></h6>
-                                                <h6 className='mx-3 pb-2'><small>Fabricante: {fabricanteVeiculo}</small></h6>
+                                                <h6 className='mx-3 pt-2'><small>Fabricante: {fabricanteVeiculo}</small></h6>
+                                                <h6 className='mx-3'><small>Modelo: {modeloVeiculo}</small></h6>
+                                                <h6 className='mx-3 pb-2'><small>Cor: {corVeiculo}</small></h6>
                                             </div>
                                             <div className="col-3 text-center pt-3 mt-3">
                                                 <FaCarAlt size={35} />
@@ -532,20 +596,8 @@ setTimeout(() => {
                                         : 
                                         <div className="row justify-content-center">
                                         <div className="col-8">
-                                            <div onChange={()=>{getModelos()}}>
-                                            <h6 className='mx-4 mt-3'><small>Fabricante:</small></h6>
-                                            <Select
-                                                className="mx-3 mb-3"
-                                                searchable
-                                                nothingFound="Sem resultados"
-                                                id="selectFabricantes"
-                                                data={fabricante}
-                                                value={fabricanteSelecionado}
-                                                onChange={(value) => handleFabricanteChange(value)}
-                                            />
-                                            </div>
                                             <div>
-                                            <h6 className='mx-4'><small>Modelo:</small></h6>
+                                            <h6 className='mx-4 mt-2'><small>Modelo:</small></h6>
                                             <Select
                                                 className="mx-3 mb-3"
                                                 searchable
@@ -559,7 +611,7 @@ setTimeout(() => {
                                             {outro ?
                                             <div  onChange={()=>{attcor()}}>
                                             <h6 className='mx-4'><small>Cor:</small></h6>
-                                            <select className="form-select form-select-sm mb-3 mx-3" aria-label=".form-select-sm example" id="selectCores">
+                                            <select className="form-select form-select-sm mb-3 mx-3" defaultValue="" aria-label=".form-select-sm example" id="selectCores">
                                             <option value="">Selecione uma cor</option>
                                             {cor.map((link, index) => (
                                                 <option value={link.cor} key={index}>{link.cor}</option>
@@ -583,8 +635,17 @@ setTimeout(() => {
                                     </div>
                                     : null}
                                     <div className="mt-4 mb-5 gap-2 d-md-block">
-                                        <button type="submit" className="btn2 botao" onClick={back}>Cancelar</button>
-                                        <button type="submit" className="btn3 botao" disabled={disabled} onClick={() => submit()}>Confirmar</button>
+                                    <Button className="bg-gray-500 mx-2" size="md" radius="md" onClick={() => {back()}}>Voltar</Button> 
+                                        <Button 
+                                        loading={estado2} 
+                                        disabled={disabled} onClick={() => submit()}
+                                        loaderPosition="right"
+                                        className="bg-blue-50"
+                                        size="md"
+                                        radius="md"
+                                        >
+                                        Confirmar
+                                        </Button>
                                     </div>
                                     <div className="alert alert-danger" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                                         {mensagem}
@@ -600,7 +661,7 @@ setTimeout(() => {
                                                 <p> <small>Vaga selecionada: {vaga}</small></p>
                                             </div>
                                             <div className="h6 mt-3">
-                                                <button type="submit" className="btn3 botao" onClick={() => { setDados(true) }}>Buscar</button>
+                                                <button type="submit" className="btn3 botao" onClick={() => { setDados(true) }}>Avançar </button>
                                             </div>
                                         </div>
                                         :
@@ -642,7 +703,7 @@ setTimeout(() => {
                                                 size="md"
                                                 radius="md"
                                                 >
-                                                    Buscar
+                                                    Avançar
                                                 </Button>
                                             </div>
 
@@ -653,9 +714,6 @@ setTimeout(() => {
                                     }
                                 </div>
                             }
-                            <div style={{ display: estado2 ? 'block' : 'none'}}>
-                                <Loader />
-                            </div>
                         </div>
                         
                     </div>

@@ -105,20 +105,20 @@ const RegisterPage = () => {
                 setEstado(false)
             }, 4000);
         }
-        else if (senha.length < 8) {
+        else if (senha.length < 4) {
             setEstado(true)
             setErrorSenha(true)
-            setMensagem("A senha deve conter no mínimo 8 caracteres!")
+            setMensagem("A senha deve conter no mínimo 4 caracteres!")
 
             setTimeout(() => {
                 setErrorSenha(false)
                 setEstado(false)
             }, 4000);
         }
-        else if (senha2.length < 8) {
+        else if (senha2.length < 4) {
             setEstado(true)
             setErrorSenha(true)
-            setMensagem("A senha deve conter no mínimo 8 caracteres!")
+            setMensagem("A senha deve conter no mínimo 4 caracteres!")
             setTimeout(() => {
                 setErrorSenha(false)
                 setEstado(false)
@@ -239,7 +239,6 @@ const RegisterPage = () => {
                                     <Input icon={<IconUser size={18}/>} placeholder="Digite seu nome"
                                     id="nome" value={nome} onChange={(e) => setNome(e.target.value)}
                                     error={errorNome}
-                                    withAsterisk
                                     />
                                 </Input.Wrapper>
                                 </div>
@@ -256,7 +255,6 @@ const RegisterPage = () => {
                                     <Input icon={<IconClipboardText size={18}/>} placeholder="Digite seu CPF p/ pessoa física ou CNPJ p/ jurídica"
                                     id="cpf" value={cpff} onChange={(e) => setCpff(e.target.value)}
                                     error={errorCpf}
-                                    withAsterisk
                                     />
                                 </Input.Wrapper>
                                 </div>
@@ -266,7 +264,6 @@ const RegisterPage = () => {
                                     id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} 
                                     placeholder="Digite seu número de telefone"
                                     error={errorTelefone}
-                                    withAsterisk
                                     />
                                 </Input.Wrapper>
                                 </div>
@@ -278,7 +275,6 @@ const RegisterPage = () => {
                                             label="Senha:"
                                             id="password2" value={senha} onChange={(e) => setSenha(e.target.value)}
                                             error={errorSenha}
-                                            withAsterisk
                                         />
                                     </div>
                                     <div className="form-group mb-2">

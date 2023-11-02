@@ -9,6 +9,7 @@ import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
 import Filtro from '../util/Filtro';
 import createAPI from '../services/createAPI';
+import { Group, Pagination } from '@mantine/core';
 
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
@@ -19,28 +20,22 @@ const VeiculosAdmin = () => {
   const [estadoLoading, setEstadoLoading] = useState(false)
   const [mensagem, setMensagem] = useState('')
 
+  const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 50;
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
 
   useEffect(() => {
     setEstado2(true)
-    const requisicao = createAPI();
-    requisicao.get('/veiculo/listar').then((response) => {
-      if (response.data.msg.resultado) {
-        setEstado2(false)
-      const newData = response.data.data.veiculos.map((item) => ({
-          placa: item.placa,
-          fabricante: item.modelo.fabricante.fabricante,
-          modelo: item.modelo.modelo,
-          notificacao: item.notificacao,
-          debito: item.debito === "S" ? "Ativado" : "Desativado",
-          id: item.id_veiculo,
-      }))
-      setData(newData)
-      setData2(newData)
-    } else {
-    }
-    }).catch((error) => {
-      console.log(error)
-    })
+    reload()
 }, [])
 
 useEffect(() => {
@@ -68,22 +63,21 @@ const Imprimir = () => {
 }
 
 const reload = () => {
-  setData([])
   setEstado2(true)
   const requisicao = createAPI();
   requisicao.get('/veiculo/listar').then((response) => {
     if (response.data.msg.resultado) {
-      setEstado2(false)
+
+    setEstado2(false)
     const newData = response.data.data.veiculos.map((item) => ({
       placa: item.placa,
-      fabricante: item.modelo.fabricante.fabricante,
-      modelo: item.modelo.modelo,
+      fabricante: item.fabricante,
+      modelo: item.modelo,
       notificacao: item.notificacao,
       debito: item.debito === "S" ? "Ativado" : "Desativado",
       id: item.id_veiculo,
     }))
     setData(newData)
-    setData2(newData)
   } else {
   }
   }).catch((error) => {
@@ -101,8 +95,8 @@ const handleConsultaSelected = (consulta) => {
       setEstado2(false)
       const newData = response.data.data.veiculos.map((item) => ({
         placa: item.placa,
-        fabricante: item.modelo.fabricante.fabricante,
-        modelo: item.modelo.modelo,
+        fabricante: item.fabricante,
+        modelo: item.modelo,
         notificacao: item.notificacao,
         debito: item.debito === "S" ? "Ativado" : "Desativado",
         id: item.id_veiculo,
@@ -160,7 +154,7 @@ const handleConsultaSelected = (consulta) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {data.map((item, index) => (
+                                    {currentItems.map((item, index) => (
                                         <tr className="card-list" key={index}>
                                             <th className="fw-bolder col" scope="row" id="tabelaUsuarios"> 
                                             {item.placa}
@@ -193,6 +187,9 @@ const handleConsultaSelected = (consulta) => {
                     </div>
                     </div>
                 </div>
+                <Group position="center" mb="md">
+                <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
+                </Group>
             </div>
               <VoltarComponente />
         </div>

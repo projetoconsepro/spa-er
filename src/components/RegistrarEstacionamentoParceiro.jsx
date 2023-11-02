@@ -5,11 +5,12 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button, Divider, Input } from "@mantine/core";
+import { Button, Divider, Grid, Input, Text } from "@mantine/core";
 import { FaParking } from "react-icons/fa";
 import Swal from "sweetalert2";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import createAPI from "../services/createAPI";
+import ModalErroBanco from "./ModalErroBanco";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -34,6 +35,10 @@ const RegistrarEstacionamentoParceiro = () => {
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [divPagamento, setDivPagamento] = useState(true);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [selectedButton, setSelectedButton] = useState("pix");
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   const param = async () => {
     const requisicao = axios.create({
@@ -43,6 +48,7 @@ const RegistrarEstacionamentoParceiro = () => {
       .get("/parametros")
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
+        setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
       })
       .catch(function (error) {
         localStorage.removeItem("user");
@@ -52,9 +58,23 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   const ValidaFormato = () => {
-    const clicado = document.getElementById("pagamentos").value;
+    setLoadingButton(true);
+    
+    const clicado = selectedButton;
 
-    if (clicado === "pix") {
+    if (clicado === "pix" && user2 === 'admin'){
+      setLoadingButton(false);
+      setSelectedButton("parkimetro");
+      setEstado(true);
+      setMensagem('Por favor tente estacionar novamente.');
+      setTimeout(() => {
+        setEstado(false);
+        setMensagem("");
+      }, 2000);
+      return;
+    }
+
+    if (clicado === "pix" && user2 !== 'admin') {
       fazerPix();
     } else {
       handleRegistrar();
@@ -90,9 +110,6 @@ const RegistrarEstacionamentoParceiro = () => {
     if (vaga === "") {
       setVaga(0);
     }
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = createAPI();
@@ -120,8 +137,9 @@ const RegistrarEstacionamentoParceiro = () => {
       return;
     }
 
-    const formaPagamentoo = document.getElementById("pagamentos").value;
+    const formaPagamentoo = selectedButton;
     if (placaMaiuscula === "" || placaMaiuscula.length < 7) {
+      setLoadingButton(false);
       setMensagem("Preencha o campo placa");
       setEstado(true);
       setTimeout(() => {
@@ -203,28 +221,26 @@ const RegistrarEstacionamentoParceiro = () => {
           setOnOpen(true);
           open();
         } else {
-          console.log("n abriu nkk");
         }
       })
       .catch((err) => {
-        console.log(err);
+        setLoadingButton(false);
+        setOnOpenError(true);
       });
   };
 
   const handleRegistrar = async () => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
     const requisicao = createAPI();
 
-    const formaPagamentoo = document.getElementById("pagamentos").value;
+    const formaPagamentoo = selectedButton;
       if (vaga === "") {
         setVaga(0);
       }
 
       if (placaMaiuscula === "" || placaMaiuscula.length < 7) {
+        setLoadingButton(false);
         setMensagem("Preencha o campo placa");
         setEstado(true);
         setTimeout(() => {
@@ -236,6 +252,7 @@ const RegistrarEstacionamentoParceiro = () => {
       const sim = document.getElementById("flexSwitchCheckDefault").checked;
       if (!sim) {
         if (!validarPlaca(placaMaiuscula)) {
+          setLoadingButton(false);
           setEstado(true);
           setMensagem("Placa inválida");
           setTimeout(() => {
@@ -260,16 +277,18 @@ const RegistrarEstacionamentoParceiro = () => {
                     placa: placaMaiuscula,
                     numero_vaga: vagaa,
                     tempo: tempo,
-                    pagamento: formaPagamentoo,
+                    pagamento: selectedButton,
                     id_vaga_veiculo:
                       response.data.data[0].estacionado[0].id_vaga_veiculo,
                   })
                   .then((response) => {
+                    setLoadingButton(false);
                     if (response.data.msg.resultado) {
+                      if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                       ImpressaoTicketEstacionamento(
                         'PRIMEIRA',
                         response.data.data.chegada,
-                        response.data.data.tempo_restante,
+                        response.data.data.tempo,
                         response.config.headers.id_usuario,
                         vagaa,
                         placaMaiuscula,
@@ -277,14 +296,19 @@ const RegistrarEstacionamentoParceiro = () => {
                         tempo,
                         response.data.data.notificacao_pendente,
                       );
+                      }
                       setVaga("");
                       setTextoPlaca("");
-                      setMensagem("Estacionamento registrado com sucesso");
-                      setSuccess(true);
-                      setTimeout(() => {
-                        setSuccess(false);
-                        setMensagem("");
-                      }, 3000);
+                        if (user2 === "monitor"){
+                          FuncTrocaComp("ListarVagasMonitor")
+                        } else {
+                        setMensagem("Estacionamento registrado com sucesso");
+                        setSuccess(true);
+                        setTimeout(() => {
+                          setSuccess(false);
+                          setMensagem("");
+                        }, 3000);
+                      }
                     } else {
                       setMensagem(response.data.msg.msg);
                       setEstado(true);
@@ -309,20 +333,21 @@ const RegistrarEstacionamentoParceiro = () => {
                     }
                   });
               } else {
-                console.log(vagaa);
                 requisicao
                   .post("/estacionamento", {
                     placa: placaMaiuscula,
                     numero_vaga: vagaa,
                     tempo: tempo,
-                    pagamento: formaPagamentoo,
+                    pagamento: selectedButton,
                   })
                   .then((response) => {
+                    setLoadingButton(false);
                     if (response.data.msg.resultado) {
+                      if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                       ImpressaoTicketEstacionamento(
                         'PRIMEIRA',
                         response.data.data.chegada,
-                        response.data.data.tempo_restante,
+                        response.data.data.tempo,
                         response.config.headers.id_usuario,
                         vagaa,
                         placaMaiuscula,
@@ -330,14 +355,19 @@ const RegistrarEstacionamentoParceiro = () => {
                         tempo,
                         response.data.data.notificacao_pendente
                       );
-                      setMensagem("Estacionamento registrado com sucesso");
-                      setSuccess(true);
+                      }
                       setVaga("");
                       setTextoPlaca("");
-                      setTimeout(() => {
-                        setSuccess(false);
-                        setMensagem("");
-                      }, 3000);
+                        if (user2 === "monitor"){
+                          FuncTrocaComp("ListarVagasMonitor")
+                        } else {
+                        setMensagem("Estacionamento registrado com sucesso");
+                        setSuccess(true);
+                        setTimeout(() => {
+                          setSuccess(false);
+                          setMensagem("");
+                        }, 3000);
+                      }
                     } else {
                       setMensagem(response.data.msg.msg);
                       setEstado(true);
@@ -370,11 +400,13 @@ const RegistrarEstacionamentoParceiro = () => {
                   pagamento: formaPagamentoo,
                 })
                 .then((response) => {
+                  setLoadingButton(false);
                   if (response.data.msg.resultado) {
+                    if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
                     ImpressaoTicketEstacionamento(
                       'PRIMEIRA',
                       response.data.data.chegada,
-                      response.data.data.tempo_restante,
+                      response.data.data.tempo,
                       response.config.headers.id_usuario,
                       vagaa,
                       placaMaiuscula,
@@ -382,14 +414,19 @@ const RegistrarEstacionamentoParceiro = () => {
                       tempo,
                       response.data.data.notificacao_pendente
                     );
-                    setMensagem("Estacionamento registrado com sucesso");
-                    setSuccess(true);
+                    }
                     setVaga("");
                     setTextoPlaca("");
-                    setTimeout(() => {
-                      setSuccess(false);
-                      setMensagem("");
-                    }, 3000);
+                      if (user2 === "monitor"){
+                        FuncTrocaComp("ListarVagasMonitor")
+                      } else {
+                      setMensagem("Estacionamento registrado com sucesso");
+                      setSuccess(true);
+                      setTimeout(() => {
+                        setSuccess(false);
+                        setMensagem("");
+                      }, 3000);
+                    }
                   } else {
                     setMensagem(response.data.msg.msg);
                     setEstado(true);
@@ -430,13 +467,11 @@ const RegistrarEstacionamentoParceiro = () => {
             }
           });
       }
-      
     }
 
   const atualiza = () => {
     const tempoo = document.getElementById("tempos").value;
     setTempo(tempoo);
-
     if (tempoo === "02:00:00") {
       setValorCobranca2(valorCobranca * 2);
     } else if (tempoo === "01:00:00") {
@@ -444,7 +479,7 @@ const RegistrarEstacionamentoParceiro = () => {
     } else if (tempoo === "01:30:00") {
       setValorCobranca2(valorCobranca * 1.5);
     } else if (tempoo === "00:30:00") {
-      setValorCobranca2(0.01);
+      setValorCobranca2(valorCobranca / 2);
     } else if (tempoo === "00:10:00") {
       setDivPagamento(false)
       setValorCobranca2(valorCobranca * 0);
@@ -463,31 +498,37 @@ const RegistrarEstacionamentoParceiro = () => {
         txid: TxId,
       })
       .then((response) => {
+        setLoadingButton(false);
         if (response.data.msg.resultado) {
-          console.log('pix', response)
+          if (response.data.msg.msg !== "Vaga atualizada com sucesso") {
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
             response.data.data.chegada,
-            response.data.data.tempo_restante,
+            response.data.data.tempo,
             response.config.headers.id_usuario,
-            response.data.data.id_vagas[0],
+            response.data.data.numero_vagas[0],
             placaMaiuscula,
             "PIX",
             tempo,
             response.data.data.notificacao_pendente
           );
+          }
           setOnOpen(false);
           setVaga("");
-            setTextoPlaca("");
+          setTextoPlaca("");
+            if (user2 === "monitor"){
+              FuncTrocaComp("ListarVagasMonitor")
+            } else {
             setMensagem("Estacionamento registrado com sucesso");
             setSuccess(true);
             setTimeout(() => {
               setSuccess(false);
               setMensagem("");
             }, 3000);
+          }
         } else {
           setNotification(false);
-          setPixExpirado(response.data.msg.msg);
+          setPixExpirado("Pix expirado");
           setMensagem(response.data.msg.msg);
           setEstado(true);
           setTimeout(() => {
@@ -497,8 +538,13 @@ const RegistrarEstacionamentoParceiro = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setLoadingButton(false);
+        setOnOpenError(true);
       });
+  }
+
+  const onClose = () => {
+    setLoadingButton(false);
   }
 
   useEffect(() => {
@@ -517,19 +563,6 @@ const RegistrarEstacionamentoParceiro = () => {
         textoPlaca[4] === "0"
       ) {
         setPlaca("placa3");
-        if (cont === 0) {
-          const fim = textoPlaca.substring(3, textoPlaca.length);
-          const texto = textoPlaca.substring(0, 3);
-          const traco = "-";
-          setTextoPlaca(texto + traco + fim);
-          setCont(cont + 1);
-        } else {
-          const fim = textoPlaca.substring(4, textoPlaca.length);
-          const texto = textoPlaca.substring(0, 3);
-          const traco = "-";
-          setTextoPlaca(texto + traco + fim);
-          setCont(cont + 1);
-        }
       } else {
         setPlaca("placa");
         setCont(0);
@@ -547,11 +580,10 @@ const RegistrarEstacionamentoParceiro = () => {
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
     ) {
-      FuncTrocaComp("FecharTurno");
+      FuncTrocaComp("AbrirTurno");
     }
     localStorage.removeItem("placaCarro");
     param();
-    setValorCobranca2(1);
     setTempo("00:30:00");
   }, []);
 
@@ -565,6 +597,7 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   return (
+    <>
     <div className="container">
       <div
         className="row justify-content-center form-bg-image"
@@ -590,33 +623,21 @@ const RegistrarEstacionamentoParceiro = () => {
                     id="flexSwitchCheckDefault"
                     onChange={() => {
                       jae();
-                    }}
-                  />
+                    } } />
                 </div>
               </div>
             </div>
             <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
               <input
+                autoFocus
                 type="text"
                 id={inputVazio}
                 className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
                 value={textoPlaca}
                 onChange={(e) => setTextoPlaca(e.target.value)}
-                maxLength={limite}
-              />
+                maxLength={limite} />
             </div>
-            <div className="text-start mt-3 px-2">
-              <h6>Número da vaga (opcional):</h6>
-              <Input
-                type="number"
-                value={vaga}
-                icon={<FaParking />}
-                onChange={(e) => setVaga([e.target.value])}
-                maxLength={limite}
-                placeholder="Exemplo: 0 "
-              />
-            </div>
-            <div className="text-start mt-3 mb-1 px-2" onChange={() => {atualiza();}}>
+            <div className="text-start mt-3 mb-1 px-2" onChange={() => { atualiza(); } }>
               <h6>Selecione o tempo:</h6>
               <select
                 className="form-select form-select-lg mb-2"
@@ -624,9 +645,6 @@ const RegistrarEstacionamentoParceiro = () => {
                 id="tempos"
                 defaultValue="00:30:00"
               >
-                {user2 === "monitor" ? (
-                  <option value="00:10:00">Tolerância</option>
-                ) : null}
                 <option value="00:30:00">30 Minutos</option>
                 <option value="01:00:00">60 Minutos</option>
                 <option value="01:30:00">90 Minutos</option>
@@ -637,60 +655,102 @@ const RegistrarEstacionamentoParceiro = () => {
                 Valor a ser cobrado: R$ {valorcobranca2}{" "}
               </p>
             </div>
-            
-            <div className="h6 mt-1 mb-4 px-2" style={{ display: tempo !== "00:10:00" ? 'block' : 'none'}}>
-              <p className="text-start">Forma de pagamento:</p>
-              <select
-                className="form-select form-select-lg mb-3"
-                defaultValue="dinheiro"
-                aria-label=".form-select-lg example"
-                id="pagamentos"
-              >
-                <option value="dinheiro">Dinheiro</option>
-                <option value="pix">PIX</option>
-                {user2 === "monitor" ? (
-                  <option value="parkimetro">Parkimetro</option>
-                ) : null}
-              </select>
-            </div>
 
-            <div className="mb-2 mt-3 gap-2 d-md-block">
-              <VoltarComponente space={true} />
-              <Button
-                className="bg-blue-50"
-                size="md"
-                radius="md"
-                onClick={() => {
-                  ValidaFormato();
-                }}
-              >
-                Registrar
-              </Button>
-            </div>
-            <div
-              className="alert alert-danger mt-4"
-              role="alert"
-              style={{ display: estado ? "block" : "none" }}
+            <div className="h6 mt-1 mb-4 px-2" style={{ display: tempo !== "00:10:00" ? 'block' : 'none' }}>
+              <p className="text-start">Forma de pagamento:</p>
+              {user2 !== 'admin' ?
+                <>
+                  <Grid>
+                    <Grid.Col span={6}>
+                      <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "pix"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("pix")}
+                      value="pix">
+                        <Text fz="lg" weight={700}>
+                          PIX
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "dinheiro"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("dinheiro")}
+                      value="dinheiro">
+                        <Text fz="lg" weight={700}>
+                          Dinheiro
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                  </Grid>
+                  </>
+                : 
+                <Grid>
+                    <Grid.Col span={12}>
+                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "parkimetro"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("parkimetro")}
+                      value="parkimetro">
+                        <Text fz="lg" weight={700}>
+                          Parkimetro
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                  </Grid>
+                   }
+          </div>
+
+          <div className="mb-2 mt-3 gap-2 d-md-block">
+            <VoltarComponente space={true} />
+            <Button
+              loading={loadingButton}
+              className="bg-blue-50"
+              size="md"
+              radius="md"
+              onClick={() => {
+                ValidaFormato();
+              } }
             >
-              {mensagem}
-            </div>
-            <div
-              className="alert alert-success mt-4"
-              role="alert"
-              style={{ display: success ? "block" : "none" }}
-            >
-              {mensagem}
-            </div>
+              Registrar
+            </Button>
+          </div>
+          <div
+            className="alert alert-danger mt-4"
+            role="alert"
+            style={{ display: estado ? "block" : "none" }}
+          >
+            {mensagem}
+          </div>
+          <div
+            className="alert alert-success mt-4"
+            role="alert"
+            style={{ display: success ? "block" : "none" }}
+          >
+            {mensagem}
           </div>
         </div>
       </div>
-      <ModalPix
+    </div>
+    <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+        />
+    <ModalPix
         qrCode={data.brcode}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
-      />
+        onClose={onClose} />
     </div>
+    </>
   );
 };
 

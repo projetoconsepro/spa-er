@@ -15,7 +15,6 @@ const DoisPerfis = () => {
     localStorage.removeItem('componenteAnterior')
     const analisePerfil = localStorage.getItem('user');
     const analiseFeita = JSON.parse(analisePerfil);
-    //console.log(analiseFeita)
     if(Array.isArray(analiseFeita.perfil[1].perfil)){
       setData(analiseFeita.perfil[1].perfil);
     }

@@ -2,16 +2,18 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
 import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
-import { BsCalendarDate, BsCashCoin } from "react-icons/bs";
+import { BsCalendarDate, BsCashCoin, BsConeStriped } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import { IconReload } from "@tabler/icons-react";
+import { IconReload, IconX } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
+import { Button, Group, Pagination } from "@mantine/core";
+import ModalErroBanco from "./ModalErroBanco";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -19,10 +21,8 @@ const Irregularidades = () => {
   const [data2, setData2] = useState([]);
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
-  const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
-  const socketRef = useRef(null);
   const [saldoCredito, setSaldoCredito] = useState(0);
   const [valorCobranca, setValorCobranca] = useState(0);
   const [loading, setOnLoading] = useState(false);
@@ -30,22 +30,37 @@ const Irregularidades = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
-  const [vaga, setVaga] = useState("");
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
+    
+  const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 50;
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
 
-  useEffect(() => {
-    console.log("setou", txid);
-  }, [txid]);
 
   const regularizar = (index) => {
+    setLoadingButton(true);
     const select = document.getElementById("pagamentos").value;
-
     if (select === "credito") {
-      if (parseFloat(saldoCredito) < parseFloat(valorCobranca)) {
+      let numeroCorrigido = saldoCredito.replace(".", "");
+      numeroCorrigido = parseFloat(numeroCorrigido.replace(",", "."));
+      if (parseFloat(numeroCorrigido) < parseFloat(data[index].valor)) {
+        setLoadingButton(false);
         Swal.fire({
           icon: "error",
           title: "Saldo insuficiente",
@@ -63,6 +78,7 @@ const Irregularidades = () => {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
         tipoPagamento: 'pix',
       }
+
       requisicao
         .post("/gerarcobranca", {
           valor: valor2,
@@ -74,12 +90,13 @@ const Irregularidades = () => {
             setTxId(resposta.data.data.txid);
             getInfoPix(resposta.data.data.txid, index);
             open();
+            setOnOpen(true);
           } else {
-            console.log("n abriu nkk");
           }
         })
         .catch((err) => {
-          console.log(err);
+          setLoadingButton(false);
+          setOnOpenError(true);
         });
     }
   };
@@ -92,6 +109,7 @@ const Irregularidades = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado) {
+            setLoadingButton(false);
             setOnOpen(false);
             Swal.fire({
               title: "Regularizado!",
@@ -100,18 +118,22 @@ const Irregularidades = () => {
               timer: 2000,
             });
             if (index !== undefined) {
+              FuncTrocaComp("MeusVeiculos");
               data[index].pago = "S";
               setData([...data]);
             } else {
+              FuncTrocaComp("MeusVeiculos");
               startNotificao();
             }
           } else {
+            setLoadingButton(false);
             setNotification(false);
-            setPixExpirado(response.data.msg.msg);
+            setPixExpirado("Pix expirado");
           }
         })
         .catch((err) => {
-          console.log(err);
+          setLoadingButton(false);
+          setOnOpenError(true);
         });
     }
 
@@ -124,6 +146,10 @@ const Irregularidades = () => {
     return data5;
   }
 
+  const onClose = () => {
+  setLoadingButton(false);
+  }
+
   const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
     const requisicao = createAPI();
 
@@ -134,6 +160,7 @@ const Irregularidades = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          setLoadingButton(false);
           Swal.fire({
             title: "Regularizado!",
             text: "A notificação foi regularizada.",
@@ -147,6 +174,7 @@ const Irregularidades = () => {
             startNotificao();
           }
         } else {
+          setLoadingButton(false);
           setEstado(true);
           setMensagem(response.data.msg.msg);
           setTimeout(() => {
@@ -313,7 +341,7 @@ const Irregularidades = () => {
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
     ) {
-      FuncTrocaComp("FecharTurno");
+      FuncTrocaComp("AbrirTurno");
     }
     const placa = localStorage.getItem("placaCarro");
     if (placa !== null && placa !== undefined && placa !== "") {
@@ -407,12 +435,10 @@ const Irregularidades = () => {
       {data.map((link, index) => (
         <div className="card border-0 shadow mt-2 mb-3" key={index}>
           <div
-            className="card-body"
-            onClick={() => {
-              atualiza(index);
-            }}
+            className={link.pago === "S" ? "card-body10 mb-0 pb-0" : "card-body9"}
+            onClick={() => link.pago === "S" ? atualiza(index) : null}
           >
-            <div className="d-flex align-items-center justify-content-between pb-3">
+            <div className="d-flex align-items-center justify-content-between">
               <div>
                 <div className="h2 mb-0 d-flex align-items-center">
                   {link.placa}
@@ -428,10 +454,10 @@ const Irregularidades = () => {
                 </div>
                 {link.estado ? (
                   <div
-                    className="h6 d-flex align-items-center fs-6"
-                    id="bordaBaixo"
+                    className="h6 d-flex align-items-center fs-6 mb-0 pb-0"
                   >
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" ? (
+                    {link.tipo_notificacao === "Ocupando vaga de deficiente" 
+                    || link.tipo_notificacao === "Ocupando vaga de idoso" ? (
                       <h6>
                         {" "}
                         <FaClipboardList />‎{" "}
@@ -440,13 +466,18 @@ const Irregularidades = () => {
                     ) : (
                       <h6>
                         {" "}
-                        <FaClipboardList />‎ Motivo: {link.tipo_notificacao}
+                        <FaClipboardList />‎ 
+                        {window.innerWidth <= 360 ? 
+                        <small>Motivo: {link.tipo_notificacao}</small>
+                        :
+                        `Motivo: ${link.tipo_notificacao}`}
                       </h6>
                     )}
                   </div>
                 ) : (
-                  <div className="h6 d-flex align-items-center fs-6">
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" ? (
+                  <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
+                    {link.tipo_notificacao === "Ocupando vaga de deficiente" 
+                    || link.tipo_notificacao === "Ocupando vaga de idoso" ? (
                       <h6>
                         {" "}
                         <FaClipboardList />‎{" "}
@@ -455,24 +486,56 @@ const Irregularidades = () => {
                     ) : (
                       <h6>
                         {" "}
-                        <FaClipboardList />‎ Motivo: {link.tipo_notificacao}
+                        <FaClipboardList />‎ 
+                        {window.innerWidth <= 360 ? 
+                        <small>Motivo: {link.tipo_notificacao}</small>
+                        :
+                        `Motivo: ${link.tipo_notificacao}`}
                       </h6>
                     )}
                   </div>
                 )}
+               <div className="h6 d-flex align-items-center fs-6">
+               <FaClipboardList />{" "} Status: {" "}
+                  <h6 className={link.pago === "S" ? 'text-success mt-2 mx-1' : 'text-danger mt-2 mx-1' }>
+                  {" "} {link.pago === "S" ? "Quitado" : "Pendente"}
+                  </h6>
+              </div>
               </div>
               <div>
                 {link.pago === "N" ? (
-                  <div className="d-flex align-items-center fw-bold">
+                  <div className="d-flex align-items-center fw-bold mb-6">
                     <BiErrorCircle size={30} color="red" />
                   </div>
                 ) : (
-                  <div className="d-flex align-items-center fw-bold">
+                  <div className="d-flex align-items-center fw-bold mb-6">
                     <AiFillCheckCircle size={30} color="green" />
                   </div>
                 )}
               </div>
+              
             </div>
+            {link.pago === "N" ?
+              <div className="row">
+              <div className="col-12">
+                  <Button
+                    variant="outline"
+                    color="red"
+                    radius="md"
+                    fullWidth
+                    className="mt-2"
+                    leftIcon={
+                       link.estado ? <IconX size={20} /> :  <BsConeStriped size={20} />
+                    }
+                    onClick={() => {
+                      atualiza(index);
+                    }}
+                  >
+                    {link.estado ? "Fechar" : "Regularize aqui"}
+                  </Button>
+              </div>
+              </div>
+              : null }
           </div>
           {link.estado ? (
             <div className="justify-content-between pb-3 mb-1">
@@ -507,10 +570,10 @@ const Irregularidades = () => {
               {link.pago === "S" ? null : (
                 <div className="h6 mt-3 mx-5">
                   <select
-                    className="form-select form-select-lg mb-1"
-                    aria-label=".form-select-lg example"
+                    className="form-select2 form-select-md mb-1 text-black"
                     id="pagamentos"
-                    defaultValue="saldo"
+                    aria-label=".form-select-md"
+                    defaultValue="credito"
                   >
                     <option value="pix">PIX</option>
                     <option value="credito">Saldo</option>
@@ -518,15 +581,18 @@ const Irregularidades = () => {
                   <div className="pt-3 gap-6 d-md-block">
                     <div className="row">
                       <div className="col-12">
-                        <button
+                        <Button
                           type="submit"
-                          className="btn4 botao align-itens-center fs-6"
+                          loading={loadingButton}
+                          variant="gradient"
+                          gradient={{ from: "blue", to: "cyan" }}
+                          fullWidth
                           onClick={() => {
                             regularizar(index);
                           }}
                         >
-                          Regularizar
-                        </button>
+                          Pagar
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -543,13 +609,19 @@ const Irregularidades = () => {
       >
         {mensagem}
       </div>
+
       <VoltarComponente />
 
+      <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+      />
       <ModalPix
         qrCode={data2.brcode}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
+        onClose={onClose}
       />
     </div>
   );

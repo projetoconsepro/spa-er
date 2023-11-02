@@ -15,7 +15,7 @@ import { AiFillEdit, AiFillPrinter } from "react-icons/ai";
 import RelatoriosPDF from "../util/RelatoriosPDF";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
-import { ActionIcon, Input, Loader } from "@mantine/core";
+import { ActionIcon, Group, Input, Loader, Pagination } from "@mantine/core";
 import { IconSearch, IconUserCircle } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 
@@ -27,9 +27,19 @@ const UsuariosAdmin = () => {
   const [nome, setNome] = useState("");
   const [senhaParam, setSenhaParam] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const user2 = JSON.parse(user);
+    
+  const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 50;
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
 
   function extrairNumeros(string) {
     return string ? string.replace(/\D/g, "") : string;
@@ -47,7 +57,6 @@ const UsuariosAdmin = () => {
 
   const AtualizaFunc = async () => {
     const requisicao = createAPI();
-  
   requisicao.get('/usuario/listar/?query=eyJ3aGVyZSI6IFt7ICJmaWVsZCI6ICJwZXJmaWwiLCAib3BlcmF0b3IiOiAiPSIsICJ2YWx1ZSI6ICJhZG1pbiJ9XX0=').then(
       response => {
         setEstado2(true)
@@ -205,7 +214,6 @@ const UsuariosAdmin = () => {
         Swal.getConfirmButton().disabled = false;
       },
     }).then((result) => {
-      console.log(result)
       if (result.isConfirmed) {
         Swal.fire({
           icon: result.value.message === "Usuário Cadastrado com Sucesso!" ? "success" : "error",
@@ -610,7 +618,6 @@ const UsuariosAdmin = () => {
       requisicao.get(`/usuario/listar/?query=${base64}`).then(
         response => {
             setEstadoLoading(false)
-            console.log(response)
                 const newData = response.data.data.map((item) => ({
                   nome: item.nome,
                   placa: item.veiculos
@@ -736,7 +743,7 @@ const UsuariosAdmin = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.map((item, index) => (
+                      {currentItems.map((item, index) => (
                         <tr className="card-list" key={index}>
                           <th
                             className="fw-bolder col"
@@ -878,6 +885,9 @@ const UsuariosAdmin = () => {
               <Loader />
               </div> }
             </div>
+            <Group position="center" mb="md">
+                <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
+            </Group>
           </div>
           <VoltarComponente />
         </div>

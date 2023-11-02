@@ -1,4 +1,4 @@
-import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaClipboardList, FaWhatsapp } from "react-icons/fa";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint, FaConnectdevelop, FaCalendar, FaCalendarAlt } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
@@ -9,8 +9,8 @@ import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
-import { IconHelpCircle } from "@tabler/icons-react";
-import { IconHelpCircleFilled } from "@tabler/icons-react";
+import { IconHelpCircleFilled, IconHttpConnect, IconPlugConnected } from "@tabler/icons-react";
+import { CarCrashOutlined } from "@mui/icons-material";
 
 const Sidebar = () => {
     const nome = localStorage.getItem("user");
@@ -29,18 +29,34 @@ const Sidebar = () => {
 
     const componentefunc = (componente, index) =>{
             if (links[index].subitem !== undefined) {
-                
             } else {
             setAriaExpanded(false)
-            if (componente !== "linkWhatsapp") {
+            if (componente !== "linkWhatsapp" && componente !== "ConfigurarImpressora" && componente !== "ConectarImpressora") {
             FuncTrocaComp(componente)
             setMostrarSidebar(false)
             setTimeout(() => {
                 setMostrarSidebar(true)
             }, 1);
             }
+            else if (componente === "ConfigurarImpressora"){
+            setMostrarSidebar(false)
+            setTimeout(() => {
+                setMostrarSidebar(true)
+            }, 1);
+                if(window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage('mostrar');
+                }
+            } else if (componente === "ConectarImpressora"){
+                setMostrarSidebar(false)
+                setTimeout(() => {
+                    setMostrarSidebar(true)
+                }, 1);
+                if(window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage('conectar');
+                }
+            }
             else {
-                window.location.href = 'https://app.hiperchat.com.br';
+                window.open('https://app.hiperchat.com.br/', '_blank');
             }
             }
     }
@@ -108,12 +124,6 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaMapMarkerAlt />,
-            name: "‎ Vagas livres",
-            componente: "VagasLivres",
-        })
-        links.push({
-            className: styles.className,
-            icon: <FaMapMarkerAlt />,
             name: "‎ Regularizar",
             componente: "Regularizacao",
         })
@@ -124,6 +134,12 @@ const Sidebar = () => {
             icon: <FaCarAlt />,
             name: "‎ Meus Veiculos",
             componente: "MeusVeiculos",
+        })
+        links.push({
+            className: styles.className,
+            icon:  <CarCrashOutlined />,
+            name: "‎ Débito automático",
+            componente: "Configuracoes",
         })
         links.push({
             className: styles.className,
@@ -171,7 +187,7 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <FaCarAlt />,
+            icon: <FaCar />,
             name: "‎ Cadastrar Novo Veículo",
             componente: "CadastrarVeiculo",
         })
@@ -188,12 +204,18 @@ const Sidebar = () => {
             componente: "Suporte",
         })
     }
-    else if (teste.perfil[0] === "admin"){
+    else if (teste.perfil[0] === "admin") {
         links.push({
             className: styles.className,
             icon: <AiOutlineBarChart />,
             name: "‎ Dashboard",
             componente: "Dashboard",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaParking />,
+            name: "‎ Registrar Estacionamento",
+            componente: "RegistrarEstacionamentoParceiro",
         })
         links.push({
             className: styles.className,
@@ -214,6 +236,12 @@ const Sidebar = () => {
                 },
                 {
                     className: styles.className,
+                    icon: <FaCar />,
+                    name: "‎ Adicionar veículo",
+                    componente: "AdicionarModelo",
+                },
+                {
+                    className: styles.className,
                     icon: <MdAddLocationAlt />,
                     name: "‎ Setores",
                     componente: "SetoresAdmin",
@@ -223,12 +251,6 @@ const Sidebar = () => {
                     className: styles.className,
                     name: "‎ Vagas ", 
                     componente: "VagasAdmin",
-                },
-                {
-                    className: styles.className,
-                    icon: <FaCar />,
-                    name: "‎ Listar Veículos",
-                    componente: "VeiculosAdmin",
                 }
             ]
         })
@@ -265,12 +287,6 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            icon: <BsCashStack />,
-            name: "‎ Adicionar Créditos",
-            componente: "AdicionarCreditos",
-        })
-        links.push({
-            className: styles.className,
             icon: <FcMoneyTransfer />,
             name: "‎ Depósito Parceiro",
             componente: "TransferenciaParceiro",
@@ -286,6 +302,12 @@ const Sidebar = () => {
             icon: <AiFillPrinter />,
             name: "‎ Prestação de Contas",
             componente: "PrestacaoContas",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaCalendarAlt />,
+            name: "‎ Feriados",
+            componente: "Feriados",
         })
         links.push({
             className: styles.className,
@@ -315,23 +337,6 @@ const Sidebar = () => {
         })
         links.push({
             className: styles.className,
-            name: "‎ Consultar vaga",
-            componente: "ConsultarVaga",
-            icon: <FaParking />,
-        })
-        links.push({
-            className: styles.className,
-            name: "‎ Notificacão",
-            componente: "Notificacao",
-            icon: <RiAlertFill />,
-        })
-        links.push({
-            className: styles.className,
-            name: "‎ Vaga livre",
-            icon: <FaMapMarkerAlt />,
-        })
-        links.push({
-            className: styles.className,
             name: "‎ Listar Vagas",
             icon: <FaCarAlt />,
             componente: "ListarVagasMonitor"
@@ -353,6 +358,18 @@ const Sidebar = () => {
             icon: <BsCashCoin />,
             name: "‎ Abrir/fechar turno",
             componente: "AbrirTurno",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaPrint />,
+            name: "‎ Configurar impressora",
+            componente: "ConfigurarImpressora",
+        })
+        links.push({
+            className: styles.className,
+            icon: <IconPlugConnected />,
+            name: "‎ Conectar",
+            componente: "ConectarImpressora",
         })
     }
     else if (teste.perfil[0] === "agente"){
@@ -430,7 +447,15 @@ const Sidebar = () => {
                                 <div className="media-body ms-3 text-white">
                                     <div className="row">
                                     <div className="col-12 text-start">
-                                    <span className="mb-0 fw-bold fs-6 text-start">{teste.nome}</span> <br />
+                                    <span className="mb-0 fw-bold fs-6 text-start">{
+                                    window.innerWidth > 990 ?
+                                    teste.nome.length > 17 ? `${teste.nome.substring(0, 17)}...` : teste.nome
+                                    :
+                                    window.innerWidth < 290 ?
+                                    teste.nome.length > 15 ? `${teste.nome.substring(0, 15)}...` : teste.nome
+                                    :
+                                    teste.nome.length > 25 ? `${teste.nome.substring(0, 25)}...` : teste.nome
+                                    } </span> <br />
                                     </div>
                                     </div>
                                     <div className="row">

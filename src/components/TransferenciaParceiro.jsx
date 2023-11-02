@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import createAPI from "../services/createAPI";
+import ModalErroBanco from "./ModalErroBanco";
 
 const TransferenciaParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -25,6 +26,8 @@ const TransferenciaParceiro = () => {
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
   const options = [{ value: "pix", label: "Pix" }, { value: "dinheiro", label: "Dinheiro" }];
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
   const FuncArrumaInput = (e) => {
     let valor = e.target.value;
@@ -53,10 +56,8 @@ const TransferenciaParceiro = () => {
     const cnpjFormatado = cnpj.replace(/[.-/]/g, '');
 
     requisicao.get(`/verificar?cnpj=${cnpjFormatado}`).then((response) => {
-      console.log(response)
       if (response.data.msg.resultado) {
         requisicao.get(`/financeiro/saldo/parceiro/${response.data.usuario[0].id_usuario}`).then((res) => {
-          console.log(res)
           if (res.data.msg.resultado) {
             setSaldo(res.data.msg.saldo);
             setNome(response.data.usuario[0].nome);
@@ -128,21 +129,17 @@ const TransferenciaParceiro = () => {
       valor: valor2,
       pagamento: metodoPagamento,
     };
-    console.log(JSON.stringify(campo))
     requisicao.post("/gerarcobranca", { valor: valor2, campo: JSON.stringify(campo) }).then((resposta) => {
         if (resposta.data.msg.resultado) {
-          console.log(resposta);
           setData(resposta.data.data);
           setTxId(resposta.data.data.txid);
           transferencia(resposta.data.data.txid);
           setOnOpen(true);
           open();
-        } else {
-          console.log("n abriu nkk");
         }
       })
       .catch((err) => {
-        console.log(err);
+        setOnOpenError(true);
       });
   }
 
@@ -166,6 +163,8 @@ const TransferenciaParceiro = () => {
         setNotification(false);
         setPixExpirado("Pix expirado");
       }
+    }).catch((err) => {
+      setOnOpenError(true);
     });
   }
 
@@ -305,6 +304,10 @@ const TransferenciaParceiro = () => {
           </div>
         </div>
       )}
+        <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+        />
        <ModalPix
         qrCode={data.brcode}
         status={notification}

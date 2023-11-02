@@ -7,6 +7,7 @@ import { BsPlus } from "react-icons/bs";
 import { BiEdit } from "react-icons/bi";
 import VoltarComponente from "../util/VoltarComponente";
 import createAPI from "../services/createAPI";
+import ValidarRequisicao from "../util/ValidarRequisicao";
 
 const VagasAdmin = () => {
     const token = localStorage.getItem('token');
@@ -69,7 +70,6 @@ const VagasAdmin = () => {
 
         await requisicao.get(`/vagas/status`).then(
             response => {
-                console.log('b', response)
                 const newData = response.data.data.map((item) => ({
                     status: item.status,
                     id_status_vaga: item.id_status_vaga,
@@ -90,15 +90,40 @@ const VagasAdmin = () => {
         });
     }
 
-    useEffect(() => {
-  const cardToScroll = document.querySelector(`.card-list[data-vaga="${vaga}"]`);
-  if (cardToScroll) {
-    setTimeout(() => {
-        cardToScroll.scrollIntoView({behavior: 'smooth', block: 'center'});
-      }, 100);
-}
-}, [vaga]);
-    
+
+    const FuncFiltroNumber = (vagaNew) => {
+        const requisicao = createAPI();
+
+        setVaga(vagaNew);
+        if ( vagaNew !== '') {
+        requisicao.get(`/vagas/verifica/${vagaNew}`).then(
+            response => {
+                if (response.data.msg.resultado !== false) {
+                    setEstado(false)
+                    setMensagem('')
+                    const newData = response.data.data.map((item) => ({
+                        id_vaga: item.id_vaga,
+                        numero_vaga: item.numero,
+                        local: item.local,
+                        tipo: item.tipo,
+                        cor: item.cor,
+                        corStatus: item.corStatus,
+                        status: item.status,
+                        id_status_vaga: item.id_status_vaga,
+                    }))
+                    setData(newData);
+                }
+                else {
+                    setEstado(true);
+                    setMensagem(response.data.msg.msg);
+                    setData([]);
+                }
+            }
+        ).catch(function (error) {
+            ValidarRequisicao(error)
+        });
+    }
+    }
 
     useEffect(() => {
         const requisicao = createAPI();
@@ -339,7 +364,7 @@ const VagasAdmin = () => {
 
                                 <div className="col-5 input-group w-50 h-25 mt-2">
                                 <span className="input-group-text bg-blue-50 text-white" id="basic-addon1"><FaSearch /></span>
-                                <input className="form-control bg-white rounded-end border-bottom-0" type="number" value={vaga} onChange={(e) => setVaga(e.target.value)} placeholder="Número da vaga" aria-describedby="basic-addon1" />
+                                    <input className="form-control bg-white rounded-end border-bottom-0" type="number" value={vaga} onChange={(e) => FuncFiltroNumber(e.target.value)} placeholder="Número da vaga" aria-describedby="basic-addon1" />
                                 </div>
 
                                 <div className="col-2">

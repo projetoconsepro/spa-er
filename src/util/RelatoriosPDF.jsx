@@ -8,7 +8,6 @@ const RelatoriosPDF = (nomeArquivo, cabecalho, array) => {
 
   const doc = new jsPDF();
 
-  console.log(user2.nome)
 
 
 const header = () => {

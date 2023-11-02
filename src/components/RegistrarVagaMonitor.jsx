@@ -1,16 +1,18 @@
 import axios from "axios";
 import { React, useState, useEffect, useRef } from "react";
-import { FaUserInjured, FaWheelchair } from "react-icons/fa";
+import { FaWheelchair } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../pages/Style/styles.css";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button, Divider, Loader } from "@mantine/core";
+import { Button, Divider, Grid, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
+import CalcularValidade from "../util/CalcularValidade";
+import ModalErroBanco from "./ModalErroBanco";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -37,9 +39,13 @@ const RegistrarVagaMonitor = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
-  const [estado2, setEstado2] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [selectedButton, setSelectedButton] = useState("pix");
+  const [onOpenError, setOnOpenError] = useState(false);
+  const [onCloseError, setOnCloseError] = useState(false);
 
-  const token = localStorage.getItem("token");
+
+
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
 
@@ -50,6 +56,7 @@ const RegistrarVagaMonitor = () => {
     const vagaa = [];
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
+      setLoadingButton(false);
       setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
@@ -63,6 +70,7 @@ const RegistrarVagaMonitor = () => {
     const sim = document.getElementById("flexSwitchCheckDefault").checked;
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
+        setLoadingButton(false);
         setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
@@ -76,7 +84,6 @@ const RegistrarVagaMonitor = () => {
     }
     const valor = valorcobranca2.toString();
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
-    console.log(valor2);
     const requisicao = createAPI();
 
     let campo = "";
@@ -113,7 +120,8 @@ const RegistrarVagaMonitor = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        setLoadingButton(false);
+        setOnOpenError(true);
       });
   };
   async function getInfoPix(TxId) {
@@ -126,21 +134,70 @@ const RegistrarVagaMonitor = () => {
         txid: TxId,
       })
       .then((response) => {
-        setEstado2(true);
         if (response.data.msg.resultado === true) {
-          console.log('pix', response)
+          if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
             response.data.data.chegada,
-            response.data.data.tempo_restante,
+            response.data.data.tempo,
             response.config.headers.id_usuario,
-            response.data.data.id_vagas[0],
+            response.data.data.numero_vagas[0],
             placaMaiuscula,
             "PIX",
             tempo,
             response.data.data.notificacao_pendente
           );
-          setEstado2(false);
+          }
+
+          const listaVagasString = localStorage.getItem("listaVagas");
+            let listaVagas = [];
+
+              try {
+                listaVagas = JSON.parse(listaVagasString) || [];
+              } catch (error) {
+                console.error("Erro ao analisar JSON:", error);
+              }
+
+              listaVagas = listaVagas.filter((element) => element !== null);
+
+              console.log(listaVagas);
+
+              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
+
+              if (indexByPlaca !== -1) {
+                const vaga = listaVagas[indexByPlaca];
+                vaga.placa = "";
+                vaga.id_vaga_veiculo = "";
+                vaga.chegada = "";
+                vaga.variaDisplay = "aparece";
+                vaga.tempo = "";
+                vaga.temporestante = "";
+                vaga.display = "testeNot2";
+                vaga.corline = "";
+                vaga.cor = "";
+              }
+
+              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == response.data.data.numero_vagas[0]);
+
+              if (indexVaga !== -1) {
+                const resposta = response.data.data;
+                const vaga = listaVagas[indexVaga];
+                vaga.placa = tirarTraco;
+                vaga.numero = parseInt(response.data.data.numero_vagas[0]);
+                vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
+                vaga.chegada = resposta.chegada;
+                vaga.tempo = resposta.tempo;
+                vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
+                vaga.variaDisplay = "aparece";
+                vaga.display = "testeNot2";
+                vaga.corline = resposta.tempo === "00:10:00" ? "#FFF3CD" : "#D1E7DD";
+                vaga.cor = resposta.tempo === "00:10:00" ? "#664D03" : "#0F5132";
+                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+              }
+
+          setLoadingButton(false);
+
+
           localStorage.removeItem("vaga");
           localStorage.removeItem("popup");
           localStorage.removeItem("id_vagaveiculo");
@@ -151,30 +208,29 @@ const RegistrarVagaMonitor = () => {
             FuncTrocaComp("Dashboard");
           }
         } else {
-          setEstado2(false);
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: response.data.msg.msg,
-            footer: '<a href="">Por favor, tente novamente.</a>',
-          });
+          setNotification(false);
+          setPixExpirado("Pix expirado");
         }
       })
       .catch((err) => {
-        console.log(err);
+        setLoadingButton(false);
+        setOnOpenError(true);
       });
   }
 
+  const onClose = () => {
+    setLoadingButton(false);
+  }
+
+  useEffect(() => {
+    console.log(selectedButton)
+  }, [selectedButton]);
+  
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });
 
-  useEffect(() => {
-    if (estado2) {
-    }
-  }, [estado2]);
-
-  const registrarEstacionamento = (campo) => {
+  const registrarEstacionamento = async (campo) => {
     const estacionamento = createAPI();
     const placaString = textoPlaca.toString();
     const placaMaiuscula = placaString.toUpperCase();
@@ -182,6 +238,7 @@ const RegistrarVagaMonitor = () => {
     const vagaa = [];
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
+      setLoadingButton(false);
       setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
@@ -195,6 +252,7 @@ const RegistrarVagaMonitor = () => {
     const sim = document.getElementById("flexSwitchCheckDefault").checked;
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
+        setLoadingButton(false);
         setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
@@ -208,33 +266,83 @@ const RegistrarVagaMonitor = () => {
     }
 
     if (localStorage.getItem("popup") == "true") {
-      setEstado2(true);
       const idvaga = localStorage.getItem("id_vagaveiculo");
       estacionamento.post("/estacionamento", {
           placa: tirarTraco,
           numero_vaga: vagaa,
           tempo: tempo,
-          pagamento: valor,
+          pagamento: selectedButton,
           id_vaga_veiculo: idvaga,
         })
-        .then((response) => {
-          console.log(response)
+        .then(async(response) => {
           if (response.data.msg.resultado === true) {
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
-              response.data.data.tempo_restante,
+              response.data.data.tempo,
               response.config.headers.id_usuario,
               vagaa,
               tirarTraco,
-              valor,
+              selectedButton,
               tempo,
               response.data.data.notificacao_pendente
             );
-            setEstado2(false);
+            }
+
+            const listaVagasString = localStorage.getItem("listaVagas");
+            let listaVagas = [];
+
+              try {
+                listaVagas = JSON.parse(listaVagasString) || [];
+              } catch (error) {
+                console.error("Erro ao analisar JSON:", error);
+              }
+
+
+              listaVagas = listaVagas.filter((element) => element !== null);
+
+              console.log(listaVagas);
+
+              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
+
+              if (indexByPlaca !== -1) {
+                const vaga = listaVagas[indexByPlaca];
+                vaga.placa = "";
+                vaga.id_vaga_veiculo = "";
+                vaga.chegada = "";
+                vaga.variaDisplay = "aparece";
+                vaga.tempo = "";
+                vaga.temporestante = "";
+                vaga.display = "testeNot2";
+                vaga.corline = "";
+                vaga.cor = "";
+              }
+
+              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaa[0]);
+
+              if (indexVaga !== -1) {
+                const resposta = response.data.data;
+                const vaga = listaVagas[indexVaga];
+                vaga.placa = tirarTraco;
+                vaga.numero = parseInt(vagaa[0]);
+                vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
+                vaga.chegada = resposta.chegada;
+                vaga.tempo = resposta.tempo;
+                vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
+                vaga.variaDisplay = "aparece";
+                vaga.display = "testeNot2";
+                vaga.corline = resposta.tempo === "00:10:00" ? "#FFF3CD" : "#D1E7DD";
+                vaga.cor = resposta.tempo === "00:10:00" ? "#664D03" : "#0F5132";
+                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+              }
+
+ 
             localStorage.removeItem("vaga");
             localStorage.removeItem("popup");
             localStorage.removeItem("id_vagaveiculo");
+
+            setLoadingButton(false);
 
             if (user2.perfil[0] === "monitor") {
               FuncTrocaComp("ListarVagasMonitor");
@@ -242,7 +350,7 @@ const RegistrarVagaMonitor = () => {
               FuncTrocaComp("Dashboard");
             }
           } else {
-            setEstado2(false);
+            setLoadingButton(false);
             Swal.fire({
               icon: "error",
               title: "Oops...",
@@ -266,28 +374,76 @@ const RegistrarVagaMonitor = () => {
           }
         });
     } else {
-      setEstado2(true);
       estacionamento.post("/estacionamento", {
           placa: tirarTraco,
           numero_vaga: vagaa,
           tempo: tempo,
-          pagamento: valor,
+          pagamento: selectedButton,
         })
         .then((response) => {
-          console.log(response)
           if (response.data.msg.resultado === true) {
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
-              response.data.data.tempo_restante,
+              response.data.data.tempo,
               response.config.headers.id_usuario,
               vagaa,
               tirarTraco,
-              valor,
-              tempo,
+              response.data.msg.msg === "Debito" ? 'debito' : selectedButton,
+              response.data.msg.msg === "Debito" ? response.data.data.tempoDebito : tempo,
               response.data.data.notificacao_pendente
             );
-            setEstado2(false);
+            }
+
+            const listaVagasString = localStorage.getItem("listaVagas");
+            let listaVagas = [];
+
+              try {
+                listaVagas = JSON.parse(listaVagasString) || [];
+              } catch (error) {
+                console.error("Erro ao analisar JSON:", error);
+              }
+
+              listaVagas = listaVagas.filter((element) => element !== null);
+
+              console.log(listaVagas);
+
+              const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
+
+              if (indexByPlaca !== -1) {
+                const vaga = listaVagas[indexByPlaca];
+                vaga.placa = "";
+                vaga.id_vaga_veiculo = "";
+                vaga.chegada = "";
+                vaga.variaDisplay = "aparece";
+                vaga.tempo = "";
+                vaga.temporestante = "";
+                vaga.display = "testeNot2";
+                vaga.corline = "";
+                vaga.cor = "";
+              }
+
+              const indexVaga = listaVagas.findIndex((vaga) => vaga.numero == vagaa[0]);
+
+              if (indexVaga !== -1) {
+                const resposta = response.data.data;
+                const vaga = listaVagas[indexVaga];
+                vaga.placa = tirarTraco;
+                vaga.numero = parseInt(vagaa[0]);
+                vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
+                vaga.chegada = resposta.chegada;
+                vaga.tempo = resposta.tempo;
+                vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
+                vaga.variaDisplay = "aparece";
+                vaga.display = "testeNot2";
+                vaga.corline = resposta.tempo === "00:10:00" ? "#FFF3CD" : "#D1E7DD";
+                vaga.cor = resposta.tempo === "00:10:00" ? "#664D03" : "#0F5132";
+                localStorage.setItem('listaVagas', JSON.stringify(listaVagas));
+              }
+
+            setLoadingButton(false);
+
             localStorage.removeItem("vaga");
 
             if (user2.perfil[0] === "monitor") {
@@ -296,7 +452,7 @@ const RegistrarVagaMonitor = () => {
               FuncTrocaComp("Dashboard");
             }
           } else {
-            setEstado2(false);
+            setLoadingButton(false);
             setEstado(true);
             setMensagem(response.data.msg.msg);
             setTimeout(() => {
@@ -338,19 +494,6 @@ const RegistrarVagaMonitor = () => {
         textoPlaca[4] === "0"
       ) {
         setPlaca("placa3");
-        if (cont === 0) {
-          const fim = textoPlaca.substring(3, textoPlaca.length);
-          const texto = textoPlaca.substring(0, 3);
-          const traco = "-";
-          setTextoPlaca(texto + traco + fim);
-          setCont(cont + 1);
-        } else {
-          const fim = textoPlaca.substring(4, textoPlaca.length);
-          const texto = textoPlaca.substring(0, 3);
-          const traco = "-";
-          setTextoPlaca(texto + traco + fim);
-          setCont(cont + 1);
-        }
       } else {
         setPlaca("placa");
         setCont(0);
@@ -376,6 +519,9 @@ const RegistrarVagaMonitor = () => {
       .get("/parametros")
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
+        if (localStorage.getItem("popup") == "true") {
+          setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
+        }
       })
       .catch(function (error) {
         if (
@@ -397,13 +543,18 @@ const RegistrarVagaMonitor = () => {
 
   const atualizafunc = () => {
     const tempoo = document.getElementById("tempos").value;
-    const valorr = document.getElementById("pagamentos").value;
+    const valorr = selectedButton;
+    console.log(selectedButton)
     setTempo(tempoo);
     setValor(valorr);
     if (tempoo === "00:10:00") {
       SetMostrapag(false);
       setValor("");
-    } else {
+    } else if (tempoo === "notificacao"){
+      SetMostrapag(false);
+      setValor("");
+    } 
+    else {
       SetMostrapag(true);
     }
 
@@ -453,9 +604,24 @@ const RegistrarVagaMonitor = () => {
   }
 
   const handleSubmit = async () => {
-    const select = document.getElementById("pagamentos").value;
+    setLoadingButton(true);
+    let select = selectedButton;
+    setValor(selectedButton);
+    const tolerancia = document.getElementById("tempos").value;
 
-    if (select === "pix") {
+    if (tolerancia === "notificacao" && textoPlaca !== ""){
+      const placaString = textoPlaca.toString();
+      const placaMaiuscula = placaString.toUpperCase();
+      localStorage.setItem("placa", `${placaMaiuscula}`);
+      FuncTrocaComp("Notificacao");
+    } else if (tolerancia === "notificacao" && textoPlaca === ""){
+      setLoadingButton(false);
+    }
+
+    if (tolerancia === '00:10:00'){
+      registrarEstacionamento();
+    }
+    else if (select === "pix") {
       fazerPix();
     } else {
       registrarEstacionamento();
@@ -467,14 +633,14 @@ const RegistrarVagaMonitor = () => {
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
     ) {
-      FuncTrocaComp("FecharTurno");
+      FuncTrocaComp("AbrirTurno");
     }
     setTipoVaga(localStorage.getItem("tipoVaga"));
     param();
+    
     if (localStorage.getItem("popup") == "true") {
       setTextoPlaca(localStorage.getItem("placa"));
       setVisible(true);
-      setValorCobranca2(1);
       SetMostrapag(true);
       setValor("dinheiro");
       setTempo("00:30:00");
@@ -531,6 +697,7 @@ const RegistrarVagaMonitor = () => {
               <div className="form-group mb-4">
                 <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
                   <input
+                    autoFocus
                     type="text"
                     id={inputVazio}
                     className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
@@ -591,23 +758,42 @@ const RegistrarVagaMonitor = () => {
               <div
                 className="h6 mt-3 "
                 style={{ display: mostrapag ? "block" : "none" }}
-                onChange={atualizafunc}
               >
                 <p className="text-start">Forma de pagamento:</p>
-                <select
-                  className="form-select form-select-lg mb-3"
-                  aria-label=".form-select-lg example"
-                  id="pagamentos"
-                >
-                  <option value="dinheiro">Dinheiro</option>
-                  <option value="pix">PIX</option>
-                  <option value="parkimetro">Parkimetro</option>
-                </select>
+                <Grid>
+                    <Grid.Col span={6}>
+                      <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "pix"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("pix")}
+                      value="pix">
+                        <Text fz="lg" weight={700}>
+                          PIX
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                      selectedButton === "dinheiro"
+                        ? "corTempoSelecionado"
+                        : "corTempo"
+                      }`} 
+                      onClick={() => setSelectedButton("dinheiro")}
+                      value="dinheiro">
+                        <Text fz="lg" weight={700}>
+                          Dinheiro
+                        </Text>
+                      </button>
+                    </Grid.Col>
+                  </Grid>
               </div>
 
               <div className="pt-4 mb-4 gap-2 d-md-block">
                 <VoltarComponente space={true} onClick={() => HangleBack()} />
                 <Button
+                  loading={loadingButton}
                   onClick={handleSubmit}
                   size="md"
                   radius="md"
@@ -623,17 +809,20 @@ const RegistrarVagaMonitor = () => {
               >
                 {mensagem}
               </div>
-              <div style={{ display: estado2 ? "block" : "none" }}>
-                <Loader />
-              </div>
             </div>
           </div>
         </div>
+        <ModalErroBanco
+          onOpen={onOpenError}
+          onClose={onCloseError}
+          setOnOpen={setOnOpenError}
+        />
         <ModalPix
           qrCode={data.brcode}
           status={notification}
           mensagemPix={pixExpirado}
           onOpen={onOpen}
+          onClose={onClose}
         />
       </div>
     </section>
