@@ -79,7 +79,6 @@ const VeiculosAgente = () => {
         }
     }, [vaga]);
     
-
     useEffect(() => {
         const requisicao = createAPI();
         requisicao.get('/setores'
