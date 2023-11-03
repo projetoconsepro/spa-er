@@ -4,6 +4,7 @@ import {
   IconPrinter,
   IconParking,
   IconEdit,
+  IconCalendar,
 } from "@tabler/icons-react";
 import {
   Accordion,
@@ -230,7 +231,7 @@ const EditarParametroAdmin = () => {
 
         <Accordion.Item value="turno">
           <Accordion.Control
-            icon={<IconPrinter size={rem(20)} color="#845EF7" />}
+            icon={<IconCalendar size={rem(20)} color="#845EF7" />}
           >
             Parâmetros turno
           </Accordion.Control>
@@ -239,7 +240,7 @@ const EditarParametroAdmin = () => {
               {dataAPI.map((item, index) => (
                 <Accordion.Item key={index} value={item.dia}>
                   <Accordion.Control
-                    icon={<IconPrinter size={rem(20)} color="#845EF7" />}
+                    icon={<IconCalendar size={rem(20)} color="#845EF7" />}
                   >
                     {item.dia}
                   </Accordion.Control>
