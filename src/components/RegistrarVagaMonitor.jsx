@@ -117,6 +117,14 @@ const RegistrarVagaMonitor = () => {
           getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
+        } else {
+          setLoadingButton(false);
+          setEstado(true);
+          setMensagem(resposta.data.msg.msg);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("");
+          }, 3000);
         }
       })
       .catch((err) => {
