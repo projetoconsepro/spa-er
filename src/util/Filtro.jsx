@@ -272,6 +272,21 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
 
     }
 
+    else if (nome === 'ListaAutoInfracao') {
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Placa', label: 'Placa' },
+        { value: 'Periodo', label: 'Período' },
+      ]);
+    }
+
+    else if (nome === 'PlacaIsenta') {
+      setOptions([
+        { value: 'Estado', label: 'Estado' },
+        { value: 'Placa', label: 'Placa' },
+      ]);
+    }
+
     else {
       setOptions([]);
     }
@@ -411,6 +426,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         default:
           break;
       }
+      console.log(consulta)
       onConsultaSelected(consulta);
     }
   };
@@ -643,10 +659,10 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                                     <Radio.Group name="Escolha alguma opção" onChange={(e) => setRadioTipo(e)}>
                                       <Grid>
                                         <Grid.Col span={12}>
-                                          <Radio value="'S'" label="Notificado" />
+                                        <Radio value="'S'" label={nome === "PlacaIsenta" ? 'Ativo' : 'Notificado'} />
                                         </Grid.Col>
                                         <Grid.Col span={12}>
-                                          <Radio value="'N'" label="Normal" />
+                                        <Radio value="'N'" label={nome === "PlacaIsenta" ? 'Inativo' : 'Normal'} />
                                         </Grid.Col>
                                       </Grid>
                                     </Radio.Group>

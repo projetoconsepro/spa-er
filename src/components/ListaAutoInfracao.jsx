@@ -10,7 +10,7 @@ import createAPI from '../services/createAPI'
 import { Group, Pagination } from '@mantine/core'
 import CarroLoading from './Carregamento'
 
-const ListarNotificacoesAgente = () => {
+const ListaAutoInfracao = () => {
     const [data, setData] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState('')
@@ -61,30 +61,21 @@ const ListarNotificacoesAgente = () => {
             title: 'Informações da notificação',
             html: `<p><b>Data:</b> ${item.data}</p>
                    <p><b>Placa:</b> ${item.placa}</p>
-                   <p><b>Estado:</b> ${item.pendente === 'Pendente' ? 'Pendente' : 'Quitado'}</p>
                    <p><b>Modelo:</b> ${item.modelo}</p>
-                   <p><b>Fabricante:</b> ${item.fabricante}</p>
                    <p><b>Cor do veículo:</b> ${item.cor}</p>
-                   <p><b>Tipo:</b> ${item.tipo}</p>
-                   <p><b>Valor:</b> R$${item.valor}</p>
-                   <p><b>Monitor:</b> ${item.monitor}</p>
                    <p><b>Hora:</b> ${item.hora}</p>`,
             showConfirmButton: true,
-            showCancelButton: true,
-            confirmButtonText: 'Auto de infração',
-            cancelButtonText: 'Fechar',
+            confirmButtonText: 'Ok',
             }).then((result) => {
             if (result.isDismissed) {
                 Swal.close();
             }
             else if (result.isConfirmed) {
-                localStorage.setItem('autoInfracao', JSON.stringify(item))
-                FuncTrocaComp('AutoInfracao')
+              Swal.close();
             }
             });
         }else{
-          localStorage.setItem('autoInfracao', JSON.stringify(item))
-          FuncTrocaComp('AutoInfracao')
+          Swal.close();
         }
         }
 
@@ -92,27 +83,19 @@ const ListarNotificacoesAgente = () => {
       setEstado(false)
       setMensagem("")
       const requisicao = createAPI();
-      requisicao.get('/notificacao').then((response) => {
+      requisicao.get('/notificacao/infracao').then((response) => {
         if (response.data.msg.resultado){
-          setEstado(false)
-          const newData = response.data.data.map((item) => ({
-            data: ArrumaHora(item.data),
-            placa: item.veiculo.placa,
-            cancelada: item.cancelada,
-            cancelada_motivo: item.cancelada_motivo,
-            vaga: item.vaga,
-            pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
-            fabricante: item.veiculo.modelo.fabricante.nome,
-            modelo: item.veiculo.modelo.nome,
-            tipo: item.tipo_notificacao.nome,
-            valor: item.valor,
-            cor : item.veiculo.cor,
-            id_vaga_veiculo: item.id_vaga_veiculo,
-            id_notificacao: item.id_notificacao,
-            monitor: item.monitor.nome,
-            hora: ArrumaHora2(item.data),
-          }));
-          setData(newData)
+        console.log(response.data.data)
+        setEstado(false)
+        const newData = response.data.data.map((item) => ({
+          data: ArrumaHora(item.hora),
+          placa: item.placa,
+          modelo: item.modelo,
+          cor: item.cor,
+          vaga: item.numero,
+          hora: ArrumaHora2(item.hora),
+        }));
+        setData(newData)
         }
         else {
           setData([])
@@ -153,26 +136,18 @@ const ListarNotificacoesAgente = () => {
     setMensagem("")
     const requisicao = createAPI();
     const base64 = btoa(where)
-    requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
-      if (response.data.data.length !== 0){
+    requisicao.get(`/notificacao/infracao/?query=${base64}`).then((response) => {
+      console.log(response.data)
+      if (response.data.msg.resultado){
       setEstadoLoading(false)
       setEstado(false)
       const newData = response.data.data.map((item) => ({
-        data: ArrumaHora(item.data),
-        placa: item.veiculo.placa,
-        cancelada: item.cancelada,
-        cancelada_motivo: item.cancelada_motivo,
-        vaga: item.vaga,
-        pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
-        fabricante: item.veiculo.modelo.fabricante.nome,
-        modelo: item.veiculo.modelo.nome,
-        tipo: item.tipo_notificacao.nome,
-        valor: item.valor,
-        cor : item.veiculo.cor,
-        id_vaga_veiculo: item.id_vaga_veiculo,
-        id_notificacao: item.id_notificacao,
-        monitor: item.monitor.nome,
-        hora: ArrumaHora2(item.data),
+        data: ArrumaHora(item.hora),
+        placa: item.placa,
+        modelo: item.modelo,
+        cor: item.cor,
+        vaga: item.numero,
+        hora: ArrumaHora2(item.hora),
       }));
       setData(newData)
     }
@@ -180,7 +155,7 @@ const ListarNotificacoesAgente = () => {
       setEstadoLoading(false)
       setData([])
       setEstado(true)
-      setMensagem("Não há notificações para exibir")
+      setMensagem(response.data.msg.msg)
     }
   }).catch((error) => {
     if(error?.response?.data?.msg === "Cabeçalho inválido!" 
@@ -195,16 +170,14 @@ const ListarNotificacoesAgente = () => {
     })
 }
 
-
-
   return (
     <div className="dashboard-container">
-        <p className="mx-3 text-start fs-4 fw-bold">Notificações pendentes</p>
+        <p className="mx-3 text-start fs-4 fw-bold">Lista Auto de Infração</p>
         <div className="row mb-3">
         <div className="col-12">
         <div className="row">
         <div className="col-7 mx-2">
-        <Filtro nome={'ListarNotificacoesAgente'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
+        <Filtro nome={'ListaAutoInfracao'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
           </div>
           <div className="col-3 text-end">
           </div>
@@ -214,7 +187,7 @@ const ListarNotificacoesAgente = () => {
           </div>
           </div>
           </div>
-            <div className="row">
+          <div className="row">
           <div className="col-12">
             <div className="row">
               <div className="col-12 mb-4">
@@ -233,19 +206,7 @@ const ListarNotificacoesAgente = () => {
                             Vaga
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Estado
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Fabricante
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
                             Modelo
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Tipo
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Valor
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios2" scope="col">
                             Hora
@@ -259,13 +220,7 @@ const ListarNotificacoesAgente = () => {
                           <td>{item.data}</td>
                           <td>{item.placa}</td>
                           <td> {item.vaga}</td>
-                          <td id="tabelaUsuarios2" style={
-                            item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}
-                          }> {item.pendente}</td>
-                          <td id="tabelaUsuarios2">{item.fabricante}</td>
                           <td id="tabelaUsuarios2">{item.modelo}</td>
-                          <td id="tabelaUsuarios2">{item.tipo}</td>
-                          <td id="tabelaUsuarios2">{item.valor}</td>
                           <td id="tabelaUsuarios2">{item.hora}</td>
                         </tr>
                     ))}
@@ -275,8 +230,7 @@ const ListarNotificacoesAgente = () => {
                   <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                         {mensagem}
                     </div>
-
-                    {data.length === 0 ?
+                    {data.length === 0 && mensagem !== 'Nenhuma infração encontrada' ? 
                     <div>
                       <CarroLoading />
                     </div>
@@ -295,4 +249,4 @@ const ListarNotificacoesAgente = () => {
   )
 }
 
-export default ListarNotificacoesAgente;
+export default ListaAutoInfracao;
