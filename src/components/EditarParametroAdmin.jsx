@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
+import Swal from "sweetalert2"; // Importe o SweetAlert
 import {
   IconPrinter,
   IconParking,
@@ -36,6 +37,39 @@ const EditarParametroAdmin = () => {
   const tardeHoraFimRef = useRef(null);
   const [updated, setUpdated] = useState(false);
 
+  // Função para lidar com a exclusão de um período
+  const handleDeleteTimeChanges = (item, periodo) => {
+    console.log(item)
+    Swal.fire({
+      title: `Confirmar exclusão do período da ${periodo}`,
+      text: `Tem certeza de que deseja excluir o período da ${periodo}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, excluir",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "red",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const requisicao = createAPI();
+        requisicao.delete("/turno/turnoFuncionamento", {
+            data: {
+              id_turno: periodo === 'manha' ? item.manha.id_turno : item.tarde.id_turno,
+            }
+        }).then((response) => {
+          console.log(response.data)
+          if (response.data.msg.resultado){
+            setUpdated(!updated);
+          } else {
+            Swal.fire("Erro ao excluir período!", "", "error");
+          }
+        }).catch((error) => {
+            console.log(error);
+        });
+        Swal.fire("Período excluído!", "", "success");
+      }
+    });
+  };
+
   const handleToggleInput = (chave) => {
     setEnabledInputs((prevState) => ({
       ...prevState,
@@ -53,7 +87,8 @@ const EditarParametroAdmin = () => {
   };
 
   const handleSaveChanges = () => {
-  }
+    // Implemente a lógica de salvamento de alterações aqui
+  };
 
   const showTimePicker = (index) => {
     setTimePickerVisible(true);
@@ -158,6 +193,42 @@ const EditarParametroAdmin = () => {
       });
   }, [updated]);
 
+  const handleAddNewPeriod = (item, periodo) => {
+    const manhaHoraInicio = manhaHoraInicioRef.current.value;
+    const manhaHoraFim = manhaHoraFimRef.current.value;
+  
+    Swal.fire({
+      title: "Confirmar adição de novo período",
+      text: "Tem certeza de que deseja adicionar este novo período?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sim, adicionar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "green",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const requisicao = createAPI();
+        requisicao
+          .post("/turno/turnoFuncionamento", {
+            dia: item.dia,
+            hora_inicio: manhaHoraInicio,
+            hora_fim: manhaHoraFim,
+          })
+          .then((response) => {
+            console.log(response.data)
+            if (response.data.msg.resultado) {
+              setUpdated(!updated);
+            } else {
+              Swal.fire("Erro ao adicionar novo período!", "", "error");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    });
+  };
+
   return (
     <div className="bg-white rounded">
       <Card padding="lg">
@@ -245,15 +316,140 @@ const EditarParametroAdmin = () => {
                     {item.dia}
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <div className="input-wrapper text-start mt-3">
-                      <label className="mx-2">Manhã:</label>
+                    {item.manha && item.tarde ? (
+                      <div>
+                        <div className="input-wrapper text-start mt-3">
+                          <label className="mx-2">Manhã:</label>
+                          <Grid>
+                            <Grid.Col span={10}>
+                              <Input
+                                readOnly
+                                value={item.manha?.hora_inicio || ""}
+                                placeholder={
+                                  item.manha?.hora_inicio === "09:00:00"
+                                    ? "0"
+                                    : null
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={10}>
+                              <Input
+                                readOnly
+                                value={item.manha?.hora_fim || ""}
+                                placeholder={
+                                  item.manha?.hora_fim === "12:00:00" ? "0" : null
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={1}>
+                              <ActionIcon>
+                                <IconEdit
+                                  className="mt-1"
+                                  size="1.3rem"
+                                  color="#228BE6"
+                                  onClick={() => showTimePicker(index)}
+                                />
+                              </ActionIcon>
+                            </Grid.Col>
+                          </Grid>
+                        </div>
+                        {timePickerIndex === index && isTimePickerVisible && (
+                          <div className="mt-3">
+                            <TimeInput className="mb-3" ref={manhaHoraInicioRef} />
+                            <TimeInput className="mb-3" ref={manhaHoraFimRef} />
+                            <Button className="mx-1" onClick={hideTimePicker}>
+                              Fechar
+                            </Button>
+                            <Button className="mx-3"
+                              onClick={() => handleSaveTimeChanges(item, "manha")}
+                            >
+                              Salvar
+                            </Button>
+                            <Button
+                              onClick={() => handleDeleteTimeChanges(item, "manhã")}
+                              variant="outline"
+                              color="red"
+                            >
+                              Apagar
+                            </Button>
+                          </div>
+                        )}
+
+                        <div className="input-wrapper text-start mt-3">
+                          <label className="mx-2">Tarde:</label>
+                          <Grid>
+                            <Grid.Col span={10}>
+                              <Input
+                                readOnly
+                                value={item.tarde?.hora_inicio || ""}
+                                placeholder={
+                                  item.tarde?.hora_inicio === "13:00:00"
+                                    ? "0"
+                                    : null
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={10}>
+                              <Input
+                                readOnly
+                                value={item.tarde?.hora_fim || ""}
+                                placeholder={
+                                  item.tarde?.hora_fim === "18:00:00" ? "0" : null
+                                }
+                              />
+                            </Grid.Col>
+                            <Grid.Col span={1}>
+                              <ActionIcon>
+                                <IconEdit
+                                  className="mt-1"
+                                  size="1.3rem"
+                                  color="#228BE6"
+                                  onClick={() => showTimePicker(index)}
+                                />
+                              </ActionIcon>
+                            </Grid.Col>
+                          </Grid>
+                        </div>
+                        {timePickerIndex === index && isTimePickerVisible && (
+                          <div className="mt-3">
+                            <TimeInput
+                              className="mb-3"
+                              ref={tardeHoraInicioRef}
+                            />
+                            <TimeInput
+                              className="mb-3"
+                              ref={tardeHoraFimRef}
+                            />
+                            <Button className="mx-1" onClick={hideTimePicker}>
+                              Fechar
+                            </Button>
+                            <Button className="mx-3"
+                              onClick={() => handleSaveTimeChanges(item, "tarde")}
+                            >
+                              Salvar
+                            </Button>
+                            <Button
+                              onClick={() => handleDeleteTimeChanges(item, "tarde")}
+                              variant="outline"
+                              color="red"
+                            >
+                              Apagar
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ) :  (
+                      <div className="input-wrapper text-start mt-3">
+                      <label className="mx-2">Período:</label>
                       <Grid>
                         <Grid.Col span={10}>
                           <Input
                             readOnly
-                            value={item.manha?.hora_inicio || ""}
+                            value={item.manha?.hora_inicio || item.tarde?.hora_inicio || ""}
                             placeholder={
                               item.manha?.hora_inicio === "09:00:00"
+                                ? "0"
+                                : item.tarde?.hora_inicio === "13:00:00"
                                 ? "0"
                                 : null
                             }
@@ -262,9 +458,13 @@ const EditarParametroAdmin = () => {
                         <Grid.Col span={10}>
                           <Input
                             readOnly
-                            value={item.manha?.hora_fim || ""}
+                            value={item.manha?.hora_fim || item.tarde?.hora_fim || ""}
                             placeholder={
-                              item.manha?.hora_fim === "12:00:00" ? "0" : null
+                              item.manha?.hora_fim === "09:00:00"
+                                ? "0"
+                                : item.tarde?.hora_fim === "13:00:00"
+                                ? "0"
+                                : null
                             }
                           />
                         </Grid.Col>
@@ -277,70 +477,28 @@ const EditarParametroAdmin = () => {
                               onClick={() => showTimePicker(index)}
                             />
                           </ActionIcon>
-                        </Grid.Col>
-                      </Grid>
-                    </div>
-                    {timePickerIndex === index && isTimePickerVisible && (
-                      <div className="mt-3">
-                        <TimeInput
-                          className="mb-3"
-                          ref={manhaHoraInicioRef}
-                        />
-                        <TimeInput
-                          className="mb-3"
-                          ref={manhaHoraFimRef}
-                        />
-                        <Button className="mx-2" onClick={hideTimePicker}>Fechar</Button>
-                        <Button onClick={() => handleSaveTimeChanges(item, 'manha')}>Salvar</Button>
-                      </div>
-                    )}
-
-                    <div className="input-wrapper text-start mt-3">
-                      <label className="mx-2">Tarde:</label>
-                      <Grid>
-                        <Grid.Col span={10}>
-                          <Input
-                            readOnly
-                            value={item.tarde?.hora_inicio || ""}
-                            placeholder={
-                              item.tarde?.hora_inicio === "13:00:00" ? "0" : null
-                            }
-                          />
-                        </Grid.Col>
-                        <Grid.Col span={10}>
-                          <Input
-                            readOnly
-                            value={item.tarde?.hora_fim || ""}
-                            placeholder={
-                              item.tarde?.hora_fim === "18:00:00" ? "0" : null
-                            }
-                          />
-                        </Grid.Col>
-                        <Grid.Col span={1}>
-                          <ActionIcon>
-                            <IconEdit
-                              className="mt-1"
-                              size="1.3rem"
-                              color="#228BE6"
-                              onClick={() => showTimePicker(index)}
+                          </Grid.Col>
+                        </Grid>
+                        {timePickerIndex === index && isTimePickerVisible && (
+                          <div className="mt-3">
+                            <TimeInput
+                              className="mb-3"
+                              ref={manhaHoraInicioRef}
                             />
-                          </ActionIcon>
-                        </Grid.Col>
-                      </Grid>
+                            <TimeInput
+                              className="mb-3"
+                              ref={manhaHoraFimRef}
+                            />
+                            <Button className="mx-1" onClick={hideTimePicker}>Fechar</Button>
+                            <Button className="mx-3" onClick={() => handleSaveTimeChanges(item, 'manha')}>Salvar</Button>
+                            <Button
+                            onClick={() => handleAddNewPeriod(item, 'manha')}
+                          >
+                            Adicionar
+                          </Button>
+                          </div>
+                        )}
                     </div>
-                    {timePickerIndex === index && isTimePickerVisible && (
-                      <div className="mt-3">
-                        <TimeInput
-                          className="mb-3"
-                          ref={tardeHoraInicioRef}
-                        />
-                        <TimeInput
-                          className="mb-3"
-                          ref={tardeHoraFimRef}
-                        />
-                        <Button className="mx-2" onClick={hideTimePicker}>Fechar</Button>
-                        <Button onClick={() => handleSaveTimeChanges(item, 'tarde')}>Salvar</Button>
-                      </div>
                     )}
                   </Accordion.Panel>
                 </Accordion.Item>

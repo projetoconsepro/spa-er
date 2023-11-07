@@ -95,6 +95,7 @@ const HistoricoVeiculo = () => {
               data: ArrumaHora(item.data),
               estado: false,
               pago: item.pago,
+              tempo: item.tempo,
               placa: item.placa,
               regularizacao: item.regularizacao,
               notificacao: item.notificacao,
@@ -137,7 +138,8 @@ const HistoricoVeiculo = () => {
         html: `Data: ${data[index].data} </br></br> 
         Horário chegada: ${data[index].chegada} </br></br> 
         Horário saída: ${data[index].saida} </br></br>
-        Vaga: ${data[index].vaga} </br></br> 
+        Vaga: ${data[index].vaga} </br></br>
+        Tempo: ${data[index].tempo} </br></br>
         Houve irregularidades: ${tipo} </br></br> 
         Endereço: ${data[index].local} </br>`,
         showCancelButton: true,
@@ -159,6 +161,7 @@ const HistoricoVeiculo = () => {
         Horário chegada: ${data[index].chegada} </br></br> 
         Horário saída: ${data[index].saida} </br></br> 
         Vaga: ${data[index].vaga} </br></br> 
+        Tempo: ${data[index].tempo} </br></br>
         Houve irregularidades: ${tipo} </br></br> 
         Endereço: ${data[index].local} </br>`,
         showCancelButton: false,
@@ -204,6 +207,7 @@ const HistoricoVeiculo = () => {
           data: ArrumaHora(item.data),
           estado: false,
           pago: item.pago,
+          tempo: item.tempo,
           placa: item.placa,
           regularizacao: item.regularizacao,
           notificacao: item.notificacao,

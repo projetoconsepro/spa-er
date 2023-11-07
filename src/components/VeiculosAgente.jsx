@@ -8,6 +8,8 @@ import { IconMapSearch } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
 import VoltarComponente from "../util/VoltarComponente";
 import createAPI from "../services/createAPI";
+import FuncTrocaComp from "../util/FuncTrocaComp";
+import Swal from "sweetalert2";
 
 const VeiculosAgente = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -39,8 +41,10 @@ const VeiculosAgente = () => {
                 if (response.data.msg.resultado !== false) {
                     setEstado(false)
                     setMensagem('')
+                    console.log(response.data.data)
                     const newData = response.data.data.map((item) => ({
                         id_vaga: item.id_vaga,
+                        notificacoes: item.numero_notificacoes_pendentes,
                         numero_vaga: item.numero,
                         local: item.local,
                         placa: item.placa,
@@ -118,6 +122,30 @@ const VeiculosAgente = () => {
     open()
     }
 
+    const openModal = (item) => {
+        Swal.fire({
+            title: 'Informações da notificação',
+            html: `
+                   <p><b>Placa:</b> ${item.placa}</p>
+                   <p><b>Local:</b> ${item.local}</p>
+                   <p><b>Notificações pendentes:</b> ${item.notificacoes}</p>
+                   <p><b>Vaga:</b> ${item.numero_vaga}</p>
+                   <p><b>Tipo da vaga:</b> ${item.tipo}</p>
+                   `,
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Auto de infração',
+            cancelButtonText: 'Fechar',
+            }).then((result) => {
+            if (result.isDismissed) {
+                Swal.close();
+            }
+            else if (result.isConfirmed) {
+
+            }
+        })
+    }
+
     return (
 
         <div className="dashboard-container mb-5">
@@ -165,9 +193,11 @@ const VeiculosAgente = () => {
                                         <tbody>
                                             {data.map((vaga, index) => (
                                                 <tr key={index} className="card-list" data-vaga={vaga.numero_vaga}>
-                                                    <th className="text-white" scope="row" style={{ backgroundColor: vaga.cor, color: vaga.cor }}>{vaga.numero_vaga}</th>
-                                                    <td className="fw-bolder"> {vaga.placa} </td>
-                                                    <td className="fw-normal">{window.innerWidth < 768 ? vaga.local.substring(0, 19) + "..." : vaga.local } </td>
+                                                    <th className="text-white" scope="row" style={{ backgroundColor: vaga.cor, color: vaga.cor }} onClick={()=>{openModal(vaga)}}>{vaga.numero_vaga}</th>
+                                                    <td className="fw-bolder" onClick={() => { openModal(vaga) }}>
+                                                        {vaga.placa} {vaga.notificacoes > 0 ? (<span className="bg-danger px-2 text-white rounded-circle">{vaga.notificacoes}</span>) : null}
+                                                    </td>
+                                                    <td className="fw-normal" onClick={()=>{openModal(vaga)}}>{window.innerWidth < 768 ? vaga.local.substring(0, 19) + "..." : vaga.local } </td>
                                                     <td className="fw-normal" onClick={() => abrirMapa(vaga)}> <IconMapSearch size={18} /> </td>
                                                 </tr>
                                             ))}
