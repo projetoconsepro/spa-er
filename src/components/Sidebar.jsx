@@ -1,4 +1,4 @@
-import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint, FaConnectdevelop, FaCalendar, FaCalendarAlt } from "react-icons/fa";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint, FaConnectdevelop, FaCalendar, FaCalendarAlt, FaClipboard, FaClipboardList } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
 import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
@@ -242,6 +242,12 @@ const Sidebar = () => {
                 },
                 {
                     className: styles.className,
+                    icon: <FaCar />,
+                    name: "‎ Placa isenta",
+                    componente: "PlacaIsenta",
+                },
+                {
+                    className: styles.className,
                     icon: <MdAddLocationAlt />,
                     name: "‎ Setores",
                     componente: "SetoresAdmin",
@@ -384,6 +390,12 @@ const Sidebar = () => {
             icon: <FaParking />,
             name: "‎ Veículos Estacionados",
             componente: "VeiculosAgente",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaClipboardList />,
+            name: "‎ Auto de Infração",
+            componente: "ListaAutoInfracao",
         })
     }
 

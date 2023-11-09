@@ -138,7 +138,7 @@ const HistoricoVeiculo = () => {
         html: `Data: ${data[index].data} </br></br> 
         Horário chegada: ${data[index].chegada} </br></br> 
         Horário saída: ${data[index].saida} </br></br>
-        Vaga: ${data[index].vaga} </br></br>
+        Vaga: ${data[index].vaga} </br></br> 
         Tempo: ${data[index].tempo} </br></br>
         Houve irregularidades: ${tipo} </br></br> 
         Endereço: ${data[index].local} </br>`,
@@ -204,10 +204,10 @@ const HistoricoVeiculo = () => {
             item.horafinal[2],
           saida: item.saida,
           local: item.local,
+          tempo: item.tempo,
           data: ArrumaHora(item.data),
           estado: false,
           pago: item.pago,
-          tempo: item.tempo,
           placa: item.placa,
           regularizacao: item.regularizacao,
           notificacao: item.notificacao,
