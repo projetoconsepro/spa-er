@@ -66,11 +66,11 @@ const EditarParametroAdmin = () => {
             </div>
             <div style="margin-top: 10px;">
                 <label for="hora-inicio">Hora de Início:</label>
-                <input type="text" id="hora-inicio" class="flatpickr swal2-input" data-enable-time="true" data-no-calendar="true" data-time_24hr="true"">
+                <input type="text" id="hora-inicio" class="flatpickr swal2-input" data-enable-time="true" data-no-calendar="true" data-time_24hr="true">
             </div>
             <div style="margin-top: 10px;">
                 <label for="hora-fim">Hora de Fim:</label>
-                <input type="text" id="hora-fim" class="flatpickr swal2-input" data-enable-time="true" data-no-calendar="true" data-time_24hr="true"">
+                <input type="text" id="hora-fim" class="flatpickr swal2-input" data-enable-time="true" data-no-calendar="true" data-time_24hr="true">
             </div>
         `,
         focusConfirm: false,
@@ -115,23 +115,18 @@ const EditarParametroAdmin = () => {
             selectedDays.includes(dia.dia)
         );
 
+        const idTurnos = [...new Set(selectedTurnos.map((turno) => turno.id_turno))];
+
         const requisicao = createAPI();
-        const requests = selectedTurnos.map((turno) =>
-            requisicao.post("/turno/intervalos", {
-                id_turno: turno.id_turno,
+        requisicao
+            .post("/turno/intervalos", {
+                id_turno: idTurnos,
                 hora_inicio: horaInicio,
                 hora_fim: horaFim,
             })
-        );
-
-        Promise.all(requests)
-            .then((responses) => {
-                console.log(responses);
-                const success = responses.every(
-                    (response) => response.data.msg.resultado
-                );
-
-                if (success) {
+            .then((response) => {
+                console.log(response);
+                if (response.data.msg.resultado) {
                     setUpdated(!updated);
                     Swal.fire({
                         icon: "success",
@@ -140,7 +135,7 @@ const EditarParametroAdmin = () => {
                         timer: 1500,
                     });
                 } else {
-                    Swal.fire("Erro ao adicionar novo(s) intervalo(s)!", "", "error");
+                    Swal.fire(response.data.msg.msg, "", "error");
                 }
             })
             .catch((error) => {
@@ -148,6 +143,8 @@ const EditarParametroAdmin = () => {
             });
     }
 };
+
+
 
 
   const handleDeletePeriod = (item, periodo) => {

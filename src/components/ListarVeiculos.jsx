@@ -348,8 +348,15 @@ const ListarVeiculos = () => {
         Swal.fire({
           icon: "error",
           title: "Saldo insuficiente",
-          footer: '<a href="">Clique aqui para adicionar crédito.</a>',
+          footer: '<a id="linkAdicionarCredito">Clique aqui para adicionar crédito.</a>',
         });
+
+        document.getElementById('linkAdicionarCredito').addEventListener('click', function(event) {
+          event.preventDefault();
+          FuncTrocaComp("InserirCreditos");
+          Swal.close();
+        });
+
       }  else {
       requisicao
         .post("/estacionamento", {
@@ -411,7 +418,13 @@ const ListarVeiculos = () => {
       Swal.fire({
         icon: "error",
         title: "Saldo insuficiente",
-        footer: '<a href="">Clique aqui para adicionar crédito.</a>',
+        footer: '<a id="linkAdicionarCredito">Clique aqui para adicionar crédito.</a>',
+      });
+
+      document.getElementById('linkAdicionarCredito').addEventListener('click', function(event) {
+        event.preventDefault();
+        FuncTrocaComp("InserirCreditos");
+        Swal.close();
       });
     } else {
       requisicao
