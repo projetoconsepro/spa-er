@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2"; // Importe o SweetAlert
 import {
-  IconPrinter,
   IconParking,
   IconEdit,
   IconCalendar,
@@ -22,6 +21,8 @@ import {
   rem,
 } from "@mantine/core";
 import createAPI from "../services/createAPI";
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const EditarParametroAdmin = () => {
   const [data, setData] = useState([]);
@@ -44,83 +45,110 @@ const EditarParametroAdmin = () => {
     }));
   };
 
-  const handleAddNewInterval = async (item, index) => {
+  const handleAddNewInterval = async () => {
     const diasSemana = dataAPI.map((dia) => dia.dia);
     const hourOptions = generateHourOptions();
 
     const { value: selectedValues } = await Swal.fire({
-      title: "Adicionar Novo Intervalo",
-      html: `
-        <select id="dia-select" class="swal2-input">
-          ${diasSemana.map((dia) => `<option value="${dia}">${dia}</option>`)}
-        </select>
-        <select id="hora-inicio-select" class="swal2-input">
-          ${hourOptions.map(
-            (option) => `<option value="${option}">${option}</option>`
-          )}
-        </select>
-        <select id="hora-fim-select" class="swal2-input">
-          ${hourOptions.map(
-            (option) => `<option value="${option}">${option}</option>`
-          )}
-        </select>
-      `,
-      focusConfirm: false,
-      preConfirm: () => {
-        const selectedDay = document.getElementById("dia-select").value;
-        const selectedTurno = dataAPI.find((dia) => dia.dia === selectedDay);
-        const selectedHoraInicio =
-          document.getElementById("hora-inicio-select").value;
-        const selectedHoraFim =
-          document.getElementById("hora-fim-select").value;
+        title: "Adicionar Novo Intervalo",
+        html: `
+            <div style="display: flex; flex-wrap: wrap;">
+                ${diasSemana
+                    .map(
+                        (dia) => `
+                            <div style="margin-right: 15px;">
+                                <input type="checkbox" id="dia-${dia}" class="swal2-control-input">
+                                <label for="dia-${dia}" class="swal2-checkbox-label">${dia}</label>
+                            </div>
+                        `
+                    )
+                    .join("")}
+            </div>
+            <div style="margin-top: 10px;">
+                <label for="hora-inicio">Hora de Início:</label>
+                <input type="text" id="hora-inicio" class="flatpickr swal2-input" data-enable-time="true" data-no-calendar="true" data-time_24hr="true"">
+            </div>
+            <div style="margin-top: 10px;">
+                <label for="hora-fim">Hora de Fim:</label>
+                <input type="text" id="hora-fim" class="flatpickr swal2-input" data-enable-time="true" data-no-calendar="true" data-time_24hr="true"">
+            </div>
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+            const selectedDays = diasSemana.filter(
+                (dia) => document.getElementById(`dia-${dia}`).checked
+            );
 
-        return {
-          id_turno: selectedTurno.id_turno,
-          horaInicio: selectedHoraInicio,
-          horaFim: selectedHoraFim,
-        };
-      },
-      showCancelButton: true,
-      confirmButtonText: "Adicionar",
-      cancelButtonText: "Cancelar",
-      showLoaderOnConfirm: true,
-      allowOutsideClick: () => !Swal.isLoading(),
+            const selectedHoraInicio = document.getElementById("hora-inicio").value;
+            const selectedHoraFim = document.getElementById("hora-fim").value;
+
+            return {
+                selectedDays,
+                horaInicio: selectedHoraInicio,
+                horaFim: selectedHoraFim,
+            };
+        },
+        showCancelButton: true,
+        confirmButtonText: "Adicionar",
+        cancelButtonText: "Cancelar",
+        showLoaderOnConfirm: true,
+        allowOutsideClick: () => !Swal.isLoading(),
+        didOpen: () => {
+            flatpickr('.flatpickr', {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+            });
+        },
     });
 
     if (
-      selectedValues &&
-      selectedValues.id_turno &&
-      selectedValues.horaInicio &&
-      selectedValues.horaFim
+        selectedValues &&
+        selectedValues.selectedDays.length > 0 &&
+        selectedValues.horaInicio &&
+        selectedValues.horaFim
     ) {
-      const { id_turno, horaInicio, horaFim } = selectedValues;
+        const { selectedDays, horaInicio, horaFim } = selectedValues;
 
-      const requisicao = createAPI();
-      requisicao
-        .post("/turno/intervalos", {
-          id_turno,
-          hora_inicio: horaInicio,
-          hora_fim: horaFim,
-        })
-        .then((response) => {
-          console.log(response.data);
-          if (response.data.msg.resultado) {
-            setUpdated(!updated);
-            Swal.fire({
-              icon: "success",
-              title: "Intervalo adicionado com sucesso!",
-              showConfirmButton: false,
-              timer: 1500,
+        const selectedTurnos = dataAPI.filter((dia) =>
+            selectedDays.includes(dia.dia)
+        );
+
+        const requisicao = createAPI();
+        const requests = selectedTurnos.map((turno) =>
+            requisicao.post("/turno/intervalos", {
+                id_turno: turno.id_turno,
+                hora_inicio: horaInicio,
+                hora_fim: horaFim,
+            })
+        );
+
+        Promise.all(requests)
+            .then((responses) => {
+                console.log(responses);
+                const success = responses.every(
+                    (response) => response.data.msg.resultado
+                );
+
+                if (success) {
+                    setUpdated(!updated);
+                    Swal.fire({
+                        icon: "success",
+                        title: "Intervalo(s) adicionado(s) com sucesso!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                } else {
+                    Swal.fire("Erro ao adicionar novo(s) intervalo(s)!", "", "error");
+                }
+            })
+            .catch((error) => {
+                console.log(error);
             });
-          } else {
-            Swal.fire("Erro ao adicionar novo intervalo!", "", "error");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     }
-  };
+};
+
 
   const handleDeletePeriod = (item, periodo) => {
     console.log(item);
@@ -263,6 +291,7 @@ const EditarParametroAdmin = () => {
     requisicao
       .get("/turno/intervalos")
       .then((response) => {
+        console.log(response.data)
         if (response.data.msg.resultado) {
           const rawData = response.data.data;
 
@@ -276,7 +305,9 @@ const EditarParametroAdmin = () => {
 
           setDataIntervalo(newData);
           setInputValues3(newData);
-          console.log(newData);
+        } else {
+          setDataIntervalo([]);
+          setInputValues3([]);
         }
       })
       .catch((error) => {
@@ -352,65 +383,54 @@ const EditarParametroAdmin = () => {
         console.log(error);
       });
   };
-
+  
   const handleAddNewPeriod = () => {
     const diasDaSemana = [
-      "Segunda",
-      "Terça",
-      "Quarta",
-      "Quinta",
-      "Sexta",
-      "Sábado",
-      "Domingo",
+        "Segunda",
+        "Terça",
+        "Quarta",
+        "Quinta",
+        "Sexta",
+        "Sábado",
+        "Domingo",
     ];
-  
-    const horasOptions = Array.from({ length: 24 }, (_, index) => ({
-      value: index,
-      label: `${index}:00`,
-    }));
-  
+
     Swal.fire({
-      title: "Adicionar novo período",
-      html: `
-        <div style="display: flex; flex-wrap: wrap;">
-          ${diasDaSemana
-            .map(
-              (dia) => `
-                <div style="margin-right: 15px;">
-                  <input type="checkbox" id="dia-${dia}" class="swal2-control-input">
-                  <label for="dia-${dia}" class="swal2-checkbox-label">${dia}</label>
-                </div>
-              `
-            )
-            .join("")}
-        </div>
-        <div>
-          <label for="abertura">Hora de Abertura:</label>
-          <select id="abertura" class="swal2-input">
-            ${horasOptions
-              .map(
-                (option) =>
-                  `<option value="${option.value}">${option.label}</option>`
-              )
-              .join("")}
-          </select>
-        </div>
-        <div>
-          <label for="fechamento">Hora de Fechamento:</label>
-          <select id="fechamento" class="swal2-input">
-            ${horasOptions
-              .map(
-                (option) =>
-                  `<option value="${option.value}">${option.label}</option>`
-              )
-              .join("")}
-          </select>
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: "Sim, adicionar",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: "green",
+        title: "Adicionar novo período",
+        html: `
+            <div style="display: flex; flex-wrap: wrap;">
+                ${diasDaSemana
+                    .map(
+                        (dia) => `
+                            <div style="margin-right: 15px;">
+                                <input type="checkbox" id="dia-${dia}" class="swal2-control-input">
+                                <label for="dia-${dia}" class="swal2-checkbox-label">${dia}</label>
+                            </div>
+                        `
+                    )
+                    .join("")}
+            </div>
+            <div style="margin-top: 15px;">
+                <label for="abertura">Hora de Abertura:</label>
+                <input type="text" id="abertura" class="flatpickr swal2-input m-0" data-enable-time="true" data-no-calendar="true" data-time_24hr="true">
+            </div>
+            <div style="margin-top: 30px;">
+                <label for="fechamento">Hora de Fechamento:</label>
+                <input type="text" id="fechamento" class="flatpickr swal2-input m-0" data-enable-time="true" data-no-calendar="true" data-time_24hr="true">
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: "Sim, adicionar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "green",
+        didOpen: () => {
+            flatpickr('.flatpickr', {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+            });
+        },
     }).then((result) => {
       if (result.isConfirmed) {
         const diasSelecionados = diasDaSemana.map((dia, index) => ({
