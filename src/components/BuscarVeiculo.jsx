@@ -10,6 +10,8 @@ import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Divider } from '@mantine/core';
 import createAPI from '../services/createAPI';
 import ImpressaoTicketEstacionamento from '../util/ImpressaoTicketEstacionamento';
+import CalcularValidade from '../util/CalcularValidade';
+import calcularValidade from '../util/CalcularValidade';
 
 
 const BuscarVeiculo = () => {
@@ -98,6 +100,7 @@ const BuscarVeiculo = () => {
             const upperCase = tirarTraco.toUpperCase();
             requisicao.get(`/veiculo/${upperCase}`)
             .then((response) => {
+                console.log(response.data.data)
                 setEstado2(false)
                 if (response.data.msg.resultado === false && response.data.msg.msg !== "Dados encontrados") {
                     setDiv(false)
@@ -124,7 +127,7 @@ const BuscarVeiculo = () => {
                         estacionado: item.estacionado[0].estacionado,
                         tempo: item.estacionado[0].tempo,
                         chegada: item.estacionado[0].chegada,
-                        temporestante: item.estacionado[0].temporestante,
+                        temporestante: calcularValidade(item.estacionado[0].chegada, item.estacionado[0].tempo),
                         id_vaga_veiculo: item.estacionado[0].id_vaga_veiculo,
                         estado: false
                       }));
@@ -229,7 +232,7 @@ const BuscarVeiculo = () => {
                                                 <h6><FaParking />‎ Estacionado - Vaga: {link.vaga} </h6>
                                             </div>
                                             <div className="h6 d-flex align-items-center fs-6" id="estacionadocarroo">
-                                                <h6><RxLapTimer />‎ Tempo restante: <Cronometro time={link.temporestante}/> </h6>
+                                                <h6><RxLapTimer />‎ Tempo restante: {link.temporestante} </h6>
                                             </div>
                                             </div>
                                             }

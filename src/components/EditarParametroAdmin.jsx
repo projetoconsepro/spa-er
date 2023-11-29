@@ -2,10 +2,10 @@ import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2"; // Importe o SweetAlert
 import {
-  IconPrinter,
   IconParking,
   IconEdit,
   IconCalendar,
+  IconClock,
 } from "@tabler/icons-react";
 import {
   Accordion,
@@ -16,33 +16,142 @@ import {
   Grid,
   Group,
   Input,
+  Select,
   Text,
-  rem
+  rem,
 } from "@mantine/core";
-import { TimeInput } from "@mantine/dates";
 import createAPI from "../services/createAPI";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 const EditarParametroAdmin = () => {
   const [data, setData] = useState([]);
   const [dataAPI, setDataAPI] = useState([]);
+  const [dataIntervalo, setDataIntervalo] = useState([]);
   const [enabledInputs, setEnabledInputs] = useState({});
   const [isModified, setIsModified] = useState(false);
   const [inputValues, setInputValues] = useState({});
   const [initialValues, setInitialValues] = useState({});
-  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
-  const [timePickerIndex, setTimePickerIndex] = useState(null);
-  const manhaHoraInicioRef = useRef(null);
-  const manhaHoraFimRef = useRef(null);
-  const tardeHoraInicioRef = useRef(null);
-  const tardeHoraFimRef = useRef(null);
   const [updated, setUpdated] = useState(false);
+  const [enabledInputs2, setEnabledInputs2] = useState({});
+  const [inputValues2, setInputValues2] = useState({});
+  const [enabledInputs3, setEnabledInputs3] = useState({});
+  const [inputValues3, setInputValues3] = useState({});
 
-  // Função para lidar com a exclusão de um período
-  const handleDeleteTimeChanges = (item, periodo) => {
-    console.log(item)
+  const handleToggleInput3 = (index) => {
+    console.log("a", index);
+    setEnabledInputs3((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
+  };
+
+  const handleAddNewInterval = async () => {
+    const diasSemana = dataAPI.map((dia) => dia.dia);
+    const hourOptions = generateHourOptions();
+
+    const { value: selectedValues } = await Swal.fire({
+      title: "Adicionar Novo Intervalo",
+      html: `
+            <div style="display: flex; flex-wrap: wrap;">
+                ${diasSemana
+                  .map(
+                    (dia) => `
+                            <div style="margin-right: 15px;">
+                                <input type="checkbox" id="dia-${dia}" class="swal2-control-input">
+                                <label for="dia-${dia}" class="swal2-checkbox-label">${dia}</label>
+                            </div>
+                        `
+                  )
+                  .join("")}
+            </div>
+            <div style="margin-top: 10px;">
+                <label for="hora-inicio">Hora de Início:</label>
+                <input type="text" id="hora-inicio" class="flatpickr swal2-input" data-enable-time="true" data-no-calendar="true" data-time_24hr="true">
+            </div>
+            <div style="margin-top: 10px;">
+                <label for="hora-fim">Hora de Fim:</label>
+                <input type="text" id="hora-fim" class="flatpickr swal2-input" data-enable-time="true" data-no-calendar="true" data-time_24hr="true">
+            </div>
+        `,
+      focusConfirm: false,
+      preConfirm: () => {
+        const selectedDays = diasSemana.filter(
+          (dia) => document.getElementById(`dia-${dia}`).checked
+        );
+
+        const selectedHoraInicio = document.getElementById("hora-inicio").value;
+        const selectedHoraFim = document.getElementById("hora-fim").value;
+
+        return {
+          selectedDays,
+          horaInicio: selectedHoraInicio,
+          horaFim: selectedHoraFim,
+        };
+      },
+      showCancelButton: true,
+      confirmButtonText: "Adicionar",
+      cancelButtonText: "Cancelar",
+      showLoaderOnConfirm: true,
+      allowOutsideClick: () => !Swal.isLoading(),
+      didOpen: () => {
+        flatpickr(".flatpickr", {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: "H:i",
+          time_24hr: true,
+        });
+      },
+    });
+
+    if (
+      selectedValues &&
+      selectedValues.selectedDays.length > 0 &&
+      selectedValues.horaInicio &&
+      selectedValues.horaFim
+    ) {
+      const { selectedDays, horaInicio, horaFim } = selectedValues;
+
+      const selectedTurnos = dataAPI.filter((dia) =>
+        selectedDays.includes(dia.dia)
+      );
+
+      const idTurnos = [
+        ...new Set(selectedTurnos.map((turno) => turno.id_turno)),
+      ];
+
+      const requisicao = createAPI();
+      requisicao
+        .post("/turno/intervalos", {
+          id_turno: idTurnos,
+          hora_inicio: horaInicio,
+          hora_fim: horaFim,
+        })
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.msg.resultado) {
+            setUpdated(!updated);
+            Swal.fire({
+              icon: "success",
+              title: "Intervalo(s) adicionado(s) com sucesso!",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } else {
+            Swal.fire(response.data.msg.msg, "", "error");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const handleDeletePeriod = (item, periodo) => {
+    console.log(item);
     Swal.fire({
-      title: `Confirmar exclusão do período da ${periodo}`,
-      text: `Tem certeza de que deseja excluir o período da ${periodo}?`,
+      title: `Confirmar exclusão do período de ${item.dia}`,
+      text: `Tem certeza de que deseja excluir?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Sim, excluir",
@@ -51,20 +160,58 @@ const EditarParametroAdmin = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         const requisicao = createAPI();
-        requisicao.delete("/turno/turnoFuncionamento", {
+        requisicao
+          .delete("/turno/turnoFuncionamento", {
             data: {
-              id_turno: periodo === 'manha' ? item.manha.id_turno : item.tarde.id_turno,
+              id_turno: item.id_turno,
+            },
+          })
+          .then((response) => {
+            console.log(response.data);
+            if (response.data.msg.resultado) {
+              setUpdated(!updated);
+            } else {
+              Swal.fire("Erro ao excluir período!", "", "error");
             }
-        }).then((response) => {
-          console.log(response.data)
-          if (response.data.msg.resultado){
-            setUpdated(!updated);
-          } else {
-            Swal.fire("Erro ao excluir período!", "", "error");
-          }
-        }).catch((error) => {
+          })
+          .catch((error) => {
             console.log(error);
-        });
+          });
+        Swal.fire("Período excluído!", "", "success");
+      }
+    });
+  };
+
+  const handleDeleteInterval = (item, periodo) => {
+    console.log(item);
+    Swal.fire({
+      title: `Confirmar exclusão desse intervalo`,
+      text: `Tem certeza de que deseja excluir?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, excluir",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "red",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const requisicao = createAPI();
+        requisicao
+          .delete("/turno/intervalos", {
+            data: {
+              id_intervalo: item.id_intervalo,
+            },
+          })
+          .then((response) => {
+            console.log(response.data);
+            if (response.data.msg.resultado) {
+              setUpdated(!updated);
+            } else {
+              Swal.fire("Erro ao excluir período!", "", "error");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
         Swal.fire("Período excluído!", "", "success");
       }
     });
@@ -84,50 +231,6 @@ const EditarParametroAdmin = () => {
     }));
 
     setIsModified(true);
-  };
-
-  const handleSaveChanges = () => {
-    // Implemente a lógica de salvamento de alterações aqui
-  };
-
-  const showTimePicker = (index) => {
-    setTimePickerVisible(true);
-    setTimePickerIndex(index);
-  };
-
-  const hideTimePicker = () => {
-    setTimePickerVisible(false);
-    setTimePickerIndex(null);
-  };
-
-  const handleSaveTimeChanges = (item, periodo) => {
-    let id_turno;
-    if (periodo === 'manha') {
-      id_turno = item.manha.id_turno;
-    } else {
-      id_turno = item.tarde.id_turno;
-    }
-    const manhaHoraInicio = manhaHoraInicioRef.current.value;
-    const manhaHoraFim = manhaHoraFimRef.current.value;
-    const tardeHoraInicio = tardeHoraInicioRef.current.value;
-    const tardeHoraFim = tardeHoraFimRef.current.value;
-    
-    const requisicao = createAPI();
-    requisicao
-      .put("/turno/turnoFuncionamento", {
-        id_turno,
-        hora_inicio: periodo === 'manha' ? manhaHoraInicio : tardeHoraInicio,
-        hora_fim: periodo === 'manha' ? manhaHoraFim : tardeHoraFim,
-      })
-      .then((response) => {
-        setUpdated(!updated);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    setIsModified(true);
-    hideTimePicker();
   };
 
   useEffect(() => {
@@ -162,30 +265,17 @@ const EditarParametroAdmin = () => {
         if (response.data.msg.resultado) {
           const rawData = response.data.data;
 
-          const groupedData = {};
-
-          rawData.forEach((item) => {
-            const dia = item.dia;
-            const turnoData = {
-              hora_inicio: item.hora_inicio,
-              hora_fim: item.hora_fim,
-              id_turno: item.id_turno_funcionamento,
-            };
-
-            if (!groupedData[dia]) {
-              groupedData[dia] = {
-                manha: turnoData,
-              };
-            } else {
-              groupedData[dia].tarde = turnoData;
-            }
-          });
-
-          const newData = Object.keys(groupedData).map((dia) => ({
-            dia,
-            ...groupedData[dia],
+          const newData = rawData.map((item) => ({
+            dia: item.dia,
+            id_dia: item.id_dia,
+            abertura: item.turno_inicio,
+            fechamento: item.turno_fim,
+            id_turno: item.id_turno,
           }));
+
           setDataAPI(newData);
+          setInputValues2(newData);
+          console.log(newData);
         }
       })
       .catch((error) => {
@@ -193,31 +283,204 @@ const EditarParametroAdmin = () => {
       });
   }, [updated]);
 
-  const handleAddNewPeriod = (item, periodo) => {
-    const manhaHoraInicio = manhaHoraInicioRef.current.value;
-    const manhaHoraFim = manhaHoraFimRef.current.value;
-  
+  useEffect(() => {
+    const requisicao = createAPI();
+    requisicao
+      .get("/turno/intervalos")
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.msg.resultado) {
+          const rawData = response.data.data;
+
+          const newData = rawData.map((item) => ({
+            dia: item.dia,
+            horario_inicio: item.horario_inicio,
+            horario_fim: item.horario_fim,
+            id_intervalo: item.id_intervalo,
+            turno_id_turno: item.turno_id_turno,
+          }));
+
+          const diasDaSemanaOrder = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+          newData.sort((a, b) => diasDaSemanaOrder.indexOf(a.dia) - diasDaSemanaOrder.indexOf(b.dia));
+          
+          const newArray = [];
+          
+          newData.forEach((item) => {
+            const posicaoDoDia = newArray.findIndex((element) => element[0]?.dia === item.dia);
+          
+            if (posicaoDoDia !== -1) {
+              // Se o dia já existe no newArray
+              newArray[posicaoDoDia].push(item);
+            } else {
+              // Se o dia não existe no newArray
+              newArray.push([item]);
+            }
+          });
+          
+          setDataIntervalo(newArray);
+
+          setInputValues3(newData);
+        } else {
+          setDataIntervalo([]);
+          setInputValues3([]);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [updated]);
+
+  const handleToggleInput2 = (index) => {
+    setEnabledInputs2((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
+  };
+
+  const handleInputChange2 = (index, chave, valor) => {
+    setInputValues2((prevState) => ({
+      ...prevState,
+      [index]: {
+        ...prevState[index],
+        [chave]: valor,
+      },
+    }));
+  };
+
+  const handleSaveChanges = () => {
+    const requisicao = createAPI();
+    const requestBody = {
+      estacionamento: inputValues,
+      turno: inputValues2,
+      usuario: data.usuario,
+    };
+    requisicao
+      .put("/parametros", requestBody)
+      .then((response) => {
+        setEnabledInputs(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setIsModified(false);
+  };
+
+  const handleSaveChanges2 = (index) => {
+    const id_turno = dataAPI[index]?.id_turno;
+    if (!id_turno) {
+      console.error("Id_turno não encontrado para o índice", index);
+      return;
+    }
+    const editedValues = inputValues2[index];
+    console.log("Id_turno:", id_turno);
+    console.log("Edited Values:", editedValues);
+
+    const requisicao = createAPI();
+    requisicao
+      .put("/turno/turnoFuncionamento", {
+        id_turno,
+        id_dia: editedValues.id_dia,
+        hora_inicio: editedValues.abertura,
+        hora_fim: editedValues.fechamento,
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.msg.resultado) {
+          setEnabledInputs2((prevState) => ({
+            ...prevState,
+            [index]: false,
+          }));
+        } else {
+          Swal.fire("Erro ao salvar alterações!", "", "error");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleAddNewPeriod = () => {
+    const diasDaSemana = [
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta",
+      "Sexta",
+      "Sábado",
+      "Domingo",
+    ];
+
     Swal.fire({
-      title: "Confirmar adição de novo período",
-      text: "Tem certeza de que deseja adicionar este novo período?",
-      icon: "question",
+      title: "Adicionar novo período",
+      html: `
+            <div style="display: flex; flex-wrap: wrap;">
+                ${diasDaSemana
+                  .map(
+                    (dia) => `
+                            <div style="margin-right: 15px;">
+                                <input type="checkbox" id="dia-${dia}" class="swal2-control-input">
+                                <label for="dia-${dia}" class="swal2-checkbox-label">${dia}</label>
+                            </div>
+                        `
+                  )
+                  .join("")}
+            </div>
+            <div style="margin-top: 15px;">
+                <label for="abertura">Hora de Abertura:</label>
+                <input type="text" id="abertura" class="flatpickr swal2-input m-0" data-enable-time="true" data-no-calendar="true" data-time_24hr="true">
+            </div>
+            <div style="margin-top: 30px;">
+                <label for="fechamento">Hora de Fechamento:</label>
+                <input type="text" id="fechamento" class="flatpickr swal2-input m-0" data-enable-time="true" data-no-calendar="true" data-time_24hr="true">
+            </div>
+        `,
       showCancelButton: true,
       confirmButtonText: "Sim, adicionar",
       cancelButtonText: "Cancelar",
       confirmButtonColor: "green",
+      didOpen: () => {
+        flatpickr(".flatpickr", {
+          enableTime: true,
+          noCalendar: true,
+          dateFormat: "H:i",
+          time_24hr: true,
+        });
+      },
     }).then((result) => {
       if (result.isConfirmed) {
+        const diasSelecionados = diasDaSemana
+          .map((dia, index) => ({
+            dia: dia,
+            value: index + 1,
+            checked: document.getElementById(`dia-${dia}`).checked,
+          }))
+          .filter((item) => item.checked)
+          .map((item) => item.value);
+        const aberturaSelecionada = document.getElementById("abertura").value;
+        const fechamentoSelecionado =
+          document.getElementById("fechamento").value;
+
+        const formatHora = (hora) =>
+          hora < 10 ? `0${hora}:00:00` : `${hora}:00:00`;
+
         const requisicao = createAPI();
         requisicao
           .post("/turno/turnoFuncionamento", {
-            dia: item.dia,
-            hora_inicio: manhaHoraInicio,
-            hora_fim: manhaHoraFim,
+            dia: diasSelecionados,
+            hora_inicio: formatHora(aberturaSelecionada),
+            hora_fim: formatHora(fechamentoSelecionado),
           })
           .then((response) => {
-            console.log(response.data)
+            console.log(response.data);
             if (response.data.msg.resultado) {
               setUpdated(!updated);
+              Swal.fire({
+                icon: "success",
+                title: "Período adicionado com sucesso!",
+                showConfirmButton: false,
+                timer: 1500,
+              });
             } else {
               Swal.fire("Erro ao adicionar novo período!", "", "error");
             }
@@ -227,6 +490,15 @@ const EditarParametroAdmin = () => {
           });
       }
     });
+  };
+
+  const generateHourOptions = () => {
+    const options = [];
+    for (let i = 0; i < 24; i++) {
+      const hour = i < 10 ? `0${i}` : `${i}`;
+      options.push(`${hour}:00:00`);
+    }
+    return options;
   };
 
   return (
@@ -304,206 +576,165 @@ const EditarParametroAdmin = () => {
           <Accordion.Control
             icon={<IconCalendar size={rem(20)} color="#845EF7" />}
           >
-            Parâmetros turno
+            Parâmetros Turno
           </Accordion.Control>
           <Accordion.Panel>
-            <Accordion>
+            <div className="input-wrapper text-start mt-3">
               {dataAPI.map((item, index) => (
-                <Accordion.Item key={index} value={item.dia}>
-                  <Accordion.Control
-                    icon={<IconCalendar size={rem(20)} color="#845EF7" />}
-                  >
-                    {item.dia}
-                  </Accordion.Control>
-                  <Accordion.Panel>
-                    {item.manha && item.tarde ? (
-                      <div>
-                        <div className="input-wrapper text-start mt-3">
-                          <label className="mx-2">Manhã:</label>
-                          <Grid>
-                            <Grid.Col span={10}>
-                              <Input
-                                readOnly
-                                value={item.manha?.hora_inicio || ""}
-                                placeholder={
-                                  item.manha?.hora_inicio === "09:00:00"
-                                    ? "0"
-                                    : null
-                                }
-                              />
-                            </Grid.Col>
-                            <Grid.Col span={10}>
-                              <Input
-                                readOnly
-                                value={item.manha?.hora_fim || ""}
-                                placeholder={
-                                  item.manha?.hora_fim === "12:00:00" ? "0" : null
-                                }
-                              />
-                            </Grid.Col>
-                            <Grid.Col span={1}>
-                              <ActionIcon>
-                                <IconEdit
-                                  className="mt-1"
-                                  size="1.3rem"
-                                  color="#228BE6"
-                                  onClick={() => showTimePicker(index)}
-                                />
-                              </ActionIcon>
-                            </Grid.Col>
-                          </Grid>
-                        </div>
-                        {timePickerIndex === index && isTimePickerVisible && (
-                          <div className="mt-3">
-                            <TimeInput className="mb-3" ref={manhaHoraInicioRef} />
-                            <TimeInput className="mb-3" ref={manhaHoraFimRef} />
-                            <Button className="mx-1" onClick={hideTimePicker}>
-                              Fechar
-                            </Button>
-                            <Button className="mx-3"
-                              onClick={() => handleSaveTimeChanges(item, "manha")}
-                            >
-                              Salvar
-                            </Button>
-                            <Button
-                              onClick={() => handleDeleteTimeChanges(item, "manhã")}
-                              variant="outline"
-                              color="red"
-                            >
-                              Apagar
-                            </Button>
-                          </div>
-                        )}
-
-                        <div className="input-wrapper text-start mt-3">
-                          <label className="mx-2">Tarde:</label>
-                          <Grid>
-                            <Grid.Col span={10}>
-                              <Input
-                                readOnly
-                                value={item.tarde?.hora_inicio || ""}
-                                placeholder={
-                                  item.tarde?.hora_inicio === "13:00:00"
-                                    ? "0"
-                                    : null
-                                }
-                              />
-                            </Grid.Col>
-                            <Grid.Col span={10}>
-                              <Input
-                                readOnly
-                                value={item.tarde?.hora_fim || ""}
-                                placeholder={
-                                  item.tarde?.hora_fim === "18:00:00" ? "0" : null
-                                }
-                              />
-                            </Grid.Col>
-                            <Grid.Col span={1}>
-                              <ActionIcon>
-                                <IconEdit
-                                  className="mt-1"
-                                  size="1.3rem"
-                                  color="#228BE6"
-                                  onClick={() => showTimePicker(index)}
-                                />
-                              </ActionIcon>
-                            </Grid.Col>
-                          </Grid>
-                        </div>
-                        {timePickerIndex === index && isTimePickerVisible && (
-                          <div className="mt-3">
-                            <TimeInput
-                              className="mb-3"
-                              ref={tardeHoraInicioRef}
-                            />
-                            <TimeInput
-                              className="mb-3"
-                              ref={tardeHoraFimRef}
-                            />
-                            <Button className="mx-1" onClick={hideTimePicker}>
-                              Fechar
-                            </Button>
-                            <Button className="mx-3"
-                              onClick={() => handleSaveTimeChanges(item, "tarde")}
-                            >
-                              Salvar
-                            </Button>
-                            <Button
-                              onClick={() => handleDeleteTimeChanges(item, "tarde")}
-                              variant="outline"
-                              color="red"
-                            >
-                              Apagar
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    ) :  (
-                      <div className="input-wrapper text-start mt-3">
-                      <label className="mx-2">Período:</label>
-                      <Grid>
-                        <Grid.Col span={10}>
-                          <Input
-                            readOnly
-                            value={item.manha?.hora_inicio || item.tarde?.hora_inicio || ""}
-                            placeholder={
-                              item.manha?.hora_inicio === "09:00:00"
-                                ? "0"
-                                : item.tarde?.hora_inicio === "13:00:00"
-                                ? "0"
-                                : null
-                            }
-                          />
-                        </Grid.Col>
-                        <Grid.Col span={10}>
-                          <Input
-                            readOnly
-                            value={item.manha?.hora_fim || item.tarde?.hora_fim || ""}
-                            placeholder={
-                              item.manha?.hora_fim === "09:00:00"
-                                ? "0"
-                                : item.tarde?.hora_fim === "13:00:00"
-                                ? "0"
-                                : null
-                            }
-                          />
-                        </Grid.Col>
-                        <Grid.Col span={1}>
-                          <ActionIcon>
-                            <IconEdit
-                              className="mt-1"
-                              size="1.3rem"
-                              color="#228BE6"
-                              onClick={() => showTimePicker(index)}
-                            />
-                          </ActionIcon>
-                          </Grid.Col>
-                        </Grid>
-                        {timePickerIndex === index && isTimePickerVisible && (
-                          <div className="mt-3">
-                            <TimeInput
-                              className="mb-3"
-                              ref={manhaHoraInicioRef}
-                            />
-                            <TimeInput
-                              className="mb-3"
-                              ref={manhaHoraFimRef}
-                            />
-                            <Button className="mx-1" onClick={hideTimePicker}>Fechar</Button>
-                            <Button className="mx-3" onClick={() => handleSaveTimeChanges(item, 'manha')}>Salvar</Button>
-                            <Button
-                            onClick={() => handleAddNewPeriod(item, 'manha')}
+                <div key={index} className="mb-3">
+                  <Text size="lg" weight={700} className="mr-2">
+                    {item.dia}:
+                  </Text>
+                  <Grid>
+                    <Grid.Col span={4}>
+                      <label className="mx-2">Abertura</label>
+                      {enabledInputs2[index] ? (
+                        <Select
+                          data={generateHourOptions()}
+                          searchable
+                          placeholder="Selecione..."
+                          value={inputValues2[index]?.abertura}
+                          onChange={(value) =>
+                            handleInputChange2(index, "abertura", value)
+                          }
+                        />
+                      ) : (
+                        <Select
+                          data={[inputValues2[index]?.abertura]}
+                          disabled
+                          value={inputValues2[index]?.abertura}
+                        />
+                      )}
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <label className="mx-2">Fechamento</label>
+                      {enabledInputs2[index] ? (
+                        <Select
+                          data={generateHourOptions()}
+                          searchable
+                          placeholder="Selecione..."
+                          value={inputValues2[index]?.fechamento}
+                          onChange={(value) =>
+                            handleInputChange2(index, "fechamento", value)
+                          }
+                        />
+                      ) : (
+                        <Select
+                          data={[inputValues2[index]?.fechamento]}
+                          disabled
+                          value={inputValues2[index]?.fechamento}
+                        />
+                      )}
+                    </Grid.Col>
+                    <Grid.Col span={4} className="d-flex align-items-center">
+                      {enabledInputs2[index] ? (
+                        <>
+                          <Button
+                            onClick={() => handleSaveChanges2(index)}
+                            style={{ marginTop: "30px", marginRight: "5px" }}
+                            color="blue"
                           >
-                            Adicionar
+                            Salvar
                           </Button>
-                          </div>
-                        )}
-                    </div>
-                    )}
-                  </Accordion.Panel>
-                </Accordion.Item>
+                          <Button
+                            onClick={() => handleDeletePeriod(item)}
+                            style={{ marginTop: "30px" }}
+                            color="red"
+                          >
+                            Excluir
+                          </Button>
+                        </>
+                      ) : (
+                        <IconEdit
+                          size="1.3rem"
+                          color="#228BE6"
+                          onClick={() => handleToggleInput2(index)}
+                          style={{ marginTop: "25px", marginLeft: "10px" }}
+                        />
+                      )}
+                    </Grid.Col>
+                  </Grid>
+                </div>
               ))}
-            </Accordion>
+            </div>
+            <div className="mt-3">
+              <Grid>
+                <Grid.Col span={10}>
+                  <Button onClick={() => handleAddNewPeriod()}>
+                    Adicionar Turno
+                  </Button>
+                </Grid.Col>
+              </Grid>
+            </div>
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="intervalo">
+          <Accordion.Control
+            icon={<IconClock size={rem(20)} color="#845EF7" />}
+          >
+            Parâmetros Intervalo
+          </Accordion.Control>
+          <Accordion.Panel>
+            <div className="input-wrapper text-start mt-3">
+              {Object.keys(dataIntervalo).map((dia, key) => (
+                <div key={dia} className="mb-3">
+                  <Text size="lg" weight={700} className="mr-2">
+                    {dataIntervalo[dia][0].dia}:
+                  </Text>
+                  {dataIntervalo[dia].map((intervalo, index) => (
+                    <Grid key={`${dia}-${index}`}>
+                      <Grid.Col span={4}>
+                        <label className="mx-2">Início intervalo</label>
+                        <Select
+                          data={[inputValues3[index]?.horario_inicio]}
+                          disabled
+                          value={inputValues3[index]?.horario_inicio}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={4}>
+                        <label className="mx-2">Término intervalo</label>
+                        <Select
+                          data={[inputValues3[index]?.horario_fim]}
+                          disabled
+                          value={inputValues3[index]?.horario_fim}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={4} className="d-flex align-items-center">
+                        {enabledInputs3[`${dia}-${index}`] ? (
+                          <>
+                            <Button
+                              onClick={() => handleDeleteInterval(intervalo)}
+                              style={{ marginTop: "30px" }}
+                              color="red"
+                            >
+                              Excluir
+                            </Button>
+                          </>
+                        ) : (
+                          <IconEdit
+                            size="1.3rem"
+                            color="#228BE6"
+                            onClick={() =>
+                              handleToggleInput3(`${dia}-${index}`)
+                            }
+                            style={{ marginTop: "25px", marginLeft: "10px" }}
+                          />
+                        )}
+                      </Grid.Col>
+                    </Grid>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="mt-3">
+              <Grid>
+                <Grid.Col span={10}>
+                  <Button onClick={() => handleAddNewInterval()}>
+                    Adicionar Intervalo
+                  </Button>
+                </Grid.Col>
+              </Grid>
+            </div>
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
