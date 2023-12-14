@@ -21,6 +21,7 @@ const AutoInfracao = () => {
     useEffect(() => {
         const infos = JSON.parse(localStorage.getItem('autoInfracao'))
         setData([infos])
+        console.log([infos])
 
        if(localStorage.getItem('fotoInfracao')){
           setImagemLocal(localStorage.getItem('fotoInfracao'))

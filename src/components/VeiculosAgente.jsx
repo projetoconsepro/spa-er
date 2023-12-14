@@ -141,7 +141,7 @@ const VeiculosAgente = () => {
                 Swal.close();
             }
             else if (result.isConfirmed) {
-
+               console.log(item)
             }
         })
     }
