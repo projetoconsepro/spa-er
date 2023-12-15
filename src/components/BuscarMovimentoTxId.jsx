@@ -1,21 +1,12 @@
-import axios from "axios";
-import { React, useState, useEffect } from "react";
-import { ActionIcon, Badge, Button, Card, Divider, Grid, Group, Image, Input, Select, Text, Modal } from "@mantine/core";
-import { IconAdjustments, IconArrowAutofitRight, IconArrowForward, IconArrowRight, IconCash, IconCheck, IconKeyboard, IconMail, IconMoneybag, IconSearch, IconUserCircle } from "@tabler/icons-react";
-import Swal from "sweetalert2";
-import { useDisclosure } from "@mantine/hooks";
-import ModalPix from "./ModalPix";
+import { React, useState } from "react";
+import { Button, Card, Divider, Grid, Group, Input, Text } from "@mantine/core";
+import { IconKeyboard, IconSearch } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
-import ModalErroBanco from "./ModalErroBanco";
 
 const BuscarMovimentoTxId = () => {
-  const [opened, { open, close }] = useDisclosure(false);
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
   const [info, setInfo] = useState(false);
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
-  const [data, setData] = useState([]);
   const [txId, setTxId] = useState("");
   const [placa, setPlaca] = useState("");
   const [tempo, setTempo] = useState("");
@@ -23,43 +14,51 @@ const BuscarMovimentoTxId = () => {
   const [status, setStatus] = useState("");
   const [valor, setValor] = useState("");
   const [dataMovimento, setDataMovimento] = useState("");
-  const [onOpen, setOnOpen] = useState(false);
-  const [notification, setNotification] = useState(true);
-  const [pixExpirado, setPixExpirado] = useState("");
-  const [onOpenError, setOnOpenError] = useState(false);
-  const [onCloseError, setOnCloseError] = useState(false);
+  const [tipoMovimento, setTipoMovimento] = useState("");
 
   const handleSearchMovimento = async () => {
+    setEstado(false);
+    setInfo(false);
     const requisicao = createAPI();
   
     requisicao.get(`/financeiro/verificar/pix/${txId}`).then((response) => {
+      if (response.data.msg.resultado === false) {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        return;
+      }
+
       const { data } = response;
-  
+
       let dadosMovimento;
       try {
         dadosMovimento = JSON.parse(data.data.dados_movimento);
       } catch (error) {
         dadosMovimento = data.data.dados_movimento;
       }
-  
+      
+      setInfo(true);
       setPlaca(dadosMovimento.placa || '');
       setTempo(dadosMovimento.tempo || '');
       setVaga(dadosMovimento.numero_vaga || '');
       setStatus(data.data.status || '');
       setDataMovimento(new Date(data.data.data).toLocaleString() || '');
-  
+
       if (typeof dadosMovimento === 'number') {
         setValor(dadosMovimento);
+        setTipoMovimento('Recarga');
+      } else if (typeof dadosMovimento[0] === 'number') {
+        setTipoMovimento('Regularização');
       } else {
+        setTipoMovimento('Estacionamento');
         setValor('');
       }
-  
-      setInfo(true);
+    }).catch((error) => {
+      setEstado(true);
+      setMensagem(error.response.data.message);
     });
   };
   
-  
-
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
         <div>
@@ -94,7 +93,7 @@ const BuscarMovimentoTxId = () => {
         {info ? (
         <Card shadow="sm" padding="lg" radius="xs" className="bg-admin-parceiro mt-4" withBorder={false}>
           <Group position="apart" mt="md" mb="xs">
-            <Text weight={500}>Informações do movimento:</Text>
+            <Text weight={500}>Informações do movimento: {tipoMovimento}</Text>
           </Group>
           <Divider my="sm" size="sm" variant="dashed" />
           <div className="text-start">
@@ -142,21 +141,8 @@ const BuscarMovimentoTxId = () => {
           )}
               <Divider my="sm" size="sm" variant="dashed" />
           </div>
-          <div className="alert alert-danger mt-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-              {mensagem}
-          </div>
         </Card>
       ) : null }
-        <ModalErroBanco
-          onOpen={onOpenError}
-          onClose={onCloseError}
-        />
-       <ModalPix
-        qrCode={data.brcode}
-        status={notification}
-        mensagemPix={pixExpirado}
-        onOpen={onOpen}
-      />
     </Card>
   );
 };
