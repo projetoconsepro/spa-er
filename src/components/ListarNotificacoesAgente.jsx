@@ -112,10 +112,12 @@ const ListarNotificacoesAgente = () => {
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
           }));
+          setEstadoLoading(false)
           setData(newData)
         }
         else {
           setData([])
+          setEstadoLoading(false)
           setEstado(true)
           setMensagem("Não há notificações para exibir")
         }
