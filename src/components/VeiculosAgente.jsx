@@ -10,6 +10,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import createAPI from "../services/createAPI";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Swal from "sweetalert2";
+import CarroLoading from "./Carregamento";
 
 const VeiculosAgente = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -23,8 +24,32 @@ const VeiculosAgente = () => {
     const [mensagem, setMensagem] = useState("");
     const [salvaSetor, setSalvaSetor] = useState('');
     const [enderecoMapa, setEnderecoMapa] = useState('');
+    const [onLoading, setOnLoading ] = useState(false);
+
+
+    function ArrumaHora(data) {
+        if (data === null || data === undefined || data === '') {
+            return '';
+        }
+        const data2 = data.split("T");
+        const data3 = data2[0].split("-");
+        const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
+        return data4;
+    }
+
+    function ArrumaHora2(data) {
+        if (data === null || data === undefined || data === '') {
+            return '';
+        }
+        const data2 = data.split("T");
+        const data6 = data2[1].split(":");
+        const data5 = (data6[0]-3) + ":" + data6[1] + ":";
+        const data7 = data5 + data6[2].split(".")[0];
+        return data7;
+      }
 
     const getVagas = async (setor) => {
+        setOnLoading(true)
         const requisicao = createAPI();
         const setor2 = document.getElementById('setoresSelect2').value;
         if (setor2 !== undefined && setor2 !== null && setor2 !== '') {
@@ -38,21 +63,25 @@ const VeiculosAgente = () => {
         await requisicao.get(`/vagas?setor=${setor}`
         ).then(
             response => {
+                setOnLoading(false)
                 if (response.data.msg.resultado !== false) {
                     setEstado(false)
                     setMensagem('')
-                    console.log(response.data.data)
                     const newData = response.data.data.map((item) => ({
                         id_vaga: item.id_vaga,
                         notificacoes: item.numero_notificacoes_pendentes,
+                        notificacao_vaga: item.numero_notificacoes_pendentess,
                         numero_vaga: item.numero,
                         local: item.local,
                         placa: item.placa,
-                        tipo: item.tipo,
+                        tipo_vaga: item.tipo,
                         cor: item.cor,
                         corStatus: item.corStatus,
                         status: item.status,
+                        infracao: item.infracao,
                         id_status_vaga: item.id_status_vaga,
+                        id_vaga_veiculo: item.id_vaga_veiculo,
+                        data: `${ArrumaHora(item.hora_notificacao)} - ${ArrumaHora2(item.hora_notificacao)}`,
                     }))
                     setData(newData);
                 }
@@ -130,9 +159,9 @@ const VeiculosAgente = () => {
                    <p><b>Local:</b> ${item.local}</p>
                    <p><b>Notificações pendentes:</b> ${item.notificacoes}</p>
                    <p><b>Vaga:</b> ${item.numero_vaga}</p>
-                   <p><b>Tipo da vaga:</b> ${item.tipo}</p>
+                   <p><b>Tipo da vaga:</b> ${item.tipo_vaga}</p>
                    `,
-            showConfirmButton: true,
+            showConfirmButton: item.notificacao_vaga > 0 ? item.infracao === "S" ? false : true : false,
             showCancelButton: true,
             confirmButtonText: 'Auto de infração',
             cancelButtonText: 'Fechar',
@@ -141,7 +170,8 @@ const VeiculosAgente = () => {
                 Swal.close();
             }
             else if (result.isConfirmed) {
-               console.log(item)
+                localStorage.setItem('autoInfracao', JSON.stringify(item))
+                FuncTrocaComp('AutoInfracao')
             }
         })
     }
@@ -194,11 +224,11 @@ const VeiculosAgente = () => {
                                             {data.map((vaga, index) => (
                                                 <tr key={index} className="card-list" data-vaga={vaga.numero_vaga}>
                                                     <th className="text-white" scope="row" style={{ backgroundColor: vaga.cor, color: vaga.cor }} onClick={()=>{openModal(vaga)}}>{vaga.numero_vaga}</th>
-                                                    <td className="fw-bolder" onClick={() => { openModal(vaga) }}>
+                                                    <td className="fw-bolder" onClick={() => { openModal(vaga) }} style={{ backgroundColor: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#D3D3D4" : "#F8D7DA" : "#FFF", color: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#141619" : "#842029" : "#000" }}>
                                                         {vaga.placa} {vaga.notificacoes > 0 ? (<span className="bg-danger px-2 text-white rounded-circle">{vaga.notificacoes}</span>) : null}
                                                     </td>
-                                                    <td className="fw-normal" onClick={()=>{openModal(vaga)}}>{window.innerWidth < 768 ? vaga.local.substring(0, 19) + "..." : vaga.local } </td>
-                                                    <td className="fw-normal" onClick={() => abrirMapa(vaga)}> <IconMapSearch size={18} /> </td>
+                                                    <td className="fw-normal" onClick={()=>{openModal(vaga)}} style={{ backgroundColor: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#D3D3D4" : "#F8D7DA" : "#FFF", color: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#141619" : "#842029" : "#000" }}>{window.innerWidth < 768 ? vaga.local.substring(0, 19) + "..." : vaga.local } </td>
+                                                    <td className="fw-normal" onClick={() => abrirMapa(vaga)} style={{ backgroundColor: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#D3D3D4" : "#F8D7DA" : "#FFF", color: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#141619" : "#842029" : "#000" }}> <IconMapSearch size={18} /> </td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -208,6 +238,12 @@ const VeiculosAgente = () => {
                                         {mensagem}
                                     </div>
                                     </div>
+                                    {onLoading ? (
+                                        <div>
+                                            <CarroLoading />
+                                        </div>
+                                    ) : null}
+                                                      
                                 </div>
                             </div>
                             <VoltarComponente />
