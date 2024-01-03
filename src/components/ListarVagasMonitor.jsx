@@ -42,7 +42,14 @@ const ListarVagasMonitor = () => {
     }
     localStorage.setItem("setorTurno", setor);
     setSalvaSetor(setor);
+
+    setEstado(true);
+    setMensagem("Carregando vagas...");
+    const startTime = performance.now();
     await requisicao.get(`/vagas?setor=${setor}`).then((response) => {
+      const endTime = performance.now();
+      const tempoDecorrido = (endTime - startTime) / 1000;
+      setMensagem(`Vagas carregadas em ${tempoDecorrido.toFixed(2)} segundos`);
       if (response.data.msg.resultado !== false) {
 
         const updatedResposta = resposta.map((item) => ({ ...item }));
@@ -149,44 +156,7 @@ const ListarVagasMonitor = () => {
           }
         }
 
-        function objetosSaoDiferentes(obj1, obj2) {
-          const str1 = JSON.stringify(obj1);
-          const str2 = JSON.stringify(obj2);
-          return str1 !== str2;
-        }
-
-        if (timeout) {
-          const listaSemPrimeiroElemento = updatedResposta;
-          const localS = JSON.parse(localStorage.getItem("listaVagas"));
-          if (objetosSaoDiferentes(listaSemPrimeiroElemento, resposta)) {
-            localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-            console.log('setou', listaSemPrimeiroElemento)
-            setResposta(listaSemPrimeiroElemento)
-          } 
-          if (objetosSaoDiferentes(resposta, localS)) {
-
-          }
-          else {
-          }
-        } else if (timeout === null){
-          if (!localVagas) {
-            const listaSemPrimeiroElemento = updatedResposta;
-            localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-            setResposta(listaSemPrimeiroElemento);
-          } else {
-            const listaSemPrimeiroElemento = updatedResposta;
-            const localS = JSON.parse(localStorage.getItem("listaVagas"));
-            // aqui
-            if (objetosSaoDiferentes(listaSemPrimeiroElemento, localS)) {
-              localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-              setResposta(listaSemPrimeiroElemento)
-            }
-          }
-        } else if (timeout === 'reset'){
-          const listaSemPrimeiroElemento = updatedResposta;
-          localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-          setResposta(listaSemPrimeiroElemento);
-        }
+        setResposta(updatedResposta)
 
         let estacionadoSCount = 0;
         let estacionadoNCount = 0;
@@ -247,7 +217,7 @@ useEffect(() => {
   }, [vaga, attFunc]);
 
   useEffect(() => {
-    if (contador === 10) {
+    if (contador === 60) {
       setContador(0);
       getVagas(salvaSetor, true);
     }
@@ -275,13 +245,6 @@ useEffect(() => {
   }, [localVagas]);
 
   useEffect(() => {
-    if (localStorage.getItem("listaVagas")) {
-      const items = localStorage.getItem("listaVagas");
-      setResposta(JSON.parse(items));
-      setLocalVagas(true)
-    } else {
-      setLocalVagas(false)
-    }
     if (localStorage.getItem("turno") != "true") {
       FuncTrocaComp("AbrirTurno");
     };
