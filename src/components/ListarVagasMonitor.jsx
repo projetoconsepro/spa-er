@@ -42,7 +42,14 @@ const ListarVagasMonitor = () => {
     }
     localStorage.setItem("setorTurno", setor);
     setSalvaSetor(setor);
+
+    setEstado(true);
+    setMensagem("Carregando vagas...");
+    const startTime = performance.now();
     await requisicao.get(`/vagas?setor=${setor}`).then((response) => {
+      const endTime = performance.now();
+      const tempoDecorrido = (endTime - startTime) / 1000;
+      setMensagem(`Vagas carregadas em ${tempoDecorrido.toFixed(2)} segundos`);
       if (response.data.msg.resultado !== false) {
 
         const updatedResposta = resposta.map((item) => ({ ...item }));
@@ -160,8 +167,18 @@ const ListarVagasMonitor = () => {
           const localS = JSON.parse(localStorage.getItem("listaVagas"));
           if (objetosSaoDiferentes(listaSemPrimeiroElemento, resposta)) {
             localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-            setResposta(listaSemPrimeiroElemento)
-          } 
+            if (listaSemPrimeiroElemento.length > 0 && JSON.stringify(listaSemPrimeiroElemento[0]) === '{}') {
+              listaSemPrimeiroElemento.shift();
+              console.log('lista', listaSemPrimeiroElemento)
+            }
+            if (listaSemPrimeiroElemento.length > 0 && 
+              (JSON.stringify(listaSemPrimeiroElemento[0]) === JSON.stringify(listaSemPrimeiroElemento[1]))) {
+              listaSemPrimeiroElemento.shift();
+              console.log('lista1', listaSemPrimeiroElemento)
+            }
+            setResposta(listaSemPrimeiroElemento);
+            console.log('lista2', listaSemPrimeiroElemento)
+          }
           if (objetosSaoDiferentes(resposta, localS)) {
 
           }
