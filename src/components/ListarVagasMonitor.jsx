@@ -728,8 +728,8 @@ useEffect(() => {
                     value={salvaSetor}
                     aria-label=".form-select-lg example"
                     id="setoresSelect"
-                    onChange={() => {
-                      getVagas(salvaSetor, 'reset');
+                    onChange={(e) => {
+                      getVagas(e.target.value, 'reset');
                     }}
                   >
                     {resposta2.map((link, index) => (
