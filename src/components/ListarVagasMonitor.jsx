@@ -169,15 +169,12 @@ const ListarVagasMonitor = () => {
             localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
             if (listaSemPrimeiroElemento.length > 0 && JSON.stringify(listaSemPrimeiroElemento[0]) === '{}') {
               listaSemPrimeiroElemento.shift();
-              console.log('lista', listaSemPrimeiroElemento)
             }
             if (listaSemPrimeiroElemento.length > 0 && 
               (JSON.stringify(listaSemPrimeiroElemento[0]) === JSON.stringify(listaSemPrimeiroElemento[1]))) {
               listaSemPrimeiroElemento.shift();
-              console.log('lista1', listaSemPrimeiroElemento)
             }
             setResposta(listaSemPrimeiroElemento);
-            console.log('lista2', listaSemPrimeiroElemento)
           }
           if (objetosSaoDiferentes(resposta, localS)) {
 
