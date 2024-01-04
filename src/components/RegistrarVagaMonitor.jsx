@@ -117,14 +117,6 @@ const RegistrarVagaMonitor = () => {
           getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
-        } else {
-          setLoadingButton(false);
-          setEstado(true);
-          setMensagem(resposta.data.msg.msg);
-          setTimeout(() => {
-            setEstado(false);
-            setMensagem("");
-          }, 3000);
         }
       })
       .catch((err) => {
@@ -229,10 +221,6 @@ const RegistrarVagaMonitor = () => {
   const onClose = () => {
     setLoadingButton(false);
   }
-
-  useEffect(() => {
-    console.log(selectedButton)
-  }, [selectedButton]);
   
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
@@ -637,6 +625,12 @@ const RegistrarVagaMonitor = () => {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem("vaga") || localStorage.getItem("vaga") === "" || 
+      localStorage.getItem("vaga") === null || localStorage.getItem("vaga") === undefined) {
+      FuncTrocaComp("ListarVagasMonitor");
+      return;
+    }
+
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
