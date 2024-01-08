@@ -17,7 +17,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { ActionIcon, Group, Input, Loader, Pagination } from "@mantine/core";
 import { IconSearch, IconUserCircle } from "@tabler/icons-react";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 
 const UsuariosAdmin = () => {
   const [data, setData] = useState([]);
@@ -56,7 +56,7 @@ const UsuariosAdmin = () => {
 
 
   const AtualizaFunc = async () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
   requisicao.get('/usuario/listar/?query=eyJ3aGVyZSI6IFt7ICJmaWVsZCI6ICJwZXJmaWwiLCAib3BlcmF0b3IiOiAiPSIsICJ2YWx1ZSI6ICJhZG1pbiJ9XX0=').then(
       response => {
         setEstado2(true)
@@ -153,7 +153,7 @@ const UsuariosAdmin = () => {
       allowOutsideClick: false,
       preConfirm: () => {
         return new Promise((resolve) => {
-          const requisicao = createAPI();
+          const requisicao = createAPI;
           const nome2 = document.getElementById("swal-input1").value;
           const email = document.getElementById("swal-input2").value;
           const telefone = document.getElementById("swal-input3").value;
@@ -263,7 +263,7 @@ const UsuariosAdmin = () => {
         } else if (perfil === "parceiro") {
           perfil2 = 6;
         }
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .post("/usuario/perfil", {
             id_usuario: item.id_usuario,
@@ -346,7 +346,7 @@ const UsuariosAdmin = () => {
         const perfil = document.getElementById("swal-input4").value;
         const ativo =
           document.getElementById("swal-input5").value === "S" ? "S" : "N";
-          const requisicao = createAPI();
+          const requisicao = createAPI;
         requisicao
           .put("/usuario", {
             id_usuario: item.id_usuario,
@@ -410,7 +410,7 @@ const UsuariosAdmin = () => {
       cancelButtonColor: "#d33",
       showLoaderOnConfirm: true,
       preConfirm: () => {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .put("/usuario", {
             nome: item.nome,
@@ -493,7 +493,7 @@ const UsuariosAdmin = () => {
           preConfirm: () => {
             const senha = document.getElementById("swal-input1").value;
             const password = sha256(senha).toString();
-            const requisicao = createAPI();
+            const requisicao = createAPI;
             Swal.fire({
               title: "Você tem certeza que deseja alterar a senha?",
               text: `A senha do usuário será: ${senha}`,
@@ -578,7 +578,7 @@ const UsuariosAdmin = () => {
 
   const handleConsulta = (consulta) => {
     setEstadoLoading(true)
-    const requisicao = createAPI();
+    const requisicao = createAPI;
   const base64 = btoa(consulta)
   requisicao.get(`/usuario/listar/?query=${base64}`).then(
       response => {
@@ -612,7 +612,7 @@ const UsuariosAdmin = () => {
   }
 
   const pesquisarUsuario = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
       const consulta = `{"where": [{ "field": "prefil", "operator": "=", "value": "admin" },{ "field": "nome", "operator": "LIKE", "value": "%${nome}%" }]}`
       const base64 = btoa(consulta)
       requisicao.get(`/usuario/listar/?query=${base64}`).then(

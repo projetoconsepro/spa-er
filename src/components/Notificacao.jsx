@@ -7,7 +7,7 @@ import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Divider, Input, Loader, Select, Text } from '@mantine/core';
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 
 const Notificacao = () => {
     const token = localStorage.getItem('token');
@@ -85,7 +85,7 @@ const Notificacao = () => {
             }
         }
 
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         if (!infoBanco) {
                 const getmodelo = modeloCerto;
                 if (document.getElementById('selectCores') !== null && document.getElementById('selectCores') !== undefined){
@@ -397,7 +397,7 @@ setTimeout(() => {
     }
 
     const getModelos = () => {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
             requisicao.get(`/veiculo/modelos/`).then(
                 response => {
                     const newData = response?.data?.data?.modelos.map(item => ({
@@ -432,7 +432,7 @@ setTimeout(() => {
         const placaString = placa.toString()
         const placaMaiuscula = placaString.toUpperCase();
         const placaLimpa = placaMaiuscula.replace(/[^a-zA-Z0-9]/g, '');
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         if(vaga.length === 0){
             vaga2[0] = [0]
         }
@@ -463,7 +463,7 @@ setTimeout(() => {
         if (localStorage.getItem("turno") !== 'true' && user2.perfil[0] === "monitor") {
             FuncTrocaComp("AbrirTurno");
         }
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         getModelos();
         getCor();
         if (localStorage.getItem("placa") !== null && localStorage.getItem("placa") !== undefined && localStorage.getItem("placa") !== "" || localStorage.getItem("vaga") !== null) {

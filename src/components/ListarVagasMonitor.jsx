@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import ScrollTopArrow from "./ScrollTopArrow";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import { Button, Group } from "@mantine/core";
 import { IconParking, IconReload } from "@tabler/icons-react";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
@@ -30,7 +30,7 @@ const ListarVagasMonitor = () => {
   const [contador, setContador] = useState(0);
 
   const getVagas = async (setor, timeout) => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const setor2 = document.getElementById("setoresSelect").value;
     if (setor2 !== undefined && setor2 !== null && setor2 !== "") {
       setor = setor2;
@@ -299,7 +299,7 @@ useEffect(() => {
       FuncTrocaComp("AbrirTurno");
     };
 
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     localStorage.removeItem("idVagaVeiculo");
     requisicao.get("/setores")
       .then((response) => {
@@ -323,7 +323,7 @@ useEffect(() => {
   }, []);
 
   const funcExtratoPlaca = (placa) => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .get(`/veiculo/${placa}`)
       .then((response) => {
@@ -396,7 +396,7 @@ useEffect(() => {
     index
   ) => {
     localStorage.setItem("numero_vaga", numero);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const horaAgoraNew = await horaAgoraFunc();
     if (tempo < horaAgoraNew && placa !== "") {
       if ((notificacoes !== 0 || notificacoess !== 0) && horaAgoraNew < hora_notificacao) {

@@ -6,7 +6,7 @@ import moment from 'moment'
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import Filtro from '../util/Filtro'
-import createAPI from '../services/createAPI'
+import { createAPI } from '../services/createAPI'
 import { Group, Pagination } from '@mantine/core'
 import CarroLoading from './Carregamento'
 
@@ -82,7 +82,7 @@ const ListaAutoInfracao = () => {
     const reload = () => {
       setEstado(false)
       setMensagem("")
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao.get('/notificacao/infracao').then((response) => {
         if (response.data.msg.resultado){
         console.log(response.data.data)
@@ -134,7 +134,7 @@ const ListaAutoInfracao = () => {
     setEstado(false)
     setEstadoLoading(true)
     setMensagem("")
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const base64 = btoa(where)
     requisicao.get(`/notificacao/infracao/?query=${base64}`).then((response) => {
       console.log(response.data)

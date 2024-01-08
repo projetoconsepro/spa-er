@@ -10,7 +10,7 @@ import moment from "moment";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Group, Pagination, Modal, TextInput } from "@mantine/core";
 import CarroLoading from "./Carregamento";
@@ -99,7 +99,7 @@ const PlacaIsenta = () => {
             const ativoValue = document.querySelector(
               'input[name="ativo"]:checked'
             ).value;
-            const requisicao = createAPI();
+            const requisicao = createAPI;
             requisicao.put(`/veiculo/veiculo-isento/`, {
                 placa: item.placa,
                 ativo: ativoValue === "Ativo" ? "S" : "N",
@@ -136,7 +136,7 @@ const PlacaIsenta = () => {
   const reload = () => {
     setEstado(false);
     setMensagem("");
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .get("/veiculo/veiculo-isento")
       .then((response) => {
@@ -199,7 +199,7 @@ const PlacaIsenta = () => {
     setEstado(false);
     setEstadoLoading(true);
     setMensagem("");
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const base64 = btoa(where);
     requisicao
       .get(`/veiculo/veiculo-isento/?query=${base64}`)
@@ -239,7 +239,7 @@ const PlacaIsenta = () => {
   };
 
   const adicionarPlacaIsenta = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .post(`/veiculo/veiculo-isento/`, {
         placa: textoPlaca,

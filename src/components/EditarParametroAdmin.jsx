@@ -20,7 +20,7 @@ import {
   Text,
   rem,
 } from "@mantine/core";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
@@ -120,7 +120,7 @@ const EditarParametroAdmin = () => {
         ...new Set(selectedTurnos.map((turno) => turno.id_turno)),
       ];
 
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao
         .post("/turno/intervalos", {
           id_turno: idTurnos,
@@ -159,7 +159,7 @@ const EditarParametroAdmin = () => {
       confirmButtonColor: "red",
     }).then((result) => {
       if (result.isConfirmed) {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .delete("/turno/turnoFuncionamento", {
             data: {
@@ -194,7 +194,7 @@ const EditarParametroAdmin = () => {
       confirmButtonColor: "red",
     }).then((result) => {
       if (result.isConfirmed) {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .delete("/turno/intervalos", {
             data: {
@@ -258,7 +258,7 @@ const EditarParametroAdmin = () => {
   }, [inputValues, data.estacionamento]);
 
   useEffect(() => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .get("/turno/turnoFuncionamento")
       .then((response) => {
@@ -284,7 +284,7 @@ const EditarParametroAdmin = () => {
   }, [updated]);
 
   useEffect(() => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .get("/turno/intervalos")
       .then((response) => {
@@ -349,7 +349,7 @@ const EditarParametroAdmin = () => {
   };
 
   const handleSaveChanges = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const requestBody = {
       estacionamento: inputValues,
       turno: inputValues2,
@@ -376,7 +376,7 @@ const EditarParametroAdmin = () => {
     console.log("Id_turno:", id_turno);
     console.log("Edited Values:", editedValues);
 
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .put("/turno/turnoFuncionamento", {
         id_turno,
@@ -464,7 +464,7 @@ const EditarParametroAdmin = () => {
         const formatHora = (hora) =>
           hora < 10 ? `0${hora}:00:00` : `${hora}:00:00`;
 
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .post("/turno/turnoFuncionamento", {
             dia: diasSelecionados,

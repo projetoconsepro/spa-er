@@ -5,7 +5,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { Badge, Group, Pagination } from "@mantine/core";
 import { IconCash } from "@tabler/icons-react";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 
 const HistoricoFinanceiroParceiro = () => {
   const [resposta, setResposta] = useState([]);
@@ -36,7 +36,7 @@ const HistoricoFinanceiroParceiro = () => {
   }
 
   useEffect(() => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     requisicao
       .get("/financeiro/parceiro")
@@ -85,7 +85,7 @@ const HistoricoFinanceiroParceiro = () => {
 
     setEstadoLoading(true);
 
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     const base64 = btoa(where);
     requisicao

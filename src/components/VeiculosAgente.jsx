@@ -7,7 +7,7 @@ import { Modal } from '@mantine/core'
 import { IconMapSearch } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
 import VoltarComponente from "../util/VoltarComponente";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Swal from "sweetalert2";
 import CarroLoading from "./Carregamento";
@@ -50,7 +50,7 @@ const VeiculosAgente = () => {
 
     const getVagas = async (setor) => {
         setOnLoading(true)
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         const setor2 = document.getElementById('setoresSelect2').value;
         if (setor2 !== undefined && setor2 !== null && setor2 !== '') {
             setor = setor2;
@@ -113,7 +113,7 @@ const VeiculosAgente = () => {
     }, [vaga]);
     
     useEffect(() => {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao.get('/setores'
         ).then(
             response => {

@@ -6,7 +6,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import { AiOutlineReload } from "react-icons/ai";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import { Group, Pagination } from "@mantine/core";
 
 const HistoricoVeiculo = () => {
@@ -50,7 +50,7 @@ const HistoricoVeiculo = () => {
     ) {
       FuncTrocaComp( "AbrirTurno");
     }
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     setPerfil(user2.perfil[0]);
     setEstado2(true);
     let idrequisicao = "";
@@ -177,7 +177,7 @@ const HistoricoVeiculo = () => {
   
   const handleFiltro = (where) => {
     setEstadoLoading(true)
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const base64 = btoa(where)
     requisicao.get(`veiculo/historico/?query=${base64}`).then((response) => {
       if (response.data.data.length > 0) {

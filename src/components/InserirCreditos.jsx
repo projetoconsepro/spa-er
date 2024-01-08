@@ -6,7 +6,7 @@ import { React, useState, useRef, useEffect } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { BsCreditCard2Back, BsCreditCard2Front } from "react-icons/bs";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import VoltarComponente from "../util/VoltarComponente";
 import ModalErroBanco from "./ModalErroBanco";
 import { MdPix } from "react-icons/md";
@@ -44,7 +44,7 @@ const InserirCreditos = () => {
 
 
   const getCreditCardFUNC = async () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     await requisicao
       .get("/cartao/")
@@ -87,7 +87,7 @@ const InserirCreditos = () => {
 
 
   const inserirCreditos = async (campo, valor) => {
-    const requisicao = await createAPI();
+    const requisicao = await createAPI;
 
     await requisicao
       .post("/usuario/saldo/pix", {
@@ -133,7 +133,7 @@ const InserirCreditos = () => {
       }, 5000);
       return;
     } else {
-      const requisicao = createAPI();
+      const requisicao = createAPI;
 
       requisicao
         .post("/gerarcobranca", {
@@ -235,7 +235,7 @@ const InserirCreditos = () => {
     } 
 
 
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     requisicao.post("/cartao/credito", {
       cartao: id_cartao,

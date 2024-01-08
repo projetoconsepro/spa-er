@@ -19,7 +19,7 @@ import { FiMail, FiMap } from "react-icons/fi";
 import { FcIdea } from "react-icons/fc";
 import axios from "axios";
 import Swal from "sweetalert2";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 
 const Suporte = () => {
   const [nome, setNome] = useState("");
@@ -33,7 +33,7 @@ const Suporte = () => {
       return;
     }
 
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     await requisicao
       .post("/usuario/sugestao", {

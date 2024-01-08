@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
 import Filtro from '../util/Filtro'
-import createAPI from '../services/createAPI'
+import { createAPI } from '../services/createAPI'
 
 const HistoricoCaixa = () => {
     const [data, setData] = useState([])
@@ -69,7 +69,7 @@ const HistoricoCaixa = () => {
         const dataHoje = ano + "-" + `${mes < 10 ? `0${mes}` : mes }` + "-" + dia;
         setDataHoje(dataHoje);
 
-        const requisicao = createAPI();
+        const requisicao = createAPI;
           const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
           const passar = btoa(idrequisicao)
           requisicao.get(`/turno/caixa/admin/?query=${passar}`).then((response) => {
@@ -105,7 +105,7 @@ const HistoricoCaixa = () => {
 
     const handleConsultaSelected = (consulta) => {
       setEstadoLoading(true)
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       const base64 = btoa(consulta)
       requisicao.get(`/turno/caixa/admin/?query=${base64}`).then((response) => {
         setEstadoLoading(false)

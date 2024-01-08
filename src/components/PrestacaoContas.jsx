@@ -8,7 +8,7 @@ import { FaPowerOff } from 'react-icons/fa';
 import { AiFillPrinter } from 'react-icons/ai';
 import CarroLoading from '../components/Carregamento';
 import Filtro from '../util/Filtro';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 
 const PrestacaoContas = () => {
   const [data, setData] = useState([]);
@@ -492,7 +492,7 @@ doc.autoTable({
     const dataHoje = ano + "-" + mes + "-" + dia;
     setDataHoje(dataHoje);
 
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
     const passar = btoa(idrequisicao)
     requisicao.get(`/financeiro/admin/?query=${passar}`).then((res) => {
@@ -698,7 +698,7 @@ doc.autoTable({
   const handleConsulta = (consulta) => {
     setEstado2(false);
     setEstadoLoading(true);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
   const base64 = btoa(consulta)
   requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
     if(res.data.msg.resultado){

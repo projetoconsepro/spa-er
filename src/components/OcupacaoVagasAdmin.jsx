@@ -9,7 +9,7 @@ import RelatoriosPDF from "../util/RelatoriosPDF";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Group, Loader, Pagination } from "@mantine/core";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 
 const OcupacaoVagasAdmin = () => {
   const [data, setData] = useState([]);
@@ -82,7 +82,7 @@ const OcupacaoVagasAdmin = () => {
   };
 
   const reload = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     const data = new Date();
       const dia = data.getDate().toString().padStart(2, '0');
@@ -157,7 +157,7 @@ const OcupacaoVagasAdmin = () => {
 
   const handleConsulta = (consulta) => {
     setEstadoLoading(true)
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
   const base64 = btoa(consulta)
   requisicao.get(`/veiculo/historico/?query=${base64}`).then((response) => {

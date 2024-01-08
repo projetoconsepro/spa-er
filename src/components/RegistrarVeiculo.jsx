@@ -4,7 +4,7 @@ import axios from 'axios'
 import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
 import { Button, Divider } from '@mantine/core'
-import createAPI from '../services/createAPI'
+import { createAPI } from '../services/createAPI'
 
 const RegistrarVeiculo = () => {
     const [placa, setPlaca] = useState("placa")
@@ -36,7 +36,7 @@ const RegistrarVeiculo = () => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const uppercase = teste.toUpperCase();
-    const veiculo = createAPI();
+    const veiculo = createAPI;
 
 
     function validarPlaca(placa) {

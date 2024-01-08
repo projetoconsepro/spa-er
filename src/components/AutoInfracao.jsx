@@ -8,7 +8,7 @@ import { Button, Card, Divider, Group, Input, Modal, Text } from '@mantine/core'
 import { Carousel } from '@mantine/carousel';
 import { IconCamera, IconCodeCircle, IconCodeDots, IconFileCode, IconReceipt } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 import VoltarComponente from '../util/VoltarComponente';
 
 const AutoInfracao = () => {
@@ -23,7 +23,7 @@ const AutoInfracao = () => {
         setData([infos])
         console.log([infos])
 
-        const requisicao = createAPI();
+        const requisicao = createAPI;
 
         requisicao.get(`/veiculo/${infos.placa}`)
         .then((response) => {
@@ -90,7 +90,7 @@ const AutoInfracao = () => {
     }
 
     const confirmarInfracao = () => {
-      const requisicao = createAPI();
+      const requisicao = createAPI;
 
       requisicao.post('/notificacao/auto-infracao',{
           codigo: codigo,

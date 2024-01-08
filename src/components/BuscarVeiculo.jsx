@@ -8,7 +8,7 @@ import { RxLapTimer } from 'react-icons/rx';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Divider } from '@mantine/core';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 import ImpressaoTicketEstacionamento from '../util/ImpressaoTicketEstacionamento';
 import CalcularValidade from '../util/CalcularValidade';
 import calcularValidade from '../util/CalcularValidade';
@@ -95,7 +95,7 @@ const BuscarVeiculo = () => {
         
         const hangleRequisicao = () => {
             setEstado2(true)
-            const requisicao = createAPI();
+            const requisicao = createAPI;
             const tirarTraco = textoPlaca.split("-").join("");
             const upperCase = tirarTraco.toUpperCase();
             requisicao.get(`/veiculo/${upperCase}`)

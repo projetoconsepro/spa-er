@@ -6,7 +6,7 @@ import moment from 'moment'
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import Filtro from '../util/Filtro'
-import createAPI from '../services/createAPI'
+import { createAPI } from '../services/createAPI'
 import { Group, Pagination } from '@mantine/core'
 import CarroLoading from './Carregamento'
 
@@ -91,7 +91,7 @@ const ListarNotificacoesAgente = () => {
     const reload = () => {
       setEstado(false)
       setMensagem("")
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao.get('/notificacao').then((response) => {
         if (response.data.msg.resultado){
           setEstado(false)
@@ -153,7 +153,7 @@ const ListarNotificacoesAgente = () => {
     setEstado(false)
     setEstadoLoading(true)
     setMensagem("")
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const base64 = btoa(where)
     requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
       if (response.data.data.length !== 0){

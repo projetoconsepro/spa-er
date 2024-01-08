@@ -31,7 +31,7 @@ import { IconArrowForwardUpDouble } from "@tabler/icons-react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { IconLockCheck } from "@tabler/icons-react";
 import Swal from "sweetalert2";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import { FaCreditCard, FaSave, FaTrash } from "react-icons/fa";
 
 const ConfigurarPerfil = () => {
@@ -67,7 +67,7 @@ const ConfigurarPerfil = () => {
     setEmail2(user2.email);
     setTelefone(user2.telefone);
     setTelefone2(user2.telefone);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     requisicao.get("/usuario/saldo-credito").then((response) => {
       setSaldo(response?.data?.data?.saldo);
@@ -117,7 +117,7 @@ const ConfigurarPerfil = () => {
 
   const handleSaveClick = () => {
     if (user.length < 60 && telefone.length === 11) {
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao
         .put("/usuario", {
           nome: user,
@@ -174,7 +174,7 @@ const ConfigurarPerfil = () => {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .delete(`/cartao/${parseInt(cartao.cartao)}`)
           .then((response) => {
@@ -210,7 +210,7 @@ const ConfigurarPerfil = () => {
   };
 
   const handleSaveClickSenha = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     if (senha.length >= 4 && !senha.match(/["']/) && senha === senha2) {
       const password = sha256(senha).toString();
       requisicao

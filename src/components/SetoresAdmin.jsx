@@ -5,7 +5,7 @@ import { BsPlus } from 'react-icons/bs'
 import Swal from 'sweetalert2';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 
 const SetoresAdmin = () => {
     const [data, setData] = useState([]);
@@ -33,7 +33,7 @@ const SetoresAdmin = () => {
             showLoaderOnConfirm: true,
             preConfirm: () => {
                 const setor = document.getElementById('swal-input1').value;
-                const requisicao = createAPI();
+                const requisicao = createAPI;
                   requisicao.post('/setores', {
                     nome: setor,
                     }).then((response) => {
@@ -73,7 +73,7 @@ const SetoresAdmin = () => {
 
 
     const requisicaoSetores = async () => {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
 
           requisicao.get('/setores'
           ).then(

@@ -41,7 +41,7 @@ import { RxLapTimer } from "react-icons/rx";
 import Cronometro from "./Cronometro";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 
 const ClientesAdmin = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -114,7 +114,7 @@ const ClientesAdmin = () => {
   }, [step]);
 
   const AtualizaFunc = async () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     setEstadoLoading(true);
 
     requisicao
@@ -170,7 +170,7 @@ const ClientesAdmin = () => {
       cancelButtonColor: "#d33",
       showLoaderOnConfirm: true,
       preConfirm: () => {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .put("/usuario", {
             nome: item.nome,
@@ -258,7 +258,7 @@ const ClientesAdmin = () => {
   };
 
   useEffect(() => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .get(`/veiculo/${selectedOption}`)
       .then((response) => {
@@ -311,7 +311,7 @@ const ClientesAdmin = () => {
       setEstadoInfoDestinatario(false);
       return;
     }
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const cpf = extrairNumeros(infoDestinatario);
     let campo = "";
     if (cpf.length === 11) {
@@ -363,7 +363,7 @@ const ClientesAdmin = () => {
     } else {
       campo = "Destinatariocnpj";
     }
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     if (campo === "Destinatariocpf") {
       requisicao
         .post(`/financeiro/credito/transferir`, {
@@ -494,7 +494,7 @@ const ClientesAdmin = () => {
 
   const handleConsultaSelected = (consulta) => {
     setEstadoLoading(true);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const base64 = btoa(consulta);
     requisicao
       .get(`/usuario/listar/?query=${base64}`)
@@ -534,7 +534,7 @@ const ClientesAdmin = () => {
 
   const pesquisarUsuario = () => {
     setEstadoLoading(true);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const consulta = `{"where": [{ "field": "prefil", "operator": "=", "value": "cliente" },{ "field": "nome", "operator": "LIKE", "value": "%${nome}%" }]}`;
     const base64 = btoa(consulta);
     requisicao

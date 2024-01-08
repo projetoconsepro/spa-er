@@ -8,7 +8,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Card, Divider, Grid, Group, Modal, Text } from "@mantine/core";
 import { Carousel } from '@mantine/carousel';
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { BiErrorCircle } from "react-icons/bi";
@@ -36,7 +36,7 @@ const Configuracoes = () => {
   };
 
   const Atualizarequisicao = async () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     requisicao
       .get("/veiculo")
@@ -102,7 +102,7 @@ const Configuracoes = () => {
   }, []);
 
   const salvarAlteracoes = (index) => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const idVeiculo = data[index].idVeiculo;
     requisicao
       .put("/veiculo", {
@@ -155,7 +155,7 @@ const Configuracoes = () => {
       icon: "warning",
     }).then((result) => {
       if (result.isConfirmed) {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .put(`/veiculo/remover`, {
             id_veiculo: idVeiculo,

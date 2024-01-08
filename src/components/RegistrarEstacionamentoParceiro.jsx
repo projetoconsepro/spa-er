@@ -9,7 +9,7 @@ import { Button, Divider, Grid, Input, Text } from "@mantine/core";
 import { FaParking } from "react-icons/fa";
 import Swal from "sweetalert2";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import ModalErroBanco from "./ModalErroBanco";
 
 const RegistrarEstacionamentoParceiro = () => {
@@ -112,7 +112,7 @@ const RegistrarEstacionamentoParceiro = () => {
     }
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     let estado;
 
@@ -239,7 +239,7 @@ const RegistrarEstacionamentoParceiro = () => {
   const handleRegistrar = async () => {
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     const formaPagamentoo = selectedButton;
       if (vaga === "") {
@@ -496,7 +496,7 @@ const RegistrarEstacionamentoParceiro = () => {
   };
 
   async function getInfoPix(TxId) {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();

@@ -8,7 +8,7 @@ import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
 import Filtro from '../util/Filtro';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 import { Group, Pagination } from '@mantine/core';
 
 const VeiculosAdmin = () => {
@@ -64,7 +64,7 @@ const Imprimir = () => {
 
 const reload = () => {
   setEstado2(true)
-  const requisicao = createAPI();
+  const requisicao = createAPI;
   requisicao.get('/veiculo/listar').then((response) => {
     if (response.data.msg.resultado) {
 
@@ -87,7 +87,7 @@ const reload = () => {
 
 const handleConsultaSelected = (consulta) => {
     setEstadoLoading(true)
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const base64 = btoa(consulta)
     requisicao.get(`/veiculo/listar/?query=${base64}`).then((response) => {
       setEstadoLoading(false)

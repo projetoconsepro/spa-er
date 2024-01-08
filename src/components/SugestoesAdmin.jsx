@@ -1,13 +1,13 @@
 import { Card, Group, Text, Table, Badge } from '@mantine/core';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 
 const SugestoesAdmin = () => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-      const requisicao = createAPI();
+      const requisicao = createAPI;
     
         requisicao
           .get("/usuario/sugestao").then((res) => {

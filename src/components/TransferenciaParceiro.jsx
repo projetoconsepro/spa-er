@@ -5,7 +5,7 @@ import { IconAdjustments, IconArrowAutofitRight, IconArrowForward, IconArrowRigh
 import Swal from "sweetalert2";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import ModalErroBanco from "./ModalErroBanco";
 
 const TransferenciaParceiro = () => {
@@ -51,7 +51,7 @@ const TransferenciaParceiro = () => {
   };
 
   const getInfoDestinatario = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     const cnpjFormatado = cnpj.replace(/[.-/]/g, '');
 
@@ -121,7 +121,7 @@ const TransferenciaParceiro = () => {
   }
 
   const fazerPix = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
     const campo = {
@@ -144,7 +144,7 @@ const TransferenciaParceiro = () => {
   }
 
   const transferencia = (campo) => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao.post(`/financeiro/debito/transferir/pix`, {
       txid: campo,
     }).then((response) => {
@@ -169,7 +169,7 @@ const TransferenciaParceiro = () => {
   }
 
   const realizarTransferencia = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     let valor2;
     if (valor.includes(",")) {
       valor2 = valor.replace(",", ".")

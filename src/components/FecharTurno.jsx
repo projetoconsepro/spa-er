@@ -1,8 +1,7 @@
-import axios from 'axios'
 import {React, useState, useEffect} from 'react'
 import Swal from 'sweetalert2'
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 import { Button } from '@mantine/core';
 import { IconReceipt } from '@tabler/icons-react';
 
@@ -41,7 +40,7 @@ const FecharTurno = () => {
 
         setTempoAtual(localStorage.getItem('horaTurno'))
 
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao.get('/setores'
         ).then(
             response => {
@@ -80,7 +79,7 @@ const FecharTurno = () => {
         const user2 = JSON.parse(user);
         localStorage.setItem("setorTurno", "A")
         setSetorSelecionado(1)
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao.post('/turno/fechar',{
             hora: tempoAtual,
             }
@@ -118,7 +117,7 @@ const FecharTurno = () => {
     }
 
     const abrirTurno2 = () => {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
 
         requisicao.post('/turno/abrir',{
             hora: tempoAtual,
@@ -189,7 +188,7 @@ const FecharTurno = () => {
     }
 
     const fecharCaixa = () => {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
 
         requisicao.get('/turno/caixa').then(
             response => {

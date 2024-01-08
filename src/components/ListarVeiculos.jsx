@@ -12,7 +12,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Button, Divider, Grid, Group, Input, Modal, Notification, Text } from "@mantine/core";
 import { IconArrowRight, IconChevronRight, IconParking, IconPlus, IconPrinter, IconReload, IconSquareRoundedPlusFilled } from "@tabler/icons-react";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
 import { CarCrashOutlined } from "@mui/icons-material";
@@ -104,7 +104,7 @@ const ListarVeiculos = () => {
       icon: "warning",
     }).then((result) => {
       if (result.isConfirmed) {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao
           .put(`/veiculo/remover`, {
             id_veiculo: idVeiculo,
@@ -157,7 +157,7 @@ const ListarVeiculos = () => {
 
   const atualizacomp = async () => {
     setDivError(false);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     atualizaHora();
     await requisicao
       .get("/veiculo")
@@ -363,7 +363,7 @@ const ListarVeiculos = () => {
       });
       return;
     }
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const tempo1 = selectedButton;
 
     const resposta = await mexerValores();
@@ -433,7 +433,7 @@ const ListarVeiculos = () => {
   };
   const AddTempo = async (placa, index, id_vaga_veiculo, vaga) => {
     setBotaoOff(true);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const vagaa = [];
 
     const verifica = await ajustarHora();

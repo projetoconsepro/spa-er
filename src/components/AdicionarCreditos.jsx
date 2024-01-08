@@ -8,7 +8,7 @@ import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Divider, Input } from "@mantine/core";
 import { IconCash, IconUser } from "@tabler/icons-react";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import ImpressaoTicketCredito from "../util/ImpressaoTicketCredito";
 import ModalErroBanco from "./ModalErroBanco";
 
@@ -30,7 +30,7 @@ const AdicionarCreditos = () => {
   const [onCloseError, setOnCloseError] = useState(false);
 
   async function getInfoPix(TxId) {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     await requisicao
       .post("usuario/credito/pix", {
         txid: TxId,
@@ -82,7 +82,7 @@ const AdicionarCreditos = () => {
 
   const fazerPix = async () => {
     let campo;
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     let cpf2 = `/verificar?cpf=${cpf}`;
     if (cpf2 > 11) {
       cpf2 = `/verificar?cnpj=${cpf}`;
@@ -155,7 +155,7 @@ const AdicionarCreditos = () => {
   };
 
   const transferencia = async () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     if (cpf !== "" && valor !== "0") {
       setEstado2(true);
       const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);

@@ -16,7 +16,7 @@ import { ActionIcon, Button, Loader } from "@mantine/core";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import { IconPrinter, IconReceipt } from "@tabler/icons-react";
 import ImpressaoTicketRegularizacao from "../util/ImpressaoTicketRegularizacao";
 import ModalErroBanco from "./ModalErroBanco";
@@ -55,7 +55,7 @@ const ListarNotificacoes = () => {
     } else {
       const valor = data[index].valor.toString();
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
-      const requisicao = createAPI();
+      const requisicao = createAPI;
 
       const campo = {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
@@ -84,7 +84,7 @@ const ListarNotificacoes = () => {
   };
 
   async function getInfoPix(TxId, index, item) {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     await requisicao
       .put(`/notificacao/pix`, {
         txid: TxId,
@@ -122,7 +122,7 @@ const ListarNotificacoes = () => {
   }
 
   const regularizar = async (idVagaVeiculo, index, pagamento, item) => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao.put("/notificacao/", {
       id_vaga_veiculo: idVagaVeiculo,
       tipoPagamento: pagamento,
@@ -177,7 +177,7 @@ const ListarNotificacoes = () => {
   }
 
   const startVagaVeiculo = async (localVagaVeiculo) => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const idrequisicao = `{"where": [{ "field": "vaga_veiculo", "operator": "=", "value": "${localVagaVeiculo}" }]}`;
     const passar = btoa(idrequisicao);
 
@@ -236,7 +236,7 @@ const ListarNotificacoes = () => {
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     setEstado2(false);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const idrequisicao = `{"where": [{ "field": "usuario", "operator": "=", "value": "${user2.id_usuario}" }]}`;
     const passar = btoa(idrequisicao);
     await requisicao
@@ -288,7 +288,7 @@ const ListarNotificacoes = () => {
 
   const startPlaca = async (placa) => {
     setEstado2(false);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const idrequisicao = `{"where": [{ "field": "placa", "operator": "=", "value": "${placa}" }]}`;
     const passar = btoa(idrequisicao);
     await requisicao
@@ -372,7 +372,7 @@ const ListarNotificacoes = () => {
 
   const handleFiltro = (where) => {
     setEstadoLoading(true);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const base64 = btoa(where);
     requisicao
       .get(`/notificacao/?query=${base64}`)

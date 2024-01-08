@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import { Button, Card, Divider, Grid, Group, Input, Text } from "@mantine/core";
 import { IconKeyboard, IconSearch } from "@tabler/icons-react";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 
 const BuscarMovimentoTxId = () => {
   const [info, setInfo] = useState(false);
@@ -19,7 +19,7 @@ const BuscarMovimentoTxId = () => {
   const handleSearchMovimento = async () => {
     setEstado(false);
     setInfo(false);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
   
     requisicao.get(`/financeiro/verificar/pix/${txId}`).then((response) => {
       if (response.data.msg.resultado === false) {

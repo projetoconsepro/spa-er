@@ -2,7 +2,7 @@ import { React, useState, useEffect } from 'react';
 import { IconCash, IconReceipt } from '@tabler/icons-react';
 import { Button, Input } from '@mantine/core';
 import Swal from 'sweetalert2';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import ImpressaoFecharCaixa from '../util/ImpressaoFecharCaixa';
 
@@ -23,7 +23,7 @@ function AbrirTurno() {
   const user2 = JSON.parse(user);
 
   const verificarTurno = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao.get('/turno/verificar').then((response) => {
       if (response.data.msg.resultado) {
         localStorage.setItem('turno', true);
@@ -52,7 +52,7 @@ function AbrirTurno() {
 }
 
   useEffect(() => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao.get('/setores').then((response) => {
       for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
         resposta2[i] = {};
@@ -126,7 +126,7 @@ function AbrirTurno() {
   };
 
   const abrirTurno = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const valorFinal = parseFloat(valor.replace(',', '.')).toFixed(2);
     requisicao.post('/turno/abrir', {
       hora: tempoAtual,
@@ -168,7 +168,7 @@ function AbrirTurno() {
   };
 
   const abrirTurno2 = () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     requisicao.post('/turno/abrir', {
       hora: tempoAtual,
@@ -237,7 +237,7 @@ function AbrirTurno() {
     // remove as vagas do localstorage para evitar erro de sincronização
     localStorage.removeItem('listaVagas');
 
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao.post('/turno/fechar', {
       hora: tempoAtual,
     }).then(
@@ -271,7 +271,7 @@ function AbrirTurno() {
     // remove as vagas do localstorage para evitar erro de sincronização
     localStorage.removeItem('listaVagas');
     
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao.get('/turno/caixa').then(
       (response2) => {
         if (response2.data.msg.resultado) {
@@ -346,7 +346,7 @@ function AbrirTurno() {
             }
           });
         } else if (response2.data.msg.resultado === false) {
-          const requisicao = createAPI();
+          const requisicao = createAPI;
           requisicao.post('/turno/fechar', {
             hora: tempoAtual,
           }).then(

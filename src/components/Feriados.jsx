@@ -8,7 +8,7 @@ import rrulPlugin from "@fullcalendar/rrule";
 import luxonPlugin from "@fullcalendar/luxon";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, Button, Input, Group, Text } from "@mantine/core";
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 import ptLocale from "@fullcalendar/core/locales/pt";
 import { IconCalendar } from "@tabler/icons-react";
 import Swal from "sweetalert2";
@@ -32,7 +32,7 @@ const Feriados = () => {
   }
 
   useEffect(() => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
     .get("/turno/feriado")
     .then((response) => {
@@ -86,7 +86,7 @@ const Feriados = () => {
     reverseButtons: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao
       .delete("/turno/feriado", {
         data: {
@@ -122,7 +122,7 @@ const Feriados = () => {
 
   const handleSalvar = async () => {
     setEstadoLoading(true);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao.post("/turno/feriado", {
       feriado: feriado,
       data: dataSelected.dateStr,

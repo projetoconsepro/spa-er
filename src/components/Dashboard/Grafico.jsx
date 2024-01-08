@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import "chartjs-plugin-annotation";
-import createAPI from "../../services/createAPI";
+import { createAPI } from "../../services/createAPI";
 import randomColor from "randomcolor";
 
 const Grafico = () => {
@@ -113,7 +113,7 @@ const Grafico = () => {
     },
   };
   const requisicaoSetores = async () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     requisicao
       .get("/setores/dashboard/admin")

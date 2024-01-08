@@ -9,7 +9,7 @@ import { rem } from "@mantine/core";
 import { IconCar, IconCarOff, IconParking, IconPrinter } from "@tabler/icons-react";
 import { FaCar, FaCarAlt } from "react-icons/fa";
 import { BiCar, BiSolidCarGarage } from "react-icons/bi";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import jsPDF from "jspdf";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -97,7 +97,7 @@ const RegistrarVagaCliente = () => {
   });
 
   async function saldo () {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .get("/usuario/saldo-credito")
       .then((response) => {
@@ -124,7 +124,7 @@ const RegistrarVagaCliente = () => {
   }
 
   useEffect(() => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .get("/veiculo")
       .then((response) => {
@@ -202,7 +202,7 @@ const RegistrarVagaCliente = () => {
 
   const handleSubmit = async () => {
     setLoadingButton(true);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     const tempo1 = selectedButton;
     const placa2 = placaSelecionada;
 

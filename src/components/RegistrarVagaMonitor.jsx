@@ -10,7 +10,7 @@ import ModalPix from "./ModalPix";
 import { Button, Divider, Grid, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import { Elderly } from "@mui/icons-material";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import CalcularValidade from "../util/CalcularValidade";
 import ModalErroBanco from "./ModalErroBanco";
 
@@ -43,8 +43,6 @@ const RegistrarVagaMonitor = () => {
   const [selectedButton, setSelectedButton] = useState("pix");
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
-
-
 
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
@@ -84,7 +82,7 @@ const RegistrarVagaMonitor = () => {
     }
     const valor = valorcobranca2.toString();
     const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     let campo = "";
 
@@ -125,7 +123,7 @@ const RegistrarVagaMonitor = () => {
       });
   };
   async function getInfoPix(TxId) {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     const tirarTraco = textoPlaca.split("-").join("");
     const placaMaiuscula = tirarTraco.toUpperCase();
@@ -227,7 +225,7 @@ const RegistrarVagaMonitor = () => {
   });
 
   const registrarEstacionamento = async (campo) => {
-    const estacionamento = createAPI();
+    const estacionamento = createAPI;
     const placaString = textoPlaca.toString();
     const placaMaiuscula = placaString.toUpperCase();
     const tirarTraco = placaMaiuscula.split("-").join("");

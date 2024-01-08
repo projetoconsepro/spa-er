@@ -2,7 +2,7 @@ import { React, useState, useEffect } from "react";
 import { Button, Card, Divider, Group, Input, Select, Text, Checkbox } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import Swal from "sweetalert2";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 import { FaCarAlt } from "react-icons/fa";
 
 const AdicionarModelo = () => {
@@ -16,7 +16,7 @@ const AdicionarModelo = () => {
 
 
     const getFabricantes = () => {
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         requisicao.get(`/veiculo/fabricantes/`).then(
             response => {
                 const newData = response?.data?.data?.fabricantes.map(item => ({
@@ -45,7 +45,7 @@ const AdicionarModelo = () => {
     const submit = async () => {
         if ((fabricante !== "" || fabricantesSelect.length !== 0) && modelo !== "") {
         const findByIndex = fabricantes.find(item => item.value === fabricantesSelect);
-        const requisicao = createAPI();
+        const requisicao = createAPI;
         console.log(checked ? fabricante : findByIndex.label)
         console.log(modelo)
 

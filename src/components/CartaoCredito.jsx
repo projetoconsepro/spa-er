@@ -3,7 +3,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import VoltarComponente from '../util/VoltarComponente';
 import { Button, Group, Notification } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const CartaoCredito = () => {
@@ -199,7 +199,7 @@ const CartaoCredito = () => {
 
       const shuffledString = shuffleString(dadosBase64, numPositions, order);
 
-      const requisicao = createAPI()
+      const requisicao = createAPI
 
       requisicao.post('/cartao/', {
         "dados": `${shuffledString}$${orderString}`

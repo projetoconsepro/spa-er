@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import randomcolor from 'randomcolor';
-import createAPI from "../../services/createAPI";
+import { createAPI } from "../../services/createAPI";
 
 
 const GraficoBola = () => {
@@ -30,7 +30,7 @@ function gerarCorBonita() {
   };
 
   const requisicaoSetores = async () => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     requisicao
       .get("/setores/admin")

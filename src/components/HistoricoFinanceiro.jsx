@@ -7,7 +7,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { Badge, Box, Group, Pagination } from "@mantine/core";
 import { IconCash } from "@tabler/icons-react";
-import createAPI from "../services/createAPI";
+import { createAPI } from "../services/createAPI";
 
 const HistoricoFinanceiro = () => {
   const [resposta, setResposta] = useState([]);
@@ -38,7 +38,7 @@ const HistoricoFinanceiro = () => {
   }
 
   useEffect(() => {
-    const requisicao = createAPI();
+    const requisicao = createAPI;
     requisicao
       .get("/financeiro/cliente")
       .then((response) => {
@@ -82,7 +82,7 @@ const HistoricoFinanceiro = () => {
     setEstadoLoading(true);
     setEstadoLoading(true);
 
-    const requisicao = createAPI();
+    const requisicao = createAPI;
 
     const base64 = btoa(where);
     requisicao

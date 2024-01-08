@@ -7,7 +7,7 @@ import Select from "react-select";
 import 'dayjs/locale/pt-br';
 import { IconAlertCircle, IconMail, IconParking, IconPhone, IconUser } from '@tabler/icons-react';
 import moment from 'moment';
-import createAPI from '../services/createAPI';
+import { createAPI } from '../services/createAPI';
 import InputMask from "react-input-mask";
 
 const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
@@ -89,7 +89,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
 
     else if (nome === 'ListarNotificacoesAdmin') {
       setPlacaCarro(localStorage.getItem('placaCarro'));
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao.get('/notificacao/tipos').then(
         response => {
           const newData = response?.data?.data?.map(item => ({
@@ -109,7 +109,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     }
 
     else if (nome === 'ListarNotificacoesAgente') {
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao.get('/notificacao/tipos').then(
         response => {
           const newData = response?.data?.data?.map(item => ({
@@ -129,7 +129,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     }
 
     else if (nome === 'ListarNotificacoes') {
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao.get('/notificacao/tipos').then(
         response => {
           const newData = response?.data?.data?.map(item => ({
@@ -149,7 +149,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
     }
 
     else if (nome === 'Irregularidades') {
-      const requisicao = createAPI();
+      const requisicao = createAPI;
       requisicao.get('/notificacao/tipos').then(
         response => {
           const newData = response?.data?.data?.map(item => ({
