@@ -56,4 +56,5 @@ export const createAPI = {
   get: (url, config) => requisicao('get', url, null, config),
   post: (url, data, config) => requisicao('post', url, data, config),
   put: (url, data, config) => requisicao('put', url, data, config),
+  delete: (url, config) => requisicao('delete', url, data, config),
 };
