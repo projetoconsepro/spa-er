@@ -482,9 +482,6 @@ doc.autoTable({
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
     const data = new Date();
     const dia = data.getDate().toString().padStart(2, '0');
     const mes = (data.getMonth() + 1).toString().padStart(2, '0');
@@ -492,215 +489,16 @@ doc.autoTable({
     const dataHoje = ano + "-" + mes + "-" + dia;
     setDataHoje(dataHoje);
 
-    const requisicao = createAPI();
     const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
-    const passar = btoa(idrequisicao)
-    requisicao.get(`/financeiro/admin/?query=${passar}`).then((res) => {
-    setEstado(true);
-    setData(res.data.data);
-    let newData = res.data.data[0].monitor.map((item) => {
-      if (item) {
-        if (item.total) {
-        const perfil = 'Total';
-        const nome = '';
-        const totalRegularizacao = item.total.Regularizacao.TotalValor;
-        const totalEstacionamento = item.total.estacionamento.TotalValor;
-        const totalRecarga = item.total.creditosInseridos.TotalValor;
-        const finalTotal = item.total.finalTotal.TotalValor;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-        }
-        const perfil = 'Monitor';
-        const nome = item.nome || '';
-        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
-        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
-        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
-        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-      }
-    });
-    const newData2 = res.data.data[0].parceiro.map((item) => {
-      if (item) {
-         if (item.total) {
-          const perfil = 'Total';
-        const nome = '';
-        const totalRegularizacao = item.total.Regularizacao.TotalValor;
-        const totalEstacionamento = item.total.estacionamento.TotalValor;
-        const totalRecarga = item.total.creditosInseridos.TotalValor;
-        const finalTotal = item.total.finalTotal.TotalValor;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-        }
-        const perfil = 'Parceiro';
-        const nome = item.nome || '';
-        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
-        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
-        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
-        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-      }
-    });
-
-    const newData3 = res.data.data[0].aplicativo.map((item) => {
-      if (item) {
-         if (item.total) {
-        const perfil = 'Total';
-        const nome = '';
-        const totalRegularizacao = item.total.Regularizacao.TotalValor;
-        const totalEstacionamento = item.total.estacionamento.TotalValor;
-        const totalRecarga = item.total.creditosInseridos.TotalValor;
-        const finalTotal = item.total.finalTotal.TotalValor;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-        }
-        const perfil = 'Aplicativo';
-        const nome = '';
-        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
-        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
-        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
-        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-      }
-    });
-
-    const newData5 = res.data.data[0].avulso.map((item) => {
-      if (item) {
-          if (item.total) {
-        const perfil = 'Avulso';
-        const nome = '';
-        const totalRegularizacao = item.total.Regularizacao.TotalValor;
-        const totalEstacionamento = item.total.estacionamento.TotalValor;
-        const totalRecarga = item.total.creditosInseridos.TotalValor;
-        const finalTotal = item.total.finalTotal.TotalValor;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-        }
-        const perfil = 'Avulso';
-        const nome = '';
-        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
-        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
-        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
-        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-      }
-    });
-
-    const newData6 = res.data.data[0].chatbot.map((item) => {
-      if (item) {
-          if (item.total) {
-        const perfil = 'Chatbot';
-        const nome = '';
-        const totalRegularizacao = item.total.Regularizacao.TotalValor;
-        const totalEstacionamento = item.total.estacionamento.TotalValor;
-        const totalRecarga = item.total.creditosInseridos.TotalValor;
-        const finalTotal = item.total.finalTotal.TotalValor;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-        }
-        const perfil = 'Chatbot';
-        const nome = '';
-        const totalRegularizacao = item.Regularizacao ? item.Regularizacao.TotalValor : null;
-        const totalEstacionamento = item.estacionamento ? item.estacionamento.TotalValor : null;
-        const totalRecarga = item.creditosInseridos ? item.creditosInseridos.TotalValor : null;
-        const finalTotal = item.finalTotal ? item.finalTotal.TotalValor : null;
-        return {
-          perfil,
-          nome,
-          totalRegularizacao,
-          totalEstacionamento,
-          totalRecarga,
-          finalTotal,
-        };
-      }
-    });
-
-
-    const iParceiro = res.data.data[0].parceiro.length - 1;
-    const iMonitor = res.data.data[0].monitor.length - 1;
-    const iAplicativo = res.data.data[0].aplicativo.length - 1;
-    const iAvulso = res.data.data[0].avulso.length - 1;
-    const iChatbot = res.data.data[0].chatbot.length - 1;
-
-    const newData4 = {
-        nome : '',
-        perfil : 'Total geral',
-        totalRegularizacao : res.data.data[0].parceiro[iParceiro].total.Regularizacao.TotalValor + res.data.data[0].monitor[iMonitor].total.Regularizacao.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.Regularizacao.TotalValor + res.data.data[0].avulso[iAvulso].total.Regularizacao.TotalValor + res.data.data[0].chatbot[iChatbot].total.Regularizacao.TotalValor,
-        totalEstacionamento : res.data.data[0].parceiro[iParceiro].total.estacionamento.TotalValor + res.data.data[0].monitor[iMonitor].total.estacionamento.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.estacionamento.TotalValor + res.data.data[0].avulso[iAvulso].total.estacionamento.TotalValor + res.data.data[0].chatbot[iChatbot].total.estacionamento.TotalValor,
-        totalRecarga : res.data.data[0].parceiro[iParceiro].total.creditosInseridos.TotalValor + res.data.data[0].monitor[iMonitor].total.creditosInseridos.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.creditosInseridos.TotalValor + res.data.data[0].avulso[iAvulso].total.creditosInseridos.TotalValor + res.data.data[0].chatbot[iChatbot].total.creditosInseridos.TotalValor,
-        finalTotal : res.data.data[0].parceiro[iParceiro].total.finalTotal.TotalValor + res.data.data[0].monitor[iMonitor].total.finalTotal.TotalValor + res.data.data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor + res.data.data[0].avulso[iAvulso].total.finalTotal.TotalValor + res.data.data[0].chatbot[iChatbot].total.finalTotal.TotalValor,
-    };
-
-    newData = newData.concat(newData2, newData3, newData5, newData6, newData4);
-    setData2(newData);
-  }).catch((err) => {
-    console.log(err);
-  });
+    handleConsulta(idrequisicao);
   }, []);
 
   const handleConsulta = (consulta) => {
     setEstado2(false);
     setEstadoLoading(true);
     const requisicao = createAPI();
-  const base64 = btoa(consulta)
-  requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
+    const base64 = btoa(consulta)
+    requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
     if(res.data.msg.resultado){
     setEstadoLoading(false);
     setEstado(true);
@@ -811,8 +609,8 @@ doc.autoTable({
 
     const newData5 = res.data.data[0].avulso.map((item) => {
       if (item) {
-          if (item.total) {
-        const perfil = 'Avulso';
+        if (item.total) {
+        const perfil = 'Total';
         const nome = '';
         const totalRegularizacao = item.total.Regularizacao.TotalValor;
         const totalEstacionamento = item.total.estacionamento.TotalValor;
@@ -846,8 +644,8 @@ doc.autoTable({
 
     const newData6 = res.data.data[0].chatbot.map((item) => {
       if (item) {
-          if (item.total) {
-        const perfil = 'Chatbot';
+        if (item.total) {
+        const perfil = 'Total';
         const nome = '';
         const totalRegularizacao = item.total.Regularizacao.TotalValor;
         const totalEstacionamento = item.total.estacionamento.TotalValor;
