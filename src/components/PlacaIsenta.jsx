@@ -29,26 +29,11 @@ const PlacaIsenta = () => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-  };
+  }; 
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-  function ArrumaHora(data, hora) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    return data4;
-  }
-
-  function ArrumaHora2(data) {
-    const data2 = data.split("T");
-    const data6 = data2[1].split(":");
-    const data5 = data6[0] - 3 + ":" + data6[1] + ":";
-    const data7 = data5 + data6[2].split(".")[0];
-    return data7;
-  }
 
   useEffect(() => {
     localStorage.removeItem("autoInfracao");
