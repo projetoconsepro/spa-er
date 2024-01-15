@@ -426,7 +426,6 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         default:
           break;
       }
-      console.log(consulta)
       onConsultaSelected(consulta);
     }
   };
