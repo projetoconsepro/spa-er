@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import ScrollTopArrow from "./ScrollTopArrow";
 import { useDisclosure } from "@mantine/hooks";
-import { Modal } from '@mantine/core'
-import { IconMapSearch } from "@tabler/icons-react";
+import { Menu, Modal, Text, Button } from '@mantine/core'
+import { IconCopy, IconMapSearch, IconReload } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
 import VoltarComponente from "../util/VoltarComponente";
 import createAPI from "../services/createAPI";
@@ -50,6 +50,7 @@ const VeiculosAgente = () => {
 
     const getVagas = async (setor) => {
         setOnLoading(true)
+        setEstado(false)
         const requisicao = createAPI();
         const setor2 = document.getElementById('setoresSelect2').value;
         if (setor2 !== undefined && setor2 !== null && setor2 !== '') {
@@ -188,7 +189,75 @@ const VeiculosAgente = () => {
             </Modal>
 
 
-            <p className="text-start mx-3">Veículos notificados</p>
+            <div className="row mb-3">
+                <div className="col-7">
+                    <h6 className="text-start align-middle mx-3 mt-2">Veículos estacionados</h6>      
+                </div>   
+                <div className="col-2">
+            <Menu shadow="md" width={200}>
+            <Menu.Target>
+              <Button
+                variant="outline"
+                sx={{ fontFamily: "Greycliff CF, sans-serif" }}
+              >
+                ?{" "}
+              </Button>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Label>Legenda:</Menu.Label>
+              <Text fz="sm" className="mx-2">
+                <small>
+                    <span className="px-2 rounded-circle" style={{
+                        backgroundColor: "#F8D7DA",
+                        border: "1px solid black",
+                    }}>
+                        {" "}
+
+                    </span> 
+                       {"‎"} Veículo notificado
+                </small>
+              </Text>
+              <Text fz="sm" className="mx-2">
+                <small>
+                    <span className="px-2 rounded-circle" style={{
+                        backgroundColor: "#D3D3D4",
+                        border: "1px solid black",
+                    }}>
+                        {" "}
+                    </span>
+                    {"‎"} Auto de infração emitido
+                </small>
+              </Text>
+              <Text fz="sm" className="mx-2">
+                <small>
+                    <span className="px-2 rounded-circle" style={{
+                        backgroundColor: "#FFF",
+                        border: "1px solid black",
+                    }}>
+                        {" "}
+                    </span>
+                    {"‎"} Tempo esgotado
+                </small>
+              </Text>
+            </Menu.Dropdown>
+          </Menu>
+            </div>
+                <div className="col-2">
+                <Button
+                    variant="gradient"
+                    gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                    mb="sm"
+                    radius="sm"
+                    size="sm"
+                    onClick={() => getVagas(salvaSetor, 'reset')}
+                  >
+                    <IconReload  color="white" size={20} />
+                  </Button>
+
+                </div>
+
+          </div>
             <div className="row">
                 <div className="col-12 col-xl-8">
                     <div className="row">

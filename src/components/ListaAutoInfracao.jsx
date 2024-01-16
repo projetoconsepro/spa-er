@@ -22,7 +22,6 @@ const ListaAutoInfracao = () => {
 
   const handlePageChange = (pageNumber) => {
       setCurrentPage(pageNumber);
-
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -81,11 +80,12 @@ const ListaAutoInfracao = () => {
 
     const reload = () => {
       setEstado(false)
+      setEstadoLoading(true)
       setMensagem("")
       const requisicao = createAPI();
       requisicao.get('/notificacao/infracao').then((response) => {
+        setEstadoLoading(false)
         if (response.data.msg.resultado){
-        console.log(response.data.data)
         setEstado(false)
         const newData = response.data.data.map((item) => ({
           data: ArrumaHora(item.hora),
@@ -100,7 +100,7 @@ const ListaAutoInfracao = () => {
         else {
           setData([])
           setEstado(true)
-          setMensagem("Não há notificações para exibir")
+          setMensagem("Nenhum auto de infração encontrado")
         }
     }).catch((error) => {
       if(error?.response?.data?.msg === "Cabeçalho inválido!" 
@@ -137,9 +137,8 @@ const ListaAutoInfracao = () => {
     const requisicao = createAPI();
     const base64 = btoa(where)
     requisicao.get(`/notificacao/infracao/?query=${base64}`).then((response) => {
-      console.log(response.data)
-      if (response.data.msg.resultado){
       setEstadoLoading(false)
+      if (response.data.msg.resultado){
       setEstado(false)
       const newData = response.data.data.map((item) => ({
         data: ArrumaHora(item.hora),
@@ -152,7 +151,6 @@ const ListaAutoInfracao = () => {
       setData(newData)
     }
     else {
-      setEstadoLoading(false)
       setData([])
       setEstado(true)
       setMensagem(response.data.msg.msg)
@@ -172,7 +170,7 @@ const ListaAutoInfracao = () => {
 
   return (
     <div className="dashboard-container">
-        <p className="mx-3 text-start fs-4 fw-bold">Lista Auto de Infração</p>
+        <p className="mx-3 text-start fs-4 fw-bold">Autos de Infração</p>
         <div className="row mb-3">
         <div className="col-12">
         <div className="row">

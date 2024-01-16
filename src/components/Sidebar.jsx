@@ -400,7 +400,7 @@ const Sidebar = () => {
         links.push({
             className: styles.className,
             icon: <FaClipboardList />,
-            name: "‎ Auto de Infração",
+            name: "‎ Autos de Infração",
             componente: "ListaAutoInfracao",
         })
     }

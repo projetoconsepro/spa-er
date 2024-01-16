@@ -201,7 +201,7 @@ const ListarNotificacoesAgente = () => {
 
   return (
     <div className="dashboard-container">
-        <p className="mx-3 text-start fs-4 fw-bold">Notificações pendentes</p>
+        <p className="mx-3 text-start fs-4 fw-bold">Notificações</p>
         <div className="row mb-3">
         <div className="col-12">
         <div className="row">
