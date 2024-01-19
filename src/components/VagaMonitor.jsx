@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import CalcularHoras from "../util/CalcularHoras";
@@ -7,6 +7,9 @@ import CalcularValidade from "../util/CalcularValidade";
 import Swal from "sweetalert2";
 import ValidarRequisicao from "../util/ValidarRequisicao";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:300/');
 
 export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, setResposta }) => {
 
@@ -34,6 +37,35 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
               ValidarRequisicao(error)
           });
      }
+
+
+     useEffect(() => {
+      // Evento de conexão
+      socket.on('connect', () => {
+        console.log('Connected to server');
+ 
+        socket.emit('setor', { setor: 'A' }, (error) => {
+          if(error) {
+            alert(error);
+          }
+        });
+      });
+  
+      // Evento de desconexão
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+      });
+
+      socket.on('vaga', (message) => {
+        if (message.vaga == vaga.numero) {
+          console.log('entrou');
+        } else {
+          console.log('nao entrou');
+        }
+      });
+  
+    }, []);
+
 
 
     const registroDebitoAutomatico = async (placa, numero, tempo, id_vaga, index) => {

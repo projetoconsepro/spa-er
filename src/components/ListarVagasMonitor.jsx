@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import Swal from "sweetalert2";
 import ScrollTopArrow from "./ScrollTopArrow";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import createAPI from "../services/createAPI";
 import { Button, Group } from "@mantine/core";
 import { IconParking, IconReload } from "@tabler/icons-react";
-import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import CalcularValidade from "../util/CalcularValidade";
-import CalcularHoras from "../util/CalcularHoras";
-import LiberarVaga from "../util/LiberarVaga";
 import ValidarRequisicao from "../util/ValidarRequisicao";
 import { VagaMonitor } from "./VagaMonitor";
 
@@ -18,17 +14,14 @@ const ListarVagasMonitor = () => {
   const [resposta, setResposta] = useState([]);
   const [vaga, setVaga] = useState("");
   const [resposta2, setResposta2] = useState([]);
-  const [resposta3, setResposta3] = useState([]);
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [salvaSetor, setSalvaSetor] = useState("");
   const [vagasLivres, setVagasLivres] = useState(0);
   const [vagasOcupadas, setVagasOcupadas] = useState(0);
   const [vagasVencidas, setVagasVencidas] = useState(0);
-  const [horaAgora, setHoraAgora] = useState("");
   const [localVagas, setLocalVagas] = useState(true);
   const [attFunc, setAttFunc] = useState(false);
-  const [contador, setContador] = useState(0);
 
   const getVagas = async (setor, timeout) => {
     const requisicao = createAPI();
@@ -231,16 +224,6 @@ useEffect(() => {
     }, 50);
   }
   }, [vaga, attFunc]);
-
-  useEffect(() => {
-    if (contador === 30) {
-      setContador(0);
-      getVagas(salvaSetor, true);
-    }
-    setTimeout(() => {
-      setContador(contador + 1);
-    }, 1000);
-  }, [contador]);
 
   useEffect(() => {
       (async () => {
