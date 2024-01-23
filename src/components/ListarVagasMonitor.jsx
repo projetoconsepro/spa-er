@@ -23,6 +23,17 @@ const ListarVagasMonitor = () => {
   const [localVagas, setLocalVagas] = useState(true);
   const [attFunc, setAttFunc] = useState(false);
 
+
+  const funcAttResposta = (Json, index) => {
+
+    const updatedResposta = resposta;
+
+    updatedResposta[index] = Json;
+
+    setResposta(updatedResposta);
+    localStorage.setItem('listaVagas', JSON.stringify(updatedResposta));
+  };
+
   const getVagas = async (setor, timeout) => {
     const requisicao = createAPI();
     const setor2 = document.getElementById("setoresSelect").value;
@@ -148,11 +159,6 @@ const ListarVagasMonitor = () => {
               listaSemPrimeiroElemento.shift();
             }
             setResposta(listaSemPrimeiroElemento);
-          }
-          if (objetosSaoDiferentes(resposta, localS)) {
-
-          }
-          else {
           }
         } else if (timeout === null){
           if (!localVagas) {
@@ -386,7 +392,7 @@ useEffect(() => {
                       {resposta.length !== 0 ? (
                         resposta.map((vaga, index) => (
                         vaga !== null && (
-                          <VagaMonitor vaga={vaga} index={index} key={index} setMensagem={setMensagem} setEstado={setEstado} setResposta={setResposta} resposta={resposta} />
+                          <VagaMonitor vaga={vaga} index={index} key={index} setMensagem={setMensagem} setEstado={setEstado} setResposta={setResposta} resposta={resposta} funcAttResposta={funcAttResposta} />
                         )
                       ))) : ( null )}
                     </tbody>

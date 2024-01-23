@@ -11,7 +11,7 @@ import io from 'socket.io-client';
 
 const socket = io('http://localhost:300/');
 
-export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, setResposta }) => {
+export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, setResposta, funcAttResposta }) => {
 
     const horaAgoraFunc = async () => {
         const dataAtual = new Date();
@@ -21,6 +21,41 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
         const horaAtual = `${hora}:${minutos}:${segundos}`;
         return horaAtual;
     };
+
+    const funcUpdateVaga = (vagaNew) => {
+
+      console.log(vagaNew)
+
+      if (vagaNew.estacionado == 'N') {
+        vaga = {
+          numero: vaga.numero,
+          chegada: "",
+          placa: "",
+          temporestante: "",
+          Countdown: "",
+          variaDisplay: "escondido",
+          corvaga: vaga.corvaga,
+          tipo: vaga.tipo,
+        }
+      } else {
+        // FALTA N* NOTIFICACAO, DEBITO, HORA NOTIFICACAO, COR DA VAGA, 
+        vaga = {
+          numero: vaga.numero,
+          chegada: vagaNew.chegada,
+          placa: vagaNew.placa,
+          temporestante: CalcularValidade( vagaNew.chegada, vagaNew.tempo),
+          Countdown: "",
+          variaDisplay: "",
+          corvaga: vaga.corvaga,
+          tipo: vaga.tipo,
+          numero_notificacoes_pendentess: vagaNew.numero_notificacoes_pendentess,
+          estacionado: vagaNew.estacionado,
+          id_vaga_veiculo: vagaNew.id_vaga_veiculo,
+        }
+      }
+      funcAttResposta(vaga, index);
+    }
+
 
       const funcLiberVaga = async (id_vaga, numero, index) => {
         const requisicao = await createAPI();
@@ -43,6 +78,7 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       // Evento de conexão
       socket.on('connect', () => {
         console.log('Connected to server');
+
  
         socket.emit('setor', { setor: 'A' }, (error) => {
           if(error) {
@@ -57,10 +93,8 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       });
 
       socket.on('vaga', (message) => {
-        if (message.vaga == vaga.numero) {
-          console.log('entrou');
-        } else {
-          console.log('nao entrou');
+        if (message.numero == vaga.numero) {
+          funcUpdateVaga(message);
         }
       });
   
@@ -356,10 +390,6 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
             });
         }
       };
-    
-
-
-
 
   return (
     <tr
