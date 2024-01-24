@@ -11,7 +11,21 @@ import io from 'socket.io-client';
 
 const socket = io('http://localhost:300/');
 
-export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, setResposta, funcAttResposta }) => {
+export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, setResposta, funcAttResposta, setor }) => {
+
+  const getHours = () => {
+    const dataAtual = new Date();
+    const hora = dataAtual.getHours().toString().padStart(2, "0");
+    const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
+    const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
+    const horaAtual = `${hora}:${minutos}:${segundos}`;
+    return horaAtual;
+  };
+
+  function converterParaSegundos(tempo) {
+    const [horas2, minutos2, segundos2] = tempo.split(":").map(Number);
+    return horas2 * 3600 + minutos2 * 60 + segundos2;
+  }
 
     const horaAgoraFunc = async () => {
         const dataAtual = new Date();
@@ -22,13 +36,11 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
         return horaAtual;
     };
 
-    const funcUpdateVaga = (vagaNew) => {
-
-      console.log(vagaNew)
-
+    const funcUpdateVaga = async (vagaNew) => {
       if (vagaNew.estacionado == 'N') {
         vaga = {
           numero: vaga.numero,
+          estacionado: vagaNew.estacionado,
           chegada: "",
           placa: "",
           temporestante: "",
@@ -38,24 +50,68 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
           tipo: vaga.tipo,
         }
       } else {
-        // FALTA N* NOTIFICACAO, DEBITO, HORA NOTIFICACAO, COR DA VAGA, 
+        const validade = await CalcularValidade(vagaNew.chegada, vagaNew.tempo);
+
+        const horaAtual = await getHours();
+
+        const segundosHoraAtual = converterParaSegundos(horaAtual);
+        const segundosTempoRestante = converterParaSegundos(validade);
+
+        const diffSegundos = segundosTempoRestante - segundosHoraAtual;
+        const diffMinutos = diffSegundos / 60;
+
         vaga = {
           numero: vaga.numero,
           chegada: vagaNew.chegada,
           placa: vagaNew.placa,
-          temporestante: CalcularValidade( vagaNew.chegada, vagaNew.tempo),
+          temporestante: validade,
           Countdown: "",
-          variaDisplay: "",
+          variaDisplay: "aparece",
           corvaga: vaga.corvaga,
           tipo: vaga.tipo,
           numero_notificacoes_pendentess: vagaNew.numero_notificacoes_pendentess,
           estacionado: vagaNew.estacionado,
           id_vaga_veiculo: vagaNew.id_vaga_veiculo,
+          debito: vagaNew.debitar_automatico
+        }
+
+        
+        if (validade < horaAtual) {
+          vaga.corline = "#F8D7DA";
+          vaga.cor = "#842029";
+        } else if (diffMinutos <= 10) {
+          vaga.corline = "#FFF3CD";
+          vaga.cor = "#664D03";
+        } else if (diffMinutos >= 10) {
+          vaga.corline = "#D1E7DD";
+          vaga.cor = "#0F5132";
+        } else {
+          vaga.corline = "#fff";
+          vaga.cor = "#000";
+        }
+
+        if (vagaNew.numero_notificacoes_pendentess !== 0) {
+          const horaOriginal = new Date(vagaNew.hora_notificacao);
+          horaOriginal.setHours(horaOriginal.getHours() + 2);
+          const horaOriginalFormatada = horaOriginal.toLocaleTimeString("pt-BR", {timeZone: "America/Sao_Paulo",});
+          vaga.hora_notificacao = horaOriginalFormatada;
+          vaga.corline = "#D3D3D4";
+          vaga.cor = "#141619";
+        } 
+
+        if (vagaNew.numero_notificacoes_pendentes !== 0) {
+          vaga.display = "testeNot";
+          vaga.numero_notificacoes_pendentes = vagaNew.numero_notificacoes_pendentes;
+          vaga.numero_notificacoes = vagaNew.numero_notificacoes_pendentes;
+        } else {
+          vaga.display = "testeNot2";
+          vaga.numero_notificacoes_pendentes = 0;
+          vaga.numero_notificacoes = 0;
         }
       }
+
       funcAttResposta(vaga, index);
     }
-
 
       const funcLiberVaga = async (id_vaga, numero, index) => {
         const requisicao = await createAPI();
@@ -73,18 +129,20 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
           });
      }
 
+     useEffect(() => {
+      socket.emit('setor', { setor: setor }, (error) => {
+        if(error) {
+          alert(error);
+        }
+      });
+    }, [setor]);
+
+
 
      useEffect(() => {
       // Evento de conexão
       socket.on('connect', () => {
         console.log('Connected to server');
-
- 
-        socket.emit('setor', { setor: 'A' }, (error) => {
-          if(error) {
-            alert(error);
-          }
-        });
       });
   
       // Evento de desconexão
@@ -437,12 +495,13 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       >
         <h6
           id={vaga.variaDisplay}
+          className="fw-bolder"
           style={{
             backgroundColor: vaga.corline,
             color: vaga.cor,
           }}
         >
-          <span>{vaga.temporestante}</span>
+          {vaga.temporestante}
         </h6>
       </td>
     </tr>

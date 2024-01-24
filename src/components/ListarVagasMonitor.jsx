@@ -24,6 +24,37 @@ const ListarVagasMonitor = () => {
   const [attFunc, setAttFunc] = useState(false);
 
 
+
+  const funcCalcVgas = (array) => {
+    array = array.filter(item => item !== null);
+    let estacionadoSCount = 0;
+    let estacionadoNCount = 0;
+    let estacionadoPCount = 0;
+
+    const dataAtual = new Date();
+    const hora = dataAtual.getHours().toString().padStart(2, "0");
+    const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
+    const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
+    const horaAtual = `${hora}:${minutos}:${segundos}`;
+
+    array.forEach((objeto) => {
+      if (objeto.numero !== 0) {
+        if (objeto.estacionado === "S") {
+          estacionadoSCount++;
+          if (objeto.temporestante < horaAtual && objeto.numero_notificacoes_pendentess === 0) {
+            estacionadoPCount++;
+          }
+        } else if (objeto.estacionado === "N") {
+          estacionadoNCount++;
+        }
+      }
+    });
+    setVagasLivres(estacionadoNCount);
+    setVagasOcupadas(estacionadoSCount);
+    setVagasVencidas(estacionadoPCount);
+  };
+
+
   const funcAttResposta = (Json, index) => {
 
     const updatedResposta = resposta;
@@ -31,6 +62,7 @@ const ListarVagasMonitor = () => {
     updatedResposta[index] = Json;
 
     setResposta(updatedResposta);
+    funcCalcVgas(updatedResposta);
     localStorage.setItem('listaVagas', JSON.stringify(updatedResposta));
   };
 
@@ -51,6 +83,11 @@ const ListarVagasMonitor = () => {
     setEstado(true);
     setMensagem("Carregando vagas...");
 
+    if(localStorage.getItem("listaVagas") && timeout !== 'reset') {
+        const items = localStorage.getItem("listaVagas");
+        setResposta(JSON.parse(items));
+        funcCalcVgas(JSON.parse(items));
+    } else  {
     const startTime = performance.now();
     await requisicao.get(`/vagas?setor=${setor}`).then((response) => {
       const endTime = performance.now();
@@ -74,9 +111,11 @@ const ListarVagasMonitor = () => {
               updatedItem.chegada = "";
               updatedItem.placa = "";
               updatedItem.temporestante = "";
+              updatedItem.estacionado = response.data.data[i].estacionado;
               updatedItem.Countdown = "";
               updatedItem.variaDisplay = "escondido";
             } else {
+              updatedItem.estacionado = response.data.data[i].estacionado;
               updatedItem.debito = response.data.data[i].debitar_automatico;
               updatedItem.numero_notificacoes = response.data.data[i].numero_notificacoes_pendentes;
               updatedItem.variaDisplay = "aparece";
@@ -139,77 +178,15 @@ const ListarVagasMonitor = () => {
             updatedResposta[i] = updatedItem;
           }
         }
-
-        function objetosSaoDiferentes(obj1, obj2) {
-          const str1 = JSON.stringify(obj1);
-          const str2 = JSON.stringify(obj2);
-          return str1 !== str2;
-        }
-
-        if (timeout) {
-          const listaSemPrimeiroElemento = updatedResposta;
-          const localS = JSON.parse(localStorage.getItem("listaVagas"));
-          if (objetosSaoDiferentes(listaSemPrimeiroElemento, resposta)) {
-            localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-            if (listaSemPrimeiroElemento.length > 0 && JSON.stringify(listaSemPrimeiroElemento[0]) === '{}') {
-              listaSemPrimeiroElemento.shift();
-            }
-            if (listaSemPrimeiroElemento.length > 0 && 
-              (JSON.stringify(listaSemPrimeiroElemento[0]) === JSON.stringify(listaSemPrimeiroElemento[1]))) {
-              listaSemPrimeiroElemento.shift();
-            }
-            setResposta(listaSemPrimeiroElemento);
-          }
-        } else if (timeout === null){
-          if (!localVagas) {
-            const listaSemPrimeiroElemento = updatedResposta;
-            localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-            setResposta(listaSemPrimeiroElemento);
-          } else {
-            const listaSemPrimeiroElemento = updatedResposta;
-            const localS = JSON.parse(localStorage.getItem("listaVagas"));
-            // aqui
-            if (objetosSaoDiferentes(listaSemPrimeiroElemento, localS)) {
-              localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-              setResposta(listaSemPrimeiroElemento)
-            }
-          }
-        } else if (timeout === 'reset'){
-          const listaSemPrimeiroElemento = updatedResposta;
-          localStorage.setItem('listaVagas', JSON.stringify(listaSemPrimeiroElemento));
-          setResposta(listaSemPrimeiroElemento);
-        }
-
-        let estacionadoSCount = 0;
-        let estacionadoNCount = 0;
-        let estacionadoPCount = 0;
-
-        const dataAtual = new Date();
-        const hora = dataAtual.getHours().toString().padStart(2, "0");
-        const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
-        const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
-        const horaAtual = `${hora}:${minutos}:${segundos}`;
-
-        response.data.data.forEach((objeto) => {
-          if (objeto.numero !== 0) {
-            if (objeto.estacionado === "S") {
-              estacionadoSCount++;
-              if (objeto.temporestante < horaAtual && objeto.numero_notificacoes_pendentess === 0) {
-                estacionadoPCount++;
-              }
-            } else if (objeto.estacionado === "N") {
-              estacionadoNCount++;
-            }
-          }
-        });
-        setVagasLivres(estacionadoNCount);
-        setVagasOcupadas(estacionadoSCount);
-        setVagasVencidas(estacionadoPCount);
+        localStorage.setItem('listaVagas', JSON.stringify(updatedResposta));
+        setResposta(updatedResposta);
+        funcCalcVgas(updatedResposta);
       } else {
         setEstado(true);
         setMensagem(response.data.msg.msg);
       }
     });
+  }
   };
 
 useEffect(() => {
@@ -219,7 +196,7 @@ useEffect(() => {
       setTimeout(() => {
         localStorage.removeItem("numero_vaga");
       }, 100);
-    } 
+    }
 
   const cardToScroll = document.querySelector(
     `.card-list[data-vaga="${vaga}"]`
@@ -235,7 +212,7 @@ useEffect(() => {
       (async () => {
         const setor = localStorage.getItem("setorTurno");
         setSalvaSetor(setor);
-        await getVagas(setor, null);
+        await getVagas(setor);
       })();
   }, [localVagas]);
 
@@ -392,7 +369,7 @@ useEffect(() => {
                       {resposta.length !== 0 ? (
                         resposta.map((vaga, index) => (
                         vaga !== null && (
-                          <VagaMonitor vaga={vaga} index={index} key={index} setMensagem={setMensagem} setEstado={setEstado} setResposta={setResposta} resposta={resposta} funcAttResposta={funcAttResposta} />
+                          <VagaMonitor vaga={vaga} index={index} key={index} setMensagem={setMensagem} setEstado={setEstado} setResposta={setResposta} resposta={resposta} funcAttResposta={funcAttResposta} setor={salvaSetor} />
                         )
                       ))) : ( null )}
                     </tbody>
