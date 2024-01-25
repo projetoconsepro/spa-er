@@ -83,10 +83,14 @@ const ListarVagasMonitor = () => {
     setEstado(true);
     setMensagem("Carregando vagas...");
 
+    const startTime = performance.now();
     if(localStorage.getItem("listaVagas") && timeout !== 'reset') {
         const items = localStorage.getItem("listaVagas");
         setResposta(JSON.parse(items));
         funcCalcVgas(JSON.parse(items));
+        const endTime = performance.now();
+        const tempoDecorrido = (endTime - startTime) / 1000;
+        setMensagem(`Vagas carregadas em ${tempoDecorrido.toFixed(2)} segundos`);
     } else  {
     const startTime = performance.now();
     await requisicao.get(`/vagas?setor=${setor}`).then((response) => {

@@ -320,8 +320,11 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
                 confirmButtonText: "Liberar",
                 denyButtonText: `Notificar`,
                 footer: `
+                <button class="btn3 botao bg-green-50 mx-2" id="btnFooter">
+                  Adicionar tempo
+                </button>
                 <button class="btn3 botao bg-blue-50" id="ticket">
-                Extrato de placa
+                  Extrato de placa
                 </button>
                 `,
               }).then((result) => {
@@ -337,6 +340,16 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
               const btnFooter2 = document.getElementById("ticket");
               btnFooter2.addEventListener("click", function () {
                 funcExtratoPlaca(vaga.placa);
+              });
+
+              const btnFooter = document.getElementById("btnFooter");
+              btnFooter.addEventListener("click", function () {
+                localStorage.setItem("vaga", vaga.numero);
+                localStorage.setItem("id_vagaveiculo", vaga.id_vaga_veiculo);
+                localStorage.setItem("placa", vaga.placa);
+                localStorage.setItem("popup", true);
+                FuncTrocaComp("RegistrarVagaMonitor");
+                Swal.close();
               });
             }
           } else if (vaga.debito === "S") {
