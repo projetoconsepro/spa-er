@@ -9,7 +9,7 @@ import ValidarRequisicao from "../util/ValidarRequisicao";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:300/');
+const socket = io(`${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`);
 
 export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, setResposta, funcAttResposta, setor }) => {
 
@@ -52,14 +52,6 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       } else {
         const validade = await CalcularValidade(vagaNew.chegada, vagaNew.tempo);
 
-        const horaAtual = await getHours();
-
-        const segundosHoraAtual = converterParaSegundos(horaAtual);
-        const segundosTempoRestante = converterParaSegundos(validade);
-
-        const diffSegundos = segundosTempoRestante - segundosHoraAtual;
-        const diffMinutos = diffSegundos / 60;
-
         vaga = {
           numero: vaga.numero,
           chegada: vagaNew.chegada,
@@ -75,28 +67,11 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
           debito: vagaNew.debitar_automatico
         }
 
-        
-        if (validade < horaAtual) {
-          vaga.corline = "#F8D7DA";
-          vaga.cor = "#842029";
-        } else if (diffMinutos <= 10) {
-          vaga.corline = "#FFF3CD";
-          vaga.cor = "#664D03";
-        } else if (diffMinutos >= 10) {
-          vaga.corline = "#D1E7DD";
-          vaga.cor = "#0F5132";
-        } else {
-          vaga.corline = "#fff";
-          vaga.cor = "#000";
-        }
-
         if (vagaNew.numero_notificacoes_pendentess !== 0) {
           const horaOriginal = new Date(vagaNew.hora_notificacao);
           horaOriginal.setHours(horaOriginal.getHours() + 2);
           const horaOriginalFormatada = horaOriginal.toLocaleTimeString("pt-BR", {timeZone: "America/Sao_Paulo",});
           vaga.hora_notificacao = horaOriginalFormatada;
-          vaga.corline = "#D3D3D4";
-          vaga.cor = "#141619";
         } 
 
         if (vagaNew.numero_notificacoes_pendentes !== 0) {
@@ -462,6 +437,60 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
         }
       };
 
+      // Função para determinar a cor de fundo
+const determineBackgroundColor = (vaga) => {
+
+  const horaAtual = getHours();
+
+  if (!vaga || vaga.placa === "") {
+    return "#fff";
+  } 
+
+  const segundosHoraAtual = converterParaSegundos(horaAtual);
+  const segundosTempoRestante = converterParaSegundos(vaga.temporestante);
+
+  const diffSegundos = segundosTempoRestante - segundosHoraAtual;
+  const diffMinutos = diffSegundos / 60;
+  
+  if (vaga.numero_notificacoes_pendentess && vaga.numero_notificacoes_pendentess !== 0) {
+    return "#D3D3D4";
+  } else if (vaga.temporestante < horaAtual) {
+    return "#F8D7DA";
+  } else if (diffMinutos <= 10) {
+    return "#FFF3CD";
+  } else if (diffMinutos > 10) {
+    return "#D1E7DD";
+  } else {
+    return "#fff";
+  }
+};
+
+const determineTextColor = (vaga) => {
+  const horaAtual = getHours();
+
+  if (!vaga || vaga.placa === "") {
+    return "#000";
+  } 
+
+  const segundosHoraAtual = converterParaSegundos(horaAtual);
+  const segundosTempoRestante = converterParaSegundos(vaga.temporestante);
+
+  const diffSegundos = segundosTempoRestante - segundosHoraAtual;
+  const diffMinutos = diffSegundos / 60;
+
+   if (vaga.numero_notificacoes_pendentess !== 0) {
+    return "#141619";
+  } else if (vaga.temporestante < horaAtual) {
+    return "#842029";
+  } else if (diffMinutos <= 10) {
+    return "#664D03";
+  } else if (diffMinutos > 10) {
+    return "#0F5132";
+  } else {
+    return "#000";
+  }
+};
+
   return (
     <tr
       className="card-list"
@@ -475,7 +504,7 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
         scope="row"
         style={{
           backgroundColor: vaga.corvaga,
-          color: vaga.cor,
+          color: determineTextColor(vaga),
         }}
       >
         {vaga.numero}
@@ -483,8 +512,8 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       <td
         className="fw-bolder"
         style={{
-          backgroundColor: vaga.corline,
-          color: vaga.cor,
+          backgroundColor: determineBackgroundColor(vaga),
+          color: determineTextColor(vaga),
         }}
       >
         {vaga.placa == "0" ? null : vaga.placa}{" "}
@@ -493,8 +522,8 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       <td
         className="fw-bolder"
         style={{
-          backgroundColor: vaga.corline,
-          color: vaga.cor,
+          backgroundColor: determineBackgroundColor(vaga),
+          color: determineTextColor(vaga),
         }}
       >
         {vaga.chegada}
@@ -502,16 +531,16 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       <td
         className="fw-bolder"
         style={{
-          backgroundColor: vaga.corline,
-          color: vaga.cor,
+          backgroundColor: determineBackgroundColor(vaga),
+          color: determineTextColor(vaga),
         }}
       >
         <h6
           id={vaga.variaDisplay}
           className="fw-bolder"
           style={{
-            backgroundColor: vaga.corline,
-            color: vaga.cor,
+            backgroundColor: determineBackgroundColor(vaga),
+            color: determineTextColor(vaga),
           }}
         >
           {vaga.temporestante}

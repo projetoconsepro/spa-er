@@ -23,8 +23,6 @@ const ListarVagasMonitor = () => {
   const [localVagas, setLocalVagas] = useState(true);
   const [attFunc, setAttFunc] = useState(false);
 
-
-
   const funcCalcVgas = (array) => {
     array = array.filter(item => item !== null);
     let estacionadoSCount = 0;
@@ -84,14 +82,14 @@ const ListarVagasMonitor = () => {
     setMensagem("Carregando vagas...");
 
     const startTime = performance.now();
-    if(localStorage.getItem("listaVagas") && timeout !== 'reset') {
+    if (localStorage.getItem("listaVagas") && timeout !== 'reset') {
         const items = localStorage.getItem("listaVagas");
         setResposta(JSON.parse(items));
         funcCalcVgas(JSON.parse(items));
         const endTime = performance.now();
         const tempoDecorrido = (endTime - startTime) / 1000;
         setMensagem(`Vagas carregadas em ${tempoDecorrido.toFixed(2)} segundos`);
-    } else  {
+    } else {
     const startTime = performance.now();
     await requisicao.get(`/vagas?setor=${setor}`).then((response) => {
       const endTime = performance.now();
@@ -139,44 +137,11 @@ const ListarVagasMonitor = () => {
 
               updatedItem.numero_notificacoes_pendentess = response.data.data[i].numero_notificacoes_pendentess;
 
-              const dataAtual = new Date();
-              const hora = dataAtual.getHours().toString().padStart(2, "0");
-              const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
-              const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
-              const horaAtual = `${hora}:${minutos}:${segundos}`;
-
-              function converterParaSegundos(tempo) {
-                const [horas2, minutos2, segundos2] = tempo.split(":").map(Number);
-                return horas2 * 3600 + minutos2 * 60 + segundos2;
-              }
-
-              const segundosHoraAtual = converterParaSegundos(horaAtual);
-              const segundosTempoRestante = converterParaSegundos(updatedItem.temporestante);
-
-              const diffSegundos = segundosTempoRestante - segundosHoraAtual;
-              const diffMinutos = diffSegundos / 60;
-
-              if (updatedItem.temporestante < horaAtual) {
-                updatedItem.corline = "#F8D7DA";
-                updatedItem.cor = "#842029";
-              } else if (diffMinutos <= 10) {
-                updatedItem.corline = "#FFF3CD";
-                updatedItem.cor = "#664D03";
-              } else if (diffMinutos >= 10) {
-                updatedItem.corline = "#D1E7DD";
-                updatedItem.cor = "#0F5132";
-              } else {
-                updatedItem.corline = "#fff";
-                updatedItem.cor = "#000";
-              }
-
               if (updatedItem.numero_notificacoes_pendentess !== 0) {
                 const horaOriginal = new Date(response.data.data[i].hora_notificacao);
                 horaOriginal.setHours(horaOriginal.getHours() + 2);
                 const horaOriginalFormatada = horaOriginal.toLocaleTimeString("pt-BR", {timeZone: "America/Sao_Paulo",});
                 updatedItem.hora_notificacao = horaOriginalFormatada;
-                updatedItem.corline = "#D3D3D4";
-                updatedItem.cor = "#141619";
               }
             }
             updatedResposta[i] = updatedItem;
