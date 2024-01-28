@@ -21,6 +21,7 @@ import { IconCirclePlus } from "@tabler/icons-react";
 import { IconX } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import jsPDF from "jspdf";
+import moment from "moment";
 
 
 const ListarVeiculos = () => {
@@ -47,6 +48,7 @@ const ListarVeiculos = () => {
   const [validade, setValidade] = useState("");
   const [pdfLoading, setPdfLoading] = useState(false);
   const [divError, setDivError] = useState(false);
+  const [encerramento, setEncerramento] = useState("");
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -61,6 +63,21 @@ const ListarVeiculos = () => {
       setValorCobranca2(valorcobranca / 2);
     }
   };
+
+
+  async function ajustarHora() {
+    let dataAtual = moment();
+  
+    if (dataAtual.day() === 6 && dataAtual.hour() >= 13) {
+      return false;
+    } else if (dataAtual.day() === 0) {
+      return false;
+    } else if (dataAtual.hour() >= encerramento) {
+      return false;
+    }
+  
+    return true;
+  }
 
   const calcularValidade = (horaInicio, duracao) => {
     const [horas, minutos, segundos] = duracao.split(":").map(Number);
@@ -261,6 +278,7 @@ const ListarVeiculos = () => {
     await parametros
       .get("/parametros")
       .then((response) => {
+        setEncerramento(response.data.data.param.turno.horaEncerramento)
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
         setValorCobranca2(response.data.data.param.estacionamento.valorHora);
         setSelectedButton("01:00:00");
@@ -332,6 +350,19 @@ const ListarVeiculos = () => {
 
   const hangleplaca = async (placa, index) => {
     setBotaoOff(true);
+
+    const verifica = await ajustarHora();
+
+    if (!verifica) {
+      setBotaoOff(false);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "O estacionamento rotativo está fechado!",
+        footer: '<a href="">Por favor, tente novamente.</a>',
+      });
+      return;
+    }
     const requisicao = createAPI();
     const tempo1 = selectedButton;
 
@@ -348,8 +379,15 @@ const ListarVeiculos = () => {
         Swal.fire({
           icon: "error",
           title: "Saldo insuficiente",
-          footer: '<a href="">Clique aqui para adicionar crédito.</a>',
+          footer: '<a id="linkAdicionarCredito">Clique aqui para adicionar crédito.</a>',
         });
+
+        document.getElementById('linkAdicionarCredito').addEventListener('click', function(event) {
+          event.preventDefault();
+          FuncTrocaComp("InserirCreditos");
+          Swal.close();
+        });
+
       }  else {
       requisicao
         .post("/estacionamento", {
@@ -398,6 +436,19 @@ const ListarVeiculos = () => {
     const requisicao = createAPI();
     const vagaa = [];
 
+    const verifica = await ajustarHora();
+
+    if (!verifica) {
+      setBotaoOff(false);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "O estacionamento rotativo está fechado!",
+        footer: '<a href="">Por favor, tente novamente.</a>',
+      });
+      return;
+    }
+
     vagaa[0] = vaga;
 
     const tempo1 = selectedButton;
@@ -411,7 +462,13 @@ const ListarVeiculos = () => {
       Swal.fire({
         icon: "error",
         title: "Saldo insuficiente",
-        footer: '<a href="">Clique aqui para adicionar crédito.</a>',
+        footer: '<a id="linkAdicionarCredito">Clique aqui para adicionar crédito.</a>',
+      });
+
+      document.getElementById('linkAdicionarCredito').addEventListener('click', function(event) {
+        event.preventDefault();
+        FuncTrocaComp("InserirCreditos");
+        Swal.close();
       });
     } else {
       requisicao

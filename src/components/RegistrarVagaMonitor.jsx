@@ -160,8 +160,6 @@ const RegistrarVagaMonitor = () => {
 
               listaVagas = listaVagas.filter((element) => element !== null);
 
-              console.log(listaVagas);
-
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
               if (indexByPlaca !== -1) {
@@ -170,6 +168,7 @@ const RegistrarVagaMonitor = () => {
                 vaga.id_vaga_veiculo = "";
                 vaga.chegada = "";
                 vaga.variaDisplay = "aparece";
+                vaga.estacionado = "N";
                 vaga.tempo = "";
                 vaga.temporestante = "";
                 vaga.display = "testeNot2";
@@ -183,6 +182,7 @@ const RegistrarVagaMonitor = () => {
                 const resposta = response.data.data;
                 const vaga = listaVagas[indexVaga];
                 vaga.placa = tirarTraco;
+                vaga.estacionado = "S";
                 vaga.numero = parseInt(response.data.data.numero_vagas[0]);
                 vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
                 vaga.chegada = resposta.chegada;
@@ -221,10 +221,6 @@ const RegistrarVagaMonitor = () => {
   const onClose = () => {
     setLoadingButton(false);
   }
-
-  useEffect(() => {
-    console.log(selectedButton)
-  }, [selectedButton]);
   
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
@@ -310,6 +306,7 @@ const RegistrarVagaMonitor = () => {
                 const vaga = listaVagas[indexByPlaca];
                 vaga.placa = "";
                 vaga.id_vaga_veiculo = "";
+                vaga.estacionado = "N";
                 vaga.chegada = "";
                 vaga.variaDisplay = "aparece";
                 vaga.tempo = "";
@@ -327,6 +324,7 @@ const RegistrarVagaMonitor = () => {
                 vaga.placa = tirarTraco;
                 vaga.numero = parseInt(vagaa[0]);
                 vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
+                vaga.estacionado = "S";
                 vaga.chegada = resposta.chegada;
                 vaga.tempo = resposta.tempo;
                 vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
@@ -433,6 +431,7 @@ const RegistrarVagaMonitor = () => {
                 vaga.numero = parseInt(vagaa[0]);
                 vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
                 vaga.chegada = resposta.chegada;
+                vaga.estacionado = "S";
                 vaga.tempo = resposta.tempo;
                 vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
                 vaga.variaDisplay = "aparece";
@@ -629,6 +628,12 @@ const RegistrarVagaMonitor = () => {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem("vaga") || localStorage.getItem("vaga") === "" || 
+      localStorage.getItem("vaga") === null || localStorage.getItem("vaga") === undefined) {
+      FuncTrocaComp("ListarVagasMonitor");
+      return;
+    }
+
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"

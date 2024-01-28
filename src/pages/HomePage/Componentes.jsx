@@ -50,6 +50,9 @@ import CameraAutoInfracao from '../../components/CameraAutoInfracao';
 import SugestoesAdmin from '../../components/SugestoesAdmin';
 import AdicionarModelo from '../../components/AdicionarModelo';
 import Feriados from '../../components/Feriados';
+import ListaAutoInfracao from '../../components/ListaAutoInfracao';
+import PlacaIsenta from '../../components/PlacaIsenta';
+import BuscarMovimentoTxId from '../../components/BuscarMovimentoTxId';
 
 export default function Veiculos({Componente}) {
     switch(Componente) {
@@ -153,6 +156,12 @@ export default function Veiculos({Componente}) {
             return <CameraAutoInfracao />;
         case "Feriados":
             return <Feriados />;
+        case "ListaAutoInfracao":
+            return <ListaAutoInfracao />;
+        case "PlacaIsenta":
+            return <PlacaIsenta />;
+        case "BuscarMovimentoTxId":
+            return <BuscarMovimentoTxId />;
         default:
             return <Error />;
     }
