@@ -1,10 +1,9 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Logo from '../util/logoconseproof2.png';
 import VoltarComponente from '../util/VoltarComponente';
-import { FaPowerOff } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 import { AiFillPrinter } from 'react-icons/ai';
 import CarroLoading from '../components/Carregamento';
 import Filtro from '../util/Filtro';
@@ -655,12 +654,21 @@ doc.autoTable({
     if(res.data.msg.resultado){
       console.log(res.data)
       setEstadoLoadingPix(false)
-      setEstado(true);
+      Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: res.data.msg.msg,
+      });
     } else {
-      setMensagem(res.data.msg.msg);
-      setEstado2(true);
+      setEstadoLoadingPix(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro!',
+        text: res.data.msg.msg,
+      });
     }
   }).catch((err) => {
+      setEstadoLoadingPix(false)
       console.log(err);
     });
   }
