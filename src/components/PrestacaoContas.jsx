@@ -1,14 +1,14 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Logo from '../util/logoconseproof2.png';
 import VoltarComponente from '../util/VoltarComponente';
-import { FaPowerOff } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 import { AiFillPrinter } from 'react-icons/ai';
 import CarroLoading from '../components/Carregamento';
 import Filtro from '../util/Filtro';
 import createAPI from '../services/createAPI';
+import AtualizarPix from '../util/AtualizarPix';
 
 const PrestacaoContas = () => {
   const [data, setData] = useState([]);
@@ -17,6 +17,7 @@ const PrestacaoContas = () => {
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
   const [estadoLoading, setEstadoLoading] = useState(false);
+  const [estadoLoadingPix, setEstadoLoadingPix] = useState(false);
   const [mensagem, setMensagem] = useState('');
   const [dataHoje, setDataHoje] = useState('');
 
@@ -246,13 +247,27 @@ const PrestacaoContas = () => {
     const totaisAplicativo = calcularTotaisPorCategoria('aplicativo', iAplicativo);
     const totaisAvulso = calcularTotaisPorCategoria('avulso', iAvulso);
     const totaisChatbot = calcularTotaisPorCategoria('chatbot', iChatbot);
-    
-    // Somar totais para criar a linha 'Total'
-    const totalFinal = totaisParceiro.map((_, index) =>
-        totaisParceiro[index] + totaisMonitor[index] + totaisAplicativo[index] + totaisAvulso[index] + totaisChatbot[index]
-    );
-    
-    // Adicionar a linha 'Total' ao regularizacaoData
+
+    const totalFinal = totaisParceiro.map((_, index) => {
+      const totalParceiro = formatNumeroParaFloat(totaisParceiro[index]);
+      const totalMonitor = formatNumeroParaFloat(totaisMonitor[index]);
+      const totalAplicativo = formatNumeroParaFloat(totaisAplicativo[index]);
+      const totalAvulso = formatNumeroParaFloat(totaisAvulso[index]);
+      const totalChatbot = formatNumeroParaFloat(totaisChatbot[index]);
+      
+      const finalTotal = totalParceiro + totalMonitor + totalAplicativo + totalAvulso + totalChatbot;
+      return typeof totaisParceiro[index] === 'string' ? formatNumero(finalTotal) : finalTotal;
+    });
+  
+  function formatNumeroParaFloat(numero) {
+      if (typeof numero === 'string') {
+          const numeroFormatado = numero.replace(/\./g, '').replace(',', '.');
+          return parseFloat(numeroFormatado);
+      } else {
+          return numero;
+      }
+  }
+
     regularizacaoData.push(['Total', ...totalFinal]);
 
     const columnStyles = {
@@ -285,7 +300,6 @@ const PrestacaoContas = () => {
       halign: 'center'
     }
 
-    
     
     doc.autoTable({
       head: [regularizacaoData[0]],
@@ -421,6 +435,7 @@ doc.autoTable({
     const base64 = btoa(consulta)
     requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
     if(res.data.msg.resultado){
+      console.log(res.data)
     setEstadoLoading(false);
     setEstado(true);
     setData(res.data.data);
@@ -629,6 +644,35 @@ doc.autoTable({
   });
   }
 
+  const handleAtualiza = (consulta) => {
+    setEstado2(false);
+    setEstadoLoadingPix(true)
+    const requisicao = createAPI();
+    const base64 = btoa(consulta)
+    requisicao.get(`/financeiro/update/pix?query=${base64}`).then((res) => {
+      console.log(res)
+    if(res.data.msg.resultado){
+      console.log(res.data)
+      setEstadoLoadingPix(false)
+      Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: res.data.msg.msg,
+      });
+    } else {
+      setEstadoLoadingPix(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro!',
+        text: res.data.msg.msg,
+      });
+    }
+  }).catch((err) => {
+      setEstadoLoadingPix(false)
+      console.log(err);
+    });
+  }
+
   return (
   <div className="dashboard-container mb-5">
   <div className="row">
@@ -642,7 +686,10 @@ doc.autoTable({
                     <div className="col-7">
                       <Filtro nome={"PrestacaoContas"} onConsultaSelected={handleConsulta} onLoading={estadoLoading} />
                     </div>
-                      <div className="col-5">
+                    <div className="col-3">
+                      <AtualizarPix nome={"PrestacaoContas"} onConsultaSelected={handleAtualiza} onLoading={estadoLoadingPix} />
+                    </div>
+                      <div className="col-2">
                         {estado ?
                           <button className="btn3 botao p-0 m-0 w-100 h-100" type="button" onClick={()=>{gerarPdf()}}><AiFillPrinter  size={21}/></button>
                           : 
