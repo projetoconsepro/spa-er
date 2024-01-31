@@ -126,8 +126,8 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       });
 
       socket.on('vaga', (message) => {
-        if (message.numero == vaga.numero) {
-          funcUpdateVaga(message);
+        if (message.vaga.numero == vaga.numero && message.setor == setor) {
+          funcUpdateVaga(message.vaga);
         }
       });
   
