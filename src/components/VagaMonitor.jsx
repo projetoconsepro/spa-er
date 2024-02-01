@@ -133,8 +133,6 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
   
     }, []);
 
-
-
     const registroDebitoAutomatico = async (placa, numero, tempo, id_vaga, index) => {
         const requisicao = await createAPI();
     
@@ -258,7 +256,7 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
         localStorage.setItem("numero_vaga", vaga.numero);
         const horaAgoraNew = await horaAgoraFunc();
         if (vaga.temporestante < horaAgoraNew && vaga.placa !== "") {
-          if (vaga.numero_notificacoes_pendentes !== 0 || vaga.numero_notificacoes_pendentess  !== 0) {
+          if (vaga.numero_notificacoes_pendentes !== 0 && vaga.numero_notificacoes_pendentess  !== 0) {
             if (horaAgoraNew < vaga.hora_notificacao) {
               Swal.fire({
                 title: "Deseja liberar esta vaga?",
