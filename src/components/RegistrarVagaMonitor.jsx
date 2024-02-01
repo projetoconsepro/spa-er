@@ -181,6 +181,7 @@ const RegistrarVagaMonitor = () => {
               if (indexVaga !== -1) {
                 const resposta = response.data.data;
                 const vaga = listaVagas[indexVaga];
+                vaga.debito = resposta.debito;
                 vaga.placa = tirarTraco;
                 vaga.estacionado = "S";
                 vaga.numero = parseInt(response.data.data.numero_vagas[0]);
@@ -322,6 +323,7 @@ const RegistrarVagaMonitor = () => {
                 const resposta = response.data.data;
                 const vaga = listaVagas[indexVaga];
                 vaga.placa = tirarTraco;
+                vaga.debito = resposta.debito;
                 vaga.numero = parseInt(vagaa[0]);
                 vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
                 vaga.estacionado = "S";
@@ -428,6 +430,7 @@ const RegistrarVagaMonitor = () => {
                 const resposta = response.data.data;
                 const vaga = listaVagas[indexVaga];
                 vaga.placa = tirarTraco;
+                vaga.debito = resposta.debito;
                 vaga.numero = parseInt(vagaa[0]);
                 vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
                 vaga.chegada = resposta.chegada;

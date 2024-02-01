@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import FuncTrocaComp from '../util/FuncTrocaComp';
-import VoltarComponente from '../util/VoltarComponente'
 import { Button, Divider, Group, Input, Modal, Text } from '@mantine/core';
 import { IconLockAccess } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';

@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { React, useState, useEffect } from 'react'
 import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'

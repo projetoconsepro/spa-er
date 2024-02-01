@@ -62,7 +62,7 @@ const RegistrarVeiculo = () => {
             placaFinal = split[0] + split[1]
         }
         placaFinal = placaFinal.toUpperCase()
-        if(validarPlaca(placaFinal) === false ) {
+        if(validarPlaca(placaFinal) === false) {
             setLoadingButton(false);
             estadoIf = false;
             setMensagem("Placa inválida")
@@ -75,7 +75,28 @@ const RegistrarVeiculo = () => {
             estadoIf = true
         }
     } else {
+        let placaFinal = ""
+        if (placa === "placa2"){
+            placaFinal = textoPlaca;
+        }
+        else {
+            const split = textoPlaca.split("-")
+            placaFinal = split[0] + split[1]
+        }
+        placaFinal = placaFinal.toUpperCase()
+        console.log(placaFinal)
+        if (placaFinal.length < 7 || placaFinal.length > 8 || placaFinal === ""){
+            setLoadingButton(false);
+            estadoIf = false;
+            setMensagem("Placa inválida")
+            setEstado(true)
+            setTimeout(() => {
+                setEstado(false)
+                setMensagem("")
+            }, 5000);
+        } else {
         estadoIf = true
+        }
     } 
     
     if(estadoIf){

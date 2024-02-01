@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Group, Input, Button, Modal, Stepper } from "@mantine/core";
 import {
   IconCash,

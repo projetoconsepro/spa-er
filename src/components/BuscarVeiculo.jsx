@@ -1,16 +1,13 @@
-import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCarAlt, FaParking } from "react-icons/fa";
 import { BsCashCoin, BsPaintBucket} from "react-icons/bs";
-import Cronometro from './Cronometro';
 import { RxLapTimer } from 'react-icons/rx';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Divider } from '@mantine/core';
 import createAPI from '../services/createAPI';
 import ImpressaoTicketEstacionamento from '../util/ImpressaoTicketEstacionamento';
-import CalcularValidade from '../util/CalcularValidade';
 import calcularValidade from '../util/CalcularValidade';
 
 
