@@ -1,14 +1,7 @@
-import axios from "axios";
 import { React, useState, useEffect } from "react";
-import {
-  AiOutlineArrowDown,
-  AiOutlineArrowUp,
-  AiOutlineReload,
-} from "react-icons/ai";
 import Swal from "sweetalert2";
 import moment from "moment";
 import VoltarComponente from "../util/VoltarComponente";
-import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
 import { useDisclosure } from "@mantine/hooks";

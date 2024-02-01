@@ -1,9 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
 import {
   AiFillCheckCircle,
-  AiFillPrinter,
   AiOutlineReload,
 } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin } from "react-icons/bs";

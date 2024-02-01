@@ -1,10 +1,8 @@
-import axios from 'axios'
 import { React, useState, useEffect } from 'react'
 import { FaEye, FaEllipsisH } from 'react-icons/fa'
 import { AiFillPrinter, AiOutlinePlusCircle, AiOutlineReload } from 'react-icons/ai'
 import ScrollTopArrow from "./ScrollTopArrow";
 import CarroLoading from '../components/Carregamento'
-import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
 import Filtro from '../util/Filtro';

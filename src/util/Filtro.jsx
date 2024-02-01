@@ -1,8 +1,7 @@
-import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Group, Button, Input, Alert, Radio, Grid, Badge } from '@mantine/core';
-import { DatePickerInput, DateTimePicker } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates';
 import Select from "react-select";
 import 'dayjs/locale/pt-br';
 import { IconAlertCircle, IconMail, IconParking, IconPhone, IconUser } from '@tabler/icons-react';

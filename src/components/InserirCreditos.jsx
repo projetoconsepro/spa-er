@@ -1,7 +1,6 @@
-import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs, Stack, Box } from "@mantine/core";
+import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowForwardUpDouble, IconArrowRight, IconCash, IconCheck, IconX } from "@tabler/icons-react";
-import axios from "axios";
 import { React, useState, useRef, useEffect } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
@@ -10,7 +9,7 @@ import createAPI from "../services/createAPI";
 import VoltarComponente from "../util/VoltarComponente";
 import ModalErroBanco from "./ModalErroBanco";
 import { MdPix } from "react-icons/md";
-import { FaSave, FaTrash } from "react-icons/fa";
+import { FaSave } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 const InserirCreditos = () => {

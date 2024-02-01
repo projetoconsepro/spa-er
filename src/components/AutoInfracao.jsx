@@ -1,12 +1,11 @@
-import axios from 'axios';
 import { React, useEffect, useState } from 'react'
 import { BsCalendarDate, BsPaintBucket } from 'react-icons/bs';
-import { FaCarAlt, FaClipboard, FaClipboardList, FaCode, FaParking } from 'react-icons/fa';
+import { FaCarAlt, FaClipboard, FaClipboardList, FaParking } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Card, Divider, Group, Input, Modal, Text } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
-import { IconCamera, IconCodeCircle, IconCodeDots, IconFileCode, IconReceipt } from '@tabler/icons-react';
+import { IconCamera, IconReceipt } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import createAPI from '../services/createAPI';
 import VoltarComponente from '../util/VoltarComponente';

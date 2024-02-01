@@ -3,7 +3,6 @@ import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from '../util/VoltarComponente';
 import { Button, Divider } from '@mantine/core';
 
-
 const Regularizacao = () => {
     const [placa, setPlaca] = useState("placa")
     const [textoPlaca, setTextoPlaca] = useState("")

@@ -15,9 +15,8 @@ import {
   IconVideo,
 } from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
-import { FiMail, FiMap } from "react-icons/fi";
+import { FiMap } from "react-icons/fi";
 import { FcIdea } from "react-icons/fc";
-import axios from "axios";
 import Swal from "sweetalert2";
 import createAPI from "../services/createAPI";
 

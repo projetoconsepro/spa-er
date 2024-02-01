@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useState, useEffect, useRef } from "react";
-import Swal from "sweetalert2"; // Importe o SweetAlert
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import {
   IconParking,
   IconEdit,

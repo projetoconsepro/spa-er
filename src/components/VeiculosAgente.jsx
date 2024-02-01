@@ -1,10 +1,9 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import ScrollTopArrow from "./ScrollTopArrow";
 import { useDisclosure } from "@mantine/hooks";
 import { Menu, Modal, Text, Button } from '@mantine/core'
-import { IconCopy, IconMapSearch, IconReload } from "@tabler/icons-react";
+import { IconMapSearch, IconReload } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
 import VoltarComponente from "../util/VoltarComponente";
 import createAPI from "../services/createAPI";

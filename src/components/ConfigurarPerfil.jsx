@@ -6,9 +6,7 @@ import {
   IconLock,
   IconUserCircle,
   IconMail,
-  IconEdit,
   IconPhone,
-  IconTrash,
 } from "@tabler/icons-react";
 import {
   Accordion,
@@ -32,7 +30,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import { IconLockCheck } from "@tabler/icons-react";
 import Swal from "sweetalert2";
 import createAPI from "../services/createAPI";
-import { FaCreditCard, FaSave, FaTrash } from "react-icons/fa";
+import { FaCreditCard } from "react-icons/fa";
 
 const ConfigurarPerfil = () => {
   const [saldo, setSaldo] = useState([]);

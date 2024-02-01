@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { AuthContext } from "../pages/contexts/auth";
 import Swal from 'sweetalert2'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
@@ -6,7 +6,7 @@ import emailValidator from 'email-validator';
 import InputMask from "react-input-mask";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { Input, Loader, PasswordInput } from "@mantine/core";
-import { IconClipboardText, IconLock, IconMail, IconPhone, IconPhoneX, IconUser } from "@tabler/icons-react";
+import { IconClipboardText, IconLock, IconMail, IconPhone, IconUser } from "@tabler/icons-react";
 import { IconLockCheck } from "@tabler/icons-react";
 
 const RegisterPage = () => {
