@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import CalcularHoras from "../util/CalcularHoras";
-import LiberarVaga from "../util/LiberarVaga";
 import CalcularValidade from "../util/CalcularValidade";
 import Swal from "sweetalert2";
 import ValidarRequisicao from "../util/ValidarRequisicao";
@@ -95,7 +94,18 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
             vaga: numero,
           }).then(async (response) => {
             if (response.data.msg.resultado) {
-               await LiberarVaga(resposta, setResposta, index);
+              const vagaNew = {
+                numero: vaga.numero,
+                estacionado: "N",
+                chegada: "",
+                placa: "",
+                temporestante: "",
+                Countdown: "",
+                variaDisplay: "escondido",
+                corvaga: vaga.corvaga,
+                tipo: vaga.tipo,
+              };
+              funcAttResposta(vagaNew, index);
             } else {
                Swal.fire(`${response.data.msg.msg}`, "", "error");
             }

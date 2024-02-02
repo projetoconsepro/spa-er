@@ -22,6 +22,7 @@ const ListarVagasMonitor = () => {
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [localVagas, setLocalVagas] = useState(true);
   const [attFunc, setAttFunc] = useState(false);
+  let variavelAuxiliarVagas = [];
 
   const funcCalcVgas = (array) => {
     array = array.filter(item => item !== null);
@@ -55,13 +56,15 @@ const ListarVagasMonitor = () => {
 
   const funcAttResposta = (Json, index) => {
 
-    const updatedResposta = resposta;
+    if (variavelAuxiliarVagas.length === 0) {
+      variavelAuxiliarVagas = resposta;
+    }
 
-    updatedResposta[index] = Json;
+    variavelAuxiliarVagas[index] = Json;
 
-    setResposta(updatedResposta);
-    funcCalcVgas(updatedResposta);
-    localStorage.setItem('listaVagas', JSON.stringify(updatedResposta));
+    setResposta(variavelAuxiliarVagas);
+    funcCalcVgas(variavelAuxiliarVagas);
+    localStorage.setItem('listaVagas', JSON.stringify(variavelAuxiliarVagas));
   };
 
   const getVagas = async (setor, timeout) => {
