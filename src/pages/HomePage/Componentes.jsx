@@ -19,7 +19,6 @@ import LoginPage from '../../components/LoginPage';
 import DoisPerfis from '../../components/DoisPerfis';
 import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
 import AdicionarCreditos from '../../components/AdicionarCreditos';
-import FecharTurno from '../../components/FecharTurno';
 import AbrirTurno from '../../components/AbrirTurno';
 import HistoricoFinanceiro from '../../components/HistoricoFinanceiro';
 import HistoricoFinanceiroParceiro from '../../components/HistoricoFinanceiroParceiro';
@@ -102,8 +101,6 @@ export default function Veiculos({Componente}) {
             return <AdicionarCreditos />;
         case "AbrirTurno":
             return <AbrirTurno />;
-        case "FecharTurno":
-            return <FecharTurno />;
         case "HistoricoFinanceiro":
             return <HistoricoFinanceiro />;
         case "Configuracoes":

@@ -18,6 +18,7 @@ import React, { useState, useEffect } from "react";
 import { FiMap } from "react-icons/fi";
 import { FcIdea } from "react-icons/fc";
 import Swal from "sweetalert2";
+import VoltarComponente from "../util/VoltarComponente";
 import createAPI from "../services/createAPI";
 
 const Suporte = () => {
@@ -63,7 +64,8 @@ const Suporte = () => {
   }, []);
 
   return (
-    <div>
+    <>
+    <div className="mb-4">
       <Card padding="lg" radius="md" withBorder>
         <Group position="apart" mt="md" mb="xs">
           <Text weight={500}>Olá, {nome}!</Text>
@@ -91,18 +93,18 @@ const Suporte = () => {
               variant="contained"
               styles={{ item: { backgroundColor: "white" } }}
             >
-                <Accordion.Item value="perguntaCartao">
+              <Accordion.Item value="perguntaCartao">
                 <Accordion.Control>
-                 Por que minha compra no cartão não foi aprovada?
+                  Por que minha compra no cartão não foi aprovada?
                 </Accordion.Control>
                 <Accordion.Panel>
-                <Text size="sm" color="dimmed">
-                  1. Pode haver um limite de crédito insuficiente em seu cartão. <br />
-                  2. Verifique se os detalhes do cartão estão corretos, como número, data de validade e código de segurança. <br />
-                  3. O vendedor ou a plataforma de pagamento pode ter problemas técnicos temporários. <br />
-                  4. O produto ou serviço pode estar fora das diretrizes de compra do seu cartão. <br />
-                  5. Verifique se há fundos suficientes na conta associada ao cartão. 
-                </Text>
+                  <Text size="sm" color="dimmed">
+                    1. Pode haver um limite de crédito insuficiente em seu cartão. <br />
+                    2. Verifique se os detalhes do cartão estão corretos, como número, data de validade e código de segurança. <br />
+                    3. O vendedor ou a plataforma de pagamento pode ter problemas técnicos temporários. <br />
+                    4. O produto ou serviço pode estar fora das diretrizes de compra do seu cartão. <br />
+                    5. Verifique se há fundos suficientes na conta associada ao cartão.
+                  </Text>
                 </Accordion.Panel>
               </Accordion.Item>
               <Accordion.Item value="pergunta6">
@@ -183,44 +185,44 @@ const Suporte = () => {
           </Accordion.Control>
           <Accordion.Panel>
             {perfil === "cliente" ?
-          <Accordion
-              variant="contained"
-              styles={{ item: { backgroundColor: "white" } }}
-            >
-              <Accordion.Item value="Debito">
-                <Accordion.Control>
-                  Como habilitar o débito automático?
-                </Accordion.Control>
-                <Accordion.Panel>
-                <iframe width="100%" height="500" src="https://www.youtube.com/embed/bn9r5PDI4WE" title="Habilitando o débito automático" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
-                </Accordion.Panel>
-              </Accordion.Item>
-              <Accordion.Item value="credito">
-                <Accordion.Control>
-                  Como faço para comprar créditos?
-                </Accordion.Control>
-                <Accordion.Panel>
-                <iframe width="100%" height="500" src="https://www.youtube.com/embed/_pI2x798syo" title="Adicionar crédito" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
-                </Accordion.Panel>
-              </Accordion.Item>
-              <Accordion.Item value="estacionar">
-                <Accordion.Control>
-                  Como estacionar pelo aplicativo?
-                </Accordion.Control>
-                <Accordion.Panel>
-                <iframe width="100%" height="500" src="https://www.youtube.com/embed/TTZyZRaq7Og" title="Estacionamento pelo App" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
-                </Accordion.Panel>
-              </Accordion.Item>
-              <Accordion.Item value="whatsapp">
-                <Accordion.Control>
-                  Como estacionar pelo WhatsApp?
-                </Accordion.Control>
-                <Accordion.Panel>
-                <iframe width="100%" height="500" src="https://www.youtube.com/embed/qpaxJ7In8Mg" title="Estacionamento pelo WhatsApp" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
-                </Accordion.Panel>
-              </Accordion.Item>
-            </Accordion>
-            : null }
+              <Accordion
+                variant="contained"
+                styles={{ item: { backgroundColor: "white" } }}
+              >
+                <Accordion.Item value="Debito">
+                  <Accordion.Control>
+                    Como habilitar o débito automático?
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <iframe width="100%" height="500" src="https://www.youtube.com/embed/bn9r5PDI4WE" title="Habilitando o débito automático" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item value="credito">
+                  <Accordion.Control>
+                    Como faço para comprar créditos?
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <iframe width="100%" height="500" src="https://www.youtube.com/embed/_pI2x798syo" title="Adicionar crédito" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item value="estacionar">
+                  <Accordion.Control>
+                    Como estacionar pelo aplicativo?
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <iframe width="100%" height="500" src="https://www.youtube.com/embed/TTZyZRaq7Og" title="Estacionamento pelo App" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                  </Accordion.Panel>
+                </Accordion.Item>
+                <Accordion.Item value="whatsapp">
+                  <Accordion.Control>
+                    Como estacionar pelo WhatsApp?
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <iframe width="100%" height="500" src="https://www.youtube.com/embed/qpaxJ7In8Mg" title="Estacionamento pelo WhatsApp" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                  </Accordion.Panel>
+                </Accordion.Item>
+              </Accordion>
+              : null}
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="contato">
@@ -232,17 +234,14 @@ const Suporte = () => {
               <div style={{ display: "flex", alignItems: "center" }}>
                 <FaWhatsapp
                   size={20}
-                  style={{ marginRight: "5px", color: "green" }}
-                />
+                  style={{ marginRight: "5px", color: "green" }} />
                 <span>Contato via WhatsApp</span>
               </div>
             </div>
             <div
-              className={
-                window.innerWidth > 768
-                  ? "text-start mt-3 mx-3"
-                  : "text-center mt-3 mx-3"
-              }
+              className={window.innerWidth > 768
+                ? "text-start mt-3 mx-3"
+                : "text-center mt-3 mx-3"}
             >
               <a href="https://api.whatsapp.com/send?phone=5186604241&text=Olá!">
                 <Button
@@ -260,8 +259,7 @@ const Suporte = () => {
               <div style={{ display: "flex", alignItems: "center" }}>
                 <FiMap
                   size={20}
-                  style={{ marginRight: "5px", color: "blue" }}
-                />
+                  style={{ marginRight: "5px", color: "blue" }} />
                 <span>Endereço</span>
               </div>
             </div>
@@ -290,8 +288,7 @@ const Suporte = () => {
               value={assunto}
               onChange={(e) => setAssunto(e.target.value)}
               className="mb-3"
-              placeholder="Qual o assunto da sua sugestão?"
-            />
+              placeholder="Qual o assunto da sua sugestão?" />
             <textarea
               value={textoSuporte}
               onChange={(e) => setTextoSuporte(e.target.value)}
@@ -304,8 +301,7 @@ const Suporte = () => {
                 fontSize: "1rem",
                 border: "1px solid #ccc",
                 borderRadius: "5px",
-              }}
-            />
+              }} />
 
             <Button
               variant="gradient"
@@ -315,7 +311,7 @@ const Suporte = () => {
               style={{ marginTop: "1rem" }}
               onClick={() => {
                 handleSugestao();
-              }}
+              } }
             >
               Enviar ‎ ‎ <IconCheck />
             </Button>
@@ -323,6 +319,8 @@ const Suporte = () => {
         </Accordion.Item>
       </Accordion>
     </div>
+    <VoltarComponente />
+    </>
   );
 };
 
