@@ -68,6 +68,7 @@ const ListarVagasMonitor = () => {
   };
 
   const getVagas = async (setor, timeout) => {
+    console.log('setor', setor)
     const requisicao = createAPI();
     const setor2 = document.getElementById("setoresSelect").value;
     if (setor2 !== undefined && setor2 !== null && setor2 !== "") {

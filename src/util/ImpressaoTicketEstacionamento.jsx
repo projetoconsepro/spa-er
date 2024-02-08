@@ -1,13 +1,6 @@
 import axios from 'axios'
 
 const ImpressaoTicketEstacionamento = async (via, tempoChegada, tempo, monitor, vaga, placa, metodo, tempoValor, notificacao) => {
-        const obterHoraAtual = () => {
-            const dataAtual = new Date();
-            const hora = dataAtual.getHours().toString().padStart(2, '0');
-            const minutos = dataAtual.getMinutes().toString().padStart(2, '0');
-            const segundos = dataAtual.getSeconds().toString().padStart(2, '0');
-            return `${hora}:${minutos}:${segundos}`;
-          };
         
           const calcularValidade = (horaInicio, duracao) => {
             const [horas, minutos, segundos] = duracao.split(':').map(Number);
