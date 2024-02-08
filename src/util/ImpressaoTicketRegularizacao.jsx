@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const ImpressaoTicketRegularizacao = async (via, item) => {
-
+  console.log(item)
     const obterHoraAtual = () => {
       const dataAtual = new Date();
       const dia = dataAtual.getDate().toString().padStart(2, '0');
@@ -10,7 +10,7 @@ const ImpressaoTicketRegularizacao = async (via, item) => {
       const hora = dataAtual.getHours().toString().padStart(2, '0');
       const minutos = dataAtual.getMinutes().toString().padStart(2, '0');
       const segundos = dataAtual.getSeconds().toString().padStart(2, '0');
-      return `${dia}/${mes}/${ano} ${hora}:${minutos}:${segundos}`;
+      return `${dia}/${mes}/${ano} ${hora}:${minutos}:${segundos} \n Hora Notif.: ${item.data} \n `;
     };
 
     if (via === "PRIMEIRA"){
@@ -27,6 +27,7 @@ const ImpressaoTicketRegularizacao = async (via, item) => {
             valor: item.valor,
             via: via
         }
+
         if(window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(JSON.stringify(json));
         }
@@ -45,7 +46,6 @@ const ImpressaoTicketRegularizacao = async (via, item) => {
           valor: item.valor,
           via: via
       }
-
       if(window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(JSON.stringify(json));
       }

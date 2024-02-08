@@ -409,7 +409,7 @@ const ListarNotificacoes = () => {
             <div className="col-12">
               <h6>Selecione as notificações para regularizar:</h6>
               <div className="text-start d-flex">
-              <h6>Selecionar todas:  </h6> <input type="checkbox"  style={{ width: "15px", height: "15px", marginLeft: "8px", marginTop: "4px" }}  onChange={(e) => data.map((item) => item.checked = e.target.checked)} />
+              <h6>Selecionar todas:  </h6> <input type="checkbox"  style={{ width: "15px", height: "15px", marginLeft: "8px", marginTop: "4px" }} onChange={(e) => data.filter(item => item.pago === "N").map(item => item.checked = e.target.checked)} />
               </div>
             </div>
           </div>
