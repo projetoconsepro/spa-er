@@ -242,6 +242,10 @@ const AdicionarCreditos = () => {
       FuncTrocaComp("AbrirTurno");
     }
     setValor("");
+    if (localStorage.getItem("usuario") !== null) {
+      const user = localStorage.getItem("usuario");
+      setCPF([user]);
+    }
   }, []);
 
   return (

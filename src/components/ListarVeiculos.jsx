@@ -762,6 +762,21 @@ const ListarVeiculos = () => {
                   )}
                   {mostrar2[index].estado ? "Fechar" : link.textoestacionado}
                 </Button>
+                {mostrar2[index].estado ? null : (
+                  <div className="mt-1">
+                <span>
+                        <IoTrashSharp
+                          color="red"
+                          size={25}
+                          onClick={() => {
+                            removerVeiculo(link.id_veiculo);
+                          }}
+                        />
+                      </span>
+                  </div>
+                )}
+                
+
                 </div>
             </div>
           </div>
