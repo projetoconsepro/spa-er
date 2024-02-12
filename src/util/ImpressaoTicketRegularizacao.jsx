@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const ImpressaoTicketRegularizacao = async (via, item) => {
-  console.log(item)
+
     const obterHoraAtual = () => {
       const dataAtual = new Date();
       const dia = dataAtual.getDate().toString().padStart(2, '0');
