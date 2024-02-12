@@ -68,11 +68,11 @@ const ListarVagasMonitor = () => {
   };
 
   const getVagas = async (setor, timeout) => {
-    console.log('setor', setor)
     const requisicao = createAPI();
     const setor2 = document.getElementById("setoresSelect").value;
     if (setor2 !== undefined && setor2 !== null && setor2 !== "") {
       setor = setor2;
+      setSalvaSetor(setor);
       if (timeout !== true && timeout !== null) {
       for (let i = 0; i < resposta.length; i++) {
         delete resposta[i];
@@ -94,6 +94,7 @@ const ListarVagasMonitor = () => {
         const tempoDecorrido = (endTime - startTime) / 1000;
         setMensagem(`Vagas carregadas em ${tempoDecorrido.toFixed(2)} segundos`);
     } else {
+    localStorage.removeItem("listaVagas");
     const startTime = performance.now();
     await requisicao.get(`/vagas?setor=${setor}`).then((response) => {
       const endTime = performance.now();
@@ -102,6 +103,12 @@ const ListarVagasMonitor = () => {
 
       if (response.data.msg.resultado !== false) {
         const updatedResposta = resposta.map((item) => ({ ...item }));
+        const setor2 = document.getElementById("setoresSelect")?.value;
+        if (setor2 !== undefined && setor2 !== null && setor2 !== "") {
+          if (response.data.data[0].nome !== setor2) {
+            return;
+          }
+        }
         for (let i = 0; i < response?.data?.data.length; i++) {
           setSalvaSetor(response.data.data[0].nome);
 
