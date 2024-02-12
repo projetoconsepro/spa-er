@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCarAlt, FaParking } from "react-icons/fa";
-import { BsCashCoin, BsPaintBucket } from "react-icons/bs";
+import { BsCarFrontFill, BsCardList, BsCashCoin, BsClipboard, BsClipboard2Check, BsPaintBucket } from "react-icons/bs";
 import { RxLapTimer } from "react-icons/rx";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -9,7 +9,7 @@ import { Button, Divider } from "@mantine/core";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import calcularValidade from "../util/CalcularValidade";
-import { CarCrashOutlined } from "@mui/icons-material";
+import { CarCrashOutlined, CarRepair } from "@mui/icons-material";
 
 const BuscarVeiculo = () => {
   const [placa, setPlaca] = useState("placa");
@@ -46,6 +46,10 @@ const BuscarVeiculo = () => {
   };
 
   useEffect(() => {
+
+    localStorage.removeItem("usuario");
+
+
     if (
       localStorage.getItem("turno") !== "true" &&
       user2.perfil[0] === "monitor"
@@ -143,6 +147,7 @@ const BuscarVeiculo = () => {
             saldo_devedor: item.saldo_devedorr,
             debito: item.debitar_automatico === "S" ? "Ativo" : "Inativo",
             saldo: item.saldo,
+            cpf: item.cpf,
             estacionado: item.estacionado[0].estacionado,
             tempo: item.estacionado[0].tempo,
             chegada: item.estacionado[0].chegada,
@@ -194,6 +199,11 @@ const BuscarVeiculo = () => {
       );
     } else {
     }
+  };
+
+  const funcAddCredit = () => {
+    localStorage.setItem("usuario", data[0].cpf);
+    FuncTrocaComp("AdicionarCreditos");
   };
 
   return (
@@ -401,11 +411,12 @@ const BuscarVeiculo = () => {
                             id="estacionadocarroo"
                           >
                             <h6>
-                              <CarCrashOutlined />‎ Debito: {link.debito}
+                              <BsClipboard2Check />‎ Debito: {link.debito}
                             </h6>
                           </div>
 
                           {link.debito === "Ativo" ? (
+                            <>
                             <div
                               className="h6 d-flex align-items-center fs-6"
                               id="estacionadocarroo"
@@ -414,6 +425,15 @@ const BuscarVeiculo = () => {
                                 <BsCashCoin  />‎ Saldo: {link.saldo}
                               </h6>
                             </div>
+                            <div
+                            className="h6 d-flex align-items-center fs-6"
+                            id="estacionadocarroo"
+                          >
+                            <h6>
+                              <BsCardList />‎ Documento: {link.cpf}
+                            </h6>
+                          </div>
+                          </>
                           ) : null}
                         </div>
 
@@ -446,6 +466,8 @@ const BuscarVeiculo = () => {
                             Adicionar tempo
                           </button>
                         ) : null}
+
+
                         <button
                           type="submit"
                           className="btn4 mb-2 botao"
@@ -455,6 +477,17 @@ const BuscarVeiculo = () => {
                         >
                           Imprimir via
                         </button>
+                        {link.debito === "Ativo" ? (
+                          <button
+                            type="submit"
+                            className="btn4 bg-success mb-2 botao"
+                            onClick={() => {
+                              funcAddCredit();
+                            }}
+                          >
+                            Adicionar Saldo
+                          </button>
+                        ) : null}
                         <button
                           type="submit"
                           className="btn4 bg-gray-400 botao"

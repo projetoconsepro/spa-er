@@ -226,6 +226,7 @@ useEffect(() => {
       });
     localStorage.removeItem("idVagaVeiculo");
     localStorage.removeItem("placa");
+    localStorage.removeItem("usuario");
     localStorage.removeItem("vaga");
     localStorage.removeItem("placaCarro");
     localStorage.removeItem("tipoVaga");
