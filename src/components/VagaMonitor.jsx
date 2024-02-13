@@ -137,7 +137,6 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
 
       socket.on('vaga', (message) => {
         const listaVagas = JSON.parse(localStorage.getItem("listaVagas"));
-        console.log(listaVagas);
         if (message.vaga.numero == vaga.numero && message.setor == setor && listaVagas !== null) {
           funcUpdateVaga(message.vaga);
         }
@@ -466,7 +465,7 @@ const determineBackgroundColor = (vaga) => {
     return "#D3D3D4";
   } else if (vaga.temporestante < horaAtual) {
     return "#F8D7DA";
-  } else if (diffMinutos <= 10) {
+  } else if (diffMinutos <= 10.1) {
     return "#FFF3CD";
   } else if (diffMinutos > 10) {
     return "#D1E7DD";
@@ -492,7 +491,7 @@ const determineTextColor = (vaga) => {
     return "#141619";
   } else if (vaga.temporestante < horaAtual) {
     return "#842029";
-  } else if (diffMinutos <= 10) {
+  } else if (diffMinutos <= 10.1) {
     return "#664D03";
   } else if (diffMinutos > 10) {
     return "#0F5132";

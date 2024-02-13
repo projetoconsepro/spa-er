@@ -407,8 +407,6 @@ const RegistrarVagaMonitor = () => {
 
               listaVagas = listaVagas.filter((element) => element !== null);
 
-              console.log(listaVagas);
-
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
               if (indexByPlaca !== -1) {
