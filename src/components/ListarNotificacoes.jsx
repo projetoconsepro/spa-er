@@ -439,8 +439,8 @@ const ListarNotificacoes = () => {
                           style={{ width: "20px", height: "20px" }} />
                       </td>
                       <td>{link.placa}</td>
-                      <td>{link.data}</td>
-                      <td> {link.valor}</td>
+                      <td><small>{link.data}</small></td>
+                      <td> R$ {link.valor.toFixed(2)}</td>
                     </tr>
                   )
                 )}
@@ -450,7 +450,7 @@ const ListarNotificacoes = () => {
           ) : (
           <>
             <div className="col-12 text-center mt-4 mb-4">
-              <h6>Valor total <h3 className="mt-2">R$ {data.filter((item) => item.checked).reduce((acc, item) => acc + item.valor, 0)} </h3></h6>
+              <h6>Valor total <h3 className="mt-2">R$ {data.filter((item) => item.checked).reduce((acc, item) => acc + item.valor, 0).toFixed(2)} </h3></h6>
             </div>
 
             <p className="text-start">Forma de pagamento:</p>
