@@ -88,6 +88,7 @@ const HistoricoVeiculo = () => {
               saida: item.saida,
               local: item.local,
               data: ArrumaHora(item.data),
+              dataFixed: item.data,
               estado: false,
               pago: item.pago,
               tempo: item.tempo,
@@ -96,7 +97,12 @@ const HistoricoVeiculo = () => {
               notificacao: item.notificacao,
               id_vaga_veiculo: item.id_vaga_veiculo,
             }));
-            setData(newData);
+            const objetosOrdenados = newData.slice().sort((a, b) => {
+              const dataA = new Date(a.dataFixed);
+              const dataB = new Date(b.dataFixed);
+              return dataB - dataA; // Classificar do mais recente para o mais antigo
+          });
+          setData(objetosOrdenados);
           } else {
             setEstado2(false);
             setEstado(true);
