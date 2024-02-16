@@ -144,14 +144,13 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
   
     }, []);
 
-    const registroDebitoAutomatico = async (placa, numero, tempo, id_vaga, index) => {
+    const registroDebitoAutomatico = async (placa, numero, id_vaga, index) => {
         const requisicao = await createAPI();
     
         requisicao
         .post("/estacionamento", {
           placa: placa,
           numero_vaga: numero,
-          tempo: tempo,
           id_vaga_veiculo: id_vaga,
         })
         .then((response) => {
@@ -354,7 +353,7 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
               if (result.isConfirmed) {
                 funcLiberVaga(vaga.id_vaga_veiculo, vaga.numero, index);
               } else if (result.isDenied) {
-                registroDebitoAutomatico(vaga.placa, vaga.numero, vaga.tempo, vaga.id_vaga_veiculo, index);
+                registroDebitoAutomatico(vaga.placa, vaga.numero, vaga.id_vaga_veiculo, index);
               }
             });
     
