@@ -1,7 +1,7 @@
-import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint, FaConnectdevelop, FaCalendar, FaCalendarAlt } from "react-icons/fa";
-import { BsConeStriped, BsCashCoin, BsCashStack } from "react-icons/bs";
+import { FaCarAlt, FaParking, FaMapMarkerAlt, FaUserPlus, FaCar, FaHistory, FaUser, FaWhatsapp, FaPrint, FaCalendarAlt, FaClipboardList, FaSearch } from "react-icons/fa";
+import { BsConeStriped, BsCashCoin } from "react-icons/bs";
 import { MdAddLocationAlt, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
-import { RiAlertFill, RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
+import { RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import { BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
 import { AiFillEdit, AiFillPrinter, AiOutlineBarChart, AiOutlineFileSearch } from "react-icons/ai";
@@ -9,7 +9,7 @@ import { TbReportSearch } from "react-icons/tb";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
-import { IconHelpCircleFilled, IconHttpConnect, IconPlugConnected } from "@tabler/icons-react";
+import { IconHelpCircleFilled, IconPlugConnected } from "@tabler/icons-react";
 import { CarCrashOutlined } from "@mui/icons-material";
 
 const Sidebar = () => {
@@ -224,6 +224,12 @@ const Sidebar = () => {
             componente: "BuscarVeiculo",
         })
         links.push({
+            className: styles.className,
+            icon: <FaSearch />,
+            name: "‎ Buscar Movimento",
+            componente: "BuscarMovimentoTxId",
+        })
+        links.push({
             icon: <RiFileAddFill />,
             className: styles.className,
             name: "‎ Cadastros",
@@ -239,6 +245,12 @@ const Sidebar = () => {
                     icon: <FaCar />,
                     name: "‎ Adicionar veículo",
                     componente: "AdicionarModelo",
+                },
+                {
+                    className: styles.className,
+                    icon: <FaCar />,
+                    name: "‎ Placa isenta",
+                    componente: "PlacaIsenta",
                 },
                 {
                     className: styles.className,
@@ -384,6 +396,12 @@ const Sidebar = () => {
             icon: <FaParking />,
             name: "‎ Veículos Estacionados",
             componente: "VeiculosAgente",
+        })
+        links.push({
+            className: styles.className,
+            icon: <FaClipboardList />,
+            name: "‎ Autos de Infração",
+            componente: "ListaAutoInfracao",
         })
     }
 

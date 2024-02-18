@@ -1,12 +1,11 @@
-import axios from 'axios';
 import { React, useEffect, useState } from 'react'
 import { BsCalendarDate, BsPaintBucket } from 'react-icons/bs';
-import { FaCarAlt, FaClipboard, FaClipboardList, FaCode, FaParking } from 'react-icons/fa';
+import { FaCarAlt, FaClipboard, FaClipboardList, FaParking } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import { Button, Card, Divider, Group, Input, Modal, Text } from '@mantine/core';
 import { Carousel } from '@mantine/carousel';
-import { IconCamera, IconCodeCircle, IconCodeDots, IconFileCode, IconReceipt } from '@tabler/icons-react';
+import { IconCamera, IconReceipt } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import createAPI from '../services/createAPI';
 import VoltarComponente from '../util/VoltarComponente';
@@ -19,19 +18,66 @@ const AutoInfracao = () => {
     const [imagemLocal, setImagemLocal] = useState('')
 
     useEffect(() => {
-        const infos = JSON.parse(localStorage.getItem('autoInfracao'))
+        let infos = JSON.parse(localStorage.getItem('autoInfracao'))
         setData([infos])
+        console.log([infos])
 
-       if(localStorage.getItem('fotoInfracao')){
+        const requisicao = createAPI();
+
+        requisicao.get(`/veiculo/${infos.placa}`)
+        .then((response) => {
+            if (response.data.msg.resultado === false && response.data.msg.msg !== "Dados encontrados") {
+            }
+            else{
+              const newdata = {
+                ...infos,
+                fabricante: response.data.data[0].modelo.fabricante.fabricante,
+                modelo: response.data.data[0].modelo.modelo,
+                cor: response.data.data[0].cor,
+              };
+
+              infos = newdata;
+
+              setData([newdata])
+            }
+        }).catch((error) => {
+            console.log(error)
+        })
+
+
+       if(localStorage.getItem('fotoInfracao') !== null && localStorage.getItem('fotoInfracao') !== undefined && localStorage.getItem('fotoInfracao') !== ''){
           setImagemLocal(localStorage.getItem('fotoInfracao'))
        }
 
-        const requisicao = createAPI();
-        requisicao.get(`/notificacao/imagens/${infos.id_notificacao}`).then((response) => {
-          if(response.data.msg.resultado){
-            setDataImagem(response.data.data)
-          }
-        })
+       let idNotificacao;
+
+
+
+       requisicao.get(`/notificacao/vagaveiculo/${infos.id_vaga_veiculo}`).then((response) => {
+        if(response.data.msg.resultado){
+          idNotificacao = response.data.data;
+
+
+          requisicao.get(`/notificacao/imagens/${response.data.data}`).then((response) => {
+            if(response.data.msg.resultado){
+              setDataImagem(response.data.data)
+            }
+          })
+
+          const newdata = {
+            ...infos,
+            id_notificacao: idNotificacao,
+          };
+
+          setData([newdata])
+
+
+
+        }
+      }) 
+
+
+
       }, [])
 
     const registrarProva = () => {
@@ -107,7 +153,7 @@ const AutoInfracao = () => {
         </Carousel>
       </Modal>
       <p className="text-start fs-2 fw-bold">Auto de infração</p>
-      {data.map((item, index) => (
+      {data && data.map((item, index) => (
         <Card padding="lg" radius="md" withBorder key={index}>
             <Group position="apart">
               <Text size={30}> {item.placa} </Text>
@@ -115,6 +161,7 @@ const AutoInfracao = () => {
             <Group position="apart">
               <Text size={20}> <BsCalendarDate className="mb-1"/> {item.data} </Text>
             </Group>
+            { item.tipo !== undefined ? (
             <Group position="apart">
               {item.tipo  !== 'Ocupando vaga de deficiente' && item.tipo  !== 'Ocupando vaga de idoso' ? 
               <Text size={20}> <FaClipboardList className="mb-1"/> Motivo: {item.tipo} </Text> 
@@ -122,13 +169,27 @@ const AutoInfracao = () => {
               <Text size={20}> <FaClipboardList className="mb-1"/> <small> Motivo: {item.tipo} </small> </Text>
               }
             </Group>
+            ) : (
+              null
+            )}
             <Divider my="sm" size="md" variant="dashed" />
             <Group position="apart">
-              <Text size={20}> <FaParking className="mb-1"/> Vaga: {item.vaga} </Text>
+              <Text size={20}> <FaParking className="mb-1"/> Vaga: {item.vaga === undefined ? item.numero_vaga : item.vaga} </Text>
             </Group>
+            { item.tipo_vaga === undefined ? (
+              null
+            ) : (
+            <Group position="apart">
+              <Text size={20}> <FaParking className="mb-1"/> Tipo Vaga: {item.tipo_vaga} </Text>
+            </Group>
+            )}
+            { item.fabricante === undefined || item.modelo === undefined ? (
+              null
+            ) : (
             <Group position="apart">
               <Text size={20}> <FaCarAlt className="mb-1"/> Modelo: {item.fabricante} ({item.modelo}) </Text>
             </Group>
+            )}
             <Group position="apart">
               <Text size={20}> <BsPaintBucket /> Cor: {item.cor} </Text>
             </Group>

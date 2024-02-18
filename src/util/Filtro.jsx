@@ -1,8 +1,7 @@
-import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Group, Button, Input, Alert, Radio, Grid, Badge } from '@mantine/core';
-import { DatePickerInput, DateTimePicker } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates';
 import Select from "react-select";
 import 'dayjs/locale/pt-br';
 import { IconAlertCircle, IconMail, IconParking, IconPhone, IconUser } from '@tabler/icons-react';
@@ -270,6 +269,21 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: 'Vaga', label: 'Vaga' },
       ]);
 
+    }
+
+    else if (nome === 'ListaAutoInfracao') {
+      setOptions([
+        { value: 'Data', label: 'Data' },
+        { value: 'Placa', label: 'Placa' },
+        { value: 'Periodo', label: 'Período' },
+      ]);
+    }
+
+    else if (nome === 'PlacaIsenta') {
+      setOptions([
+        { value: 'Estado', label: 'Estado' },
+        { value: 'Placa', label: 'Placa' },
+      ]);
     }
 
     else {
@@ -643,10 +657,10 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                                     <Radio.Group name="Escolha alguma opção" onChange={(e) => setRadioTipo(e)}>
                                       <Grid>
                                         <Grid.Col span={12}>
-                                          <Radio value="'S'" label="Notificado" />
+                                        <Radio value="'S'" label={nome === "PlacaIsenta" ? 'Ativo' : 'Notificado'} />
                                         </Grid.Col>
                                         <Grid.Col span={12}>
-                                          <Radio value="'N'" label="Normal" />
+                                        <Radio value="'N'" label={nome === "PlacaIsenta" ? 'Inativo' : 'Normal'} />
                                         </Grid.Col>
                                       </Grid>
                                     </Radio.Group>

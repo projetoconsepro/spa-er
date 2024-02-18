@@ -1,13 +1,15 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import ScrollTopArrow from "./ScrollTopArrow";
 import { useDisclosure } from "@mantine/hooks";
-import { Modal } from '@mantine/core'
-import { IconMapSearch } from "@tabler/icons-react";
+import { Menu, Modal, Text, Button } from '@mantine/core'
+import { IconMapSearch, IconReload } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
 import VoltarComponente from "../util/VoltarComponente";
 import createAPI from "../services/createAPI";
+import FuncTrocaComp from "../util/FuncTrocaComp";
+import Swal from "sweetalert2";
+import CarroLoading from "./Carregamento";
 
 const VeiculosAgente = () => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -21,8 +23,33 @@ const VeiculosAgente = () => {
     const [mensagem, setMensagem] = useState("");
     const [salvaSetor, setSalvaSetor] = useState('');
     const [enderecoMapa, setEnderecoMapa] = useState('');
+    const [onLoading, setOnLoading ] = useState(false);
+
+
+    function ArrumaHora(data) {
+        if (data === null || data === undefined || data === '') {
+            return '';
+        }
+        const data2 = data.split("T");
+        const data3 = data2[0].split("-");
+        const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
+        return data4;
+    }
+
+    function ArrumaHora2(data) {
+        if (data === null || data === undefined || data === '') {
+            return '';
+        }
+        const data2 = data.split("T");
+        const data6 = data2[1].split(":");
+        const data5 = (data6[0]-3) + ":" + data6[1] + ":";
+        const data7 = data5 + data6[2].split(".")[0];
+        return data7;
+      }
 
     const getVagas = async (setor) => {
+        setOnLoading(true)
+        setEstado(false)
         const requisicao = createAPI();
         const setor2 = document.getElementById('setoresSelect2').value;
         if (setor2 !== undefined && setor2 !== null && setor2 !== '') {
@@ -36,19 +63,25 @@ const VeiculosAgente = () => {
         await requisicao.get(`/vagas?setor=${setor}`
         ).then(
             response => {
+                setOnLoading(false)
                 if (response.data.msg.resultado !== false) {
                     setEstado(false)
                     setMensagem('')
                     const newData = response.data.data.map((item) => ({
                         id_vaga: item.id_vaga,
+                        notificacoes: item.numero_notificacoes_pendentes,
+                        notificacao_vaga: item.numero_notificacoes_pendentess,
                         numero_vaga: item.numero,
                         local: item.local,
                         placa: item.placa,
-                        tipo: item.tipo,
+                        tipo_vaga: item.tipo,
                         cor: item.cor,
                         corStatus: item.corStatus,
                         status: item.status,
+                        infracao: item.infracao,
                         id_status_vaga: item.id_status_vaga,
+                        id_vaga_veiculo: item.id_vaga_veiculo,
+                        data: `${ArrumaHora(item.hora_notificacao)} - ${ArrumaHora2(item.hora_notificacao)}`,
                     }))
                     setData(newData);
                 }
@@ -79,7 +112,6 @@ const VeiculosAgente = () => {
         }
     }, [vaga]);
     
-
     useEffect(() => {
         const requisicao = createAPI();
         requisicao.get('/setores'
@@ -119,6 +151,31 @@ const VeiculosAgente = () => {
     open()
     }
 
+    const openModal = (item) => {
+        Swal.fire({
+            title: 'Informações da notificação',
+            html: `
+                   <p><b>Placa:</b> ${item.placa}</p>
+                   <p><b>Local:</b> ${item.local}</p>
+                   <p><b>Notificações pendentes:</b> ${item.notificacoes}</p>
+                   <p><b>Vaga:</b> ${item.numero_vaga}</p>
+                   <p><b>Tipo da vaga:</b> ${item.tipo_vaga}</p>
+                   `,
+            showConfirmButton: item.notificacao_vaga > 0 ? item.infracao === "S" ? false : true : false,
+            showCancelButton: true,
+            confirmButtonText: 'Auto de infração',
+            cancelButtonText: 'Fechar',
+            }).then((result) => {
+            if (result.isDismissed) {
+                Swal.close();
+            }
+            else if (result.isConfirmed) {
+                localStorage.setItem('autoInfracao', JSON.stringify(item))
+                FuncTrocaComp('AutoInfracao')
+            }
+        })
+    }
+
     return (
 
         <div className="dashboard-container mb-5">
@@ -131,7 +188,75 @@ const VeiculosAgente = () => {
             </Modal>
 
 
-            <p className="text-start mx-3">Veículos notificados</p>
+            <div className="row mb-3">
+                <div className="col-7">
+                    <h6 className="text-start align-middle mx-3 mt-2">Veículos estacionados</h6>      
+                </div>   
+                <div className="col-2">
+            <Menu shadow="md" width={200}>
+            <Menu.Target>
+              <Button
+                variant="outline"
+                sx={{ fontFamily: "Greycliff CF, sans-serif" }}
+              >
+                ?{" "}
+              </Button>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Label>Legenda:</Menu.Label>
+              <Text fz="sm" className="mx-2">
+                <small>
+                    <span className="px-2 rounded-circle" style={{
+                        backgroundColor: "#F8D7DA",
+                        border: "1px solid black",
+                    }}>
+                        {" "}
+
+                    </span> 
+                       {"‎"} Veículo notificado
+                </small>
+              </Text>
+              <Text fz="sm" className="mx-2">
+                <small>
+                    <span className="px-2 rounded-circle" style={{
+                        backgroundColor: "#D3D3D4",
+                        border: "1px solid black",
+                    }}>
+                        {" "}
+                    </span>
+                    {"‎"} Auto de infração emitido
+                </small>
+              </Text>
+              <Text fz="sm" className="mx-2">
+                <small>
+                    <span className="px-2 rounded-circle" style={{
+                        backgroundColor: "#FFF",
+                        border: "1px solid black",
+                    }}>
+                        {" "}
+                    </span>
+                    {"‎"} Tempo esgotado
+                </small>
+              </Text>
+            </Menu.Dropdown>
+          </Menu>
+            </div>
+                <div className="col-2">
+                <Button
+                    variant="gradient"
+                    gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                    mb="sm"
+                    radius="sm"
+                    size="sm"
+                    onClick={() => getVagas(salvaSetor, 'reset')}
+                  >
+                    <IconReload  color="white" size={20} />
+                  </Button>
+
+                </div>
+
+          </div>
             <div className="row">
                 <div className="col-12 col-xl-8">
                     <div className="row">
@@ -166,10 +291,12 @@ const VeiculosAgente = () => {
                                         <tbody>
                                             {data.map((vaga, index) => (
                                                 <tr key={index} className="card-list" data-vaga={vaga.numero_vaga}>
-                                                    <th className="text-white" scope="row" style={{ backgroundColor: vaga.cor, color: vaga.cor }}>{vaga.numero_vaga}</th>
-                                                    <td className="fw-bolder"> {vaga.placa} </td>
-                                                    <td className="fw-normal">{window.innerWidth < 768 ? vaga.local.substring(0, 19) + "..." : vaga.local } </td>
-                                                    <td className="fw-normal" onClick={() => abrirMapa(vaga)}> <IconMapSearch size={18} /> </td>
+                                                    <th className="text-white" scope="row" style={{ backgroundColor: vaga.cor, color: vaga.cor }} onClick={()=>{openModal(vaga)}}>{vaga.numero_vaga}</th>
+                                                    <td className="fw-bolder" onClick={() => { openModal(vaga) }} style={{ backgroundColor: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#D3D3D4" : "#F8D7DA" : "#FFF", color: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#141619" : "#842029" : "#000" }}>
+                                                        {vaga.placa} {vaga.notificacoes > 0 ? (<span className="bg-danger px-2 text-white rounded-circle">{vaga.notificacoes}</span>) : null}
+                                                    </td>
+                                                    <td className="fw-normal" onClick={()=>{openModal(vaga)}} style={{ backgroundColor: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#D3D3D4" : "#F8D7DA" : "#FFF", color: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#141619" : "#842029" : "#000" }}>{window.innerWidth < 768 ? vaga.local.substring(0, 19) + "..." : vaga.local } </td>
+                                                    <td className="fw-normal" onClick={() => abrirMapa(vaga)} style={{ backgroundColor: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#D3D3D4" : "#F8D7DA" : "#FFF", color: vaga.notificacao_vaga > 0 ? vaga.infracao === "S" ? "#141619" : "#842029" : "#000" }}> <IconMapSearch size={18} /> </td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -179,6 +306,12 @@ const VeiculosAgente = () => {
                                         {mensagem}
                                     </div>
                                     </div>
+                                    {onLoading ? (
+                                        <div>
+                                            <CarroLoading />
+                                        </div>
+                                    ) : null}
+                                                      
                                 </div>
                             </div>
                             <VoltarComponente />

@@ -19,7 +19,6 @@ import LoginPage from '../../components/LoginPage';
 import DoisPerfis from '../../components/DoisPerfis';
 import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
 import AdicionarCreditos from '../../components/AdicionarCreditos';
-import FecharTurno from '../../components/FecharTurno';
 import AbrirTurno from '../../components/AbrirTurno';
 import HistoricoFinanceiro from '../../components/HistoricoFinanceiro';
 import HistoricoFinanceiroParceiro from '../../components/HistoricoFinanceiroParceiro';
@@ -50,6 +49,9 @@ import CameraAutoInfracao from '../../components/CameraAutoInfracao';
 import SugestoesAdmin from '../../components/SugestoesAdmin';
 import AdicionarModelo from '../../components/AdicionarModelo';
 import Feriados from '../../components/Feriados';
+import ListaAutoInfracao from '../../components/ListaAutoInfracao';
+import PlacaIsenta from '../../components/PlacaIsenta';
+import BuscarMovimentoTxId from '../../components/BuscarMovimentoTxId';
 
 export default function Veiculos({Componente}) {
     switch(Componente) {
@@ -99,8 +101,6 @@ export default function Veiculos({Componente}) {
             return <AdicionarCreditos />;
         case "AbrirTurno":
             return <AbrirTurno />;
-        case "FecharTurno":
-            return <FecharTurno />;
         case "HistoricoFinanceiro":
             return <HistoricoFinanceiro />;
         case "Configuracoes":
@@ -153,6 +153,12 @@ export default function Veiculos({Componente}) {
             return <CameraAutoInfracao />;
         case "Feriados":
             return <Feriados />;
+        case "ListaAutoInfracao":
+            return <ListaAutoInfracao />;
+        case "PlacaIsenta":
+            return <PlacaIsenta />;
+        case "BuscarMovimentoTxId":
+            return <BuscarMovimentoTxId />;
         default:
             return <Error />;
     }

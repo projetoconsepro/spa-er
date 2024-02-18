@@ -1,7 +1,6 @@
-import axios from "axios";
-import { React, useState, useEffect } from "react";
-import { ActionIcon, Badge, Button, Card, Divider, Grid, Group, Image, Input, Select, Text, Modal } from "@mantine/core";
-import { IconAdjustments, IconArrowAutofitRight, IconArrowForward, IconArrowRight, IconCash, IconCheck, IconMail, IconUserCircle } from "@tabler/icons-react";
+import { React, useState } from "react";
+import { Button, Card, Divider, Grid, Group, Image, Input, Select, Text } from "@mantine/core";
+import { IconArrowRight, IconCash, IconUserCircle } from "@tabler/icons-react";
 import Swal from "sweetalert2";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
