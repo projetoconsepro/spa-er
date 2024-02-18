@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {FaArrowCircleUp} from 'react-icons/fa';
 
-
 const ScrollTopArrow = () =>{
 
   const [showScroll, setShowScroll] = useState(false)

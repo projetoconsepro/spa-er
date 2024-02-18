@@ -1,4 +1,3 @@
-import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import VoltarComponente from "../util/VoltarComponente";

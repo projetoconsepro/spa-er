@@ -1,5 +1,4 @@
-import { Card, Group, Text, Table, Badge } from '@mantine/core';
-import axios from 'axios';
+import { Card, Group, Text, Badge } from '@mantine/core';
 import React, { useEffect, useState } from 'react'
 import createAPI from '../services/createAPI';
 

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { React, useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { BsPlus } from 'react-icons/bs'

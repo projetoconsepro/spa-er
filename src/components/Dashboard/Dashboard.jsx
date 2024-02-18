@@ -8,7 +8,7 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { FaParking } from 'react-icons/fa';
 
 const Dashboard = () => {
-    const [setores, setSetores] = useState([])
+    /*const [setores, setSetores] = useState([])
 
     function ArrumaHora(data, hora ) {
         if(data !== 'Nenhum registrado'){
@@ -67,11 +67,12 @@ const Dashboard = () => {
 
     useEffect(() => {
         requisicaoSetores()
-    }, [])
+    }, [])*/
 
   return (
     <div>
-       <div className="row">
+        <h1>RETIRADO DASHBOARD PARA TESTES.</h1>
+       { /*<div className="row">
        <Carousel slideGap="md" height={200} slideSize={window.innerWidth <  768 ?  "90%" : "33.333333%"} dragFree align="center" slidesToScroll={window.innerWidth <  768 ?  1 : 3}>
         {setores.map((item, index) => (
         <Carousel.Slide key={index}>
@@ -156,7 +157,7 @@ const Dashboard = () => {
                     </div>
                 </div>
                 }
-            </div>
+            </div> */ }
     </div>
   )
 }

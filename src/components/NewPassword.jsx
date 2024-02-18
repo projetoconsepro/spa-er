@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import sha256 from "crypto-js/sha256";
 import FuncTrocaComp from "../util/FuncTrocaComp";

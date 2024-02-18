@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { React, useState, useEffect } from 'react'
 import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'
@@ -8,6 +7,7 @@ import FuncTrocaComp from '../util/FuncTrocaComp';
 import Filtro from '../util/Filtro'
 import createAPI from '../services/createAPI'
 import { Group, Pagination } from '@mantine/core'
+import CarroLoading from './Carregamento'
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
@@ -111,10 +111,12 @@ const ListarNotificacoesAgente = () => {
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
           }));
+          setEstadoLoading(false)
           setData(newData)
         }
         else {
           setData([])
+          setEstadoLoading(false)
           setEstado(true)
           setMensagem("Não há notificações para exibir")
         }
@@ -198,7 +200,7 @@ const ListarNotificacoesAgente = () => {
 
   return (
     <div className="dashboard-container">
-        <p className="mx-3 text-start fs-4 fw-bold">Notificações pendentes</p>
+        <p className="mx-3 text-start fs-4 fw-bold">Notificações</p>
         <div className="row mb-3">
         <div className="col-12">
         <div className="row">
@@ -274,6 +276,12 @@ const ListarNotificacoesAgente = () => {
                   <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                         {mensagem}
                     </div>
+
+                    {data.length === 0 ?
+                    <div>
+                      <CarroLoading />
+                    </div>
+                  : null}
                 </div>
               </div>
 

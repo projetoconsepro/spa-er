@@ -1,4 +1,8 @@
 const calcularValidade = (horaInicio, duracao) => {
+  if (horaInicio === undefined && duracao === undefined) {
+    return "";
+  }
+
     const [horas, minutos, segundos] = duracao.split(":").map(Number);
     const dataInicio = new Date(`2000-01-01T${horaInicio}`);
     const dataValidade = new Date(

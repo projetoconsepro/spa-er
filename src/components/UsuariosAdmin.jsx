@@ -4,7 +4,6 @@ import {
   FaEllipsisH,
   FaEye,
   FaPowerOff,
-  FaSearch,
   FaUserPlus,
 } from "react-icons/fa";
 import ScrollTopArrow from "./ScrollTopArrow";
