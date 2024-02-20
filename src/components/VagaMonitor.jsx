@@ -136,8 +136,7 @@ export const VagaMonitor = ({ vaga, index, setEstado, setMensagem, resposta, set
       });
 
       socket.on('vaga', (message) => {
-        const listaVagas = JSON.parse(localStorage.getItem("listaVagas"));
-        if (message.vaga.numero == vaga.numero && message.setor == setor && listaVagas !== null) {
+        if (message.vaga.numero == vaga.numero && message.setor == setor) {
           funcUpdateVaga(message.vaga);
         }
       });
