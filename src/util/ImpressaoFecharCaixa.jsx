@@ -1,4 +1,3 @@
-import axios from 'axios';
 
 const ImpressaoFecharCaixa = async (item, valor, monitor) => {
 

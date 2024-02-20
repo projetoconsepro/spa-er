@@ -24,7 +24,6 @@ const AdicionarCreditos = () => {
   const [onOpen, setOnOpen] = useState(false);
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [estado2, setEstado2] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
@@ -105,7 +104,6 @@ const AdicionarCreditos = () => {
             .then((resposta) => {
               if (resposta.data.msg.resultado) {
                 setData(resposta.data.data);
-                setTxId(resposta.data.data.txid);
                 getInfoPix(resposta.data.data.txid);
                 setOnOpen(true);
                 open();

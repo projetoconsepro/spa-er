@@ -16,13 +16,11 @@ import ModalErroBanco from "./ModalErroBanco";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const socketRef = useRef(null);
   const [mensagem, setMensagem] = useState("");
   const [placa, setPlaca] = useState("placa");
   const [textoPlaca, setTextoPlaca] = useState("");
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
-  const [placaVeiculo, setPlacaVeiculo] = useState("");
   const [tempo, setTempo] = useState("00:10:00");
   const [valor, setValor] = useState("dinheiro");
   const [inputVazio, setInputVazio] = useState("inputvazio3");

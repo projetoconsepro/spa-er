@@ -13,9 +13,6 @@ import CarroLoading from "./Carregamento";
 
 const VeiculosAgente = () => {
     const [opened, { open, close }] = useDisclosure(false);
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
     const [data, setData] = useState([]);
     const [data2, setData2] = useState([]);
     const [vaga, setVaga] = useState("");

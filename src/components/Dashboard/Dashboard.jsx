@@ -1,3 +1,4 @@
+/*
 import React, { useState, useEffect } from 'react'
 import Grafico from './Grafico'
 import { Card, Grid, Group, Text } from '@mantine/core'
@@ -6,6 +7,7 @@ import { Carousel } from '@mantine/carousel';
 import axios from 'axios';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import { FaParking } from 'react-icons/fa';
+ */
 
 const Dashboard = () => {
     /*const [setores, setSetores] = useState([])

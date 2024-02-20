@@ -15,8 +15,6 @@ import createAPI from '../services/createAPI';
 const ListarNotificacoesAdmin = () => {
     const [opened, { open, close }] = useDisclosure(false);
     const [data, setData] = useState([])
-    const [data2, setData2] = useState([])
-    const [data3, setData3] = useState([])
     const [dataImagem, setDataImagem] = useState([])
     const [estado, setEstado] = useState(false)
     const [estado2, setEstado2] = useState(false)

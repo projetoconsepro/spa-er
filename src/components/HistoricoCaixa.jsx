@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { React, useEffect, useState } from 'react'
 import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'
@@ -13,9 +12,6 @@ const HistoricoCaixa = () => {
     const [mensagem, setMensagem] = useState("")
     const [dataHoje, setDataHoje] = useState("")
     const [estadoLoading, setEstadoLoading] = useState(false)
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
 
   
     function ArrumaHora(data, hora ) {

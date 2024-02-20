@@ -22,7 +22,6 @@ const RegisterPage = () => {
     const [estado, setEstado] = useState(false);
     const [estado2, setEstado2] = useState(false);
     const [sucesso, setSucesso] = useState(false);
-    const [passwordType, setPasswordType] = useState("password");
     const [errorNome, setErrorNome] = useState(false);
     const [errorMail, setErrorMail] = useState(false);
     const [errorCpf, setErrorCpf] = useState(false);

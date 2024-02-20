@@ -14,7 +14,6 @@ import Swal from "sweetalert2";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const socketRef = useRef(null);
   const [valor, setValor] = useState("15.00");
   const [valor2, setValor2] = useState("");
   const [data, setData] = useState([]);

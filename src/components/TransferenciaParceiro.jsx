@@ -1,5 +1,15 @@
 import { React, useState } from "react";
-import { Button, Card, Divider, Grid, Group, Image, Input, Select, Text } from "@mantine/core";
+import {
+  Button,
+  Card,
+  Divider,
+  Grid,
+  Group,
+  Image,
+  Input,
+  Select,
+  Text,
+} from "@mantine/core";
 import { IconArrowRight, IconCash, IconUserCircle } from "@tabler/icons-react";
 import Swal from "sweetalert2";
 import { useDisclosure } from "@mantine/hooks";
@@ -24,7 +34,10 @@ const TransferenciaParceiro = () => {
   const [onOpen, setOnOpen] = useState(false);
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const options = [{ value: "pix", label: "Pix" }, { value: "dinheiro", label: "Dinheiro" }];
+  const options = [
+    { value: "pix", label: "Pix" },
+    { value: "dinheiro", label: "Dinheiro" },
+  ];
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
 
@@ -52,72 +65,75 @@ const TransferenciaParceiro = () => {
   const getInfoDestinatario = () => {
     const requisicao = createAPI();
 
-    const cnpjFormatado = cnpj.replace(/[.-/]/g, '');
+    const cnpjFormatado = cnpj.replace(/[.-/]/g, "");
 
     requisicao.get(`/verificar?cnpj=${cnpjFormatado}`).then((response) => {
       if (response.data.msg.resultado) {
-        requisicao.get(`/financeiro/saldo/parceiro/${response.data.usuario[0].id_usuario}`).then((res) => {
-          if (res.data.msg.resultado) {
-            setSaldo(res.data.msg.saldo);
-            setNome(response.data.usuario[0].nome);
-            setEmail(response.data.usuario[0].email);
-            setSaldo(res.data.data.saldo);
-            setIdParceiro(response.data.usuario[0].id_usuario);
-            setInfo(true);
-          } else {
-            setEstado(true)
-            setMensagem(res.data.msg.msg)
-            setTimeout(() => {
-              setEstado(false)
-              setMensagem("")
-            }, 3000)
-          }
-        });
-          } else {
-            setEstado(true)
-            setMensagem(response.data.msg.msg)
-            setTimeout(() => {
-              setEstado(false)
-              setMensagem("")
-            }, 3000)
-          }
+        requisicao
+          .get(
+            `/financeiro/saldo/parceiro/${response.data.usuario[0].id_usuario}`
+          )
+          .then((res) => {
+            if (res.data.msg.resultado) {
+              setSaldo(res.data.msg.saldo);
+              setNome(response.data.usuario[0].nome);
+              setEmail(response.data.usuario[0].email);
+              setSaldo(res.data.data.saldo);
+              setIdParceiro(response.data.usuario[0].id_usuario);
+              setInfo(true);
+            } else {
+              setEstado(true);
+              setMensagem(res.data.msg.msg);
+              setTimeout(() => {
+                setEstado(false);
+                setMensagem("");
+              }, 3000);
+            }
+          });
+      } else {
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("");
+        }, 3000);
+      }
     });
   };
 
   const validarTransferencia = () => {
     if (valor === "") {
-      setEstado(true)
-      setMensagem("Preencha o campo valor")
+      setEstado(true);
+      setMensagem("Preencha o campo valor");
       setTimeout(() => {
-        setEstado(false)
-        setMensagem("")
-      }, 3000)
+        setEstado(false);
+        setMensagem("");
+      }, 3000);
       return false;
     } else if (valor === "0,00") {
-      setEstado(true)
-      setMensagem("Valor inválido")
+      setEstado(true);
+      setMensagem("Valor inválido");
       setTimeout(() => {
-        setEstado(false)
-        setMensagem("")
-      }, 3000)
+        setEstado(false);
+        setMensagem("");
+      }, 3000);
       return false;
     } else if (parseFloat(valor) > parseFloat(saldo)) {
-      setEstado(true)
-      setMensagem("Saldo insuficiente")
+      setEstado(true);
+      setMensagem("Saldo insuficiente");
       setTimeout(() => {
-        setEstado(false)
-        setMensagem("")
-      }, 3000)
+        setEstado(false);
+        setMensagem("");
+      }, 3000);
       return false;
     }
 
-    if(metodoPagamento === "pix"){
+    if (metodoPagamento === "pix") {
       fazerPix();
-    }
-    else {
+    } else {
       realizarTransferencia();
     }
-  }
+  };
 
   const fazerPix = () => {
     const requisicao = createAPI();
@@ -128,7 +144,9 @@ const TransferenciaParceiro = () => {
       valor: valor2,
       pagamento: metodoPagamento,
     };
-    requisicao.post("/gerarcobranca", { valor: valor2, campo: JSON.stringify(campo) }).then((resposta) => {
+    requisicao
+      .post("/gerarcobranca", { valor: valor2, campo: JSON.stringify(campo) })
+      .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
           setTxId(resposta.data.data.txid);
@@ -140,66 +158,72 @@ const TransferenciaParceiro = () => {
       .catch((err) => {
         setOnOpenError(true);
       });
-  }
+  };
 
   const transferencia = (campo) => {
     const requisicao = createAPI();
-    requisicao.post(`/financeiro/debito/transferir/pix`, {
-      txid: campo,
-    }).then((response) => {
-      if (response.data.msg.resultado) {
-        setNotification(false);
-        setOnOpen(false)
-        close();
-        Swal.fire({
-          icon: "success",
-          title: "Sucesso!",
-          timer: 2000,
-          text: "Transferência realizada com sucesso!",
-        });
-        getInfoDestinatario();
-      } else {
-        setNotification(false);
-        setPixExpirado("Pix expirado");
-      }
-    }).catch((err) => {
-      setOnOpenError(true);
-    });
-  }
+    requisicao
+      .post(`/financeiro/debito/transferir/pix`, {
+        txid: campo,
+      })
+      .then((response) => {
+        if (response.data.msg.resultado) {
+          setNotification(false);
+          setOnOpen(false);
+          close();
+          Swal.fire({
+            icon: "success",
+            title: "Sucesso!",
+            timer: 2000,
+            text: "Transferência realizada com sucesso!",
+          });
+          getInfoDestinatario();
+        } else {
+          setNotification(false);
+          setPixExpirado("Pix expirado");
+        }
+      })
+      .catch((err) => {
+        setOnOpenError(true);
+      });
+  };
 
   const realizarTransferencia = () => {
     const requisicao = createAPI();
     let valor2;
     if (valor.includes(",")) {
-      valor2 = valor.replace(",", ".")
+      valor2 = valor.replace(",", ".");
     }
-    requisicao.post(`/financeiro/debito/transferir`, {
-      id_usuario: idParceiro,
-      valor: valor2,
-      pagamento: metodoPagamento,
-    }).then((response) => {
-      if (response.data.msg.resultado) {
-        Swal.fire({
-          icon: "success",
-          title: "Sucesso!",
-          text: "Transferência realizada com sucesso!",
-        });
-        getInfoDestinatario();
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Erro!",
-          text: response.data.msg.msg,
-        });
-      }
-    });
-  }
+    requisicao
+      .post(`/financeiro/debito/transferir`, {
+        id_usuario: idParceiro,
+        valor: valor2,
+        pagamento: metodoPagamento,
+      })
+      .then((response) => {
+        if (response.data.msg.resultado) {
+          Swal.fire({
+            icon: "success",
+            title: "Sucesso!",
+            text: "Transferência realizada com sucesso!",
+          });
+          getInfoDestinatario();
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erro!",
+            text: response.data.msg.msg,
+          });
+        }
+      });
+  };
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       {window.innerWidth < 768 ? (
         <Card>
-          <Card.Section style={{
+          <Card.Section
+            style={{
               display: "flex",
               justifyContent: "flex-start",
               position: "relative",
@@ -228,49 +252,78 @@ const TransferenciaParceiro = () => {
         </Card>
       )}
       {info ? (
-        <Card shadow="sm" padding="lg" radius="xs" className="bg-admin-parceiro" withBorder={false}>
+        <Card
+          shadow="sm"
+          padding="lg"
+          radius="xs"
+          className="bg-admin-parceiro"
+          withBorder={false}
+        >
           <Group position="apart" mt="md" mb="xs">
             <Text weight={500}>Informações do destinatário:</Text>
           </Group>
           <div className="text-start">
-              <Grid>
-                <Grid.Col span={12}>
-                  <Text fz="md">Nome do destinatário: {nome}</Text>
-                </Grid.Col>
-              </Grid>
-              <Grid>
-                <Grid.Col span={12}>
-                  <Text fz="md">Email do destinatário: {email}</Text>
-                </Grid.Col>
-              </Grid>
-              <Grid>
-                <Grid.Col span={12}>
-                <Text fz="md">Saldo disponível do parceiro: <span style={{ fontWeight: 'bold', fontSize: '1.1em' }}>R${saldo}</span></Text>
-
-                </Grid.Col>
-              </Grid>
-              <Divider my="sm" size="sm" variant="dashed" />
-            <Input.Wrapper label="Digite o valor da transferência:" size={18} weight={600} mt="md">
-            <Input
-              icon={<IconCash />}
-              placeholder="R$ 0,00"
-              value={valor}
-              onChange={(e) => FuncArrumaInput(e)}
-            />
+            <Grid>
+              <Grid.Col span={12}>
+                <Text fz="md">Nome do destinatário: {nome}</Text>
+              </Grid.Col>
+            </Grid>
+            <Grid>
+              <Grid.Col span={12}>
+                <Text fz="md">Email do destinatário: {email}</Text>
+              </Grid.Col>
+            </Grid>
+            <Grid>
+              <Grid.Col span={12}>
+                <Text fz="md">
+                  Saldo disponível do parceiro:{" "}
+                  <span style={{ fontWeight: "bold", fontSize: "1.1em" }}>
+                    R${saldo}
+                  </span>
+                </Text>
+              </Grid.Col>
+            </Grid>
+            <Divider my="sm" size="sm" variant="dashed" />
+            <Input.Wrapper
+              label="Digite o valor da transferência:"
+              size={18}
+              weight={600}
+              mt="md"
+            >
+              <Input
+                icon={<IconCash />}
+                placeholder="R$ 0,00"
+                value={valor}
+                onChange={(e) => FuncArrumaInput(e)}
+              />
             </Input.Wrapper>
 
             <Group position="left" mt="md" mb="xs">
               <Text weight={500}>Selecione o método de pagamento:</Text>
-              <Select value={metodoPagamento} data={options} onChange={(e) => setMetodoPagamento(e)} />
+              <Select
+                value={metodoPagamento}
+                data={options}
+                onChange={(e) => setMetodoPagamento(e)}
+              />
             </Group>
 
-            <Button variant="gradient" gradient={{ from: "teal", to: "blue", deg: 60 }} fullWidth mt="md" radius="md"
-            onClick={() => validarTransferencia()}>
+            <Button
+              variant="gradient"
+              gradient={{ from: "teal", to: "blue", deg: 60 }}
+              fullWidth
+              mt="md"
+              radius="md"
+              onClick={() => validarTransferencia()}
+            >
               Realizar transferência ‎ <IconCash color="white" size={15} />
             </Button>
           </div>
-          <div className="alert alert-danger mt-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-              {mensagem}
+          <div
+            className="alert alert-danger mt-3"
+            role="alert"
+            style={{ display: estado ? "block" : "none" }}
+          >
+            {mensagem}
           </div>
         </Card>
       ) : (
@@ -293,21 +346,28 @@ const TransferenciaParceiro = () => {
               </Grid>
             </Input.Wrapper>
           </div>
-          <Button variant="gradient" gradient={{ from: "teal", to: "blue", deg: 60 }} fullWidth mt="md" radius="md"
-            onClick={() => getInfoDestinatario()}>
+          <Button
+            variant="gradient"
+            gradient={{ from: "teal", to: "blue", deg: 60 }}
+            fullWidth
+            mt="md"
+            radius="md"
+            onClick={() => getInfoDestinatario()}
+          >
             Avançar ‎
             <IconArrowRight size="1.125rem" />
           </Button>
-          <div className="alert alert-danger mt-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-              {mensagem}
+          <div
+            className="alert alert-danger mt-3"
+            role="alert"
+            style={{ display: estado ? "block" : "none" }}
+          >
+            {mensagem}
           </div>
         </div>
       )}
-        <ModalErroBanco
-          onOpen={onOpenError}
-          onClose={onCloseError}
-        />
-       <ModalPix
+      <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
+      <ModalPix
         qrCode={data.brcode}
         status={notification}
         mensagemPix={pixExpirado}

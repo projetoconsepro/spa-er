@@ -107,22 +107,21 @@ const TransferirCreditoCliente = () => {
       });
   };
 
-
   const FuncArrumaInput = (e) => {
     let valor = e.target.value;
 
-    if (valor.length === 1 && valor !== '0') {
+    if (valor.length === 1 && valor !== "0") {
       valor = `0,0${valor}`;
     } else if (valor.length > 1) {
       valor = valor.replace(/\D/g, "");
       valor = valor.replace(/^0+/, "");
-  
+
       if (valor.length < 3) {
         valor = `0,${valor}`;
       } else {
-        valor = valor.replace(/(\d{2})$/, ',$1');
+        valor = valor.replace(/(\d{2})$/, ",$1");
       }
-  
+
       valor = valor.replace(/(?=(\d{3})+(\D))\B/g, ".");
     }
 
@@ -135,8 +134,6 @@ const TransferirCreditoCliente = () => {
       // Habilitar o botão após o atraso
       setIsButtonDisabled(false);
     }, 2000);
-    
-
 
     const cpf = extrairNumeros(infoDestinatario);
     let campo = "";
@@ -147,7 +144,9 @@ const TransferirCreditoCliente = () => {
     }
     const requisicao = createAPI();
 
-    const valor2 = parseFloat(infoDestinatarioValor.replace(",", ".")).toFixed(2);
+    const valor2 = parseFloat(infoDestinatarioValor.replace(",", ".")).toFixed(
+      2
+    );
     if (campo === "Destinatariocpf") {
       requisicao
         .post(`/financeiro/credito/transferir`, {
@@ -285,11 +284,11 @@ const TransferirCreditoCliente = () => {
                   className="mt-2"
                 >
                   <Input
-                      icon={<IconCash />}
-                      placeholder="R$ 0,00"
-                      value={infoDestinatarioValor}
-                      onChange={(e) => FuncArrumaInput(e)}
-                    />
+                    icon={<IconCash />}
+                    placeholder="R$ 0,00"
+                    value={infoDestinatarioValor}
+                    onChange={(e) => FuncArrumaInput(e)}
+                  />
                 </Input.Wrapper>
               </div>
               {estadoInfoDestinatario ? (
@@ -366,11 +365,12 @@ const TransferirCreditoCliente = () => {
                 <div className="col-12">
                   <Group position="center" mt="xl">
                     <VoltarComponente />
-                    <Button 
-                    className="bg-blue-50"
-                    size="md"
-                    radius="md"
-                    onClick={() => getInfo()}>
+                    <Button
+                      className="bg-blue-50"
+                      size="md"
+                      radius="md"
+                      onClick={() => getInfo()}
+                    >
                       Confirmar
                     </Button>
                   </Group>

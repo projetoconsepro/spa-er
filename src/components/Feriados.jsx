@@ -41,7 +41,6 @@ const Feriados = () => {
           title: item.feriado,
           start: formatDate(item.data),
         }));
-        console.log(newData)
         setData(newData)
       }
     })

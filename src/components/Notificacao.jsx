@@ -1,16 +1,14 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
 import { FaCarAlt, FaEdit, FaParking } from 'react-icons/fa';
 import arrayCores from '../services/cores';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
-import { Button, Divider, Input, Loader, Select, Text } from '@mantine/core';
+import { Button, Divider, Input, Select, Text } from '@mantine/core';
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
 import createAPI from '../services/createAPI';
 
 const Notificacao = () => {
-    const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const [mensagem, setMensagem] = useState("");
@@ -421,7 +419,7 @@ setTimeout(() => {
 
     const getCor = () => {
         const newData = arrayCores.map(item => ({
-            cor: item.cor,
+            cor: item
     }));
     setCor(newData);
 }

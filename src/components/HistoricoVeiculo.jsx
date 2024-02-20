@@ -15,7 +15,6 @@ const HistoricoVeiculo = () => {
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [user2, setUser2] = useState(null);
-  const [perfil, setPerfil] = useState("");
 
   function ArrumaHora(data, hora) {
     const data2 = data.split("T");
@@ -50,7 +49,6 @@ const HistoricoVeiculo = () => {
       FuncTrocaComp( "AbrirTurno");
     }
     const requisicao = createAPI();
-    setPerfil(user2.perfil[0]);
     setEstado2(true);
     let idrequisicao = "";
     let passar = "";

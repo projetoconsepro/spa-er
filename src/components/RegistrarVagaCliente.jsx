@@ -15,7 +15,6 @@ import { useDisclosure } from "@mantine/hooks";
 const RegistrarVagaCliente = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [inputVaga, setInputVaga] = useState("form-control fs-5");
   const [vaga, setVaga] = useState([]);
   const [resposta, setResposta] = useState([{}]);
   const [resposta2, setResposta2] = useState([]);

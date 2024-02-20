@@ -1,7 +1,6 @@
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
-import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
+import { AiFillCheckCircle } from "react-icons/ai";
 import { BsCalendarDate, BsCashCoin, BsConeStriped } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
@@ -12,7 +11,7 @@ import { IconReload, IconX } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
-import { Button, Group, Pagination } from "@mantine/core";
+import { Button } from "@mantine/core";
 import ModalErroBanco from "./ModalErroBanco";
 
 const Irregularidades = () => {

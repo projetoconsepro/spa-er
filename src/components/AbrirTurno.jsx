@@ -8,13 +8,11 @@ import ImpressaoFecharCaixa from '../util/ImpressaoFecharCaixa';
 
 function AbrirTurno() {
   const [valor, setValor] = useState('');
-  const [estado, setEstado] = useState(true);
   const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState('');
   const [abTurno, setAbTurno] = useState(false);
   const [setorSelecionado, setSetorSelecionado] = useState(1);
   const [setorSelecionado2, setSetorSelecionado2] = useState('A');
-  const [botaoFecharTurno, setBotaoFecharTurno] = useState(false);
   const [nome, setNome] = useState('');
   const [caixa, setCaixa] = useState([]);
   const [tempoAtual, setTempoAtual] = useState('');
@@ -54,11 +52,12 @@ function AbrirTurno() {
   useEffect(() => {
     const requisicao = createAPI();
     requisicao.get('/setores').then((response) => {
-      for (let i = 0; i < response?.data?.data?.setores?.length; i++) {
-        resposta2[i] = {};
-        resposta2[i].setores = response.data.data.setores[i].nome;
-        resposta2[i].id_setores = response.data.data.setores[i].id_setor;
-      }
+      const setoresData = response?.data?.data?.setores || [];
+      const novosSetores = setoresData.map((setor) => ({
+        setores: setor.nome,
+        id_setores: setor.id_setor
+      }));
+      setResposta2(novosSetores);
     })
       .catch((error) => {
         if (

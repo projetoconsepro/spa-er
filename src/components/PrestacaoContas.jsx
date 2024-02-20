@@ -13,7 +13,6 @@ import AtualizarPix from '../util/AtualizarPix';
 const PrestacaoContas = () => {
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
-  const [data3, setData3] = useState([]);
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
   const [estadoLoading, setEstadoLoading] = useState(false);

@@ -1,13 +1,10 @@
-import axios from "axios";
-import { React, useState, useEffect, useRef } from "react";
-import { FaCarAlt, FaCheck, FaParking } from "react-icons/fa";
+import { React, useState, useEffect } from "react";
 import { TbHandClick } from "react-icons/tb";
 import { BsFillTrashFill } from "react-icons/bs";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Card, Divider, Grid, Group, Modal, Text } from "@mantine/core";
-import { Carousel } from '@mantine/carousel';
+import { Button, Card, Divider, Group, Modal, Text } from "@mantine/core";
 import createAPI from "../services/createAPI";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -20,20 +17,9 @@ const Configuracoes = () => {
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [cardBody] = useState("card-body3");
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [estadoDiv, setEstadoDiv] = useState(false);
   const [estadoDiv2, setEstadoDiv2] = useState(true);
   const [debito, setDebito] = useState(true);
-
-  const handleCheckboxChange = (index) => {
-    data[index].check = !data[index].check;
-    setData([...data]);
-  };
-
-  const abrirDiv = (index) => {
-    data[index].estado = !data[index].estado;
-    setData([...data]);
-  };
 
   const Atualizarequisicao = async () => {
     const requisicao = createAPI();

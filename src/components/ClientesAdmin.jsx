@@ -7,7 +7,6 @@ import {
   FaEye,
   FaParking,
   FaPowerOff,
-  FaSearch,
 } from "react-icons/fa";
 import ScrollTopArrow from "./ScrollTopArrow";
 import Swal from "sweetalert2";
@@ -21,7 +20,6 @@ import {
   Stepper,
   Button,
   Input,
-  Grid,
   ActionIcon,
   Pagination,
   Loader,

@@ -48,7 +48,6 @@ const EditarParametroAdmin = () => {
 
   const handleAddNewInterval = async () => {
     const diasSemana = dataAPI.map((dia) => dia.dia);
-    const hourOptions = generateHourOptions();
 
     const { value: selectedValues } = await Swal.fire({
       title: "Adicionar Novo Intervalo",

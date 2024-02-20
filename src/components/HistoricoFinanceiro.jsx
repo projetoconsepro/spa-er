@@ -2,7 +2,7 @@ import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
-import { Badge, Box, Group, Pagination } from "@mantine/core";
+import { Badge, Group, Pagination } from "@mantine/core";
 import { IconCash } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 
