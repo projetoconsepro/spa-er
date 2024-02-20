@@ -425,6 +425,7 @@ const BuscarVeiculo = () => {
                                 <BsCashCoin  />‎ Saldo: {link.saldo}
                               </h6>
                             </div>
+                            {user2 ? user2.perfil[0] === "admin" ? (
                             <div
                             className="h6 d-flex align-items-center fs-6"
                             id="estacionadocarroo"
@@ -433,6 +434,7 @@ const BuscarVeiculo = () => {
                               <BsCardList />‎ Documento: {link.cpf}
                             </h6>
                           </div>
+                            ) : null : null}
                           </>
                           ) : null}
                         </div>

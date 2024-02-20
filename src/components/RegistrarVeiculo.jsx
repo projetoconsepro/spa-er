@@ -84,8 +84,7 @@ const RegistrarVeiculo = () => {
             placaFinal = split[0] + split[1]
         }
         placaFinal = placaFinal.toUpperCase()
-        console.log(placaFinal)
-        if (placaFinal.length < 7 || placaFinal.length > 8 || placaFinal === ""){
+        if (placaFinal.length < 6 || placaFinal.length > 8 || placaFinal === ""){
             setLoadingButton(false);
             estadoIf = false;
             setMensagem("Placa inválida")
