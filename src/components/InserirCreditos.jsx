@@ -1,7 +1,7 @@
 import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowForwardUpDouble, IconArrowRight, IconCash, IconCheck, IconX } from "@tabler/icons-react";
-import { React, useState, useRef, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { BsCreditCard2Back, BsCreditCard2Front } from "react-icons/bs";

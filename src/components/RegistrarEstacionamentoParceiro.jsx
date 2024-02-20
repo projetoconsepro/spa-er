@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useRef } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";

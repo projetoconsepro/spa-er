@@ -74,10 +74,6 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
   }, [onLoading]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
-
     if (nome === 'HistoricoCaixa') {
       setOptions([
         { value: 'Data', label: 'Data' },
