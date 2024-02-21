@@ -17,6 +17,11 @@ const BuscarMovimentoTxId = () => {
   const [tipoMovimento, setTipoMovimento] = useState("");
 
   const handleSearchMovimento = async () => {
+    if (txId === "") {
+      setEstado(true);
+      setMensagem("Preencha o campo");
+      return;
+    }
     setEstado(false);
     setInfo(false);
     const requisicao = createAPI();

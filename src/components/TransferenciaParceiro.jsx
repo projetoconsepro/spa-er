@@ -30,7 +30,6 @@ const TransferenciaParceiro = () => {
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [data, setData] = useState([]);
-  const [txId, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
@@ -149,7 +148,6 @@ const TransferenciaParceiro = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
-          setTxId(resposta.data.data.txid);
           transferencia(resposta.data.data.txid);
           setOnOpen(true);
           open();

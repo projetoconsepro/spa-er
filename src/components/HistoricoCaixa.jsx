@@ -10,7 +10,6 @@ const HistoricoCaixa = () => {
     const [data, setData] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState("")
-    const [dataHoje, setDataHoje] = useState("")
     const [estadoLoading, setEstadoLoading] = useState(false)
 
   
@@ -63,7 +62,6 @@ const HistoricoCaixa = () => {
         const ano = data.getFullYear();
 
         const dataHoje = ano + "-" + `${mes < 10 ? `0${mes}` : mes }` + "-" + dia;
-        setDataHoje(dataHoje);
 
         const requisicao = createAPI();
           const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`

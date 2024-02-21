@@ -19,19 +19,15 @@ const RegistrarEstacionamentoParceiro = () => {
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [cont, setCont] = useState(0);
   const [success, setSuccess] = useState(false);
   const [vaga, setVaga] = useState("");
   const [tempo, setTempo] = useState("");
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
-  const [token, setToken] = useState("");
   const [user2, setUser2] = useState("");
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
-  const [divPagamento, setDivPagamento] = useState(true);
   const [loadingButton, setLoadingButton] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
   const [onOpenError, setOnOpenError] = useState(false);
@@ -213,7 +209,6 @@ const RegistrarEstacionamentoParceiro = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
-          setTxId(resposta.data.data.txid);
           getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
@@ -485,7 +480,6 @@ const RegistrarEstacionamentoParceiro = () => {
     } else if (tempoo === "00:30:00") {
       setValorCobranca2(valorCobranca / 2);
     } else if (tempoo === "00:10:00") {
-      setDivPagamento(false)
       setValorCobranca2(valorCobranca * 0);
     } else {
       setValorCobranca2(valorCobranca * 0);
@@ -569,16 +563,13 @@ const RegistrarEstacionamentoParceiro = () => {
         setPlaca("placa3");
       } else {
         setPlaca("placa");
-        setCont(0);
       }
     }
   }, [textoPlaca]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
-    setToken(token);
     setUser2(user2.perfil[0]);
     if (
       localStorage.getItem("turno") !== "true" &&

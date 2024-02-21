@@ -63,9 +63,6 @@ const AdicionarModelo = () => {
         (item) => item.value === fabricantesSelect
       );
       const requisicao = createAPI();
-      console.log(checked ? fabricante : findByIndex.label);
-      console.log(modelo);
-
       const postModelos = async () => {
         await requisicao
           .post(`/veiculo/modelos/`, {
@@ -114,7 +111,6 @@ const AdicionarModelo = () => {
             fabricante: checked ? fabricante : findByIndex.label,
           })
           .then((response) => {
-            console.log(response.data.msg.resultado);
             if (response.data.msg.resultado) {
               postModelos();
               setEstado(false);
@@ -122,7 +118,6 @@ const AdicionarModelo = () => {
               setModelo("");
               getFabricantes();
             } else {
-              console.log("b");
               Swal.fire({
                 icon: "error",
                 title: "Erro!",

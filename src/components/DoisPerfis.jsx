@@ -1,10 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from "../pages/contexts/auth";
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const DoisPerfis = () => {
-    const { authenticated, logout } = useContext(AuthContext);
     const analisePerfil = localStorage.getItem('user');
     const analiseFeita = JSON.parse(analisePerfil);
     const [data, setData] = useState([]);

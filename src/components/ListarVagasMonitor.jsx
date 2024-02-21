@@ -21,7 +21,6 @@ const ListarVagasMonitor = () => {
   const [vagasOcupadas, setVagasOcupadas] = useState(0);
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [localVagas, setLocalVagas] = useState(true);
-  const [attFunc, setAttFunc] = useState(false);
   let variavelAuxiliarVagas = [];
 
   const funcCalcVgas = (array) => {
@@ -186,7 +185,7 @@ useEffect(() => {
       cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 50);
   }
-  }, [vaga, attFunc]);
+  }, [vaga]);
 
   useEffect(() => {
       (async () => {

@@ -18,7 +18,6 @@ const PrestacaoContas = () => {
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [estadoLoadingPix, setEstadoLoadingPix] = useState(false);
   const [mensagem, setMensagem] = useState('');
-  const [dataHoje, setDataHoje] = useState('');
 
 
   function formatNumero(number) {
@@ -421,7 +420,6 @@ doc.autoTable({
     const mes = (data.getMonth() + 1).toString().padStart(2, '0');
     const ano = data.getFullYear();
     const dataHoje = ano + "-" + mes + "-" + dia;
-    setDataHoje(dataHoje);
 
     const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
     handleConsulta(idrequisicao);
@@ -434,7 +432,6 @@ doc.autoTable({
     const base64 = btoa(consulta)
     requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
     if(res.data.msg.resultado){
-      console.log(res.data)
     setEstadoLoading(false);
     setEstado(true);
     setData(res.data.data);
@@ -649,9 +646,7 @@ doc.autoTable({
     const requisicao = createAPI();
     const base64 = btoa(consulta)
     requisicao.get(`/financeiro/update/pix?query=${base64}`).then((res) => {
-      console.log(res)
     if(res.data.msg.resultado){
-      console.log(res.data)
       setEstadoLoadingPix(false)
       Swal.fire({
         icon: 'success',

@@ -22,20 +22,16 @@ const RegistrarVagaMonitor = () => {
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
   const [tempo, setTempo] = useState("00:10:00");
-  const [valor, setValor] = useState("dinheiro");
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [mostrapag, SetMostrapag] = useState(false);
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
   const [vaga, setVaga] = useState("");
-  const [cont, setCont] = useState(0);
-  const [InputPlaca, setInputPlaca] = useState(" form-control fs-5");
   const [visible, setVisible] = useState(false);
   const [limite, setLimite] = useState(8);
   const [tipoVaga, setTipoVaga] = useState("");
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
@@ -55,11 +51,9 @@ const RegistrarVagaMonitor = () => {
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
       setLoadingButton(false);
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -69,11 +63,9 @@ const RegistrarVagaMonitor = () => {
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
         setLoadingButton(false);
-        setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
         setTimeout(() => {
-          setInputPlaca("form-control fs-5");
           setEstado(false);
           setMensagem("");
         }, 4000);
@@ -111,7 +103,6 @@ const RegistrarVagaMonitor = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
-          setTxId(resposta.data.data.txid);
           getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
@@ -234,11 +225,9 @@ const RegistrarVagaMonitor = () => {
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
       setLoadingButton(false);
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -248,11 +237,9 @@ const RegistrarVagaMonitor = () => {
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
         setLoadingButton(false);
-        setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
         setTimeout(() => {
-          setInputPlaca("form-control fs-5");
           setEstado(false);
           setMensagem("");
         }, 4000);
@@ -296,8 +283,6 @@ const RegistrarVagaMonitor = () => {
 
 
               listaVagas = listaVagas.filter((element) => element !== null);
-
-              console.log(listaVagas);
 
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
@@ -494,7 +479,6 @@ const RegistrarVagaMonitor = () => {
         setPlaca("placa3");
       } else {
         setPlaca("placa");
-        setCont(0);
       }
     }
   }, [textoPlaca]);
@@ -541,16 +525,11 @@ const RegistrarVagaMonitor = () => {
 
   const atualizafunc = () => {
     const tempoo = document.getElementById("tempos").value;
-    const valorr = selectedButton;
-    console.log(selectedButton)
     setTempo(tempoo);
-    setValor(valorr);
     if (tempoo === "00:10:00") {
       SetMostrapag(false);
-      setValor("");
     } else if (tempoo === "notificacao"){
       SetMostrapag(false);
-      setValor("");
     } 
     else {
       SetMostrapag(true);
@@ -604,7 +583,6 @@ const RegistrarVagaMonitor = () => {
   const handleSubmit = async () => {
     setLoadingButton(true);
     let select = selectedButton;
-    setValor(selectedButton);
     const tolerancia = document.getElementById("tempos").value;
 
     if (tolerancia === "notificacao" && textoPlaca !== ""){
@@ -646,7 +624,6 @@ const RegistrarVagaMonitor = () => {
       setTextoPlaca(localStorage.getItem("placa"));
       setVisible(true);
       SetMostrapag(true);
-      setValor("dinheiro");
       setTempo("00:30:00");
     } else {
       setVisible(false);

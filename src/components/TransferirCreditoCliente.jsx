@@ -28,7 +28,6 @@ const TransferirCreditoCliente = () => {
     setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
-  const [readyTransfer, setReadyTransfer] = useState(false);
 
   function extrairNumeros(string) {
     return string ? string.replace(/\D/g, "") : string;
@@ -48,7 +47,6 @@ const TransferirCreditoCliente = () => {
         setTimeout(() => {
           prevStep();
         }, 500);
-        setReadyTransfer(false);
       }
     }
   }, [step]);
@@ -156,7 +154,6 @@ const TransferirCreditoCliente = () => {
         .then((response) => {
           if (response.data.msg.resultado) {
             open();
-            setReadyTransfer(true);
             setStep(1);
           } else {
             setEstado(true);
@@ -178,7 +175,6 @@ const TransferirCreditoCliente = () => {
         .then((response) => {
           if (response.data.msg.resultado) {
             open();
-            setReadyTransfer(true);
             setStep(1);
           } else {
             setEstado(true);

@@ -118,7 +118,6 @@ const BuscarVeiculo = () => {
     requisicao
       .get(`/veiculo/${upperCase}`)
       .then((response) => {
-        console.log(response.data.data);
         setEstado2(false);
         if (
           response.data.msg.resultado === false &&

@@ -12,7 +12,7 @@ import { Group, Pagination } from '@mantine/core';
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
-  const [placa, setPlaca] = useState('')
+  const [ placa ] = useState('')
   const [estado2, setEstado2] = useState(false)
   const [estadoLoading, setEstadoLoading] = useState(false)
 

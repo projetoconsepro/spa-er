@@ -17,7 +17,6 @@ const AdicionarCreditos = () => {
   const [estado, setEstado] = useState(false);
   const [cpf, setCPF] = useState("");
   const [valor, setValor] = useState('');
-  const [InputPlaca, setInputPlaca] = useState("form-control fs-6");
   const [pagamentos, setPagamento] = useState("dinheiro");
   const [data, setData] = useState([]);
   const [onOpen, setOnOpen] = useState(false);
@@ -25,7 +24,6 @@ const AdicionarCreditos = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [estado2, setEstado2] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
-  const [onCloseError, setOnCloseError] = useState(false);
 
   async function getInfoPix(TxId) {
     const requisicao = createAPI();
@@ -114,11 +112,9 @@ const AdicionarCreditos = () => {
               setOnOpenError(true);
             });
         } else {
-          setInputPlaca("form-control fs-5 is-invalid");
           setEstado(true);
           setMensagem("Verifique os campos novamente!");
           setTimeout(() => {
-            setInputPlaca("form-control fs-5");
             setEstado(false);
             setMensagem("");
           }, 4000);
@@ -132,11 +128,9 @@ const AdicionarCreditos = () => {
   const handleSubmit = async () => {
     const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
     if (Newvalor < 2 || isNaN(Newvalor)) {
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Valor mínimo de R$ 2,00!");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -202,20 +196,16 @@ const AdicionarCreditos = () => {
           }
         });
     } else if (valor === 0) {
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Verifique os campos novamente!");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
     } else {
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Verifique os campos novamente!");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -359,7 +349,6 @@ const AdicionarCreditos = () => {
       </div>
       <ModalErroBanco
           onOpen={onOpenError}
-          onClose={onCloseError}
         />
       <ModalPix
         qrCode={data.brcode}

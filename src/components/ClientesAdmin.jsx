@@ -52,7 +52,6 @@ const ClientesAdmin = () => {
   const [step, setStep] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [data, setData] = useState([]);
-  const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
   const [mensagemStep, setMensagemStep] = useState(false);
   const [infoRemetente, setInfoRemetente] = useState("");
@@ -63,7 +62,6 @@ const ClientesAdmin = () => {
   const [veiculos, setVeiculos] = useState([]);
   const [detalhesVeiculo, setDetalhesVeiculo] = useState([]);
   const [nome, setNome] = useState("");
-  const [senhaParam, setSenhaParam] = useState("");
   const [estado, setEstado] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [readyTransfer, setReadyTransfer] = useState(false);
@@ -82,15 +80,6 @@ const ClientesAdmin = () => {
   function extrairNumeros(string) {
     return string ? string.replace(/\D/g, "") : string;
   }
-
-  useEffect(() => {
-    const parametros = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-    });
-    parametros.get("/parametros").then((response) => {
-      setSenhaParam(response.data.data.param.usuario.default);
-    });
-  }, []);
 
   useEffect(() => {
     if (step >= 1 && step <= 4) {
@@ -135,7 +124,6 @@ const ClientesAdmin = () => {
           saldo: parseFloat(item.saldo),
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (
@@ -512,7 +500,6 @@ const ClientesAdmin = () => {
           saldo: parseFloat(item.saldo),
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (
@@ -553,7 +540,6 @@ const ClientesAdmin = () => {
           saldo: parseFloat(item.saldo),
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (

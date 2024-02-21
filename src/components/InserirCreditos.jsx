@@ -23,7 +23,6 @@ const InserirCreditos = () => {
   const [divAvancar, setDivAvancar] = useState(false);
   const [divAvancar2, setDivAvancar2] = useState(false);
   const [pixExpirado, setPixExpirado] = useState("Sucesso!");
-  const [txid, setTxId] = useState(null);
   const [onOpen, setOnOpen] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
@@ -70,7 +69,6 @@ const InserirCreditos = () => {
 
 
       const tipoCard = localStorage.getItem("tipoCard");
-      console.log(tipoCard);
       if (tipoCard == 'debito') {
         setMetodo('cartaoDeb');
       } else {
@@ -142,7 +140,6 @@ const InserirCreditos = () => {
           setButtonDisabled(false);
           if (resposta.data.msg.resultado) {
             setData(resposta.data.data);
-            setTxId(resposta.data.data.txid);
             inserirCreditos(resposta.data.data.txid, ValorFinal)
             setOnOpen(true);
             setNotification(true)
@@ -215,7 +212,6 @@ const InserirCreditos = () => {
       ValorFinal = valor2;
     }
     ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
-    console.log(ValorFinal, ValorFinal < 20)
     if (
       ValorFinal < 20 ||
       ValorFinal == "" ||

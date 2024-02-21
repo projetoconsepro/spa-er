@@ -39,7 +39,6 @@ const EditarParametroAdmin = () => {
   const [inputValues3, setInputValues3] = useState({});
 
   const handleToggleInput3 = (index) => {
-    console.log("a", index);
     setEnabledInputs3((prevState) => ({
       ...prevState,
       [index]: !prevState[index],
@@ -127,7 +126,6 @@ const EditarParametroAdmin = () => {
           hora_fim: horaFim,
         })
         .then((response) => {
-          console.log(response.data);
           if (response.data.msg.resultado) {
             setUpdated(!updated);
             Swal.fire({
@@ -166,7 +164,6 @@ const EditarParametroAdmin = () => {
             },
           })
           .then((response) => {
-            console.log(response.data);
             if (response.data.msg.resultado) {
               setUpdated(!updated);
             } else {
@@ -182,7 +179,6 @@ const EditarParametroAdmin = () => {
   };
 
   const handleDeleteInterval = (item, periodo) => {
-    console.log(item);
     Swal.fire({
       title: `Confirmar exclusão desse intervalo`,
       text: `Tem certeza de que deseja excluir?`,
@@ -201,7 +197,6 @@ const EditarParametroAdmin = () => {
             },
           })
           .then((response) => {
-            console.log(response.data);
             if (response.data.msg.resultado) {
               setUpdated(!updated);
             } else {
@@ -274,7 +269,6 @@ const EditarParametroAdmin = () => {
 
           setDataAPI(newData);
           setInputValues2(newData);
-          console.log(newData);
         }
       })
       .catch((error) => {
@@ -287,7 +281,6 @@ const EditarParametroAdmin = () => {
     requisicao
       .get("/turno/intervalos")
       .then((response) => {
-        console.log(response.data);
         if (response.data.msg.resultado) {
           const rawData = response.data.data;
 
@@ -372,8 +365,6 @@ const EditarParametroAdmin = () => {
       return;
     }
     const editedValues = inputValues2[index];
-    console.log("Id_turno:", id_turno);
-    console.log("Edited Values:", editedValues);
 
     const requisicao = createAPI();
     requisicao
@@ -384,7 +375,6 @@ const EditarParametroAdmin = () => {
         hora_fim: editedValues.fechamento,
       })
       .then((response) => {
-        console.log(response.data);
         if (response.data.msg.resultado) {
           setEnabledInputs2((prevState) => ({
             ...prevState,
@@ -471,7 +461,6 @@ const EditarParametroAdmin = () => {
             hora_fim: formatHora(fechamentoSelecionado),
           })
           .then((response) => {
-            console.log(response.data);
             if (response.data.msg.resultado) {
               setUpdated(!updated);
               Swal.fire({

@@ -20,16 +20,16 @@ import moment from "moment";
 
 
 const ListarVeiculos = () => {
-  const [resposta, setResposta] = useState([]);
+  const [resposta ] = useState([]);
   const [valorcobranca, setValorCobranca] = useState("");
   const [valorcobranca2, setValorCobranca2] = useState("");
   const [mostrar, setMostrar] = useState(false);
-  const [mostrar2, setMostrar2] = useState([]);
-  const [mostrardiv, setMostrarDiv] = useState([]);
-  const [nofityvar, setNotifyVar] = useState([]);
+  const [mostrar2 ] = useState([]);
+  const [mostrardiv ] = useState([]);
+  const [nofityvar ] = useState([]);
   const [saldoCredito, setSaldoCredito] = useState("0.00");
-  const [vaga, setVaga] = useState([]);
-  const [notificacao, setNotificacao] = useState([]);
+  const [vaga ] = useState([]);
+  const [notificacao ] = useState([]);
   const [selectedButton, setSelectedButton] = useState("01:00:00");
   const [botaoOff, setBotaoOff] = useState(false);
   const [contador, setContador] = useState(0);
@@ -535,7 +535,6 @@ const ListarVeiculos = () => {
         telefone: '(51) 9 8660-4241'
     };
   
-      console.log('JSON gerado:', data);
 
       if(window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(JSON.stringify(data));

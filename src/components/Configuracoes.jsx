@@ -19,7 +19,6 @@ const Configuracoes = () => {
   const [cardBody] = useState("card-body3");
   const [estadoDiv, setEstadoDiv] = useState(false);
   const [estadoDiv2, setEstadoDiv2] = useState(true);
-  const [debito, setDebito] = useState(true);
 
   const Atualizarequisicao = async () => {
     const requisicao = createAPI();
@@ -83,7 +82,6 @@ const Configuracoes = () => {
       Atualizarequisicao();
     } else {
       open()
-      setDebito(false)
     }
   }, []);
 
@@ -336,6 +334,13 @@ const Configuracoes = () => {
           </>
           : null}
       </Modal>
+      <div
+              className="alert alert-danger mt-4"
+              role="alert"
+              style={{ display: estado ? "block" : "none" }}
+            >
+              {mensagem}
+      </div>
     </div>
   );
 };

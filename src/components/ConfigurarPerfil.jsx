@@ -43,8 +43,6 @@ const ConfigurarPerfil = () => {
   const [telefone2, setTelefone2] = useState("");
   const [senha, setSenha] = useState("");
   const [senha2, setSenha2] = useState("");
-  const [token, setToken] = useState("");
-  const [idUsuario, setIdUsuario] = useState(null);
   const [isUsernameEnabled, setIsUsernameEnabled] = useState(false);
   const [isEmailEnabled, setIsEmailEnabled] = useState(false);
   const [isTelefoneEnabled, setIsTelefoneEnabled] = useState(false);
@@ -53,13 +51,10 @@ const ConfigurarPerfil = () => {
   const [cartoesData, setCartoesData] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
-    setToken(token);
     setUser2(user2.nome);
     setUser(user2.nome);
-    setIdUsuario(user2.id_usuario);
     setPerfil(user2.perfil[0]);
     setEmail(user2.email);
     setEmail2(user2.email);
@@ -88,7 +83,6 @@ const ConfigurarPerfil = () => {
                 ? "linear-gradient(to right, #322214, #2E282A)"
                 : "white",
           }));
-          console.log(newData);
           setCartoesData(newData);
         } else {
           setCartoesData([]);

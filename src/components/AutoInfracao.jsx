@@ -33,7 +33,6 @@ const AutoInfracao = () => {
   useEffect(() => {
     let infos = JSON.parse(localStorage.getItem("autoInfracao"));
     setData([infos]);
-    console.log([infos]);
 
     const requisicao = createAPI();
 

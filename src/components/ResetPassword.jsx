@@ -14,7 +14,7 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     const checks = document.querySelectorAll('input[type="checkbox"]');
-    if(!sucesso){
+    if (!sucesso) {
       if (
         checks[0].checked === false
       ) {
@@ -33,7 +33,7 @@ const ResetPassword = () => {
     else{
         setSucesso(true);
     } 
-  }else{
+  } else {
     if (metodo === "") {
       setMensagem("Digite seu dado de identificação");
       setEstado(true);
