@@ -58,6 +58,7 @@ function AbrirTurno() {
         id_setores: setor.id_setor
       }));
       setResposta2(novosSetores);
+      localStorage.setItem('setores', JSON.stringify(novosSetores));
     })
       .catch((error) => {
         if (

@@ -28,6 +28,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.2.2",
     "bootstrap": "^5.2.3",
+    "caniuse-lite": "^1.0.30001589",
     "chart.js": "^4.3.0",
     "chartjs-plugin-annotation": "^2.2.1",
     "cpf-cnpj-validator": "^1.0.3",

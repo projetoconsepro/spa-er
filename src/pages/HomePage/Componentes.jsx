@@ -52,6 +52,7 @@ import Feriados from '../../components/Feriados';
 import ListaAutoInfracao from '../../components/ListaAutoInfracao';
 import PlacaIsenta from '../../components/PlacaIsenta';
 import BuscarMovimentoTxId from '../../components/BuscarMovimentoTxId';
+import ListagemMovimentoVeiculo from '../../components/ListagemMovimentoVeiculo';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -106,6 +107,7 @@ const componentesMap = {
     PlacaIsenta: <PlacaIsenta />,
     BuscarMovimentoTxId: <BuscarMovimentoTxId />,
     SugestoesAdmin: <SugestoesAdmin />,
+    ListagemMovimentoVeiculo: <ListagemMovimentoVeiculo />,
     Error: <Error />,
 };
 
@@ -113,6 +115,6 @@ export default function Veiculos({Componente}) {
 
     const ComponenteSelecionado = componentesMap[Componente];
 
-    return ComponenteSelecionado || null;
+    return ComponenteSelecionado || <Error />;
 
 };

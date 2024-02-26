@@ -190,6 +190,7 @@ const Sidebar = () => {
                   { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "ListarNotificacoesAdmin", className: commonStyles },
                   { icon: <FaParking />, name: "‎ Estacionamento", componente: "OcupacaoVagasAdmin", className: commonStyles },
                   { icon: <FcIdea />, name: "‎ Sugestões", componente: "SugestoesAdmin", className: commonStyles },
+                  { icon: <FaCar />, name: "‎ Registro Veículo", componente: "ListagemMovimentoVeiculo", className: commonStyles },
               ]
           },
           { icon: <FcMoneyTransfer />, name: "‎ Depósito Parceiro", componente: "TransferenciaParceiro" },
