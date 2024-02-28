@@ -116,10 +116,9 @@ const InserirCreditos = () => {
 
     if (
       ValorFinal <= 2 ||
-      ValorFinal == "" ||
-      ValorFinal == "" ||
+      ValorFinal === "" ||
       ValorFinal == null ||
-      ValorFinal == undefined ||
+      ValorFinal === undefined ||
       isNaN(ValorFinal)
     ) {
       setButtonDisabled(false);
@@ -214,10 +213,9 @@ const InserirCreditos = () => {
     ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
     if (
       ValorFinal < 20 ||
-      ValorFinal == "" ||
-      ValorFinal == "" ||
+      ValorFinal === "" ||
       ValorFinal == null ||
-      ValorFinal == undefined ||
+      ValorFinal === undefined ||
       isNaN(ValorFinal)
     ) {
       setButtonDisabled(false);

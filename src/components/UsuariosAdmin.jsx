@@ -15,7 +15,6 @@ import createAPI from "../services/createAPI";
 
 const UsuariosAdmin = () => {
   const [data, setData] = useState([]);
-  const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
   const [estado2, setEstado2] = useState(false);
   const [nome, setNome] = useState("");
@@ -67,7 +66,6 @@ const UsuariosAdmin = () => {
           id_usuario: item.id_usuario,
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (
@@ -591,7 +589,6 @@ const UsuariosAdmin = () => {
           id_usuario: item.id_usuario,
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (
@@ -630,7 +627,6 @@ const UsuariosAdmin = () => {
           id_usuario: item.id_usuario,
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (
