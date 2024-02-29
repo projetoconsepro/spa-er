@@ -167,18 +167,6 @@ export const VagaMonitor = ({
       })
       .then((response) => {
         if (response.data.msg.resultado === true) {
-          ImpressaoTicketEstacionamento(
-            "PRIMEIRA",
-            response.data.data.chegada,
-            response.data.data.tempo,
-            response.config.headers.id_usuario,
-            [numero],
-            placa,
-            "debito",
-            "00:30:00",
-            response.data.data.notificacao_pendente
-          );
-
           const updatedResposta = [...resposta];
           let validade = CalcularHoras(
             CalcularValidade(

@@ -151,8 +151,6 @@ const Dashboard = () => {
             <div className="row">
               <Group position="center">
                 <div className="card bg-white border-0 shadow divPers mx-2">
-                  <h1>RETIRADO DASHBOARD PARA TESTES.</h1>
-                  {/*
                   <div
                     className={
                       window.innerWidth > 1474
@@ -166,7 +164,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                */}
+
                 </div>
                 <div className="card bg-white border-0 shadow divPers mx-3">
                   <div
@@ -194,7 +192,6 @@ const Dashboard = () => {
         ) : (
           <div className="col-12 mb-4 mt-4">
             <div className="row">
-              {/*
                     <div className="card bg-white border-0 shadow w-100">
                         <div className="card-body7 p-2">
                             <div className="row">
@@ -204,7 +201,6 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
-            */}
             </div>
             <div className="row mt-3">
               <div className="card bg-white border-0 shadow w-100">

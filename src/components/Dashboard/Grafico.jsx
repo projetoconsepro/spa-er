@@ -6,10 +6,6 @@ import createAPI from "../../services/createAPI";
 import randomColor from "randomcolor";
 
 const Grafico = () => {
-  const [contador, setContador] = useState(0);
-  const [dataSetor, setData] = useState([]);
-  const [ocupacao, setOcupacao] = useState([]);
-  const [cores, setCores] = useState([]);
   const [nome, setNome] = useState([]);
 
   function gerarCorBonita() {
@@ -54,19 +50,20 @@ const Grafico = () => {
     return newHexColor;
   }
 
+  const labels = [
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+  ];
+
   const data = {
-    labels: [
-      "09:00",
-      "10:00",
-      "11:00",
-      "12:00",
-      "13:00",
-      "14:00",
-      "15:00",
-      "16:00",
-      "17:00",
-      "18:00",
-    ],
+    labels: labels,
     datasets: Object.values(nome),
   };
 
@@ -123,17 +120,17 @@ const Grafico = () => {
           const backgroundColor = lightenAndFadeColor(corBonita, 30, 200);
           return {
             nome: item.nome,
-            quantidade: item.id_movimento,
-            hora: item.hora,
+            quantidade: item.numero_movimento,
+            hora: item.intervalo_horario,
             cor: corBonita,
             backgroundColor: backgroundColor,
           };
         });
 
         const novoObjeto = {};
-
+        
         for (const item of NewData) {
-          const { cor, nome, quantidade, backgroundColor } = item;
+          const { cor, nome, quantidade, backgroundColor, hora } = item;
 
           if (!novoObjeto[nome]) {
             novoObjeto[nome] = {
@@ -148,8 +145,7 @@ const Grafico = () => {
               cubicInterpolationMode: "monotone",
             };
           }
-
-          novoObjeto[nome].data.push(quantidade);
+          novoObjeto[nome].data[labels.indexOf(hora)] = quantidade;
         }
         setNome(novoObjeto);
       })
@@ -157,6 +153,20 @@ const Grafico = () => {
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    requisicaoSetores();
+
+    const interval = setInterval(() => {
+        requisicaoSetores();
+    }, 120000);
+
+    return () => clearInterval(interval);
+}, []);
+
+
+
+
 
   return (
     <>
