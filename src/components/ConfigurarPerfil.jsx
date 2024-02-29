@@ -43,8 +43,6 @@ const ConfigurarPerfil = () => {
   const [telefone2, setTelefone2] = useState("");
   const [senha, setSenha] = useState("");
   const [senha2, setSenha2] = useState("");
-  const [token, setToken] = useState("");
-  const [idUsuario, setIdUsuario] = useState(null);
   const [isUsernameEnabled, setIsUsernameEnabled] = useState(false);
   const [isEmailEnabled, setIsEmailEnabled] = useState(false);
   const [isTelefoneEnabled, setIsTelefoneEnabled] = useState(false);
@@ -53,13 +51,10 @@ const ConfigurarPerfil = () => {
   const [cartoesData, setCartoesData] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
-    setToken(token);
     setUser2(user2.nome);
     setUser(user2.nome);
-    setIdUsuario(user2.id_usuario);
     setPerfil(user2.perfil[0]);
     setEmail(user2.email);
     setEmail2(user2.email);
@@ -78,10 +73,16 @@ const ConfigurarPerfil = () => {
           const newData = resposta.data.data.map((item) => ({
             cartao: `${item.id_cartao}`,
             bandeira: item.bandeira,
-            numero:  `#### #### #### ${item.cartao}`,
-            background: item.bandeira === 'visa' ? 'linear-gradient(to right, #064789, #427AA1)' : item.bandeira === 'mastercard' ? 'linear-gradient(to right, #F4796B, #f79e21)' : item.bandeira === 'elocard' ? 'linear-gradient(to right, #322214, #2E282A)' :  'white'
+            numero: `#### #### #### ${item.cartao}`,
+            background:
+              item.bandeira === "visa"
+                ? "linear-gradient(to right, #064789, #427AA1)"
+                : item.bandeira === "mastercard"
+                ? "linear-gradient(to right, #F4796B, #f79e21)"
+                : item.bandeira === "elocard"
+                ? "linear-gradient(to right, #322214, #2E282A)"
+                : "white",
           }));
-          console.log(newData)
           setCartoesData(newData);
         } else {
           setCartoesData([]);
@@ -162,14 +163,14 @@ const ConfigurarPerfil = () => {
   const apagarCartao = (cartao) => {
     const finalDoNumero = cartao.numero.slice(-4);
     Swal.fire({
-      title: 'Tem certeza?',
+      title: "Tem certeza?",
       text: `Você deseja apagar o cartão de final ${finalDoNumero}?`,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sim, apagar!',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, apagar!",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
         const requisicao = createAPI();
@@ -178,16 +179,18 @@ const ConfigurarPerfil = () => {
           .then((response) => {
             if (response.data.msg.resultado) {
               Swal.fire({
-                icon: 'success',
+                icon: "success",
                 title: response.data.msg.msg,
                 showConfirmButton: false,
                 timer: 1500,
               });
-              const newData = cartoesData.filter((item) => item.cartao !== cartao.cartao);
+              const newData = cartoesData.filter(
+                (item) => item.cartao !== cartao.cartao
+              );
               setCartoesData(newData);
             } else {
               Swal.fire({
-                icon: 'error',
+                icon: "error",
                 title: response.data.msg.msg,
                 showConfirmButton: false,
                 timer: 1500,
@@ -200,7 +203,6 @@ const ConfigurarPerfil = () => {
       }
     });
   };
-  
 
   const handleCancelClickSenha = () => {
     setSenha("");
@@ -490,7 +492,7 @@ const ConfigurarPerfil = () => {
         {perfil === "cliente" ? (
           <Accordion.Item value="cartao">
             <Accordion.Control icon={<IconCreditCard size={rem(20)} />}>
-              Meus cartões 
+              Meus cartões
             </Accordion.Control>
             <Accordion.Panel>
               <Accordion
@@ -498,63 +500,84 @@ const ConfigurarPerfil = () => {
                 styles={{ item: { backgroundColor: "white" } }}
                 className="text-start"
               >
-
-                {cartoesData.length !== 0 ? 
-                cartoesData.map((cartao) => (
-                <Accordion.Item
-                  style={{ background: cartao.background }}
-                  className="text-white"
-                  key={cartao.cartao}
-                  value={cartao.cartao}
-                >
-                  <Accordion.Control style={{ background: cartao.background }} className={cartao.background === 'white' ? 'text-black' : 'text-white'}>
-                    <div className="row">
-                      <div className="">
-                        {cartao.bandeira === "mastercard" || cartao.bandeira === "visa" || cartao.bandeira === "elocard" ? (
-                        <img
-                          src={`../../assets/img/cartaoCredito/${cartao.bandeira}.png`}
-                          alt="logo"
-                          className="bandeira"
-                        />
-                        ) : (
-                          <FaCreditCard size={rem(20)} />
-                        )}
-                        <span className="mx-2">{cartao.numero}</span>
-                      </div>
-                    </div>
-                  </Accordion.Control>
-                  <Accordion.Panel>
-                    <div className="row align-items-center justify-content-center">
-                    <Button
-                        variant="gradient"
-                        gradient={{ from: 'red', to: 'red', deg: 90 }}
-                        className="w-50"
-                        onClick={() => apagarCartao(cartao)}
+                {cartoesData.length !== 0 ? (
+                  cartoesData.map((cartao) => (
+                    <Accordion.Item
+                      style={{ background: cartao.background }}
+                      className="text-white"
+                      key={cartao.cartao}
+                      value={cartao.cartao}
+                    >
+                      <Accordion.Control
+                        style={{ background: cartao.background }}
+                        className={
+                          cartao.background === "white"
+                            ? "text-black"
+                            : "text-white"
+                        }
                       >
-                        Apagar cartão
-                      </Button>
-                    </div>
-                  </Accordion.Panel>
-                </Accordion.Item>
-                )) : (
+                        <div className="row">
+                          <div className="">
+                            {cartao.bandeira === "mastercard" ||
+                            cartao.bandeira === "visa" ||
+                            cartao.bandeira === "elocard" ? (
+                              <img
+                                src={`../../assets/img/cartaoCredito/${cartao.bandeira}.png`}
+                                alt="logo"
+                                className="bandeira"
+                              />
+                            ) : (
+                              <FaCreditCard size={rem(20)} />
+                            )}
+                            <span className="mx-2">{cartao.numero}</span>
+                          </div>
+                        </div>
+                      </Accordion.Control>
+                      <Accordion.Panel>
+                        <div className="row align-items-center justify-content-center">
+                          <Button
+                            variant="gradient"
+                            gradient={{ from: "red", to: "red", deg: 90 }}
+                            className="w-50"
+                            onClick={() => apagarCartao(cartao)}
+                          >
+                            Apagar cartão
+                          </Button>
+                        </div>
+                      </Accordion.Panel>
+                    </Accordion.Item>
+                  ))
+                ) : (
                   <div>
-                  <div className="d-flex align-items-center justify-content-center" onClick={()=> FuncTrocaComp('CartaoCredito')}>
-                    <Box>
-                    <Image
-                        src='https://media.discordapp.net/attachments/894696108926832711/1140737633958498314/creditCardPayment.png?width=364&height=367'
-                        alt="image"
-                        style={{ width: 160, height: 160 }}
-                      />
-                    </Box>
+                    <div
+                      className="d-flex align-items-center justify-content-center"
+                      onClick={() => FuncTrocaComp("CartaoCredito")}
+                    >
+                      <Box>
+                        <Image
+                          src="https://media.discordapp.net/attachments/894696108926832711/1140737633958498314/creditCardPayment.png?width=364&height=367"
+                          alt="image"
+                          style={{ width: 160, height: 160 }}
+                        />
+                      </Box>
+                    </div>
+                    <div className="mt-3">
+                      <Text className="text-center">
+                        {" "}
+                        Você não possui cartão registrado{" "}
+                      </Text>
+                    </div>
                   </div>
-                  <div className="mt-3">
-                  <Text className="text-center"> Você não possui cartão registrado </Text>
-                </div>
-                </div>
                 )}
               </Accordion>
-              <Button className='mt-3' leftIcon={<IconArrowForwardUpDouble size="1rem" />} onClick={() => { FuncTrocaComp('CartaoCredito') }}>
-                  Adicionar cartão 
+              <Button
+                className="mt-3"
+                leftIcon={<IconArrowForwardUpDouble size="1rem" />}
+                onClick={() => {
+                  FuncTrocaComp("CartaoCredito");
+                }}
+              >
+                Adicionar cartão
               </Button>
             </Accordion.Panel>
           </Accordion.Item>

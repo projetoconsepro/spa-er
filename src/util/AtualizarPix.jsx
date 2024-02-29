@@ -1,14 +1,11 @@
-import axios from 'axios';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDisclosure } from '@mantine/hooks';
-import { Modal, Group, Button, Input, Alert, Radio, Grid, Badge } from '@mantine/core';
-import { DatePickerInput, DateTimePicker } from '@mantine/dates';
+import { Modal, Group, Button, Alert } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
 import Select from "react-select";
 import 'dayjs/locale/pt-br';
-import { IconAlertCircle, IconMail, IconParking, IconPhone, IconUser } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
 import moment from 'moment';
-import createAPI from '../services/createAPI';
-import InputMask from "react-input-mask";
 
 const AtualizarPix = ({ nome, onConsultaSelected, onLoading }) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -20,7 +17,6 @@ const AtualizarPix = ({ nome, onConsultaSelected, onLoading }) => {
   const [State, setState] = useState(false);
   const [valuePeriodo, setValuePeriodo] = useState([null, null]);
   const [estadoLoading, setEstadoLoading] = useState(onLoading);
-  const [dataHoje, setDataHoje] = useState("");
   const [dataHora, setDataHora] = useState("09:00");
   const [dataHora2, setDataHora2] = useState("18:00");
 

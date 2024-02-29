@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCarAlt, FaParking } from "react-icons/fa";
-import { BsCarFrontFill, BsCardList, BsCashCoin, BsClipboard, BsClipboard2Check, BsPaintBucket } from "react-icons/bs";
+import { BsCardList, BsCashCoin, BsClipboard2Check, BsPaintBucket } from "react-icons/bs";
 import { RxLapTimer } from "react-icons/rx";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -9,7 +9,6 @@ import { Button, Divider } from "@mantine/core";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import calcularValidade from "../util/CalcularValidade";
-import { CarCrashOutlined, CarRepair } from "@mui/icons-material";
 
 const BuscarVeiculo = () => {
   const [placa, setPlaca] = useState("placa");
@@ -119,7 +118,6 @@ const BuscarVeiculo = () => {
     requisicao
       .get(`/veiculo/${upperCase}`)
       .then((response) => {
-        console.log(response.data.data);
         setEstado2(false);
         if (
           response.data.msg.resultado === false &&
@@ -271,12 +269,7 @@ const BuscarVeiculo = () => {
                 {data.map((link, index) => (
                   <div className="card border-3 shadow mt-5" key={index}>
                     <div
-                      className={
-                        link.numero_notificacoes_pendentes !== 0 &&
-                        link.estacionado === "S"
-                          ? "card-body8 h-75"
-                          : "card-body8"
-                      }
+                      className="card-body8 h-75"
                     >
                       <div className="d-flex align-items-center justify-content-between pb-3">
                         <div>

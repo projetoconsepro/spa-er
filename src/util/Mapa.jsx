@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import React, { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import { Icon } from "leaflet";
-import 'leaflet/dist/leaflet.css';
-import markerIcon from './marker.png';
-import CarroLoading from '../components/Carregamento';
+import "leaflet/dist/leaflet.css";
+import markerIcon from "./marker.png";
+import CarroLoading from "../components/Carregamento";
 
 const Mapa = ({ address }) => {
   const [latitude, setLatitude] = useState(null);
@@ -12,7 +12,11 @@ const Mapa = ({ address }) => {
   useEffect(() => {
     const geocodeAddress = async () => {
       try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`);
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+            address
+          )}&format=json&addressdetails=1&limit=1`
+        );
         const data = await response.json();
 
         if (data.length > 0) {
@@ -29,27 +33,28 @@ const Mapa = ({ address }) => {
 
     geocodeAddress();
   }, [address]);
-  
+
   const customIcon = new Icon({
     iconUrl: markerIcon,
     iconSize: [25, 35],
-    iconAnchor: [19, 30]
-  })
+    iconAnchor: [19, 30],
+  });
 
   return (
     <div>
-    {latitude !== null && longitude !== null ? (
-    <MapContainer center={[latitude, longitude]} zoom={15}>
-      <TileLayer 
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-        <Marker position={[latitude, longitude]} icon={customIcon}></Marker>
-    </MapContainer>
-    ) : <div>
-        <CarroLoading />
-      </div>
-      }
+      {latitude !== null && longitude !== null ? (
+        <MapContainer center={[latitude, longitude]} zoom={15}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={[latitude, longitude]} icon={customIcon}></Marker>
+        </MapContainer>
+      ) : (
+        <div>
+          <CarroLoading />
+        </div>
+      )}
     </div>
   );
 };

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 function Paginacao({ data, itemsPerPage, handleCurrentItems }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(Math.ceil(data.length / itemsPerPage));
-  const [currentItems, setCurrentItems] = useState([]);
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(data.length / itemsPerPage)
+  );
+  const [ setCurrentItems ] = useState([]);
 
   useEffect(() => {
     paginate(currentPage);
@@ -31,7 +33,9 @@ function Paginacao({ data, itemsPerPage, handleCurrentItems }) {
         {pageNumbers.map((pageNumber) => (
           <li key={pageNumber} className="page-item">
             <button
-              className={`page-link ${currentPage === pageNumber ? 'active' : ''}`}
+              className={`page-link ${
+                currentPage === pageNumber ? "active" : ""
+              }`}
               onClick={() => paginate(pageNumber)}
             >
               {pageNumber}

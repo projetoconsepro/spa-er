@@ -1,23 +1,18 @@
 import axios from "axios";
-import { FcPlus } from "react-icons/fc";
 import { FaBell, FaCarAlt, FaParking } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
 import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import { TbHandClick, TbSquareRoundedPlusFilled } from "react-icons/tb";
 import "../pages/Style/styles.css";
 import Swal from "sweetalert2";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
-import { Button, Divider, Grid, Group, Input, Modal, Notification, Text } from "@mantine/core";
-import { IconArrowRight, IconChevronRight, IconParking, IconPlus, IconPrinter, IconReload, IconSquareRoundedPlusFilled } from "@tabler/icons-react";
+import { Button, Divider, Grid, Group, Modal, Notification, Text } from "@mantine/core";
+import { IconChevronRight, IconPrinter, IconReload, IconSquareRoundedPlusFilled } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
-import { CarCrashOutlined } from "@mui/icons-material";
-import { BsConeStriped } from "react-icons/bs";
-import { IconCirclePlus } from "@tabler/icons-react";
 import { IconX } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import jsPDF from "jspdf";
@@ -25,16 +20,16 @@ import moment from "moment";
 
 
 const ListarVeiculos = () => {
-  const [resposta, setResposta] = useState([]);
+  const [resposta ] = useState([]);
   const [valorcobranca, setValorCobranca] = useState("");
   const [valorcobranca2, setValorCobranca2] = useState("");
   const [mostrar, setMostrar] = useState(false);
-  const [mostrar2, setMostrar2] = useState([]);
-  const [mostrardiv, setMostrarDiv] = useState([]);
-  const [nofityvar, setNotifyVar] = useState([]);
+  const [mostrar2 ] = useState([]);
+  const [mostrardiv ] = useState([]);
+  const [nofityvar ] = useState([]);
   const [saldoCredito, setSaldoCredito] = useState("0.00");
-  const [vaga, setVaga] = useState([]);
-  const [notificacao, setNotificacao] = useState([]);
+  const [vaga ] = useState([]);
+  const [notificacao ] = useState([]);
   const [selectedButton, setSelectedButton] = useState("01:00:00");
   const [botaoOff, setBotaoOff] = useState(false);
   const [contador, setContador] = useState(0);
@@ -540,7 +535,6 @@ const ListarVeiculos = () => {
         telefone: '(51) 9 8660-4241'
     };
   
-      console.log('JSON gerado:', data);
 
       if(window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(JSON.stringify(data));

@@ -21,7 +21,6 @@ const ListarNotificacoes = () => {
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
-  const [placaSetada, setPlacaSetada] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [data2, setData2] = useState([]);
@@ -218,7 +217,6 @@ const ListarNotificacoes = () => {
     ) {
       startVagaVeiculo(localVagaVeiculo);
     } else if (placa !== null && placa !== undefined && placa !== "") {
-      setPlacaSetada(placa);
       startPlaca(placa);
     } else {
       startNotificao();
@@ -409,7 +407,10 @@ const ListarNotificacoes = () => {
             <div className="col-12">
               <h6>Selecione as notificações para regularizar:</h6>
               <div className="text-start d-flex">
-              <h6>Selecionar todas:  </h6> <input type="checkbox"  style={{ width: "15px", height: "15px", marginLeft: "8px", marginTop: "4px" }} onChange={(e) => data.filter(item => item.pago === "N").map(item => item.checked = e.target.checked)} />
+              <h6>Selecionar todas:  </h6> <input type="checkbox"  style={{ width: "15px", height: "15px", marginLeft: "8px", marginTop: "4px" }} onChange={(e) => {
+                data.filter(item => item.pago === "N").map(item => item.checked = e.target.checked)
+                setData([...data])
+              }} />
               </div>
             </div>
           </div>
@@ -435,7 +436,10 @@ const ListarNotificacoes = () => {
                         <input
                           type="checkbox"
                           checked={link.checked}
-                          onChange={() => (link.checked = !link.checked)}
+                          onChange={() => {
+                            link.checked = !link.checked;
+                            setData([...data]);
+                          }}
                           style={{ width: "20px", height: "20px" }} />
                       </td>
                       <td>{link.placa}</td>

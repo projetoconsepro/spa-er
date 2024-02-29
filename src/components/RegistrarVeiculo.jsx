@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import axios from 'axios'
 import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
 import { Button, Divider } from '@mantine/core'
@@ -19,12 +18,11 @@ const RegistrarVeiculo = () => {
 
     const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked
-        if(clicado === true){
+        if (clicado === true) {
             setPlaca("placa2")
             setLimite(10)
             setInputVazio("inputvazio2")
-        }
-        else{
+        } else{
             setPlaca("placa")
             setLimite(8)
             setInputVazio("inputvazio")

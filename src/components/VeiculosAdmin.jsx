@@ -12,11 +12,9 @@ import { Group, Pagination } from '@mantine/core';
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
-  const [placa, setPlaca] = useState('')
+  const [ placa ] = useState('')
   const [estado2, setEstado2] = useState(false)
-  const [estado, setEstado] = useState(false)
   const [estadoLoading, setEstadoLoading] = useState(false)
-  const [mensagem, setMensagem] = useState('')
 
   const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
@@ -180,9 +178,6 @@ const handleConsultaSelected = (consulta) => {
                         <div className="mt-3 mb-3" style={{ display: estado2 ? 'block' : 'none'}}>
                           <CarroLoading  />       
                         </div>
-                        <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-                        {mensagem}
-                    </div>
                     </div>
                 </div>
                 <Group position="center" mb="md">

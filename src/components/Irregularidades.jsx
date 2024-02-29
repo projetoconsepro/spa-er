@@ -1,7 +1,6 @@
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
-import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
+import { AiFillCheckCircle } from "react-icons/ai";
 import { BsCalendarDate, BsCashCoin, BsConeStriped } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
@@ -12,7 +11,7 @@ import { IconReload, IconX } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
-import { Button, Group, Pagination } from "@mantine/core";
+import { Button } from "@mantine/core";
 import ModalErroBanco from "./ModalErroBanco";
 
 const Irregularidades = () => {
@@ -24,28 +23,13 @@ const Irregularidades = () => {
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
   const [saldoCredito, setSaldoCredito] = useState(0);
-  const [valorCobranca, setValorCobranca] = useState(0);
   const [loading, setOnLoading] = useState(false);
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
-    
-  const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 50;
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-
-    };
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -87,7 +71,6 @@ const Irregularidades = () => {
         .then((resposta) => {
           if (resposta.data.msg.resultado) {
             setData2(resposta.data.data);
-            setTxId(resposta.data.data.txid);
             getInfoPix(resposta.data.data.txid, index);
             open();
             setOnOpen(true);
@@ -298,25 +281,6 @@ const Irregularidades = () => {
 
   useEffect(() => {
     const requisicao = createAPI();
-    requisicao.get("/parametros").then((response) => {
-        setValorCobranca(
-          response.data.data.param.estacionamento.valor_notificacao
-        );
-      })
-      .catch(function (error) {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("perfil");
-        } else {
-          console.log(error);
-        }
-      });
 
     requisicao
       .get("/usuario/saldo-credito")
