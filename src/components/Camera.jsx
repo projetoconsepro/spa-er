@@ -12,7 +12,7 @@ function Camera() {
   const [photos, setPhotos] = useState([]);
   const [cont, setCont] = useState(0);
   const [cont2, setCont2] = useState(0);
-  const [tamanho, setTamanho] = useState(90);
+  const [ tamanho ] = useState(90);
   const [divErro, setDivErro] = useState(false);
   const [cameraLoaded, setCameraLoaded] = useState(false); 
 

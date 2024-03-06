@@ -3,12 +3,11 @@ import { React, useState, useEffect } from "react";
 import "../pages/Style/styles.css";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
-import { Button, Card, Divider, Grid, Group, Input, Modal, Text } from "@mantine/core";
+import { Button, Card, Divider, Grid, Group, Modal, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { rem } from "@mantine/core";
-import { IconCar, IconCarOff, IconParking, IconPrinter } from "@tabler/icons-react";
-import { FaCar, FaCarAlt } from "react-icons/fa";
-import { BiCar, BiSolidCarGarage } from "react-icons/bi";
+import { IconPrinter } from "@tabler/icons-react";
+import { FaCar } from "react-icons/fa";
 import createAPI from "../services/createAPI";
 import jsPDF from "jspdf";
 import { useDisclosure } from "@mantine/hooks";
@@ -16,10 +15,8 @@ import { useDisclosure } from "@mantine/hooks";
 const RegistrarVagaCliente = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [inputVaga, setInputVaga] = useState("form-control fs-5");
-  const [vaga, setVaga] = useState([]);
-  const [resposta, setResposta] = useState([{}]);
-  const [resposta2, setResposta2] = useState([]);
+  const [ vaga ] = useState([]);
+  const [ resposta2, setResposta2 ] = useState([]);
   const [valor, setValor] = useState(0);
   const [valorcobranca, setValorCobranca] = useState("");
   const [valorcobranca2, setValorCobranca2] = useState("");
@@ -128,14 +125,15 @@ const RegistrarVagaCliente = () => {
     requisicao
       .get("/veiculo")
       .then((response) => {
-        setResposta(response?.data?.data);
         if (response.data.msg.resultado === false) {
           FuncTrocaComp("MeusVeiculos");
         }
-        for (let i = 0; i < response?.data?.data.length; i++) {
-          resposta2[i] = {};
-          resposta2[i].placa = response.data.data[i].usuario;
-        }
+
+        const NewArray = response.data.data.map((item) => ({
+          placa: item.usuario,
+        }));
+
+        setResposta2(NewArray);
       })
       .catch(function (error) {
         if (

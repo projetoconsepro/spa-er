@@ -1,20 +1,17 @@
 import axios from "axios";
-import React, { useRef } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button, Divider, Grid, Input, Text } from "@mantine/core";
-import { FaParking } from "react-icons/fa";
-import Swal from "sweetalert2";
+import { Button, Divider, Grid, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import createAPI from "../services/createAPI";
 import ModalErroBanco from "./ModalErroBanco";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const socketRef = useRef(null);
   const [data, setData] = useState([]);
   const [placa, setPlaca] = useState("placa");
   const [textoPlaca, setTextoPlaca] = useState("");
@@ -22,19 +19,15 @@ const RegistrarEstacionamentoParceiro = () => {
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [cont, setCont] = useState(0);
   const [success, setSuccess] = useState(false);
   const [vaga, setVaga] = useState("");
   const [tempo, setTempo] = useState("");
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
-  const [token, setToken] = useState("");
   const [user2, setUser2] = useState("");
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
-  const [divPagamento, setDivPagamento] = useState(true);
   const [loadingButton, setLoadingButton] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
   const [onOpenError, setOnOpenError] = useState(false);
@@ -216,11 +209,17 @@ const RegistrarEstacionamentoParceiro = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
-          setTxId(resposta.data.data.txid);
           getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
         } else {
+          setLoadingButton(false);
+          setEstado(true);
+          setMensagem(resposta.data.msg.msg);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("");
+          }, 3000);
         }
       })
       .catch((err) => {
@@ -481,7 +480,6 @@ const RegistrarEstacionamentoParceiro = () => {
     } else if (tempoo === "00:30:00") {
       setValorCobranca2(valorCobranca / 2);
     } else if (tempoo === "00:10:00") {
-      setDivPagamento(false)
       setValorCobranca2(valorCobranca * 0);
     } else {
       setValorCobranca2(valorCobranca * 0);
@@ -565,16 +563,13 @@ const RegistrarEstacionamentoParceiro = () => {
         setPlaca("placa3");
       } else {
         setPlaca("placa");
-        setCont(0);
       }
     }
   }, [textoPlaca]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
-    setToken(token);
     setUser2(user2.perfil[0]);
     if (
       localStorage.getItem("turno") !== "true" &&

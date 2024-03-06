@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import axios from 'axios'
 import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
 import { Button, Divider } from '@mantine/core'
@@ -19,12 +18,11 @@ const RegistrarVeiculo = () => {
 
     const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked
-        if(clicado === true){
+        if (clicado === true) {
             setPlaca("placa2")
             setLimite(10)
             setInputVazio("inputvazio2")
-        }
-        else{
+        } else{
             setPlaca("placa")
             setLimite(8)
             setInputVazio("inputvazio")
@@ -62,7 +60,7 @@ const RegistrarVeiculo = () => {
             placaFinal = split[0] + split[1]
         }
         placaFinal = placaFinal.toUpperCase()
-        if(validarPlaca(placaFinal) === false ) {
+        if(validarPlaca(placaFinal) === false) {
             setLoadingButton(false);
             estadoIf = false;
             setMensagem("Placa inválida")
@@ -75,7 +73,27 @@ const RegistrarVeiculo = () => {
             estadoIf = true
         }
     } else {
+        let placaFinal = ""
+        if (placa === "placa2"){
+            placaFinal = textoPlaca;
+        }
+        else {
+            const split = textoPlaca.split("-")
+            placaFinal = split[0] + split[1]
+        }
+        placaFinal = placaFinal.toUpperCase()
+        if (placaFinal.length < 6 || placaFinal.length > 8 || placaFinal === ""){
+            setLoadingButton(false);
+            estadoIf = false;
+            setMensagem("Placa inválida")
+            setEstado(true)
+            setTimeout(() => {
+                setEstado(false)
+                setMensagem("")
+            }, 5000);
+        } else {
         estadoIf = true
+        }
     } 
     
     if(estadoIf){

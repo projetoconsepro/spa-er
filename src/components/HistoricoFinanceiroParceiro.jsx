@@ -1,4 +1,3 @@
-import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import VoltarComponente from "../util/VoltarComponente";
@@ -9,7 +8,6 @@ import createAPI from "../services/createAPI";
 
 const HistoricoFinanceiroParceiro = () => {
   const [resposta, setResposta] = useState([]);
-  const [resposta2, setResposta2] = useState([]);
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [saldo, setSaldo] = useState(0);
@@ -60,7 +58,6 @@ const HistoricoFinanceiroParceiro = () => {
         }
 
         setResposta(newData);
-        setResposta2(newData);
       })
       .catch((error) => {
         if (

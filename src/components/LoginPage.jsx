@@ -31,10 +31,6 @@ const LoginPage = () => {
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
   const [mensagem2, setMensagem2] = useState("");
-  const [inputSenha, setInputSenha] = useState("form-control");
-  const [inputLogin, setinputLogin] = useState("form-control");
-  const [passwordType, setPasswordType] = useState("password");
-  const [classolho, setClassolho] = useState("olho");
   const [errorLogin, setErrorLogin] = useState(false);
   const [errorSenha, setErrorSenha] = useState(false);
   const [emailDois, setEmailDois] = useState("");

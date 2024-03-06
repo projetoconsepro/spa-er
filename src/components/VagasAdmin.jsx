@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -10,9 +9,6 @@ import createAPI from "../services/createAPI";
 import ValidarRequisicao from "../util/ValidarRequisicao";
 
 const VagasAdmin = () => {
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
     const [data, setData] = useState([]);
     const [data2, setData2] = useState([]);
     const [data3, setData3] = useState([]);

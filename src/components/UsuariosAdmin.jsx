@@ -1,12 +1,6 @@
 import axios from "axios";
 import { React, useEffect, useState } from "react";
-import {
-  FaEllipsisH,
-  FaEye,
-  FaPowerOff,
-  FaSearch,
-  FaUserPlus,
-} from "react-icons/fa";
+import { FaEllipsisH, FaEye, FaPowerOff, FaUserPlus } from "react-icons/fa";
 import ScrollTopArrow from "./ScrollTopArrow";
 import Swal from "sweetalert2";
 import sha256 from "crypto-js/sha256";
@@ -21,25 +15,22 @@ import createAPI from "../services/createAPI";
 
 const UsuariosAdmin = () => {
   const [data, setData] = useState([]);
-  const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
   const [estado2, setEstado2] = useState(false);
   const [nome, setNome] = useState("");
   const [senhaParam, setSenhaParam] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-    
+
   const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 50;
+  const itemsPerPage = 50;
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
-    };
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
   function extrairNumeros(string) {
     return string ? string.replace(/\D/g, "") : string;
@@ -54,12 +45,14 @@ const UsuariosAdmin = () => {
     });
   }, []);
 
-
   const AtualizaFunc = async () => {
     const requisicao = createAPI();
-  requisicao.get('/usuario/listar/?query=eyJ3aGVyZSI6IFt7ICJmaWVsZCI6ICJwZXJmaWwiLCAib3BlcmF0b3IiOiAiPSIsICJ2YWx1ZSI6ICJhZG1pbiJ9XX0=').then(
-      response => {
-        setEstado2(true)
+    requisicao
+      .get(
+        "/usuario/listar/?query=eyJ3aGVyZSI6IFt7ICJmaWVsZCI6ICJwZXJmaWwiLCAib3BlcmF0b3IiOiAiPSIsICJ2YWx1ZSI6ICJhZG1pbiJ9XX0="
+      )
+      .then((response) => {
+        setEstado2(true);
         const newData = response.data.data.map((item) => ({
           nome: item.nome,
           placa: item.veiculos
@@ -73,19 +66,21 @@ const UsuariosAdmin = () => {
           id_usuario: item.id_usuario,
         }));
         setData(newData);
-        setData2(newData);
-        }).catch(function (error) {
-          if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-      } else {
-          console.log(error)
-      }
-  }
-  );
+      })
+      .catch(function (error) {
+        if (
+          error?.response?.data?.msg === "Cabeçalho inválido!" ||
+          error?.response?.data?.msg === "Token inválido!" ||
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
+        } else {
+          console.log(error);
+        }
+      });
   };
 
   useEffect(() => {
@@ -216,7 +211,10 @@ const UsuariosAdmin = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
-          icon: result.value.message === "Usuário Cadastrado com Sucesso!" ? "success" : "error",
+          icon:
+            result.value.message === "Usuário Cadastrado com Sucesso!"
+              ? "success"
+              : "error",
           title: result.value.message,
           showConfirmButton: false,
           timer: 2000,
@@ -346,7 +344,7 @@ const UsuariosAdmin = () => {
         const perfil = document.getElementById("swal-input4").value;
         const ativo =
           document.getElementById("swal-input5").value === "S" ? "S" : "N";
-          const requisicao = createAPI();
+        const requisicao = createAPI();
         requisicao
           .put("/usuario", {
             id_usuario: item.id_usuario,
@@ -566,23 +564,18 @@ const UsuariosAdmin = () => {
       ]),
     ];
     const nomeArquivo = "Relatório de Usuários";
-    const cabecalho = [
-      "Nome",
-      "Telefone",
-      "Email",
-      "Perfil",
-      "Status",
-    ];
+    const cabecalho = ["Nome", "Telefone", "Email", "Perfil", "Status"];
     RelatoriosPDF(nomeArquivo, cabecalho, dataD);
   };
 
   const handleConsulta = (consulta) => {
-    setEstadoLoading(true)
+    setEstadoLoading(true);
     const requisicao = createAPI();
-  const base64 = btoa(consulta)
-  requisicao.get(`/usuario/listar/?query=${base64}`).then(
-      response => {
-        setEstadoLoading(false)
+    const base64 = btoa(consulta);
+    requisicao
+      .get(`/usuario/listar/?query=${base64}`)
+      .then((response) => {
+        setEstadoLoading(false);
         const newData = response.data.data.map((item) => ({
           nome: item.nome,
           placa: item.veiculos
@@ -596,55 +589,60 @@ const UsuariosAdmin = () => {
           id_usuario: item.id_usuario,
         }));
         setData(newData);
-        setData2(newData);
-        }).catch(function (error) {
-          if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-            || error?.response?.data?.msg === "Token inválido!" 
-            || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-      } else {
-          console.log(error)
-      }
-  }
-  );
-  }
+      })
+      .catch(function (error) {
+        if (
+          error?.response?.data?.msg === "Cabeçalho inválido!" ||
+          error?.response?.data?.msg === "Token inválido!" ||
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
+        } else {
+          console.log(error);
+        }
+      });
+  };
 
   const pesquisarUsuario = () => {
     const requisicao = createAPI();
-      const consulta = `{"where": [{ "field": "prefil", "operator": "=", "value": "admin" },{ "field": "nome", "operator": "LIKE", "value": "%${nome}%" }]}`
-      const base64 = btoa(consulta)
-      requisicao.get(`/usuario/listar/?query=${base64}`).then(
-        response => {
-            setEstadoLoading(false)
-                const newData = response.data.data.map((item) => ({
-                  nome: item.nome,
-                  placa: item.veiculos
-                    ? item.veiculos.map((veiculo) => veiculo.placa)
-                    : [],
-                  telefone: item.telefone,
-                  email: item.email,
-                  saldo: item.saldo,
-                  perfil: item.perfil,
-                  ativo: item.ativo,
-                  id_usuario: item.id_usuario,
-                }))
-                setData(newData)
-                setData2(newData)
-                }).catch(function (error) {
-                    if(error?.response?.data?.msg === "Cabeçalho inválido!" 
-        || error?.response?.data?.msg === "Token inválido!" 
-        || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
-            localStorage.removeItem("user")
-        localStorage.removeItem("token")
-        localStorage.removeItem("perfil");
+    const consulta = `{"where": [{ "field": "prefil", "operator": "=", "value": "admin" },{ "field": "nome", "operator": "LIKE", "value": "%${nome}%" }]}`;
+    const base64 = btoa(consulta);
+    requisicao
+      .get(`/usuario/listar/?query=${base64}`)
+      .then((response) => {
+        setEstadoLoading(false);
+        const newData = response.data.data.map((item) => ({
+          nome: item.nome,
+          placa: item.veiculos
+            ? item.veiculos.map((veiculo) => veiculo.placa)
+            : [],
+          telefone: item.telefone,
+          email: item.email,
+          saldo: item.saldo,
+          perfil: item.perfil,
+          ativo: item.ativo,
+          id_usuario: item.id_usuario,
+        }));
+        setData(newData);
+      })
+      .catch(function (error) {
+        if (
+          error?.response?.data?.msg === "Cabeçalho inválido!" ||
+          error?.response?.data?.msg === "Token inválido!" ||
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
         } else {
-            console.log(error)
+          console.log(error);
         }
-    }
-    );
-}
+      });
+  };
 
   return (
     <div className="dashboard-container mb-5">
@@ -667,22 +665,32 @@ const UsuariosAdmin = () => {
           <div className="row">
             <div className="col-12 mb-4">
               <div className="row mx-2 mb-3">
-              <div className="col-6 text-start mt-2">
-                        <Input icon={<IconUserCircle size="1rem" />} placeholder="Usuário" value={nome} 
-                        onChange={(e) => setNome(e.target.value)}
-                        className="p-0"
-                        rightSection={
-                            <ActionIcon onClick={() => {pesquisarUsuario()}} 
-                            variant="filled"
-                            color="indigo"
-                            >
-                            <IconSearch size="1.125rem" />
-                            </ActionIcon>
-                        }
-                        />
+                <div className="col-6 text-start mt-2">
+                  <Input
+                    icon={<IconUserCircle size="1rem" />}
+                    placeholder="Usuário"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    className="p-0"
+                    rightSection={
+                      <ActionIcon
+                        onClick={() => {
+                          pesquisarUsuario();
+                        }}
+                        variant="filled"
+                        color="indigo"
+                      >
+                        <IconSearch size="1.125rem" />
+                      </ActionIcon>
+                    }
+                  />
                 </div>
                 <div className="col-4 mt-2">
-                <Filtro nome={'UsuariosAdmin'} onConsultaSelected={handleConsulta} onLoading={estadoLoading}/>
+                  <Filtro
+                    nome={"UsuariosAdmin"}
+                    onConsultaSelected={handleConsulta}
+                    onLoading={estadoLoading}
+                  />
                 </div>
                 <div className="col-2 text-end">
                   <button
@@ -696,197 +704,210 @@ const UsuariosAdmin = () => {
                   </button>
                 </div>
               </div>
-              {estado2 ?
-              <div className="card border-0 shadow">
-                <div className="table-responsive">
-                  <table className="table align-items-center table-flush">
-                    <thead className="thead-light">
-                      <tr>
-                        <th
-                          className="border-bottom"
-                          id="tabelaUsuarios"
-                          scope="col"
-                        >
-                          Nome
-                        </th>
-                        <th
-                          className="border-bottom"
-                          id="tabelaUsuarios"
-                          scope="col"
-                        >
-                          Telefone
-                        </th>
-                        <th
-                          className="border-bottom"
-                          id="tabelaUsuarios2"
-                          scope="col"
-                        >
-                          Email
-                        </th>
-                        <th
-                          className="border-bottom"
-                          id="tabelaUsuarios"
-                          scope="col"
-                        >
-                          Perfil
-                        </th>
-                        <th
-                          className="border-bottom"
-                          id="tabelaUsuarios2"
-                          scope="col"
-                        >
-                          Status
-                        </th>
-                        <th className="border-bottom" scope="col">
-                          ‎‎
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentItems.map((item, index) => (
-                        <tr className="card-list" key={index}>
+              {estado2 ? (
+                <div className="card border-0 shadow">
+                  <div className="table-responsive">
+                    <table className="table align-items-center table-flush">
+                      <thead className="thead-light">
+                        <tr>
                           <th
-                            className="fw-bolder col"
-                            scope="row"
+                            className="border-bottom"
                             id="tabelaUsuarios"
-                            style={{
-                              backgroundColor:
-                                item.ativo === "S" ? "#fff" : "#F8D7DA",
-                            }}
+                            scope="col"
                           >
-                            {item.nome.length > 14
-                              ? item.nome.substring(0, 14) + "..."
-                              : item.nome}
+                            Nome
                           </th>
-                          <td
-                            className="fw-bolder col"
+                          <th
+                            className="border-bottom"
                             id="tabelaUsuarios"
-                            style={{
-                              backgroundColor:
-                                item.ativo === "S" ? "#fff" : "#F8D7DA",
-                            }}
+                            scope="col"
                           >
-                            {" "}
-                            <small> {item.telefone} </small>
-                          </td>
-                          <td
-                            className="fw-bolder col"
+                            Telefone
+                          </th>
+                          <th
+                            className="border-bottom"
                             id="tabelaUsuarios2"
-                            style={{
-                              backgroundColor:
-                                item.ativo === "S" ? "#fff" : "#F8D7DA",
-                            }}
+                            scope="col"
                           >
-                            {" "}
-                            <small> {item.email} </small>
-                          </td>
-                          <td
-                            className="fw-bolder col"
+                            Email
+                          </th>
+                          <th
+                            className="border-bottom"
                             id="tabelaUsuarios"
-                            style={{
-                              backgroundColor:
-                                item.ativo === "S" ? "#fff" : "#F8D7DA",
-                            }}
+                            scope="col"
                           >
-                            {" "}
-                            <small> {item.perfil} </small>
-                          </td>
-                          <td
-                            className="fw-bolder col"
+                            Perfil
+                          </th>
+                          <th
+                            className="border-bottom"
                             id="tabelaUsuarios2"
-                            style={{
-                              backgroundColor:
-                                item.ativo === "S" ? "#fff" : "#F8D7DA",
-                            }}
+                            scope="col"
                           >
-                            {" "}
-                            <small>
-                              {" "}
-                              {item.ativo === "S"
-                                ? "Ativado"
-                                : "Desativado"}{" "}
-                            </small>
-                          </td>
-                          <td
-                            className="fw-bolder col"
-                            id="tabelaUsuarios3"
-                            style={{
-                              backgroundColor:
-                                item.ativo === "S" ? "#fff" : "#F8D7DA",
-                            }}
-                          >
-                            <div>
-                              <button
-                                className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
-                                data-bs-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false"
-                              >
-                                <FaEllipsisH />
-                              </button>
-                              <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                <h6
-                                  className="dropdown-item d-flex align-items-center"
-                                  onClick={() => {
-                                    mudarSenha(item);
-                                  }}
-                                >
-                                  <BsFillShieldLockFill /> ‎‎ Mudar senha{" "}
-                                </h6>
-                                <h6
-                                  className="dropdown-item d-flex align-items-center"
-                                  onClick={() => {
-                                    informacoes(item);
-                                  }}
-                                >
-                                  <FaEye />
-                                  ‎‎ Ver mais{" "}
-                                </h6>
-                                <h6
-                                  className="dropdown-item d-flex align-items-center"
-                                  onClick={() => {
-                                    adicionarPerfil(item, index);
-                                  }}
-                                >
-                                  <FaUserPlus /> ‎‎ Adicionar perfil{" "}
-                                </h6>
-                                <h6
-                                  className="dropdown-item d-flex align-items-center"
-                                  onClick={() => {
-                                    editaUsuario(item, index);
-                                  }}
-                                >
-                                  <AiFillEdit /> ‎‎ Editar
-                                </h6>
-                                <h6
-                                  className="dropdown-item d-flex align-items-center"
-                                  onClick={() => {
-                                    desativaUsuario(item);
-                                  }}
-                                  style={{
-                                    color:
-                                      item.ativo === "S" ? "red" : "#0F5132",
-                                  }}
-                                >
-                                  <FaPowerOff size={13} className="mb-1" /> ‎‎{" "}
-                                  {item.ativo === "S" ? "Desativar" : "Ativar"}
-                                </h6>
-                              </div>
-                            </div>
-                          </td>
+                            Status
+                          </th>
+                          <th className="border-bottom" scope="col">
+                            ‎‎
+                          </th>
                         </tr>
-                      ))} 
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {currentItems.map((item, index) => (
+                          <tr className="card-list" key={index}>
+                            <th
+                              className="fw-bolder col"
+                              scope="row"
+                              id="tabelaUsuarios"
+                              style={{
+                                backgroundColor:
+                                  item.ativo === "S" ? "#fff" : "#F8D7DA",
+                              }}
+                            >
+                              {item.nome.length > 14
+                                ? item.nome.substring(0, 14) + "..."
+                                : item.nome}
+                            </th>
+                            <td
+                              className="fw-bolder col"
+                              id="tabelaUsuarios"
+                              style={{
+                                backgroundColor:
+                                  item.ativo === "S" ? "#fff" : "#F8D7DA",
+                              }}
+                            >
+                              {" "}
+                              <small> {item.telefone} </small>
+                            </td>
+                            <td
+                              className="fw-bolder col"
+                              id="tabelaUsuarios2"
+                              style={{
+                                backgroundColor:
+                                  item.ativo === "S" ? "#fff" : "#F8D7DA",
+                              }}
+                            >
+                              {" "}
+                              <small> {item.email} </small>
+                            </td>
+                            <td
+                              className="fw-bolder col"
+                              id="tabelaUsuarios"
+                              style={{
+                                backgroundColor:
+                                  item.ativo === "S" ? "#fff" : "#F8D7DA",
+                              }}
+                            >
+                              {" "}
+                              <small> {item.perfil} </small>
+                            </td>
+                            <td
+                              className="fw-bolder col"
+                              id="tabelaUsuarios2"
+                              style={{
+                                backgroundColor:
+                                  item.ativo === "S" ? "#fff" : "#F8D7DA",
+                              }}
+                            >
+                              {" "}
+                              <small>
+                                {" "}
+                                {item.ativo === "S"
+                                  ? "Ativado"
+                                  : "Desativado"}{" "}
+                              </small>
+                            </td>
+                            <td
+                              className="fw-bolder col"
+                              id="tabelaUsuarios3"
+                              style={{
+                                backgroundColor:
+                                  item.ativo === "S" ? "#fff" : "#F8D7DA",
+                              }}
+                            >
+                              <div>
+                                <button
+                                  className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
+                                  data-bs-toggle="dropdown"
+                                  aria-haspopup="true"
+                                  aria-expanded="false"
+                                >
+                                  <FaEllipsisH />
+                                </button>
+                                <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
+                                  <h6
+                                    className="dropdown-item d-flex align-items-center"
+                                    onClick={() => {
+                                      mudarSenha(item);
+                                    }}
+                                  >
+                                    <BsFillShieldLockFill /> ‎‎ Mudar senha{" "}
+                                  </h6>
+                                  <h6
+                                    className="dropdown-item d-flex align-items-center"
+                                    onClick={() => {
+                                      informacoes(item);
+                                    }}
+                                  >
+                                    <FaEye />
+                                    ‎‎ Ver mais{" "}
+                                  </h6>
+                                  <h6
+                                    className="dropdown-item d-flex align-items-center"
+                                    onClick={() => {
+                                      adicionarPerfil(item, index);
+                                    }}
+                                  >
+                                    <FaUserPlus /> ‎‎ Adicionar perfil{" "}
+                                  </h6>
+                                  <h6
+                                    className="dropdown-item d-flex align-items-center"
+                                    onClick={() => {
+                                      editaUsuario(item, index);
+                                    }}
+                                  >
+                                    <AiFillEdit /> ‎‎ Editar
+                                  </h6>
+                                  <h6
+                                    className="dropdown-item d-flex align-items-center"
+                                    onClick={() => {
+                                      desativaUsuario(item);
+                                    }}
+                                    style={{
+                                      color:
+                                        item.ativo === "S" ? "red" : "#0F5132",
+                                    }}
+                                  >
+                                    <FaPowerOff size={13} className="mb-1" /> ‎‎{" "}
+                                    {item.ativo === "S"
+                                      ? "Desativar"
+                                      : "Ativar"}
+                                  </h6>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
-              : 
-              <div className="col-12 text-center mt-4 mb-4">
-              <Loader />
-              </div> }
+              ) : (
+                <div className="col-12 text-center mt-4 mb-4">
+                  <Loader />
+                </div>
+              )}
             </div>
             <Group position="center" mb="md">
-                <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
+              <Pagination
+                value={currentPage}
+                size="sm"
+                onChange={handlePageChange}
+                total={
+                  Math.floor(data.length / 50) === data.length / 50
+                    ? data.length / 50
+                    : Math.floor(data.length / 50) + 1
+                }
+                limit={itemsPerPage}
+              />
             </Group>
           </div>
           <VoltarComponente />

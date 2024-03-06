@@ -1,12 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from "../pages/contexts/auth";
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import FuncTrocaComp from '../util/FuncTrocaComp';
 
 const DoisPerfis = () => {
-    const { authenticated, logout } = useContext(AuthContext);
-    const navigate = useNavigate();
     const analisePerfil = localStorage.getItem('user');
     const analiseFeita = JSON.parse(analisePerfil);
     const [data, setData] = useState([]);
@@ -24,10 +20,6 @@ const DoisPerfis = () => {
     for(let i = 0; i < analiseFeita.perfil.length; i++){
         perfil[i] = analiseFeita.perfil[i].perfil;
     }
-
-const handleLogout = () => {
-    logout();
-}
 
 function red(id) {
   const NewPerfil = perfil;

@@ -1,8 +1,7 @@
-import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs, Stack, Box } from "@mantine/core";
+import { Group, Text, Card, Button, Radio, Image, Input, Notification, Tabs, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowForwardUpDouble, IconArrowRight, IconCash, IconCheck, IconX } from "@tabler/icons-react";
-import axios from "axios";
-import { React, useState, useRef, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { BsCreditCard2Back, BsCreditCard2Front } from "react-icons/bs";
@@ -10,12 +9,11 @@ import createAPI from "../services/createAPI";
 import VoltarComponente from "../util/VoltarComponente";
 import ModalErroBanco from "./ModalErroBanco";
 import { MdPix } from "react-icons/md";
-import { FaSave, FaTrash } from "react-icons/fa";
+import { FaSave } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const socketRef = useRef(null);
   const [valor, setValor] = useState("15.00");
   const [valor2, setValor2] = useState("");
   const [data, setData] = useState([]);
@@ -25,7 +23,6 @@ const InserirCreditos = () => {
   const [divAvancar, setDivAvancar] = useState(false);
   const [divAvancar2, setDivAvancar2] = useState(false);
   const [pixExpirado, setPixExpirado] = useState("Sucesso!");
-  const [txid, setTxId] = useState(null);
   const [onOpen, setOnOpen] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
@@ -72,7 +69,6 @@ const InserirCreditos = () => {
 
 
       const tipoCard = localStorage.getItem("tipoCard");
-      console.log(tipoCard);
       if (tipoCard == 'debito') {
         setMetodo('cartaoDeb');
       } else {
@@ -120,10 +116,9 @@ const InserirCreditos = () => {
 
     if (
       ValorFinal <= 2 ||
-      ValorFinal == "" ||
-      ValorFinal == "" ||
+      ValorFinal === "" ||
       ValorFinal == null ||
-      ValorFinal == undefined ||
+      ValorFinal === undefined ||
       isNaN(ValorFinal)
     ) {
       setButtonDisabled(false);
@@ -144,7 +139,6 @@ const InserirCreditos = () => {
           setButtonDisabled(false);
           if (resposta.data.msg.resultado) {
             setData(resposta.data.data);
-            setTxId(resposta.data.data.txid);
             inserirCreditos(resposta.data.data.txid, ValorFinal)
             setOnOpen(true);
             setNotification(true)
@@ -217,13 +211,11 @@ const InserirCreditos = () => {
       ValorFinal = valor2;
     }
     ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
-    console.log(ValorFinal, ValorFinal < 20)
     if (
       ValorFinal < 20 ||
-      ValorFinal == "" ||
-      ValorFinal == "" ||
+      ValorFinal === "" ||
       ValorFinal == null ||
-      ValorFinal == undefined ||
+      ValorFinal === undefined ||
       isNaN(ValorFinal)
     ) {
       setButtonDisabled(false);
