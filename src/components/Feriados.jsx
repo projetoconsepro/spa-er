@@ -118,7 +118,7 @@ const Feriados = () => {
     setData(newData);
   };
 
-  const handleSalvar = async () => {
+  const handleSalvarFunc = async () => {
     setEstadoLoading(true);
     const requisicao = createAPI();
     requisicao.post("/turno/feriado", {
