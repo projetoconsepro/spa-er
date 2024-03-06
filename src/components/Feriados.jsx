@@ -151,65 +151,6 @@ const Feriados = () => {
     <div className="col-7 mb-3">
       <h5 className="text-start mx-4 mb-4">Feriados</h5>
     </div>
-    <div className="bg-white p-5 rounded fs-6">
-      <FullCalendar
-        handleWindowResize
-        dateClick={(e) => openModal(e)}
-        plugins={[
-          dayGridPlugin,
-          timeGridPlugin,
-          interactionPlugin,
-          momentTimezonePlugin,
-          luxonPlugin,
-        ]}
-        initialView="dayGridMonth"
-        events={data}
-        eventContent={renderEventContent}
-        locale={ptLocale}
-        eventClick={removerFeriado}
-      />
-
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Adicionar feriado"
-        centered
-        transitionProps={{ transition: "fade", duration: 200 }}
-      >
-        <div className="mb-2">
-          <Text size="md">Data selecionada - {dataFormmated}</Text>
-        </div>
-        <div className="mb-4">
-          <Input
-            icon={<IconCalendar size={16} />}
-            placeholder="Digite o nome do feriado"
-            maxLength={15}
-            onChange={(e) => setFeriado(e.target.value)}
-          />
-        </div>
-        <div className="mt-auto">
-          <Group position="center" spacing="sm" grow>
-            <Button
-              color="gray"
-              onClick={() => {
-                close();
-              }}
-            >
-              Voltar
-            </Button>
-            <Button
-              loading={estadoLoading}
-              onClick={() => {
-                handleSalvar();
-              }}
-              loaderPosition="right"
-            >
-              Adicionar
-            </Button>
-          </Group>
-        </div>
-      </Modal>
-    </div>
   </div>
   );
 };
