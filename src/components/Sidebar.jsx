@@ -29,7 +29,7 @@ import {
   AiOutlineBarChart,
   AiOutlineFileSearch,
 } from "react-icons/ai";
-import { TbReportSearch } from "react-icons/tb";
+import { TbClipboardList, TbReportSearch } from "react-icons/tb";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
@@ -195,6 +195,7 @@ const Sidebar = () => {
           },
           { icon: <FcMoneyTransfer />, name: "‎ Depósito Parceiro", componente: "TransferenciaParceiro" },
           { icon: <FaUser />, name: "‎ Clientes", componente: "ClientesAdmin" },
+          { icon: <TbClipboardList />, name: "‎ Relatório Monitor", componente: "RelatorioMonitorAdmin" },
           { icon: <AiFillPrinter />, name: "‎ Prestação de Contas", componente: "PrestacaoContas" },
           { icon: <FaCalendarAlt />, name: "‎ Feriados", componente: "Feriados" },
           { icon: <AiFillEdit />, name: "‎ Editar Parâmetro", componente: "EditarParametroAdmin" },
