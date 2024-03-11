@@ -113,6 +113,11 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Periodo", label: "Período" },
         { value: "Motivo", label: "Motivo" },
       ]);
+    } else if (nome === "RelatorioMonitorAdmin") {
+      setOptions([
+        { value: "Data", label: "Data" },
+        { value: "Periodo", label: "Período" },
+      ]);
     } else if (nome === "ListarNotificacoesAgente") {
       const requisicao = createAPI();
       requisicao.get("/notificacao/tipos").then((response) => {
@@ -854,7 +859,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
 
       <Group position="center">
         <Button onClick={open} className="w-100 bg-blue-50">
-          Filtrar
+           {nome === "RelatorioMonitorAdmin" ? "Avançar" : "Filtrar"}
         </Button>
       </Group>
     </>
