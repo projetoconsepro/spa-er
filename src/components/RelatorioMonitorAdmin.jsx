@@ -91,10 +91,12 @@ const RelatorioMonitorAdmin = () => {
     HandleGetMonitor();
   }, []);
 
-  const gerarPdf = (nome) => {
+  const gerarPdf = (index) => {
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const doc = new jsPDF({ orientation: 'landscape' });
+
+    const RelatorioNew = Relatorio[index];
 
     const header = () => {
       const logoWidth = 30;
@@ -117,17 +119,15 @@ const RelatorioMonitorAdmin = () => {
       const formattedDate = `${day}/${month}/${year} ${hour}:${minute}`;
       doc.text(`Gerado por: ${user2.nome}`, 3.5, 18);
       doc.text(`Data: ${formattedDate}`, 3.5, 22);
-      doc.text(`Monitor: ${nome}`, 3.5, 26);
+      doc.text(`Monitor: ${RelatorioNew.nome}`, 3.5, 26);
     };
 
     header()
 
     const PdfData = [
-      [`${nome}`, { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 4 }, { content: 'Total arrecadado', colSpan: 3 },],
+      [`${RelatorioNew.nome}`, { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 4 }, { content: 'Total arrecadado', colSpan: 3 },],
       [['', 'Nº' ,'Din', 'Pix', 'Total', 'Nº' , 'Din', 'Pix', 'Total' , 'Nº' , 'Din', 'Pix','Total' , 'Din', 'Pix', 'Total']],
     ];
-
-    const RelatorioNew = Relatorio.find((item) => item.nome === nome);
 
     const regularizacao = Object.keys(RelatorioNew.data).map((date) => {  
         return [
@@ -152,6 +152,42 @@ const RelatorioMonitorAdmin = () => {
     
     PdfData.push(regularizacao);
 
+    let TotalFinal = new Array(16).fill(0);
+
+    Object.keys(RelatorioNew.data).map((date) => {
+        TotalFinal[0] = "Total";
+        TotalFinal[1] += RelatorioNew.data[date].Regularizacao.quantidade;
+        TotalFinal[2] += parseFloat(RelatorioNew.data[date].Regularizacao.dinheiro);
+        TotalFinal[3] += parseFloat(RelatorioNew.data[date].Regularizacao.pix);
+        TotalFinal[4] += parseFloat(RelatorioNew.data[date].Regularizacao.TotalValor);
+        TotalFinal[5] += RelatorioNew.data[date].estacionamento.quantidade;
+        TotalFinal[6] += parseFloat(RelatorioNew.data[date].estacionamento.dinheiro);
+        TotalFinal[7] += parseFloat(RelatorioNew.data[date].estacionamento.pix);
+        TotalFinal[8] += parseFloat(RelatorioNew.data[date].estacionamento.TotalValor);
+        TotalFinal[9] += RelatorioNew.data[date].creditosInseridos.quantidade;
+        TotalFinal[10] += parseFloat(RelatorioNew.data[date].creditosInseridos.dinheiro);
+        TotalFinal[11] += parseFloat(RelatorioNew.data[date].creditosInseridos.pix);
+        TotalFinal[12] += parseFloat(RelatorioNew.data[date].creditosInseridos.TotalValor);
+        TotalFinal[13] += parseFloat(RelatorioNew.data[date].finalTotal.dinheiro);
+        TotalFinal[14] += parseFloat(RelatorioNew.data[date].finalTotal.pix);
+        TotalFinal[15] += parseFloat(RelatorioNew.data[date].finalTotal.TotalValor);
+    });
+
+    TotalFinal[2] = formatNumero(TotalFinal[2]);
+    TotalFinal[3] = formatNumero(TotalFinal[3]);
+    TotalFinal[4] = formatNumero(TotalFinal[4]);
+    TotalFinal[6] = formatNumero(TotalFinal[6]);
+    TotalFinal[7] = formatNumero(TotalFinal[7]);
+    TotalFinal[8] = formatNumero(TotalFinal[8]);
+    TotalFinal[10] = formatNumero(TotalFinal[10]);
+    TotalFinal[11] = formatNumero(TotalFinal[11]);
+    TotalFinal[12] = formatNumero(TotalFinal[12]);
+    TotalFinal[13] = formatNumero(TotalFinal[13]);
+    TotalFinal[14] = formatNumero(TotalFinal[14]);
+    TotalFinal[15] = formatNumero(TotalFinal[15]);
+
+    PdfData.push([TotalFinal]);
+      
     let headStyles = {
       fillColor: [255, 255, 255], 
       textColor: [0, 0, 0], 
@@ -182,8 +218,6 @@ const RelatorioMonitorAdmin = () => {
       17: { cellWidth: 19 },
     };
 
-    console.log(PdfData);
-
     doc.autoTable({
       head: [PdfData[0]],
       body: PdfData.slice(1).flat(),
@@ -195,9 +229,24 @@ const RelatorioMonitorAdmin = () => {
       styles: {
         fontSize: 7, 
       },
+      didParseCell: (data) => {
+        const rowIndex = data.row ? data.row.index : null;
+        const rowCount = data.table.body.length;
+
+        if (rowIndex !== null && (rowIndex === 0 || rowIndex === rowCount - 1)) {
+        const columnCount = data.table.columns.length;
+
+        for (let i = 0; i < columnCount; i++) {
+          const cell = data.row.cells[i];
+          if (cell && cell.styles) {
+            cell.styles.fontStyle = 'bold';
+        }
+      }
+    }
+    },
     });
 
-    doc.save('Relatorio Monitor.pdf');
+    doc.save(`Relatorio Monitor - ${RelatorioNew.nome}.pdf`);
   }
 
   function formatNumero(number) {
@@ -293,7 +342,7 @@ const RelatorioMonitorAdmin = () => {
                     <h5 className="card-title text-start">Monitor: {item.nome}</h5>
                   </div>
                   <div className="col-2">
-                    <button className="btn3 botao p-0 m-0 w-100 h-100" type="button" onClick={()=>{gerarPdf(item.nome);}}><AiFillPrinter  size={21}/></button>
+                    <button className="btn3 botao p-0 m-0 w-100 h-100" type="button" onClick={()=>{gerarPdf(index);}}><AiFillPrinter  size={21}/></button>
                   </div>
                   </div>
                       <div className="table-responsive">
