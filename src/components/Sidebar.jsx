@@ -18,6 +18,8 @@ import {
 import { BsConeStriped, BsCashCoin } from "react-icons/bs";
 import {
   MdAddLocationAlt,
+  MdCarCrash,
+  MdHelp,
   MdOutlineSubdirectoryArrowRight,
 } from "react-icons/md";
 import { RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
@@ -33,8 +35,7 @@ import { TbClipboardList, TbReportSearch } from "react-icons/tb";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
-import { IconHelpCircleFilled, IconPlugConnected } from "@tabler/icons-react";
-import { CarCrashOutlined } from "@mui/icons-material";
+import { IconPlugConnected } from "@tabler/icons-react";
 
 const Sidebar = () => {
   const nome = localStorage.getItem("user");
@@ -144,13 +145,13 @@ const Sidebar = () => {
       });
   } else if (teste.perfil[0] === "cliente") {
       const clienteLinks = [
-          { icon: <FaCarAlt />, name: "‎ Meus Veiculos", componente: "MeusVeiculos" },
-          { icon: <CarCrashOutlined />, name: "‎ Débito automático", componente: "Configuracoes" },
+          { icon: <FaCarAlt />, name: "‎ Meus Veículos", componente: "MeusVeiculos" },
+          { icon: <MdCarCrash />, name: "‎ Débito automático", componente: "Configuracoes" },
           { icon: <FaParking />, name: "‎ Registrar Estacionamento", componente: "RegistrarEstacionamento" },
           { icon: <BsCashCoin />, name: "‎ Financeiro", 
               subitem: [ 
                   { icon: <BsCashCoin />, name: "‎ Adicionar Créditos", componente: "InserirCreditos", className: commonStyles },
-                  { icon: <BiTransfer />, name: "‎ Transferir Créditos", componente: "TransferirCreditoCliente", className: commonStyles },
+                  { icon: <BiTransfer />, name: "z‎ Transferir Créditos", componente: "TransferirCreditoCliente", className: commonStyles },
               ] 
           },
           { icon: <FaHistory />, name: "‎ Históricos",
@@ -161,7 +162,7 @@ const Sidebar = () => {
           },
           { icon: <FaCar />, name: "‎ Cadastrar Novo Veículo", componente: "CadastrarVeiculo" },
           { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "Irregularidades" },
-          { icon: <IconHelpCircleFilled />, name: "‎ Ajuda", componente: "Suporte" }
+          { icon: <MdHelp />, name: "‎ Ajuda", componente: "Suporte" }
       ];
 
       clienteLinks.forEach(link => {
@@ -285,13 +286,13 @@ const Sidebar = () => {
             <div className="row">
               <div className="col-10">
                 <div className="nav-item align-items-end">
-                  <a className="nav-link d-flex align-items-center pb-3" onClick={() => chamarMenu()}>
+                  <a className="nav-link d-flex align-items-center pb-3">
                     <span className="sidebar-icon">
                       <img
                         src="../../assets/img/logo.png"
                         height="20"
                         width="20"
-                        alt="Rich Logo"                     
+                        alt="Rich Logo"
                       />{" "}
                     </span>
                     <span className="mt-1 ms-1 sidebar-text">CONSEPRO</span>

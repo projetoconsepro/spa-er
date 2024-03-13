@@ -6,7 +6,8 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import { AiOutlineReload } from "react-icons/ai";
 import createAPI from "../services/createAPI";
-import { Group, Pagination } from "@mantine/core";
+import { Button, Group, Pagination } from "@mantine/core";
+import { IconReload } from "@tabler/icons-react";
 
 const HistoricoVeiculo = () => {
   const [data, setData] = useState([]);
@@ -251,7 +252,15 @@ const HistoricoVeiculo = () => {
             
           </div>
           <div className="col-1 text-end">
-            <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21}/>
+                  <Button
+                    variant="gradient"
+                    gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                    radius="md"
+                    size="sm"
+                    onClick={() => reload()}
+                  >
+                    <IconReload color="white" size={20} />
+                  </Button>
           </div>
           </div>
 

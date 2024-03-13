@@ -110,7 +110,7 @@ const UsuariosAdmin = () => {
 
   const AdicionarNovoUsuario = () => {
     Swal.fire({
-      title: "Adicionar novo usuario",
+      title: "Adicionar novo usuário",
       html: `
             <div className="form-group">
                     <label for="nome" class="form-label col-3 fs-6">Nome:</label>
