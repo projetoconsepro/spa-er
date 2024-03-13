@@ -242,7 +242,7 @@ const LoginPage = () => {
 
               <div className="mt-3 mb-4 text-center" onClick={() => open()}>
                 <img
-                  src="https://cdn.discordapp.com/attachments/894696108926832711/1133135306493800568/Inserir_um_titulo_10.png"
+                  src="../../assets/img/Banner.png"
                   style={{ borderRadius: "10px" }}
                   alt="gif"
                 />
