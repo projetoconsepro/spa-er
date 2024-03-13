@@ -285,13 +285,13 @@ const Sidebar = () => {
             <div className="row">
               <div className="col-10">
                 <div className="nav-item align-items-end">
-                  <a className="nav-link d-flex align-items-center pb-3">
+                  <a className="nav-link d-flex align-items-center pb-3" onClick={() => chamarMenu()}>
                     <span className="sidebar-icon">
                       <img
                         src="../../assets/img/logo.png"
                         height="20"
                         width="20"
-                        alt="Rich Logo"
+                        alt="Rich Logo"                     
                       />{" "}
                     </span>
                     <span className="mt-1 ms-1 sidebar-text">CONSEPRO</span>

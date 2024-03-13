@@ -207,7 +207,7 @@ const LoginPage = () => {
                 />
               </div>
               <div className="form-group mb-4 text-start">
-                <Input.Wrapper label="Login">
+                <Input.Wrapper label="Login:">
                   <Input
                     icon={<IconUser size={18} />}
                     placeholder="Digite seu login CPF/CNPJ ou Email"
