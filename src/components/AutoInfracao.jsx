@@ -103,6 +103,11 @@ const AutoInfracao = () => {
   };
 
   const confirmarInfracao = () => {
+
+    if (codigo === "") {
+      Swal.fire("Aviso!", "Necessário informar o código ( Auto de Infração - DETRAN )!", "warning");
+      return;
+    }
     const requisicao = createAPI();
 
     requisicao

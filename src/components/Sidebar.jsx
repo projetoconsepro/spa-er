@@ -244,7 +244,7 @@ const Sidebar = () => {
       agente: "ListarNotificacoesAgente",
     };
 
-    FuncTrocaComp(perfilToComponent[teste.perfil[0]]);
+    toggleSidebar(perfilToComponent[teste.perfil[0]]);
   };
 
   return (
@@ -286,7 +286,7 @@ const Sidebar = () => {
             <div className="row">
               <div className="col-10">
                 <div className="nav-item align-items-end">
-                  <a className="nav-link d-flex align-items-center pb-3">
+                  <a className="nav-link d-flex align-items-center pb-3" onClick={() => chamarMenu()}>
                     <span className="sidebar-icon">
                       <img
                         src="../../assets/img/logo.png"

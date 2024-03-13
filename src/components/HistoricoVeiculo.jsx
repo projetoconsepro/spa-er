@@ -4,7 +4,6 @@ import CarroLoading from "./Carregamento";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import { AiOutlineReload } from "react-icons/ai";
 import createAPI from "../services/createAPI";
 import { Button, Group, Pagination } from "@mantine/core";
 import { IconReload } from "@tabler/icons-react";
