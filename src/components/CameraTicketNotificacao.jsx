@@ -4,7 +4,6 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from "webrtc-adapter";
 import { Button, Card, Group } from "@mantine/core";
 import { IconCamera, IconCheck, IconPrinter, IconReload } from "@tabler/icons-react";
-import axios from "axios";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
 

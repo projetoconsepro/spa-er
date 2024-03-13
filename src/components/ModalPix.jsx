@@ -33,7 +33,6 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
     }, 1000);
   };
 
-  const user = JSON.parse(localStorage.getItem("user"));
   const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {

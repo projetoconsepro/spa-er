@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { AuthContext } from "../pages/contexts/auth";
 import Swal from 'sweetalert2'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
@@ -6,7 +6,7 @@ import emailValidator from 'email-validator';
 import InputMask from "react-input-mask";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { Input, Loader, PasswordInput } from "@mantine/core";
-import { IconClipboardText, IconLock, IconMail, IconPhone, IconPhoneX, IconUser } from "@tabler/icons-react";
+import { IconClipboardText, IconLock, IconMail, IconPhone, IconUser } from "@tabler/icons-react";
 import { IconLockCheck } from "@tabler/icons-react";
 
 const RegisterPage = () => {
@@ -22,7 +22,6 @@ const RegisterPage = () => {
     const [estado, setEstado] = useState(false);
     const [estado2, setEstado2] = useState(false);
     const [sucesso, setSucesso] = useState(false);
-    const [passwordType, setPasswordType] = useState("password");
     const [errorNome, setErrorNome] = useState(false);
     const [errorMail, setErrorMail] = useState(false);
     const [errorCpf, setErrorCpf] = useState(false);
@@ -224,7 +223,7 @@ const RegisterPage = () => {
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
-                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500 mb-4">
+                        <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500 mb-4">
                             <div className="text-center text-md-center mb-2 mt-1 mt-md-0">
                                 <img src="../../assets/img/logoconseproof2.png" alt="logo" />
                             </div>

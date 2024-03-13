@@ -1,16 +1,14 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { AiFillCamera } from 'react-icons/ai';
 import { FaCarAlt, FaEdit, FaParking } from 'react-icons/fa';
 import arrayCores from '../services/cores';
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
-import { Button, Divider, Input, Loader, Select, Text } from '@mantine/core';
+import { Button, Divider, Input, Select, Text } from '@mantine/core';
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
 import createAPI from '../services/createAPI';
 
 const Notificacao = () => {
-    const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const user2 = JSON.parse(user);
     const [mensagem, setMensagem] = useState("");
@@ -22,20 +20,18 @@ const Notificacao = () => {
     const [infoBanco, setInfoBanco] = useState(false);
     const [imagensSalvas, setImagenSalvas] = useState(false);
     const [placa, setPlaca] = useState("");
-    const [imagens, setImagens] = useState([]);
+    const [imagens ] = useState([]);
     const [modelo, setModelo] = useState([]);
     const [modeloVeiculo, setModeloVeiculo] = useState("");
     const [cor, setCor] = useState([]);
     const [corVeiculo, setCorVeiculo] = useState("");
     const [cor2, setCor2] = useState("");
-    const [fabricante, setFabricante] = useState([]);
     const [fabricanteVeiculo, setFabricanteVeiculo] = useState("");
     const [tipoNot, setTipoNot] = useState("1");
     const [tiposNotificacao, setTiposNot] = useState([]);
     const [outro, setOutro] = useState (true);
     const [estado2, setEstado2] = useState(false);
     let [cont, setCont] = useState(0);
-    const [fabricanteCerto, setFabricanteCerto] = useState('');
     const [modeloSelecionado, setModeloSelecionado] = useState('');
     const [modeloCerto, setModeloCerto] = useState('');
     const [tipoNotificacaoNome, setTipoNotificacaoNome] = useState("Tempo limite excedido");
@@ -197,7 +193,6 @@ const Notificacao = () => {
 
                         listaVagas = listaVagas.filter((element) => element !== null);
 
-                        console.log(listaVagas);
 
                     const indexByVaga = listaVagas.findIndex((item) => item.numero == vaga);
 
@@ -291,8 +286,6 @@ const Notificacao = () => {
                          }
 
                          listaVagas = listaVagas.filter((element) => element !== null);
-
-                         console.log(listaVagas);
 
                      const indexByVaga = listaVagas.findIndex((item) => item.numero == vaga);
 
@@ -421,7 +414,7 @@ setTimeout(() => {
 
     const getCor = () => {
         const newData = arrayCores.map(item => ({
-            cor: item.cor,
+            cor: item
     }));
     setCor(newData);
 }

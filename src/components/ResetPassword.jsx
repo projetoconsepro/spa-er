@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { Input } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
 
 const ResetPassword = () => {
   const [metodo, setMetodo] = useState("");
-  const [inputLogin] = useState("form-control");
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [checkValidate1] = useState(false);
@@ -16,7 +14,7 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     const checks = document.querySelectorAll('input[type="checkbox"]');
-    if(!sucesso){
+    if (!sucesso) {
       if (
         checks[0].checked === false
       ) {
@@ -35,7 +33,7 @@ const ResetPassword = () => {
     else{
         setSucesso(true);
     } 
-  }else{
+  } else {
     if (metodo === "") {
       setMensagem("Digite seu dado de identificação");
       setEstado(true);

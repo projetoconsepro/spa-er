@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import CarroLoading from "./Carregamento";
@@ -16,7 +15,6 @@ const HistoricoVeiculo = () => {
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [user2, setUser2] = useState(null);
-  const [perfil, setPerfil] = useState("");
 
   function ArrumaHora(data, hora) {
     const data2 = data.split("T");
@@ -51,7 +49,6 @@ const HistoricoVeiculo = () => {
       FuncTrocaComp( "AbrirTurno");
     }
     const requisicao = createAPI();
-    setPerfil(user2.perfil[0]);
     setEstado2(true);
     let idrequisicao = "";
     let passar = "";
@@ -79,11 +76,7 @@ const HistoricoVeiculo = () => {
             const newData = arraySemNulos.map((item) => ({
               vaga: item.numerovaga,
               chegada:
-                item.chegada[0]
-                +
-                item.chegada[1]
-                +
-                item.chegada[2],
+                item.chegada,
               horafinal:
                 item.horafinal[0] +
                 ":" +
@@ -93,14 +86,21 @@ const HistoricoVeiculo = () => {
               saida: item.saida,
               local: item.local,
               data: ArrumaHora(item.data),
+              dataFixed: item.data,
               estado: false,
               pago: item.pago,
+              tempo: item.tempo,
               placa: item.placa,
               regularizacao: item.regularizacao,
               notificacao: item.notificacao,
               id_vaga_veiculo: item.id_vaga_veiculo,
             }));
-            setData(newData);
+            const objetosOrdenados = newData.slice().sort((a, b) => {
+              const dataA = new Date(a.dataFixed);
+              const dataB = new Date(b.dataFixed);
+              return dataB - dataA; // Classificar do mais recente para o mais antigo
+          });
+          setData(objetosOrdenados);
           } else {
             setEstado2(false);
             setEstado(true);
@@ -138,6 +138,7 @@ const HistoricoVeiculo = () => {
         Horário chegada: ${data[index].chegada} </br></br> 
         Horário saída: ${data[index].saida} </br></br>
         Vaga: ${data[index].vaga} </br></br> 
+        Tempo: ${data[index].tempo} </br></br>
         Houve irregularidades: ${tipo} </br></br> 
         Endereço: ${data[index].local} </br>`,
         showCancelButton: true,
@@ -159,6 +160,7 @@ const HistoricoVeiculo = () => {
         Horário chegada: ${data[index].chegada} </br></br> 
         Horário saída: ${data[index].saida} </br></br> 
         Vaga: ${data[index].vaga} </br></br> 
+        Tempo: ${data[index].tempo} </br></br>
         Houve irregularidades: ${tipo} </br></br> 
         Endereço: ${data[index].local} </br>`,
         showCancelButton: false,
@@ -201,6 +203,7 @@ const HistoricoVeiculo = () => {
             item.horafinal[2],
           saida: item.saida,
           local: item.local,
+          tempo: item.tempo,
           data: ArrumaHora(item.data),
           estado: false,
           pago: item.pago,

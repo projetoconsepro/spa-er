@@ -4,7 +4,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import momentTimezonePlugin from "@fullcalendar/moment";
-import rrulPlugin from "@fullcalendar/rrule";
 import luxonPlugin from "@fullcalendar/luxon";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, Button, Input, Group, Text } from "@mantine/core";
@@ -41,7 +40,6 @@ const Feriados = () => {
           title: item.feriado,
           start: formatDate(item.data),
         }));
-        console.log(newData)
         setData(newData)
       }
     })
@@ -162,7 +160,6 @@ const Feriados = () => {
           timeGridPlugin,
           interactionPlugin,
           momentTimezonePlugin,
-          rrulPlugin,
           luxonPlugin,
         ]}
         initialView="dayGridMonth"

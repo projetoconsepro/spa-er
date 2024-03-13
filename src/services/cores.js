@@ -1,80 +1,8 @@
 const arrayCores = [
-    {
-      cor: "Vermelho"
-    },
-    {
-      cor: "Azul"
-    },
-    {
-      cor: "Verde"
-    },
-    {
-      cor: "Amarelo"
-    },
-    {
-      cor: "Laranja"
-    },
-    {
-      cor: "Roxo"
-    },
-    {
-      cor: "Preto"
-    },
-    {
-      cor: "Branco"
-    },
-    {
-      cor: "Prata"
-    },
-    {
-      cor: "Cinza"
-    },
-    {
-      cor: "Marrom"
-    },
-    {
-      cor: "Dourado"
-    },
-    {
-      cor: "Bege"
-    },
-    {
-      cor: "Azul Marinho"
-    },
-    {
-      cor: "Vermelho Metálico"
-    },
-    {
-      cor: "Verde Limão"
-    },
-    {
-      cor: "Azul Celeste"
-    },
-    {
-      cor: "Rosa"
-    },
-    {
-      cor: "Roxo Metálico"
-    },
-    {
-      cor: "Prata Metálico"
-    },
-    {
-      cor: "Cinza Metálico"
-    },
-    {
-      cor: "Vermelho Ferrari"
-    },
-    {
-      cor: "Azul Porsche"
-    },
-    {
-      cor: "Preto Fosco"
-    },
-    {
-    cor: "Outra"
-    }
-  ];
-  
+  "Vermelho", "Azul", "Verde", "Amarelo", "Laranja", "Roxo", "Preto", "Branco",
+  "Prata", "Cinza", "Marrom", "Dourado", "Bege", "Azul Marinho", "Vermelho Metálico",
+  "Verde Limão", "Azul Celeste", "Rosa", "Roxo Metálico", "Prata Metálico", "Cinza Metálico",
+  "Vermelho Ferrari", "Azul Porsche", "Preto Fosco", "Outra"
+];
 
 export default arrayCores;

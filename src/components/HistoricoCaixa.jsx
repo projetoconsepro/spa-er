@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { React, useEffect, useState } from 'react'
 import { AiFillPrinter, AiOutlineReload } from 'react-icons/ai'
 import Swal from 'sweetalert2'
@@ -11,11 +10,7 @@ const HistoricoCaixa = () => {
     const [data, setData] = useState([])
     const [estado, setEstado] = useState(false)
     const [mensagem, setMensagem] = useState("")
-    const [dataHoje, setDataHoje] = useState("")
     const [estadoLoading, setEstadoLoading] = useState(false)
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
-    const user2 = JSON.parse(user);
 
   
     function ArrumaHora(data, hora ) {
@@ -67,7 +62,6 @@ const HistoricoCaixa = () => {
         const ano = data.getFullYear();
 
         const dataHoje = ano + "-" + `${mes < 10 ? `0${mes}` : mes }` + "-" + dia;
-        setDataHoje(dataHoje);
 
         const requisicao = createAPI();
           const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
