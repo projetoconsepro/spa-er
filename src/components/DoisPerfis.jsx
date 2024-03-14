@@ -100,7 +100,7 @@ const DoisPerfis = () => {
                             trocaPerfil(item);
                           }}
                         >
-                          {item}
+                          {item.charAt(0).toUpperCase() + item.slice(1)}
                         </li>
                       ))
                     : perfil.map((item, index) => (
@@ -113,7 +113,7 @@ const DoisPerfis = () => {
                             VerificaComp(index);
                           }}
                         >
-                          {item}
+                          {item.charAt(0).toUpperCase() + item.slice(1)}
                         </li>
                       ))}
                 </ul>

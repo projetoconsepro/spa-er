@@ -59,7 +59,7 @@ const UsuariosAdmin = () => {
             ? item.veiculos.map((veiculo) => veiculo.placa)
             : [],
           telefone: item.telefone,
-          email: item.email,
+          email: item.email === "" ? "Email não informado!" : item.email,
           saldo: item.saldo,
           perfil: item.perfil,
           ativo: item.ativo,
@@ -91,9 +91,7 @@ const UsuariosAdmin = () => {
     Swal.fire({
       title: "Informações do usuário",
       html: `<p><b>Nome:</b> ${item.nome}</p>
-                   <p><b>Email:</b> ${
-                     item.email === null ? "Email não cadastrado" : item.email
-                   }</p>
+                   <p><b>Email:</b> ${item.email}</p>
                    <p><b>Telefone:</b> ${item.telefone}</p>
                    <p><b>Perfil:</b> ${item.perfil}</p>
                    <p><b>Status:</b> ${
@@ -305,7 +303,7 @@ const UsuariosAdmin = () => {
                     <div className="form-group">
                     <label for="email" class="form-label col-3 fs-6">Email:</label>
                    <input id="swal-input2" class="swal2-input" value="${
-                     item.email === null ? "" : item.email
+                     item.email === "Email não informado!" ? "" : item.email
                    }">
                    </div>
                    <div className="form-group">
@@ -358,7 +356,7 @@ const UsuariosAdmin = () => {
             if (response.data.msg.resultado) {
               data3[index] = {
                 ativo: ativo,
-                email: email,
+                email: item.email === "" ? "Email não informado!" : item.email,
                 id_usuario: item.id_usuario,
                 nome: nome2,
                 perfil: perfil,
