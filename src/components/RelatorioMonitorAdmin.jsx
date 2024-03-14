@@ -6,6 +6,7 @@ import Filtro from "../util/Filtro";
 import Logo from '../util/logoconseproof2.png';
 import jsPDF from "jspdf";
 import { Button, Divider } from "@mantine/core";
+import Swal from "sweetalert2";
 
 const RelatorioMonitorAdmin = () => {
   const [monitor, setMonitor] = useState([]);
@@ -51,11 +52,24 @@ const RelatorioMonitorAdmin = () => {
 
   const HandleGetMovByMonitor = async (query) => {
     setEstadoLoading(true);
-    const requisicao = await createAPI();
 
     const Array = monitor.filter((item) => {
       return item.checked === true;
     });
+
+    if (Array.length === 0) {
+      setEstadoLoading(false);
+      Swal.fire({
+        title: "Atenção!",
+        text: "Selecione pelo menos um monitor para gerar o relatório!",
+        icon: "warning",
+        confirmButtonText: "Ok",
+      });
+      return;
+    };
+
+
+    const requisicao = await createAPI();
 
     const NewArray = Array.map((item) => {
       return item.id;

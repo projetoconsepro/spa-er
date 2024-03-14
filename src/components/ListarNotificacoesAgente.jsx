@@ -1,13 +1,14 @@
 import { React, useState, useEffect } from 'react'
-import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineReload } from 'react-icons/ai'
+import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai'
 import Swal from 'sweetalert2'
 import moment from 'moment'
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import Filtro from '../util/Filtro'
 import createAPI from '../services/createAPI'
-import { Group, Pagination } from '@mantine/core'
+import { Button, Group, Pagination } from '@mantine/core'
 import CarroLoading from './Carregamento'
+import { IconReload } from '@tabler/icons-react';
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
@@ -207,10 +208,18 @@ const ListarNotificacoesAgente = () => {
         <div className="col-7 mx-2">
         <Filtro nome={'ListarNotificacoesAgente'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
           </div>
-          <div className="col-3 text-end">
+          <div className="col-2 text-end">
           </div>
-          <div className="col-1 text-end">
-            <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21} />
+          <div className="col-2 text-end">
+            <Button
+                    variant="gradient"
+                    gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                    radius="md"
+                    size="sm"
+                    onClick={() => reload()}
+                  >
+                    <IconReload color="white" size={20} />
+                </Button>
           </div>
           </div>
           </div>

@@ -36,7 +36,6 @@ const Irregularidades = () => {
     setData([...data]);
   };
 
-
   const regularizar = (index) => {
     setLoadingButton(true);
     const select = document.getElementById("pagamentos").value;
@@ -58,15 +57,15 @@ const Irregularidades = () => {
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
       const requisicao = createAPI();
 
-      const campo = { 
+      const campo = {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
-        tipoPagamento: 'pix',
-      }
+        tipoPagamento: "pix",
+      };
 
       requisicao
         .post("/gerarcobranca", {
           valor: valor2,
-          campo: JSON.stringify(campo)
+          campo: JSON.stringify(campo),
         })
         .then((resposta) => {
           if (resposta.data.msg.resultado) {
@@ -86,39 +85,39 @@ const Irregularidades = () => {
 
   async function getInfoPix(TxId, index) {
     const requisicao = createAPI();
-      await requisicao
-        .put(`/notificacao/pix`,{
-          txid: TxId,
-        })
-        .then((response) => {
-          if (response.data.msg.resultado) {
-            setLoadingButton(false);
-            setOnOpen(false);
-            Swal.fire({
-              title: "Regularizado!",
-              text: "A notificação foi regularizada.",
-              icon: "success",
-              timer: 2000,
-            });
-            if (index !== undefined) {
-              FuncTrocaComp("MeusVeiculos");
-              data[index].pago = "S";
-              setData([...data]);
-            } else {
-              FuncTrocaComp("MeusVeiculos");
-              startNotificao();
-            }
-          } else {
-            setLoadingButton(false);
-            setNotification(false);
-            setPixExpirado("Pix expirado");
-          }
-        })
-        .catch((err) => {
+    await requisicao
+      .put(`/notificacao/pix`, {
+        txid: TxId,
+      })
+      .then((response) => {
+        if (response.data.msg.resultado) {
           setLoadingButton(false);
-          setOnOpenError(true);
-        });
-    }
+          setOnOpen(false);
+          Swal.fire({
+            title: "Regularizado!",
+            text: "A notificação foi regularizada.",
+            icon: "success",
+            timer: 2000,
+          });
+          if (index !== undefined) {
+            FuncTrocaComp("MeusVeiculos");
+            data[index].pago = "S";
+            setData([...data]);
+          } else {
+            FuncTrocaComp("MeusVeiculos");
+            startNotificao();
+          }
+        } else {
+          setLoadingButton(false);
+          setNotification(false);
+          setPixExpirado("Pix expirado");
+        }
+      })
+      .catch((err) => {
+        setLoadingButton(false);
+        setOnOpenError(true);
+      });
+  }
 
   function ArrumaHora(data) {
     const data2 = data.split("T");
@@ -130,8 +129,8 @@ const Irregularidades = () => {
   }
 
   const onClose = () => {
-  setLoadingButton(false);
-  }
+    setLoadingButton(false);
+  };
 
   const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
     const requisicao = createAPI();
@@ -382,15 +381,17 @@ const Irregularidades = () => {
                 onLoading={loading}
               />
             </div>
-            <div className="col-3 text-end"></div>
-            <div className="col-1 text-end">
-              <IconReload
-                onClick={() => {
-                  startNotificao();
-                }}
-                className="mt-1"
-                size={21}
-              />
+            <div className="col-2 text-end"></div>
+            <div className="col-2 text-end">
+              <Button
+                variant="gradient"
+                gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                radius="md"
+                size="sm"
+                onClick={() => startNotificao()}
+              >
+                <IconReload color="white" size={20} />
+              </Button>
             </div>
           </div>
         </div>
@@ -399,8 +400,10 @@ const Irregularidades = () => {
       {data.map((link, index) => (
         <div className="card border-0 shadow mt-2 mb-3" key={index}>
           <div
-            className={link.pago === "S" ? "card-body10 mb-0 pb-0" : "card-body9"}
-            onClick={() => link.pago === "S" ? atualiza(index) : null}
+            className={
+              link.pago === "S" ? "card-body10 mb-0 pb-0" : "card-body9"
+            }
+            onClick={() => (link.pago === "S" ? atualiza(index) : null)}
           >
             <div className="d-flex align-items-center justify-content-between">
               <div>
@@ -417,11 +420,9 @@ const Irregularidades = () => {
                   </h6>
                 </div>
                 {link.estado ? (
-                  <div
-                    className="h6 d-flex align-items-center fs-6 mb-0 pb-0"
-                  >
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" 
-                    || link.tipo_notificacao === "Ocupando vaga de idoso" ? (
+                  <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
+                    {link.tipo_notificacao === "Ocupando vaga de deficiente" ||
+                    link.tipo_notificacao === "Ocupando vaga de idoso" ? (
                       <h6>
                         {" "}
                         <FaClipboardList />‎{" "}
@@ -430,18 +431,19 @@ const Irregularidades = () => {
                     ) : (
                       <h6>
                         {" "}
-                        <FaClipboardList />‎ 
-                        {window.innerWidth <= 360 ? 
-                        <small>Motivo: {link.tipo_notificacao}</small>
-                        :
-                        `Motivo: ${link.tipo_notificacao}`}
+                        <FaClipboardList />‎
+                        {window.innerWidth <= 360 ? (
+                          <small>Motivo: {link.tipo_notificacao}</small>
+                        ) : (
+                          `Motivo: ${link.tipo_notificacao}`
+                        )}
                       </h6>
                     )}
                   </div>
                 ) : (
                   <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" 
-                    || link.tipo_notificacao === "Ocupando vaga de idoso" ? (
+                    {link.tipo_notificacao === "Ocupando vaga de deficiente" ||
+                    link.tipo_notificacao === "Ocupando vaga de idoso" ? (
                       <h6>
                         {" "}
                         <FaClipboardList />‎{" "}
@@ -450,21 +452,29 @@ const Irregularidades = () => {
                     ) : (
                       <h6>
                         {" "}
-                        <FaClipboardList />‎ 
-                        {window.innerWidth <= 360 ? 
-                        <small>Motivo: {link.tipo_notificacao}</small>
-                        :
-                        `Motivo: ${link.tipo_notificacao}`}
+                        <FaClipboardList />‎
+                        {window.innerWidth <= 360 ? (
+                          <small>Motivo: {link.tipo_notificacao}</small>
+                        ) : (
+                          `Motivo: ${link.tipo_notificacao}`
+                        )}
                       </h6>
                     )}
                   </div>
                 )}
-               <div className="h6 d-flex align-items-center fs-6">
-               <FaClipboardList />{" "} Status: {" "}
-                  <h6 className={link.pago === "S" ? 'text-success mt-2 mx-1' : 'text-danger mt-2 mx-1' }>
-                  {" "} {link.pago === "S" ? "Quitado" : "Pendente"}
+                <div className="h6 d-flex align-items-center fs-6">
+                  <FaClipboardList /> Status:{" "}
+                  <h6
+                    className={
+                      link.pago === "S"
+                        ? "text-success mt-2 mx-1"
+                        : "text-danger mt-2 mx-1"
+                    }
+                  >
+                    {" "}
+                    {link.pago === "S" ? "Quitado" : "Pendente"}
                   </h6>
-              </div>
+                </div>
               </div>
               <div>
                 {link.pago === "N" ? (
@@ -477,11 +487,10 @@ const Irregularidades = () => {
                   </div>
                 )}
               </div>
-              
             </div>
-            {link.pago === "N" ?
+            {link.pago === "N" ? (
               <div className="row">
-              <div className="col-12">
+                <div className="col-12">
                   <Button
                     variant="outline"
                     color="red"
@@ -489,7 +498,11 @@ const Irregularidades = () => {
                     fullWidth
                     className="mt-2"
                     leftIcon={
-                       link.estado ? <IconX size={20} /> :  <BsConeStriped size={20} />
+                      link.estado ? (
+                        <IconX size={20} />
+                      ) : (
+                        <BsConeStriped size={20} />
+                      )
                     }
                     onClick={() => {
                       atualiza(index);
@@ -497,9 +510,9 @@ const Irregularidades = () => {
                   >
                     {link.estado ? "Fechar" : "Regularize aqui"}
                   </Button>
+                </div>
               </div>
-              </div>
-              : null }
+            ) : null}
           </div>
           {link.estado ? (
             <div className="justify-content-between pb-3 mb-1">
@@ -576,10 +589,7 @@ const Irregularidades = () => {
 
       <VoltarComponente />
 
-      <ModalErroBanco
-          onOpen={onOpenError}
-          onClose={onCloseError}
-      />
+      <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
       <ModalPix
         qrCode={data2.brcode}
         status={notification}
