@@ -113,7 +113,7 @@ const Sidebar = () => {
       {
         className: commonStyles,
         icon: <FaUser />,
-        name: "‎ Meu perfil",
+        name: "‎ Meu Perfil",
         subitem: [
           {
             className: commonStyles,
