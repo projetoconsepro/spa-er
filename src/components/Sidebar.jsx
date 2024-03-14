@@ -145,22 +145,22 @@ const Sidebar = () => {
       });
   } else if (teste.perfil[0] === "cliente") {
       const clienteLinks = [
-          { icon: <FaCarAlt />, name: "‎ Meus Veículos", componente: "MeusVeiculos" },
-          { icon: <MdCarCrash />, name: "‎ Débito automático", componente: "Configuracoes" },
-          { icon: <FaParking />, name: "‎ Registrar Estacionamento", componente: "RegistrarEstacionamento" },
-          { icon: <BsCashCoin />, name: "‎ Financeiro", 
-              subitem: [ 
-                  { icon: <BsCashCoin />, name: "‎ Adicionar Créditos", componente: "InserirCreditos", className: commonStyles },
-                  { icon: <BiTransfer />, name: "z‎ Transferir Créditos", componente: "TransferirCreditoCliente", className: commonStyles },
-              ] 
-          },
-          { icon: <FaHistory />, name: "‎ Históricos",
+          { icon: <FaCarAlt />, name: "‎ Veículos",
               subitem: [
-                  { icon: <TbReportSearch />, name: "‎ Estacionamentos", componente: "HistoricoVeiculo", className: commonStyles },
-                  { icon: <BsCashCoin />, name: "‎ Financeiro", componente: "HistoricoFinanceiro", className: commonStyles },
+                { icon: <FaCarAlt />, name: "‎ Meus Veículos", componente: "MeusVeiculos", className: commonStyles },
+                { icon: <MdCarCrash />, name: "‎ Débito Automático", componente: "Configuracoes", className: commonStyles },
+                { icon: <FaCarAlt />, name: "‎ Adicionar Veículo", componente: "CadastrarVeiculo", className: commonStyles },
+                { icon: <TbReportSearch />, name: "‎ Histórico", componente: "HistoricoVeiculo", className: commonStyles },
+            ]
+          },
+          { icon: <FaParking />, name: "‎ Registrar Estacionamento", componente: "RegistrarEstacionamento" },
+          { icon: <BsCashCoin />, name: "‎ Financeiro",
+              subitem: [
+                  { icon: <BsCashCoin />, name: "‎ Adicionar Créditos", componente: "InserirCreditos", className: commonStyles },
+                  { icon: <BiTransfer />, name: "‎ Transferir Créditos", componente: "TransferirCreditoCliente", className: commonStyles },
+                  { icon: <TbReportSearch />, name: "‎ Histórico", componente: "HistoricoFinanceiro", className: commonStyles },
               ]
           },
-          { icon: <FaCar />, name: "‎ Cadastrar Novo Veículo", componente: "CadastrarVeiculo" },
           { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "Irregularidades" },
           { icon: <MdHelp />, name: "‎ Ajuda", componente: "Suporte" }
       ];
@@ -170,53 +170,63 @@ const Sidebar = () => {
       }
       );
   } else if (teste.perfil[0] === "admin") {
-
       const adminLinks = [
           { icon: <AiOutlineBarChart />, name: "‎ Dashboard", componente: "Dashboard" },
           { icon: <FaParking />, name: "‎ Registrar Estacionamento", componente: "RegistrarEstacionamentoParceiro" },
-          { icon: <FaCarAlt />, name: "‎ Buscar Veículo", componente: "BuscarVeiculo" },
-          { icon: <FaSearch />, name: "‎ Buscar Movimento", componente: "BuscarMovimentoTxId" },
-          { icon: <RiFileAddFill />, name: "‎ Cadastros",
-              subitem: [
-                  { icon: <FaUserPlus />, name: "‎ Usuários", componente: "UsuariosAdmin", className: commonStyles },
-                  { icon: <FaCar />, name: "‎ Adicionar veículo", componente: "AdicionarModelo", className: commonStyles },
-                  { icon: <FaCar />, name: "‎ Placa isenta", componente: "PlacaIsenta", className: commonStyles },
-                  { icon: <MdAddLocationAlt />, name: "‎ Setores", componente: "SetoresAdmin", className: commonStyles },
-                  { icon: <FaParking />, name: "‎ Vagas ", componente: "VagasAdmin", className: commonStyles },
-              ]
-          },
           { icon: <FaHistory />, name: "‎ Históricos",
-              subitem: [
-                  { icon: <FaHistory />, name: "‎ Caixa Monitor", componente: "HistoricoCaixa", className: commonStyles },
-                  { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "ListarNotificacoesAdmin", className: commonStyles },
-                  { icon: <FaParking />, name: "‎ Estacionamento", componente: "OcupacaoVagasAdmin", className: commonStyles },
-                  { icon: <FcIdea />, name: "‎ Sugestões", componente: "SugestoesAdmin", className: commonStyles },
-                  { icon: <FaCar />, name: "‎ Registro Veículo", componente: "ListagemMovimentoVeiculo", className: commonStyles },
-              ]
+          subitem: [
+              { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "ListarNotificacoesAdmin", className: commonStyles },
+              { icon: <FaParking />, name: "‎ Estacionamentos", componente: "OcupacaoVagasAdmin", className: commonStyles },
+              { icon: <FaCar />, name: "‎ Veículos", componente: "ListagemMovimentoVeiculo", className: commonStyles },
+              { icon: <FcIdea />, name: "‎ Sugestões", componente: "SugestoesAdmin", className: commonStyles },
+            ]
           },
-          { icon: <FcMoneyTransfer />, name: "‎ Depósito Parceiro", componente: "TransferenciaParceiro" },
-          { icon: <FaUser />, name: "‎ Clientes", componente: "ClientesAdmin" },
-          { icon: <TbClipboardList />, name: "‎ Relatório Monitor", componente: "RelatorioMonitorAdmin" },
-          { icon: <AiFillPrinter />, name: "‎ Prestação de Contas", componente: "PrestacaoContas" },
-          { icon: <FaCalendarAlt />, name: "‎ Feriados", componente: "Feriados" },
+          { icon: <RiFileAddFill />, name: "‎ Cadastros",
+          subitem: [
+              { icon: <FaUserPlus />, name: "‎ Usuários", componente: "UsuariosAdmin", className: commonStyles },
+              { icon: <FaCar />, name: "‎ Placas isentas", componente: "PlacaIsenta", className: commonStyles },
+              { icon: <FaCar />, name: "‎ Modelos/Fabricante", componente: "AdicionarModelo", className: commonStyles },
+              { icon: <MdAddLocationAlt />, name: "‎ Setores", componente: "SetoresAdmin", className: commonStyles },
+              { icon: <FaParking />, name: "‎ Vagas ", componente: "VagasAdmin", className: commonStyles },
+              { icon: <FaCalendarAlt />, name: "‎ Feriados", componente: "Feriados", className: commonStyles },
+            ]
+          },
+          { icon: <FaSearch />, name: "‎ Consultas",
+          subitem: [
+            { icon: <FaCarAlt />, name: "‎ Buscar Veículo", componente: "BuscarVeiculo", className: commonStyles },
+            { icon: <FaSearch />, name: "‎ Movimento PIX", componente: "BuscarMovimentoTxId", className: commonStyles },
+            { icon: <FaUser />, name: "‎ Clientes", componente: "ClientesAdmin", className: commonStyles },
+            ]
+          },
+          { icon: <BsCashCoin />, name: "‎ Financeiro",
+          subitem: [
+            { icon: <AiFillPrinter />, name: "‎ Prestação de Contas", componente: "PrestacaoContas", className: commonStyles },
+            { icon: <TbClipboardList />, name: "‎ Relatório Monitor", componente: "RelatorioMonitorAdmin", className: commonStyles },
+            { icon: <FaHistory />, name: "‎ Caixa Monitor", componente: "HistoricoCaixa", className: commonStyles },
+            { icon: <FcMoneyTransfer />, name: "‎ Depósito Parceiro", componente: "TransferenciaParceiro", className: commonStyles },
+            ]
+          },
           { icon: <AiFillEdit />, name: "‎ Editar Parâmetro", componente: "EditarParametroAdmin" },
           { icon: <FaWhatsapp />, name: "‎ Whatsapp", componente: "linkWhatsapp" }
       ];
-
       adminLinks.forEach(link => {
           commonLinks.push({ className: commonStyles, ...link });
       });
   } else if (teste.perfil[0] === "monitor"){
 
       const monitorLinks = [
-          { icon: <FaParking />, name: "‎ Registrar estacionamento", componente: "RegistrarEstacionamentoParceiro" },
-          { icon: <BsCashCoin />, name: "‎ Adicionar créditos", componente: "AdicionarCreditos" },
+          { icon: <FaParking />, name: "‎ Registrar Estacionamento", componente: "RegistrarEstacionamentoParceiro" },
+          { icon: <BsCashCoin />, name: "‎ Adicionar Créditos", componente: "AdicionarCreditos" },
           { icon: <FaCarAlt />, name: "‎ Listar Vagas", componente: "ListarVagasMonitor" },
           { icon: <BsConeStriped />, name: "‎ Listar Notificações", componente: "ListarNotificacoes" },
-          { icon: <BiSearchAlt />, name: "‎ Buscar veículo", componente: "BuscarVeiculo" },
+          { icon: <BiSearchAlt />, name: "‎ Buscar Veículo", componente: "BuscarVeiculo" },
           { icon: <BsCashCoin />, name: "‎ Abrir/fechar turno", componente: "AbrirTurno" },
-          { icon: <FaPrint />, name: "‎ Configurar impressora", componente: "ConfigurarImpressora" },
-          { icon: <IconPlugConnected />, name: "‎ Conectar", componente: "ConectarImpressora" }
+          { icon: <AiFillPrinter />, name: "‎ Impressora",
+            subitem: [
+              { icon: <FaPrint />, name: "‎ Configurar", componente: "ConfigurarImpressora", className: commonStyles },
+              { icon: <IconPlugConnected />, name: "‎ Conectar", componente: "ConectarImpressora", className: commonStyles },
+            ]
+          },
       ];
 
       monitorLinks.forEach(link => {
