@@ -15,6 +15,7 @@ import Select from "react-select";
 import "dayjs/locale/pt-br";
 import {
   IconAlertCircle,
+  IconCar,
   IconMail,
   IconParking,
   IconPhone,
@@ -117,6 +118,11 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       setOptions([
         { value: "Data", label: "Data" },
         { value: "Periodo", label: "Período" },
+      ]);
+    } else if (nome === "AdicionarModelo") {
+      setOptions([
+        { value: "Modelo", label: "Modelo" },
+        { value: "Fabricante", label: "Fabricante" },
       ]);
     } else if (nome === "ListarNotificacoesAgente") {
       const requisicao = createAPI();
@@ -362,6 +368,13 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
           } else {
             consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placa2}" }]}`;
           }
+          break;
+
+        case "Modelo":
+          consulta = `{"where": [{ "field": "${selectedOption.value}", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
+          break;
+        case "Fabricante":
+            consulta = `{"where": [{ "field": "${selectedOption.value}", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
           break;
         case "Vaga":
           if (nome === "HistoricoVeiculoAdmin") {
@@ -752,6 +765,26 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                     placeholder="Digite o CPF ou CNPJ"
                     maxLength={14}
                     onChange={(e) => setCpf(e.target.value)}
+                  />
+                </div>
+              ) : selectedOption.value === "Modelo" ? (
+                <div>
+                  <div className="mt-4 mb-3">Digite o modelo do veículo:</div>
+                  <Input
+                    icon={<IconCar size={16} />}
+                    type="text"
+                    placeholder="Digite o modelo"
+                    onChange={(e) => setInputNome(e.target.value)}
+                  />
+                </div>
+              ) : selectedOption.value === "Fabricante" ? (
+                <div>
+                  <div className="mt-4 mb-3">Digite o fabricante do veículo:</div>
+                  <Input
+                    icon={<IconCar size={16} />}
+                    type="text"
+                    placeholder="Digite o fabricante"
+                    onChange={(e) => setInputNome(e.target.value)}
                   />
                 </div>
               ) : selectedOption.value === "email" ? (
