@@ -46,7 +46,6 @@ const ListarVeiculos = () => {
   const [botaoOff, setBotaoOff] = useState(false);
   const [contador, setContador] = useState(0);
   const [horaAgora, setHoraAgora] = useState("");
-  const [cont, setCont] = useState(0);
   const [openedModal, { open: openModal, close: closeModal }] =
     useDisclosure(false);
   const [data2, setData2] = useState([]);
@@ -56,6 +55,7 @@ const ListarVeiculos = () => {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [divError, setDivError] = useState(false);
   const [encerramento, setEncerramento] = useState("");
+  const [ModalContent, setModalContent] = useState("ModalTermos");
 
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
@@ -327,8 +327,9 @@ const ListarVeiculos = () => {
   };
 
   useEffect(() => {
-    if (contador >= 10) {
-      setContador(0);
+    if (contador >= 90 || contador === 0) {
+      setContador(1);
+      atualizacomp();
     }
     setTimeout(() => {
       setContador(contador + 1);
@@ -336,12 +337,17 @@ const ListarVeiculos = () => {
   }, [contador]);
 
   useEffect(() => {
-    if (cont != 0) {
-      atualizacomp();
-    } else {
-      setCont(1);
+    if (localStorage.getItem("NewTerm") !== "true") {
+      setModalContent("");
+      setTimeout(() => {
+        openModal();
+        // localStorage.setItem("NewTerm", "true");
+      }, 1000);
     }
-  }, [cont]);
+  }, []);
+
+      
+
 
   function mexerValores() {
     const tempo1 = selectedButton;
@@ -414,6 +420,7 @@ const ListarVeiculos = () => {
         })
         .then(async (response) => {
           if (response.data.msg.resultado === true) {
+            setModalContent("Comprovante");
             setData2(response.data.data);
             setDate(FormatDate(response.data.data.data));
             setEmissao(response.data.data.chegada);
@@ -503,6 +510,7 @@ const ListarVeiculos = () => {
         })
         .then(async (response) => {
           if (response.data.msg.resultado === true) {
+            setModalContent("Comprovante");
             setData2(response.data.data);
             setDate(FormatDate(response.data.data.data));
             setEmissao(response.data.data.chegada);
@@ -622,8 +630,10 @@ const ListarVeiculos = () => {
         }}
         centered
         size="xl"
-        title="Comprovante de estacionamento:"
+        title= {ModalContent === "Comprovante" ?"Comprovante de estacionamento:" : "Aviso!"}
       >
+       {ModalContent === "Comprovante" ? (
+        <>
         <div
           className="rounded border border-gray p-3 text-center"
           id="conteudoParaPDF"
@@ -680,6 +690,20 @@ const ListarVeiculos = () => {
             Salvar
           </Button>
         </div>
+        </>
+       ) :  (
+        <div className="rounded border border-gray p-3 text-center modal-body" id="modalTexto">
+          <small>
+          Gostaríamos de informar que o CONSEPRO - Conselho Comunitário Pró-Segurança Pública de Taquara, a partir de agora, 
+          estará reduzindo o uso de papel no estacionamento rotativo. 
+          Para os usuários com débito automático ativo, não será mais impresso o comprovante de estacionamento.  <br />  <br /> 
+          </small>
+          <small>
+            Agradecemos a compreensão e colaboração de todos. 
+          </small>
+          </div>
+       )
+       }
       </Modal>
       <div className="col-12 px-3 mb-7">
         <div className="row">
