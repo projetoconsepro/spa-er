@@ -346,9 +346,6 @@ const ListarVeiculos = () => {
     }
   }, []);
 
-      
-
-
   function mexerValores() {
     const tempo1 = selectedButton;
 
@@ -692,8 +689,13 @@ const ListarVeiculos = () => {
         </div>
         </>
        ) :  (
-        <div className="rounded border border-gray p-3 text-center modal-body" id="modalTexto">
-          <small>
+        <div className="rounded border border-gray p-3 modal-body" id="modalTexto">
+          <div className='text-center m-3'>
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+              <path fill="none" stroke="#424242" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 13V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13c0 1-.6 3-3 3m0 0H6c-1 0-3-.6-3-3v-2h12v2c0 2.4 2 3 3 3M9 7h8m-8 4h4"/>
+            </svg>
+          </div>
+          <small >
           Gostaríamos de informar que o CONSEPRO - Conselho Comunitário Pró-Segurança Pública de Taquara, a partir de agora, 
           estará reduzindo o uso de papel no estacionamento rotativo. 
           Para os usuários com débito automático ativo, não será mais impresso o comprovante de estacionamento.  <br />  <br /> 
@@ -701,6 +703,15 @@ const ListarVeiculos = () => {
           <small>
             Agradecemos a compreensão e colaboração de todos. 
           </small>
+         <div className="row">
+          <div className="col-12 text-center mt-3">
+            <Button>
+              <Text>
+                Ok!‎‎‎‎
+              </Text>
+            </Button>
+          </div>
+         </div>
           </div>
        )
        }
