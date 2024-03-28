@@ -410,7 +410,7 @@ const InserirCreditos = () => {
                   <div className="d-flex align-items-center justify-content-center" onClick={()=> FuncTrocaComp('CartaoCredito')}>
                     <Box >
                     <Image
-                        src='https://media.discordapp.net/attachments/894696108926832711/1140737633958498314/creditCardPayment.png?width=364&height=367'
+                        src='../../assets/img/cartaoCredito/creditCardPayment.png'
                         alt="image"
                         style={{ width: 160, height: 160 }}
                       />
