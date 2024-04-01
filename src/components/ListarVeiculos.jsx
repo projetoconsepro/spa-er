@@ -341,7 +341,7 @@ const ListarVeiculos = () => {
       setModalContent("");
       setTimeout(() => {
         openModal();
-        // localStorage.setItem("NewTerm", "true");
+        localStorage.setItem("NewTerm", "true");
       }, 1000);
     }
   }, []);
@@ -698,16 +698,17 @@ const ListarVeiculos = () => {
           <small >
           Gostaríamos de informar que o CONSEPRO - Conselho Comunitário Pró-Segurança Pública de Taquara, a partir de agora, 
           estará reduzindo o uso de papel no estacionamento rotativo. 
-          Para os usuários com débito automático ativo, não será mais impresso o comprovante de estacionamento.  <br />  <br /> 
+          Para os usuários com débito automático ativo, não será mais impresso o comprovante de estacionamento.
+          Atualizando assim os termos de uso do Débito Automático!  <br />  <br /> 
           </small>
           <small>
             Agradecemos a compreensão e colaboração de todos. 
           </small>
          <div className="row">
           <div className="col-12 text-center mt-3">
-            <Button>
+            <Button onClick={() => closeModal()} variant="gradient" gradient={{ from: "teal", to: "indigo", deg: 300 }} size="md" radius="md" fullWidth>
               <Text>
-                Ok!‎‎‎‎
+                Ok!
               </Text>
             </Button>
           </div>
