@@ -285,7 +285,7 @@ const Configuracoes = () => {
       ))}
       <VoltarComponente />
       <Modal opened={opened} onClose={() => { close() }} closeOnClickOutside={false} style={{ zIndex: 51 }} centered title="Termos de uso débito automático">
-        <div>
+        <div id="modalTexto">
           <small><strong>Ao solicitar a ativação automática do estacionamento, o usuário concorda com os seguintes termos:</strong></small> <br />
           <small>a) Quando o monitor fiscalizar, será realizada uma ativação de 30 minutos, sendo repetida a ativação por um período máximo de 2 horas em cada vaga;</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
@@ -296,6 +296,8 @@ const Configuracoes = () => {
           <small>d) Declaro ter ciência, que ao optar pela ativação automática, não terei direito ao período de tolerância de 10 minutos, sendo que na primeira fiscalização do monitor, será realizada a ativação de 30 minutos;</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
           <small>e) A ativação fica vinculada a placa do veículo.</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
+          <small>f) Declaro ter ciência, que não será impresso o comprovante de estacionamento! E caso necessário, irei requisitar uma segunda via com uma monitora.</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
           <small><strong> APÓS CONCORDAR COM OS TERMOS, HABILITE O DÉBITO AUTOMÁTICO NAS PLACAS DESEJADAS.</strong></small> <br />
         </div>
