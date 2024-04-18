@@ -35,6 +35,8 @@ const Configuracoes = () => {
           estadoOn: false,
           check: false,
           idVeiculo: item.id_veiculo,
+          estacionado: item?.estacionado || "N",
+          vaga: item?.numerovaga || 0,
         }));
         for (let index = 0; index < newData.length; index++) {
           if (newData[index].debito == "S") {
@@ -43,11 +45,16 @@ const Configuracoes = () => {
             newData[index].check = false;
           }
 
+          if (newData[index].estacionado === "S" && newData[index].vaga !== 0) {
+            newData[index].estado = false;
+          }
+
           if ((newData[index].debitoDisponivel === "N" && newData[index].debito === "N") ||
             (newData[index].debitoDisponivel === "N" && newData[index].debito !== "S")) {
             newData[index].estado = false;
           }
         }
+
         setData(newData);
       })
       .catch((error) => {
@@ -196,6 +203,7 @@ const Configuracoes = () => {
           key={index}
           id="divD"
           disabled={
+            (link.estacionado === "S" && link.vaga !== 0) ||
             (link.debitoDisponivel === "N" && link.debito === "N") ||
               (link.debitoDisponivel === "N" && link.debito !== "S")
               ? true
@@ -267,17 +275,18 @@ const Configuracoes = () => {
 
           <h6
             style={{
-              display:
+              display: (link.estacionado === "S" && link.vaga !== 0) ||
                 (link.debitoDisponivel === "N" && link.debito === "N") ||
                   (link.debitoDisponivel === "N" && link.debito !== "S")
                   ? "block"
                   : "none",
             }}
-            className="px-4 fs-6"
+            className="px-4 fs-6 text-center mt-4"
+            id="modalTexto"
           >
             <small>
-              Este veículo já possui débito automático ativo em outro
-              dispositivo.
+            {link.estacionado === "S" && link.vaga !== 0 ? "Não é possível ativar/desativar o débito automático de veículos que estão estacionados no momento."
+            : "Este veículo já possui débito automático ativo em outro dispositivo."}
             </small>
           </h6>
 

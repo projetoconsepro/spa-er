@@ -36,6 +36,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
 import { IconPlugConnected } from "@tabler/icons-react";
+import ConfigImpressora from "../util/ConfigImpressora";
 
 const Sidebar = () => {
   const nome = localStorage.getItem("user");
@@ -52,8 +53,8 @@ const Sidebar = () => {
     }, 1);
   };
 
-  const componentefunc = (componente, index) => {
-    if (commonLinks[index].subitem !== undefined) {
+  const componentefunc = (componente, index, type) => {
+    if (commonLinks[index].subitem !== undefined && type !== "subItem") {
     } else {
       setAriaExpanded(false);
       if (
@@ -71,17 +72,13 @@ const Sidebar = () => {
         setTimeout(() => {
           setMostrarSidebar(true);
         }, 1);
-        if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage("mostrar");
-        }
+        ConfigImpressora("mostrar");
       } else if (componente === "ConectarImpressora") {
         setMostrarSidebar(false);
         setTimeout(() => {
           setMostrarSidebar(true);
         }, 1);
-        if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage("conectar");
-        }
+        ConfigImpressora("conectar");
       } else {
         window.open("https://app.hiperchat.com.br/", "_blank");
       }
@@ -402,7 +399,7 @@ const Sidebar = () => {
                       <div key={key}>
                         <span
                           id="textoSm"
-                          onClick={() => componentefunc(link.componente, key)}
+                          onClick={() => componentefunc(link.componente, key, "Item")}
                           className="nav-link collapsed d-flex justify-content-between align-items-center"
                           data-bs-toggle="collapse"
                           data-bs-target={`#submenu-app-${key}`}
@@ -446,8 +443,7 @@ const Sidebar = () => {
                                     onClick={
                                       subitem.deslogar
                                         ? () => handleLogout()
-                                        : () =>
-                                            toggleSidebar(subitem.componente)
+                                        : () => componentefunc(subitem.componente, key, "subItem")
                                     }
                                   >
                                     {subitem.icon}
