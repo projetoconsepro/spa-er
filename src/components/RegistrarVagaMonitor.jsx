@@ -124,7 +124,7 @@ const RegistrarVagaMonitor = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado === true) {
-          if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+          if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
             response.data.data.chegada,
@@ -258,7 +258,7 @@ const RegistrarVagaMonitor = () => {
         })
         .then(async(response) => {
           if (response.data.msg.resultado === true) {
-            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -365,7 +365,7 @@ const RegistrarVagaMonitor = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado === true) {
-            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
