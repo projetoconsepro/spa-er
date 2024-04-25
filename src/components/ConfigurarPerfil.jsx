@@ -66,32 +66,39 @@ const ConfigurarPerfil = () => {
       setSaldo(response?.data?.data?.saldo);
     });
 
-    requisicao
-      .get("/cartao/")
-      .then((resposta) => {
-        if (resposta.data.msg.resultado) {
-          const newData = resposta.data.data.map((item) => ({
-            cartao: `${item.id_cartao}`,
-            bandeira: item.bandeira,
-            numero: `#### #### #### ${item.cartao}`,
-            background:
-              item.bandeira === "visa"
-                ? "linear-gradient(to right, #064789, #427AA1)"
-                : item.bandeira === "mastercard"
-                ? "linear-gradient(to right, #F4796B, #f79e21)"
-                : item.bandeira === "elocard"
-                ? "linear-gradient(to right, #322214, #2E282A)"
-                : "white",
-          }));
-          setCartoesData(newData);
-        } else {
-          setCartoesData([]);
-        }
-      })
-      .catch((err) => {
-        setCartoesData([]);
-      });
+    // getCartoes();
+
+
   }, []);
+
+  const getCartoes = () => {
+    const requisicao = createAPI();
+    requisicao
+    .get("/cartao/")
+    .then((resposta) => {
+      if (resposta.data.msg.resultado) {
+        const newData = resposta.data.data.map((item) => ({
+          cartao: `${item.id_cartao}`,
+          bandeira: item.bandeira,
+          numero: `#### #### #### ${item.cartao}`,
+          background:
+            item.bandeira === "visa"
+              ? "linear-gradient(to right, #064789, #427AA1)"
+              : item.bandeira === "mastercard"
+              ? "linear-gradient(to right, #F4796B, #f79e21)"
+              : item.bandeira === "elocard"
+              ? "linear-gradient(to right, #322214, #2E282A)"
+              : "white",
+        }));
+        setCartoesData(newData);
+      } else {
+        setCartoesData([]);
+      }
+    })
+    .catch((err) => {
+      setCartoesData([]);
+    });
+  }
 
   const handleUsernameIconClick = () => {
     setIsUsernameEnabled(!isUsernameEnabled);
@@ -489,7 +496,7 @@ const ConfigurarPerfil = () => {
           </Accordion.Panel>
         </Accordion.Item>
 
-        {perfil === "cliente" ? (
+        {perfil === "cliente" && 1 === 2 ? (
           <Accordion.Item value="cartao">
             <Accordion.Control icon={<IconCreditCard size={rem(20)} />}>
               Meus cartões
