@@ -86,6 +86,9 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
+    if (window.ReactNativeWebView) { 
+       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'logout' }));
+  }
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("perfil");
