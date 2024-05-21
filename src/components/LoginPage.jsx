@@ -83,17 +83,6 @@ const LoginPage = () => {
         emailNovo = extrairNumeros(email);
       }
       const resposta = await login(emailNovo, password); 
-      
-      const user = JSON.parse(localStorage.getItem("user"));
-      const perfil = user.perfil[0];
-      if(perfil === "cliente"){
-      const token = localStorage.getItem("token");
-      const id_usuario = user.id_usuario;
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'login', token: token, id_usuario: id_usuario}));
-      }
-      }
-   
       if (resposta.auth === false) {
         setEstado(true);
         setMensagem(resposta.message);
@@ -104,6 +93,22 @@ const LoginPage = () => {
           setErrorLogin(false);
           setErrorSenha(false);
         }, 6000);
+      } else {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const perfil = user.perfil[0];
+        if (perfil === "cliente") {
+          const token = localStorage.getItem("token");
+          const id_usuario = user.id_usuario;
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({
+                type: "login",
+                token: token,
+                id_usuario: id_usuario,
+              })
+            );
+          }
+        }
       }
     }
   };
