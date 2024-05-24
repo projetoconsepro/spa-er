@@ -82,7 +82,7 @@ const LoginPage = () => {
       if (cpf.isValid(emailNovo) || cnpj.isValid(emailNovo)) {
         emailNovo = extrairNumeros(email);
       }
-      const resposta = await login(emailNovo, password); 
+      const resposta = await login(emailNovo, password);
       if (resposta.auth === false) {
         setEstado(true);
         setMensagem(resposta.message);
@@ -97,16 +97,15 @@ const LoginPage = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         const perfil = user.perfil[0];
         if (perfil === "cliente") {
-          const token = localStorage.getItem("token");
-          const id_usuario = user.id_usuario;
+          const token = btoa(unescape(encodeURIComponent(localStorage.getItem("token"))));
+          const id_usuario = btoa(user.id_usuario);
           if (window.ReactNativeWebView) {
-            window.ReactNativeWebView.postMessage(
-              JSON.stringify({
-                type: "login",
-                token: token,
-                id_usuario: id_usuario,
-              })
-            );
+            const data = {
+              type: "login",
+              token: token,
+              id_usuario: id_usuario,
+            };
+            window.ReactNativeWebView.postMessage(JSON.stringify(data));
           }
         }
       }
