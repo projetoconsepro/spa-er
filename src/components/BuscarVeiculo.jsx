@@ -45,9 +45,7 @@ const BuscarVeiculo = () => {
   };
 
   useEffect(() => {
-
     localStorage.removeItem("usuario");
-
 
     if (
       localStorage.getItem("turno") !== "true" &&

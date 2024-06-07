@@ -4,7 +4,7 @@ import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
-import VoltarComponente from "../util/VoltarComponente";
+import VoltarComponente, { voltar } from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import { ActionIcon, Button, Grid, Loader, Modal, Text } from "@mantine/core";
@@ -33,7 +33,7 @@ const ListarNotificacoes = () => {
   const [onCloseError, setOnCloseError] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
   const [estadoModal, setEstadoModal] = useState("select");
-
+  const [param, setParam] = useState({});
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
@@ -49,7 +49,6 @@ const ListarNotificacoes = () => {
       const valor = data[index].valor.toString();
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
       const requisicao = createAPI();
-
       const campo = {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
         tipoPagamento: "pix",
@@ -239,6 +238,7 @@ const ListarNotificacoes = () => {
           setEstado(false);
           setMensagem("");
           setEstado2(true);
+          setParam(response.data.data[0]);
           const newData = response.data.data.map((item) => ({
             data: ArrumaHora(item.data),
             id_notificacao: item.id_notificacao,
@@ -278,6 +278,39 @@ const ListarNotificacoes = () => {
       });
   };
 
+  const Imprimir = async (via, item, data3) => {
+    const obterHoraAtual = () => {
+      const dataAtual = new Date();
+      const dia = dataAtual.getDate().toString().padStart(2, "0");
+      const mes = (dataAtual.getMonth() + 1).toString().padStart(2, "0");
+      const ano = dataAtual.getFullYear().toString();
+      const hora = dataAtual.getHours().toString().padStart(2, "0");
+      const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
+      const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
+      return `${dia}/${mes}/${ano} ${hora}:${minutos}:${segundos} \n Hora Notif.: ${item.data} \n `;
+    };
+    const json = {
+      tipo: "REGULARIZACAO",
+      dataEmissao: obterHoraAtual(),
+      monitor: item.monitor.id_usuario,
+      modelo: item.veiculo.modelo.nome,
+      endereco: item.local,
+      fabricante: item.veiculo.modelo.fabricante.nome,
+      motivo: item.tipo_notificacao.nome,
+      vaga: item.vaga,
+      placa: item.veiculo.placa,
+      valor: data
+        .filter((item) => item.checked)
+        .reduce((acc, item) => acc + item.valor, 0)
+        .toFixed(2),
+      via: via,
+    };
+    voltar();
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify(json));
+    }
+  };
+
   const imprimirSegundaVia = (item) => {
     ImpressaoTicketNotificacao(
       "SEGUNDA",
@@ -288,31 +321,42 @@ const ListarNotificacoes = () => {
       item.fabricante,
       item.tipo_notificacao,
       item.endereco,
-      item.valor,
+      data
+        .filter((item) => item.checked)
+        .reduce((acc, item) => acc + item.valor, 0)
+        .toFixed(2),
       item.data
     );
   };
 
   const registroPixRegularizacao = () => {
-    let valor = data.filter((item) => item.checked).reduce((acc, item) => acc + item.valor, 0);
+    let valor = data
+      .filter((item) => item.checked)
+      .reduce((acc, item) => acc + item.valor, 0);
     valor = valor.toString();
-    let valor2 = valor.replace(',', '.');
+    let valor2 = valor.replace(",", ".");
     valor2 = parseFloat(valor2).toFixed(2);
     const requisicao = createAPI();
 
-    const campo = data.filter((item) => item.checked).map((item) => item.id_vaga_veiculo);
+    const campo = data
+      .filter((item) => item.checked)
+      .map((item) => item.id_vaga_veiculo);
 
     requisicao
       .post("/gerarcobranca", {
         valor: valor2,
-        campo: JSON.stringify(campo)
+        campo: JSON.stringify(campo),
       })
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setOnOpen(true);
           setData2(resposta.data.data);
           close();
-          registrarMultiplasRegularizacoes(data, "pix", resposta.data.data.txid);
+          registrarMultiplasRegularizacoes(
+            data,
+            "pix",
+            resposta.data.data.txid
+          );
         } else {
           setButtonLoading(false);
           setEstado(true);
@@ -327,16 +371,15 @@ const ListarNotificacoes = () => {
         setButtonLoading(false);
         setOnOpenError(true);
       });
-    };
-
-
-
+  };
 
   const registrarMultiplasRegularizacoes = (array, formaPagamento, txid) => {
     let arrayRegularizacao = [];
     const requisicao = createAPI();
-    if ( formaPagamento === "dinheiro") {
-      arrayRegularizacao = array.filter((item) => item.checked).map((item) => item.id_vaga_veiculo);
+    if (formaPagamento === "dinheiro") {
+      arrayRegularizacao = array
+        .filter((item) => item.checked)
+        .map((item) => item.id_vaga_veiculo);
     }
 
     requisicao
@@ -388,9 +431,7 @@ const ListarNotificacoes = () => {
           console.log(error);
         }
       });
-  }
-
-    
+  };
 
   return (
     <>
@@ -399,22 +440,37 @@ const ListarNotificacoes = () => {
         centered
         size="xl"
         opened={opened}
-        onClose={() => {close(); setEstadoModal("select")}}
+        onClose={() => {
+          close();
+          setEstadoModal("select");
+        }}
       >
-      {estadoModal === "select" ? (
-        <>
-        <div className="row">
-            <div className="col-12">
-              <h6>Selecione as notificações para regularizar:</h6>
-              <div className="text-start d-flex">
-              <h6>Selecionar todas:  </h6> <input type="checkbox"  style={{ width: "15px", height: "15px", marginLeft: "8px", marginTop: "4px" }} onChange={(e) => {
-                data.filter(item => item.pago === "N").map(item => item.checked = e.target.checked)
-                setData([...data])
-              }} />
+        {estadoModal === "select" ? (
+          <>
+            <div className="row">
+              <div className="col-12">
+                <h6>Selecione as notificações para regularizar:</h6>
+                <div className="text-start d-flex">
+                  <h6>Selecionar todas: </h6>{" "}
+                  <input
+                    type="checkbox"
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                      marginLeft: "8px",
+                      marginTop: "4px",
+                    }}
+                    onChange={(e) => {
+                      data
+                        .filter((item) => item.pago === "N")
+                        .map((item) => (item.checked = e.target.checked));
+                      setData([...data]);
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <table className="table table-striped table-hover table-bordered table-responsive">
+            <table className="table table-striped table-hover table-bordered table-responsive">
               <thead>
                 <tr className="text-center">
                   <th>
@@ -427,69 +483,86 @@ const ListarNotificacoes = () => {
               </thead>
               <tbody>
                 {data.map(
-                  (link, index) => link.pago !== "S" && (
-                    <tr key={index}>
-                      <td
-                        className="px-1"
-                        style={{ width: "40px", textAlign: "center" }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={link.checked}
-                          onChange={() => {
-                            link.checked = !link.checked;
-                            setData([...data]);
-                          }}
-                          style={{ width: "20px", height: "20px" }} />
-                      </td>
-                      <td>{link.placa}</td>
-                      <td><small>{link.data}</small></td>
-                      <td> R$ {link.valor.toFixed(2)}</td>
-                    </tr>
-                  )
+                  (link, index) =>
+                    link.pago !== "S" && (
+                      <tr key={index}>
+                        <td
+                          className="px-1"
+                          style={{ width: "40px", textAlign: "center" }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={link.checked}
+                            onChange={() => {
+                              link.checked = !link.checked;
+                              setData([...data]);
+                            }}
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                        </td>
+                        <td>{link.placa}</td>
+                        <td>
+                          <small>{link.data}</small>
+                        </td>
+                        <td> R$ {link.valor.toFixed(2)}</td>
+                      </tr>
+                    )
                 )}
               </tbody>
             </table>
-            </>
-          ) : (
+          </>
+        ) : (
           <>
             <div className="col-12 text-center mt-4 mb-4">
-              <h6>Valor total <h3 className="mt-2">R$ {data.filter((item) => item.checked).reduce((acc, item) => acc + item.valor, 0).toFixed(2)} </h3></h6>
+              <h6>
+                Valor total{" "}
+                <h3 className="mt-2">
+                  R${" "}
+                  {data
+                    .filter((item) => item.checked)
+                    .reduce((acc, item) => acc + item.valor, 0)
+                    .toFixed(2)}{" "}
+                </h3>
+              </h6>
             </div>
 
             <p className="text-start">Forma de pagamento:</p>
-                <Grid cols={12} gap="md" className="text-center">
-                    <Grid.Col span={6}>
-                      <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
-                      selectedButton === "pix"
-                        ? "corTempoSelecionado"
-                        : "corTempo"
-                      }`} 
-                      onClick={() => setSelectedButton("pix")}
-                      value="pix">
-                        <Text fz="lg" weight={700}>
-                          PIX
-                        </Text>
-                      </button>
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
-                      selectedButton === "dinheiro"
-                        ? "corTempoSelecionado"
-                        : "corTempo"
-                      }`} 
-                      onClick={() => setSelectedButton("dinheiro")}
-                      value="dinheiro">
-                        <Text fz="lg" weight={700}>
-                          Dinheiro
-                        </Text>
-                      </button>
-                    </Grid.Col>
-                  </Grid>
-
-
-          </> 
-          )}
+            <Grid cols={12} gap="md" className="text-center">
+              <Grid.Col span={6}>
+                <button
+                  type="button"
+                  className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                    selectedButton === "pix"
+                      ? "corTempoSelecionado"
+                      : "corTempo"
+                  }`}
+                  onClick={() => setSelectedButton("pix")}
+                  value="pix"
+                >
+                  <Text fz="lg" weight={700}>
+                    PIX
+                  </Text>
+                </button>
+              </Grid.Col>
+              <Grid.Col span={6}>
+                <button
+                  type="button"
+                  className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                    selectedButton === "dinheiro"
+                      ? "corTempoSelecionado"
+                      : "corTempo"
+                  }`}
+                  onClick={() => setSelectedButton("dinheiro")}
+                  value="dinheiro"
+                >
+                  <Text fz="lg" weight={700}>
+                    Dinheiro
+                  </Text>
+                </button>
+              </Grid.Col>
+            </Grid>
+          </>
+        )}
         <Button
           variant="gradient"
           gradient={{ from: "indigo", to: "cyan" }}
@@ -505,7 +578,10 @@ const ListarNotificacoes = () => {
                 registrarMultiplasRegularizacoes(data, selectedButton);
               }
               setEstadoModal("select");
-            } else if (estadoModal === "select" && data.filter((item) => item.checked).length > 0) {
+            } else if (
+              estadoModal === "select" &&
+              data.filter((item) => item.checked).length > 0
+            ) {
               setEstadoModal("pagamento");
             } else {
               Swal.fire({
@@ -515,7 +591,8 @@ const ListarNotificacoes = () => {
             }
           }}
         >
-          {estadoModal === "select" ? 'Avançar' : 'Finalizar' } ‎ <AiFillCheckCircle size={18} />
+          {estadoModal === "select" ? "Avançar" : "Finalizar"} ‎{" "}
+          <AiFillCheckCircle size={18} />
         </Button>
       </Modal>
 
@@ -744,6 +821,7 @@ const ListarNotificacoes = () => {
           mensagemPix={pixExpirado}
           onOpen={onOpen}
           onClose={onClose}
+          funcao={() => Imprimir("PRIMEIRA", param, data)}
         />
       </div>
     </>

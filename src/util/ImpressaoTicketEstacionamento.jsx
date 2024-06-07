@@ -9,9 +9,12 @@ const ImpressaoTicketEstacionamento = async (
   placa,
   metodo,
   tempoValor,
-  notificacao
+  notificacao,
 ) => {
   const calcularValidade = (horaInicio, duracao) => {
+    if (horaInicio === undefined || duracao === undefined) {
+      return "";
+    }
     const [horas, minutos, segundos] = duracao.split(":").map(Number);
     const dataInicio = new Date(`2000-01-01T${horaInicio}`);
     const dataValidade = new Date(
@@ -95,10 +98,9 @@ const ImpressaoTicketEstacionamento = async (
       metodo: forma(),
       vaga: metodo === "PIX" ? vaga : vaga[0],
       placa: placa,
-      valor: await valorTicket(),
+      valor: tempoValor > 0 ? tempoValor : await valorTicket(),
       notificacaoPendente: notificacao,
     };
-
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
     }
@@ -116,7 +118,7 @@ const ImpressaoTicketEstacionamento = async (
       valor: await valorTicket(),
       notificacaoPendente: notificacao,
     };
-
+  
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
     }

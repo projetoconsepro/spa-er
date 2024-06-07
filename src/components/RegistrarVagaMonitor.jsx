@@ -9,6 +9,7 @@ import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import { Button, Divider, Grid, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
+import ImpressaoTempoEstacionamento from "../util/ImpressaoTempoEstacionamento";
 import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
 import CalcularValidade from "../util/CalcularValidade";
@@ -37,9 +38,6 @@ const RegistrarVagaMonitor = () => {
   const [selectedButton, setSelectedButton] = useState("pix");
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
-
-
-
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
 
@@ -804,6 +802,7 @@ const RegistrarVagaMonitor = () => {
           mensagemPix={pixExpirado}
           onOpen={onOpen}
           onClose={onClose}
+          funcao={() => ImpressaoTempoEstacionamento(textoPlaca, tempo, vaga, valorcobranca2) }
         />
       </div>
     </section>

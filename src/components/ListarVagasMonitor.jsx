@@ -52,13 +52,11 @@ const ListarVagasMonitor = () => {
     setVagasVencidas(estacionadoPCount);
   };
 
-
   const funcAttResposta = (Json, index) => {
 
     if (variavelAuxiliarVagas.length === 0) {
       variavelAuxiliarVagas = resposta;
     }
-
     variavelAuxiliarVagas[index] = Json;
 
     setResposta(variavelAuxiliarVagas);

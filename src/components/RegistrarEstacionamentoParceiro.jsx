@@ -7,8 +7,10 @@ import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import { Button, Divider, Grid, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
+import ImpressaoTempoEstacionamento from "../util/ImpressaoTempoEstacionamento";
 import createAPI from "../services/createAPI";
 import ModalErroBanco from "./ModalErroBanco";
+import { set } from "mongoose";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -41,7 +43,7 @@ const RegistrarEstacionamentoParceiro = () => {
       .get("/parametros")
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
-        setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
+        setValorCobranca2(0.01); // response.data.data.param.estacionamento.valorHora / 2
       })
       .catch(function (error) {
         localStorage.removeItem("user");
@@ -743,7 +745,9 @@ const RegistrarEstacionamentoParceiro = () => {
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
-        onClose={onClose} />
+        onClose={onClose}
+        funcao={() => ImpressaoTempoEstacionamento(textoPlaca, tempo, vaga, valorcobranca2) }
+    />
     </div>
     </>
   );
