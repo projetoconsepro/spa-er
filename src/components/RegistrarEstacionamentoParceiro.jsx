@@ -76,8 +76,7 @@ const RegistrarEstacionamentoParceiro = () => {
 
   function validarPlaca(placa) {
     const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-    const regexPlacaNova =
-      /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+    const regexPlacaNova = /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/;
 
     if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
       return true;
