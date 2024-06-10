@@ -24,7 +24,6 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose , funcao}) => {
   const [perfil, setPerfil] = useState(" ");
   const componente = localStorage.getItem("componente");
   const [opened, { open, close }] = useDisclosure(false);
-  
   const copyToClipboard = () => {
     if (inputRef.current) {
       inputRef.current.select();
@@ -33,21 +32,21 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose , funcao}) => {
 
       setTimeout(() => {
         setIcon("FaCopy");
-      }, 1000);
-    }
+        }, 1000);
+        }
   };
 
   useEffect(() => {
     if (onOpen) {
       open();
-    } else {
-      close();
-    }
-  }, [qrCode, onOpen]);
-
-  useEffect(() => {
-    if (!opened && onClose) {
-      onClose();
+      } else {
+        close();
+        }
+        }, [qrCode, onOpen]);
+        
+        useEffect(() => {
+          if (!opened && onClose) {
+            onClose();
     }
   }, [opened]);
 
@@ -100,63 +99,63 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose , funcao}) => {
             <QRCode value={qrCode === undefined ? "a" : qrCode} />
           </Group>
           <div style={{ alignItems: "center" }}>
-            {perfil === "cliente" ? (
-              <div>
-                <Input
-                  ref={inputRef}
-                  type="text"
-                  value={qrCode}
-                  readOnly
-                  style={{ flex: 1 }}
-                />
-                <VoltarComponente space={true} />
-                <Button
-                  mt={4}
-                  onClick={copyToClipboard}
-                  style={{
-                    color: "white",
-                    backgroundColor: icon === "FaCopy" ? "" : "green",
-                    padding: "8px",
-                    cursor: "pointer",
-                  }}
-                  fullWidth
-                >
-                  <span className="material-icons" style={{ color: "white" }}>
-                    {icon === "FaCopy"
-                      ? "Clique para copiar o código"
-                      : "Código copiado"}
-                    {icon === "FaCopy" ? <FaCopy /> : <FaCheck color="white" />}
-                  </span>
-                </Button>
-              </div>
-            ) : (
-              <>
-                <Input
-                  ref={inputRef}
-                  type="text"
-                  value={qrCode}
-                  readOnly
-                  style={{ flex: 1 }}
-                />
-                <div className="pt-4 mb-4 gap-4 d-flex alignItems-center">
-                  <Button
-                    mt={4}
-                    onClick={funcao}
-                    loaderPosition="right"
-                    className="bg-blue-50"
-                    radius="md"
-                    style={{
-                      width: "300px",
-                      height: "50px",
-                      marginBottom: "2px",
-                    }}
-                  >
-                    2ª Via
-                  </Button>
-                  <VoltarComponente fechar={true} />
-                </div>
-              </>
-            )}
+          {perfil === "monitor" ? (
+          <div>
+            <Input
+              ref={inputRef}
+              type="text"
+              value={qrCode}
+              readOnly
+              style={{ flex: 1 }}
+            />
+            <VoltarComponente space={true} />
+            <Button
+              mt={4}
+              onClick={copyToClipboard}
+              style={{
+                color: "white",
+                backgroundColor: icon === "FaCopy" ? "" : "green",
+                padding: "8px",
+                cursor: "pointer",
+              }}
+              fullWidth
+            >
+              <span className="material-icons" style={{ color: "white" }}>
+                {icon === "FaCopy"
+                  ? "Clique para copiar o código"
+                  : "Código copiado"}
+                {icon === "FaCopy" ? <FaCopy /> : <FaCheck color="white" />}
+              </span>
+            </Button>
+          </div>
+        ) : (
+          <>
+            <Input
+              ref={inputRef}
+              type="text"
+              value={qrCode}
+              readOnly
+              style={{ flex: 1 }}
+            />
+            <div className="pt-4 mb-4 gap-4 d-flex alignItems-center">
+              <Button
+                mt={4}
+                onClick={funcao}
+                loaderPosition="right"
+                className="bg-blue-50"
+                radius="md"
+                style={{
+                  width: "300px",
+                  height: "50px",
+                  marginBottom: "2px",
+                }}
+              >
+                Imprimir
+              </Button>
+              <VoltarComponente fechar={true} />
+            </div>
+          </>
+        )}
           </div>
           <div className="mt-3">
             {status ? (

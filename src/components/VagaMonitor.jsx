@@ -246,7 +246,6 @@ export const VagaMonitor = ({
           }));
 
           const impressao = link[0];
-          console.table(impressao);
           ImpressaoTicketEstacionamento(
             "SEGUNDA",
             impressao.chegada,

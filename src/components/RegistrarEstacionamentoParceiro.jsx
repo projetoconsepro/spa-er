@@ -43,7 +43,7 @@ const RegistrarEstacionamentoParceiro = () => {
       .get("/parametros")
       .then((response) => {
         setValorCobranca(response.data.data.param.estacionamento.valorHora);
-        setValorCobranca2(0.01); // response.data.data.param.estacionamento.valorHora / 2
+        setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
       })
       .catch(function (error) {
         localStorage.removeItem("user");

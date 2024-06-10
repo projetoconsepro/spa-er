@@ -81,9 +81,6 @@ const AdicionarCreditos = () => {
       pagamento: pagamento,
     };
     voltar();
-    console.table(user);
-    console.table(user.perfil);
-    console.table(json);
 
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
@@ -107,7 +104,6 @@ const AdicionarCreditos = () => {
 
       valor = valor.replace(/(?=(\d{3})+(\D))\B/g, ".");
     }
-
     setValor(valor);
   };
 
