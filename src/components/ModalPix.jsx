@@ -8,47 +8,45 @@ import {
   Menu,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconCheck,
-  IconCopy,
-  IconX,
-} from "@tabler/icons-react";
-import { React, useState, useEffect, useRef } from "react";
+import { IconCheck, IconCopy, IconX } from "@tabler/icons-react";
+import VoltarComponente from "../util/VoltarComponente";
+import RegistrarEstacionamentoParceiro from "./RegistrarEstacionamentoParceiro";
+import ImpressaoTicketCredito from "../util/ImpressaoTicketCredito";
+import ImpressaoTicketRegularizacao from "../util/ImpressaoTicketRegularizacao";
+import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
+import React, { useState, useEffect, useRef } from "react";
 import QRCode from "react-qr-code";
 import { FaCopy, FaCheck } from "react-icons/fa";
 
-const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
+const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose , funcao}) => {
   const inputRef = useRef(null);
   const [icon, setIcon] = useState("FaCopy");
-
-  const copyToClipboard = () => {
-    // Seleciona o conteúdo do input
-    inputRef.current.select();
-    // Copia o conteúdo selecionado para a área de transferência
-    document.execCommand("copy");
-    setIcon("FaCheck");
-
-    setTimeout(() => {
-      setIcon("FaCopy");
-    }, 1000);
-  };
-
+  const [perfil, setPerfil] = useState(localStorage.getItem("user"));
+  const perfil2 = JSON.parse(perfil);
+  const componente = localStorage.getItem("componente");
   const [opened, { open, close }] = useDisclosure(false);
+  const copyToClipboard = () => {
+    if (inputRef.current) {
+      inputRef.current.select();
+      document.execCommand("copy");
+      setIcon("FaCheck");
+      setTimeout(() => {
+        setIcon("FaCopy");
+        }, 1000);
+        }
+  };
 
   useEffect(() => {
     if (onOpen) {
       open();
-    } else {
-      close();
-    }
-  }, [qrCode, onOpen]);
-
-  useEffect(() => {
-    if (opened){
-    } else {
-      if (onClose !== undefined){
-      onClose()
-      }
+      } else {
+        close();
+        }
+        }, [qrCode, onOpen]);
+        
+        useEffect(() => {
+          if (!opened && onClose) {
+            onClose();
     }
   }, [opened]);
 
@@ -57,9 +55,7 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
       <Modal
         style={{ zIndex: 51 }}
         opened={opened}
-        onClose={() => {
-          close();
-        }}
+        onClose={close}
         centered
         size="xl"
         title={
@@ -103,32 +99,63 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
             <QRCode value={qrCode === undefined ? "a" : qrCode} />
           </Group>
           <div style={{ alignItems: "center" }}>
+          {perfil2.perfil[0] !== "monitor" ? (
+          <div>
             <Input
               ref={inputRef}
               type="text"
               value={qrCode}
               readOnly
-              style={{ flex: 1, }}
+              style={{ flex: 1 }}
             />
+
             <Button
               mt={4}
               onClick={copyToClipboard}
               style={{
-                color: icon === "FaCopy" ? "white" : "white",
+                color: "white",
                 backgroundColor: icon === "FaCopy" ? "" : "green",
                 padding: "8px",
                 cursor: "pointer",
               }}
               fullWidth
             >
-              <span className="material-icons"
-              style={{color: icon === "FaCopy" ? "white" : "white", 
-            }}
-              >
-                {icon === "FaCopy" ? 'Clique para copiar o código': 'Código copiado'} {" "} 
-                {icon === "FaCopy" ? <FaCopy /> : <FaCheck  color="white"/>}
+              <span className="material-icons" style={{ color: "white" }}>
+                {icon === "FaCopy"
+                  ? "Clique para copiar o código"
+                  : "Código copiado"}
+                {icon === "FaCopy" ? <FaCopy /> : <FaCheck color="white" />}
               </span>
             </Button>
+          </div>
+        ) : (
+          <>
+            <Input
+              ref={inputRef}
+              type="text"
+              value={qrCode}
+              readOnly
+              style={{ flex: 1 }}
+            />
+            <div className="pt-4 mb-4 gap-4 d-flex alignItems-center">
+              <Button
+                mt={4}
+                onClick={funcao}
+                loaderPosition="right"
+                className="bg-blue-50"
+                radius="md"
+                style={{
+                  width: "300px",
+                  height: "50px",
+                  marginBottom: "2px",
+                }}
+              >
+                Imprimir
+              </Button>
+              <VoltarComponente fechar={true} />
+            </div>
+          </>
+        )}
           </div>
           <div className="mt-3">
             {status ? (
@@ -165,5 +192,4 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
     </div>
   );
 };
-
 export default ModalPix;

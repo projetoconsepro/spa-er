@@ -32,6 +32,9 @@ export const VagaMonitor = ({
   };
 
   function converterParaSegundos(tempo) {
+    if (tempo === undefined) {
+      return 0;
+    }
     const [horas2, minutos2, segundos2] = tempo.split(":").map(Number);
     return horas2 * 3600 + minutos2 * 60 + segundos2;
   }
@@ -46,7 +49,7 @@ export const VagaMonitor = ({
   };
 
   const funcUpdateVaga = async (vagaNew) => {
-    if (vagaNew.estacionado == "N") {
+    if (vagaNew.estacionado === "N") {
       vaga = {
         numero: vaga.numero,
         estacionado: vagaNew.estacionado,
@@ -150,7 +153,7 @@ export const VagaMonitor = ({
     });
 
     socket.on("vaga", (message) => {
-      if (message.vaga.numero == vaga.numero && message.setor == setor) {
+      if (message.vaga.numero === vaga.numero && message.setor === setor) {
         funcUpdateVaga(message.vaga);
       }
     });
@@ -212,7 +215,7 @@ export const VagaMonitor = ({
       });
   };
 
-  const funcExtratoPlaca = (placa) => {
+    const funcExtratoPlaca = (placa) => {
     const requisicao = createAPI();
     requisicao
       .get(`/veiculo/${placa}`)
@@ -243,7 +246,6 @@ export const VagaMonitor = ({
           }));
 
           const impressao = link[0];
-
           ImpressaoTicketEstacionamento(
             "SEGUNDA",
             impressao.chegada,
@@ -545,7 +547,7 @@ export const VagaMonitor = ({
           color: determineTextColor(vaga),
         }}
       >
-        {vaga.placa == "0" ? null : vaga.placa}{" "}
+        {vaga.placa === "0" ? null : vaga.placa}{" "}
         <small id={vaga.display}>{vaga.numero_notificacoes}</small>
       </td>
       <td

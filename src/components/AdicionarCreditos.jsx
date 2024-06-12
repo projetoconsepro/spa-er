@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import "../pages/Style/styles.css";
-import VoltarComponente from "../util/VoltarComponente";
+import VoltarComponente, { voltar } from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
@@ -16,7 +16,7 @@ const AdicionarCreditos = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [cpf, setCPF] = useState("");
-  const [valor, setValor] = useState('');
+  const [valor, setValor] = useState("");
   const [pagamentos, setPagamento] = useState("dinheiro");
   const [data, setData] = useState([]);
   const [onOpen, setOnOpen] = useState(false);
@@ -24,7 +24,8 @@ const AdicionarCreditos = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [estado2, setEstado2] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
-
+  const [user] = useState(localStorage.getItem("user"));
+  const user2 = JSON.parse(user);
   async function getInfoPix(TxId) {
     const requisicao = createAPI();
     await requisicao
@@ -33,9 +34,14 @@ const AdicionarCreditos = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
-          ImpressaoTicketCredito(cpf, valor, pagamentos, response.config.headers.id_usuario)
-          setValor("")
-          setCPF("")
+          ImpressaoTicketCredito(
+            cpf,
+            valor,
+            pagamentos,
+            response.config.headers.id_usuario
+          );
+          setValor("");
+          setCPF("");
           setOnOpen(false);
           Swal.fire({
             title: "Sucesso!",
@@ -54,25 +60,50 @@ const AdicionarCreditos = () => {
       });
   }
 
+  const Imprimir = async (cpf, valor, pagamento) => {
+    const obterHoraAtual = () => {
+      const dataAtual = new Date();
+      const dia = dataAtual.getDate().toString().padStart(2, "0");
+      const mes = (dataAtual.getMonth() + 1).toString().padStart(2, "0");
+      const ano = dataAtual.getFullYear().toString();
+      const hora = dataAtual.getHours().toString().padStart(2, "0");
+      const minutos = dataAtual.getMinutes().toString().padStart(2, "0");
+      const segundos = dataAtual.getSeconds().toString().padStart(2, "0");
+      return `${dia}/${mes}/${ano} ${hora}:${minutos}:${segundos}`;
+    };  
+
+    const json = {
+      tipo: "CREDITOS INSERIDOS",
+      dataEmissao: obterHoraAtual(),
+      monitor: user2.id_usuario,
+      valor: valor,
+      cpf: cpf[0],
+      pagamento: pagamento,
+    };
+    voltar();
+
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify(json));
+    }
+  };
 
   const FuncArrumaInput = (e) => {
     let valor = e;
 
-    if (valor.length === 1 && valor !== '0') {
+    if (valor.length === 1 && valor !== "0") {
       valor = `0,0${valor}`;
     } else if (valor.length > 1) {
       valor = valor.replace(/\D/g, "");
       valor = valor.replace(/^0+/, "");
-  
+
       if (valor.length < 3) {
         valor = `0,${valor}`;
       } else {
-        valor = valor.replace(/(\d{2})$/, ',$1');
+        valor = valor.replace(/(\d{2})$/, ",$1");
       }
-  
+
       valor = valor.replace(/(?=(\d{3})+(\D))\B/g, ".");
     }
-
     setValor(valor);
   };
 
@@ -87,14 +118,17 @@ const AdicionarCreditos = () => {
     }
     const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
 
-    requisicao.get(cpf2).then((resposta) => {
+    requisicao
+      .get(cpf2)
+      .then((resposta) => {
         if (resposta.data.msg.resultado) {
           campo = {
             user: cpf,
             valor: Newvalor,
             pagamento: pagamentos,
           };
-          requisicao.post("/gerarcobranca", {
+          requisicao
+            .post("/gerarcobranca", {
               valor: Newvalor,
               campo: JSON.stringify(campo),
             })
@@ -137,7 +171,6 @@ const AdicionarCreditos = () => {
       return;
     }
 
-
     if (pagamentos === "dinheiro") {
       transferencia();
     } else {
@@ -158,10 +191,15 @@ const AdicionarCreditos = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado) {
-            ImpressaoTicketCredito(cpf, Newvalor, pagamentos, response.config.headers.id_usuario)
+            ImpressaoTicketCredito(
+              cpf,
+              Newvalor,
+              pagamentos,
+              response.config.headers.id_usuario
+            );
             setEstado2(false);
-            setValor("")
-            setCPF("")
+            setValor("");
+            setCPF("");
             Swal.fire({
               title: "Sucesso!",
               text: "Créditos adicionados com sucesso!",
@@ -237,7 +275,10 @@ const AdicionarCreditos = () => {
 
   return (
     <div className="container">
-      <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
+      <div
+        className="row justify-content-center form-bg-image"
+        data-background-lg="../../assets/img/illustrations/signin.svg"
+      >
         <div className="col-12 d-flex align-items-center justify-content-center">
           <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
             <div className="h5 mt-2 align-items-center text-start">
@@ -249,7 +290,7 @@ const AdicionarCreditos = () => {
                 <button
                   type="button"
                   className="btn btn-info w-100"
-                  onClick={() => FuncArrumaInput('1000')}
+                  onClick={() => FuncArrumaInput("1000")}
                 >
                   10
                 </button>
@@ -258,7 +299,7 @@ const AdicionarCreditos = () => {
                 <button
                   type="button"
                   className="btn btn-info w-100"
-                  onClick={() => FuncArrumaInput('2000')}
+                  onClick={() => FuncArrumaInput("2000")}
                 >
                   20
                 </button>
@@ -267,7 +308,7 @@ const AdicionarCreditos = () => {
                 <button
                   type="button"
                   className="btn btn-info w-100"
-                  onClick={() => FuncArrumaInput('3000')}
+                  onClick={() => FuncArrumaInput("3000")}
                 >
                   30
                 </button>
@@ -276,7 +317,7 @@ const AdicionarCreditos = () => {
                 <button
                   type="button"
                   className="btn btn-info w-100"
-                  onClick={() => FuncArrumaInput('5000')}
+                  onClick={() => FuncArrumaInput("5000")}
                 >
                   50
                 </button>
@@ -285,7 +326,7 @@ const AdicionarCreditos = () => {
             <div className="form-group mb-4 mt-4">
               <h6 className="text-start mb-1">CPF ou CNPJ:</h6>
               <div className="input-group">
-              <Input
+                <Input
                   type="number"
                   icon={<IconUser />}
                   placeholder="Digite o CPF ou CNPJ"
@@ -323,7 +364,7 @@ const AdicionarCreditos = () => {
             </div>
 
             <div className="pt-4 mb-6 gap-2 d-md-block">
-              <VoltarComponente space={true}/>
+              <VoltarComponente space={true} />
               <Button
                 loading={estado2}
                 onClick={handleSubmit}
@@ -342,19 +383,17 @@ const AdicionarCreditos = () => {
             >
               {mensagem}
             </div>
-            <div style={{ display: estado2 ? "block" : "none" }}>
-            </div>
+            <div style={{ display: estado2 ? "block" : "none" }}></div>
           </div>
         </div>
       </div>
-      <ModalErroBanco
-          onOpen={onOpenError}
-        />
+      <ModalErroBanco onOpen={onOpenError} />
       <ModalPix
         qrCode={data.brcode}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
+        funcao={() => Imprimir(cpf, valor, pagamentos)}
       />
     </div>
   );
