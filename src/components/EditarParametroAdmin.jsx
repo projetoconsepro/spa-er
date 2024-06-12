@@ -21,7 +21,7 @@ import {
   rem,
 } from "@mantine/core";
 import createAPI from "../services/createAPI";
-import flatpickr from "flatpickr";
+import Flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
 const EditarParametroAdmin = () => {
@@ -93,7 +93,7 @@ const EditarParametroAdmin = () => {
       showLoaderOnConfirm: true,
       allowOutsideClick: () => !Swal.isLoading(),
       didOpen: () => {
-        flatpickr(".flatpickr", {
+        Flatpickr(".flatpickr", {
           enableTime: true,
           noCalendar: true,
           dateFormat: "H:i",
@@ -429,7 +429,7 @@ const EditarParametroAdmin = () => {
       cancelButtonText: "Cancelar",
       confirmButtonColor: "green",
       didOpen: () => {
-        flatpickr(".flatpickr", {
+        Flatpickr(".flatpickr", {
           enableTime: true,
           noCalendar: true,
           dateFormat: "H:i",

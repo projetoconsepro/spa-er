@@ -21,7 +21,8 @@ import { FaCopy, FaCheck } from "react-icons/fa";
 const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose , funcao}) => {
   const inputRef = useRef(null);
   const [icon, setIcon] = useState("FaCopy");
-  const [perfil, setPerfil] = useState(" ");
+  const [perfil, setPerfil] = useState(localStorage.getItem("user"));
+  const perfil2 = JSON.parse(perfil);
   const componente = localStorage.getItem("componente");
   const [opened, { open, close }] = useDisclosure(false);
   const copyToClipboard = () => {
@@ -29,7 +30,6 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose , funcao}) => {
       inputRef.current.select();
       document.execCommand("copy");
       setIcon("FaCheck");
-
       setTimeout(() => {
         setIcon("FaCopy");
         }, 1000);
@@ -99,7 +99,7 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose , funcao}) => {
             <QRCode value={qrCode === undefined ? "a" : qrCode} />
           </Group>
           <div style={{ alignItems: "center" }}>
-          {perfil === "monitor" ? (
+          {perfil2.perfil[0] !== "monitor" ? (
           <div>
             <Input
               ref={inputRef}
@@ -108,7 +108,7 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose , funcao}) => {
               readOnly
               style={{ flex: 1 }}
             />
-            <VoltarComponente space={true} />
+
             <Button
               mt={4}
               onClick={copyToClipboard}
