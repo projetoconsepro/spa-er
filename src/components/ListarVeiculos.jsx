@@ -57,6 +57,18 @@ const ListarVeiculos = () => {
   const [encerramento, setEncerramento] = useState("");
   const [ModalContent, setModalContent] = useState("ModalTermos");
 
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = btoa(unescape(encodeURIComponent(localStorage.getItem("token"))));
+    const id_usuario = btoa(user.id_usuario);
+    if (window.ReactNativeWebView) {
+      const data = {
+        type: "listarVeiculos",
+        token: token,
+        id_usuario: id_usuario,
+      };
+      window.ReactNativeWebView.postMessage(JSON.stringify(data));
+    }
+    
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
     const tempo1 = buttonIndex;
