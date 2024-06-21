@@ -21,7 +21,6 @@ const ListarVagasMonitor = () => {
   const [vagasOcupadas, setVagasOcupadas] = useState(0);
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [localVagas, setLocalVagas] = useState(true);
-  const [attFunc, setAttFunc] = useState(false);
   let variavelAuxiliarVagas = [];
 
   const funcCalcVgas = (array) => {
@@ -186,7 +185,7 @@ useEffect(() => {
       cardToScroll.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 50);
   }
-  }, [vaga, attFunc]);
+  }, [vaga]);
 
   useEffect(() => {
       (async () => {
@@ -211,12 +210,18 @@ useEffect(() => {
 
     const requisicao = createAPI();
     localStorage.removeItem("idVagaVeiculo");
+
+    if (localStorage.getItem("setores")) {
+      const items = localStorage.getItem("setores");
+      setResposta2(JSON.parse(items));
+    } else {
     requisicao.get("/setores").then((response) => {
       if (response.data.msg.resultado) {
         const NewData = response.data.data.setores.map((item) => ({
           setores: item.nome,
         }));
         setResposta2(NewData);
+        localStorage.setItem("setores", JSON.stringify(NewData));
       } else {
         setEstado(true);
         setMensagem(response.data.msg.msg);
@@ -224,6 +229,7 @@ useEffect(() => {
       }).catch(function (error) {
       ValidarRequisicao(error)
       });
+    }
     localStorage.removeItem("idVagaVeiculo");
     localStorage.removeItem("placa");
     localStorage.removeItem("usuario");

@@ -7,9 +7,7 @@ const SugestoesAdmin = () => {
 
     useEffect(() => {
       const requisicao = createAPI();
-    
-        requisicao
-          .get("/usuario/sugestao").then((res) => {
+        requisicao.get("/usuario/sugestao").then((res) => {
             const Newdata = res.data.data.map((item) => {
                 return {
                     nome: item.nome,
@@ -18,8 +16,7 @@ const SugestoesAdmin = () => {
                     assunto: item.assunto,
                     perfil: item.perfil
                 }
-            }
-            )
+            })
             setData(Newdata);
           }
         )
@@ -27,7 +24,6 @@ const SugestoesAdmin = () => {
             console.log(err);
             }
         );
-        
     }, []);
 
 
@@ -41,7 +37,7 @@ const SugestoesAdmin = () => {
         const segundos = String(data.getSeconds()).padStart(2, '0');
       
         return `${dia}/${mes}/${ano} - ${hora}:${minutos}:${segundos}`;
-      }
+    }
 
   return (
     <div className="mb-3">

@@ -19,7 +19,6 @@ const NewPassword = () => {
   const [errorSenha2, setErrorSenha2] = useState(false);
   const [telefone] = useState(localStorage.getItem("telefone"));
   const [input, setInput] = useState("");
-  const [errorSenhaTelefone, setErrorSenhaTelefone] = useState(false);
 
   function extrairNumeros(string) {
     return string ? string.replace(/\D/g, '') : string;
@@ -29,11 +28,9 @@ const NewPassword = () => {
 
     if (telefone === "Não cadastrado") {
         if (input === "") {
-            setErrorSenhaTelefone(true);
             setMensagem("Digite seu telefone!");
             setEstado(true);
             setTimeout(() => {
-                setErrorSenhaTelefone(false);
                 setMensagem("");
                 setEstado(false);
             }, 4000);
@@ -168,7 +165,6 @@ const NewPassword = () => {
                     value={input}
                     component={ReactInputMask} mask={'(99) 99999-9999'}
                     onChange={(e) => setInput(e.target.value)}
-                    error={setErrorSenhaTelefone}
                     className="mt-1"
                   />
                 </div>

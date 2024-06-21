@@ -7,7 +7,6 @@ import { IconUser } from "@tabler/icons-react";
 
 const ResetPassword = () => {
   const [metodo, setMetodo] = useState("");
-  const [inputLogin] = useState("form-control");
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [checkValidate1] = useState(false);
@@ -15,7 +14,7 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     const checks = document.querySelectorAll('input[type="checkbox"]');
-    if(!sucesso){
+    if (!sucesso) {
       if (
         checks[0].checked === false
       ) {
@@ -34,7 +33,7 @@ const ResetPassword = () => {
     else{
         setSucesso(true);
     } 
-  }else{
+  } else {
     if (metodo === "") {
       setMensagem("Digite seu dado de identificação");
       setEstado(true);
@@ -114,7 +113,7 @@ const ResetPassword = () => {
           data-background-lg="../../assets/img/illustrations/signin.svg"
         >
           <div className="col-12 d-flex align-items-center justify-content-center">
-            <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+            <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
               <div className="text-center text-md-center mb-3 pt-3 mt-4mt-md-0">
                 <img
                   src="../../assets/img/logoconseproof2.png"

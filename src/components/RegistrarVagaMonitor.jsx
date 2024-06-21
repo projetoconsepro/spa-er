@@ -1,5 +1,5 @@
 import axios from "axios";
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect } from "react";
 import { FaWheelchair } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../pages/Style/styles.css";
@@ -16,28 +16,22 @@ import ModalErroBanco from "./ModalErroBanco";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const socketRef = useRef(null);
   const [mensagem, setMensagem] = useState("");
   const [placa, setPlaca] = useState("placa");
   const [textoPlaca, setTextoPlaca] = useState("");
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
-  const [placaVeiculo, setPlacaVeiculo] = useState("");
   const [tempo, setTempo] = useState("00:10:00");
-  const [valor, setValor] = useState("dinheiro");
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [mostrapag, SetMostrapag] = useState(false);
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
   const [vaga, setVaga] = useState("");
-  const [cont, setCont] = useState(0);
-  const [InputPlaca, setInputPlaca] = useState(" form-control fs-5");
   const [visible, setVisible] = useState(false);
   const [limite, setLimite] = useState(8);
   const [tipoVaga, setTipoVaga] = useState("");
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
@@ -57,11 +51,9 @@ const RegistrarVagaMonitor = () => {
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
       setLoadingButton(false);
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -71,11 +63,9 @@ const RegistrarVagaMonitor = () => {
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
         setLoadingButton(false);
-        setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
         setTimeout(() => {
-          setInputPlaca("form-control fs-5");
           setEstado(false);
           setMensagem("");
         }, 4000);
@@ -113,7 +103,6 @@ const RegistrarVagaMonitor = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
-          setTxId(resposta.data.data.txid);
           getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
@@ -135,7 +124,7 @@ const RegistrarVagaMonitor = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado === true) {
-          if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+          if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
             response.data.data.chegada,
@@ -236,11 +225,9 @@ const RegistrarVagaMonitor = () => {
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
       setLoadingButton(false);
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -250,11 +237,9 @@ const RegistrarVagaMonitor = () => {
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
         setLoadingButton(false);
-        setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
         setTimeout(() => {
-          setInputPlaca("form-control fs-5");
           setEstado(false);
           setMensagem("");
         }, 4000);
@@ -273,7 +258,7 @@ const RegistrarVagaMonitor = () => {
         })
         .then(async(response) => {
           if (response.data.msg.resultado === true) {
-            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -298,8 +283,6 @@ const RegistrarVagaMonitor = () => {
 
 
               listaVagas = listaVagas.filter((element) => element !== null);
-
-              console.log(listaVagas);
 
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
@@ -382,7 +365,7 @@ const RegistrarVagaMonitor = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado === true) {
-            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -496,7 +479,6 @@ const RegistrarVagaMonitor = () => {
         setPlaca("placa3");
       } else {
         setPlaca("placa");
-        setCont(0);
       }
     }
   }, [textoPlaca]);
@@ -543,16 +525,11 @@ const RegistrarVagaMonitor = () => {
 
   const atualizafunc = () => {
     const tempoo = document.getElementById("tempos").value;
-    const valorr = selectedButton;
-    console.log(selectedButton)
     setTempo(tempoo);
-    setValor(valorr);
     if (tempoo === "00:10:00") {
       SetMostrapag(false);
-      setValor("");
     } else if (tempoo === "notificacao"){
       SetMostrapag(false);
-      setValor("");
     } 
     else {
       SetMostrapag(true);
@@ -593,8 +570,7 @@ const RegistrarVagaMonitor = () => {
 
   function validarPlaca(placa) {
     const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-    const regexPlacaNova =
-      /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
+    const regexPlacaNova = /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/;
 
     if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
       return true;
@@ -606,7 +582,6 @@ const RegistrarVagaMonitor = () => {
   const handleSubmit = async () => {
     setLoadingButton(true);
     let select = selectedButton;
-    setValor(selectedButton);
     const tolerancia = document.getElementById("tempos").value;
 
     if (tolerancia === "notificacao" && textoPlaca !== ""){
@@ -648,7 +623,6 @@ const RegistrarVagaMonitor = () => {
       setTextoPlaca(localStorage.getItem("placa"));
       setVisible(true);
       SetMostrapag(true);
-      setValor("dinheiro");
       setTempo("00:30:00");
     } else {
       setVisible(false);

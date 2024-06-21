@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import axios from 'axios'
 import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
 import { Button, Divider } from '@mantine/core'
@@ -19,12 +18,11 @@ const RegistrarVeiculo = () => {
 
     const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked
-        if(clicado === true){
+        if (clicado === true) {
             setPlaca("placa2")
             setLimite(10)
             setInputVazio("inputvazio2")
-        }
-        else{
+        } else{
             setPlaca("placa")
             setLimite(8)
             setInputVazio("inputvazio")
@@ -41,8 +39,8 @@ const RegistrarVeiculo = () => {
 
     function validarPlaca(placa) {
         const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-        const regexPlacaNova = /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
-      
+        const regexPlacaNova = /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/;
+
         if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
           return true;
         } else {
@@ -84,8 +82,7 @@ const RegistrarVeiculo = () => {
             placaFinal = split[0] + split[1]
         }
         placaFinal = placaFinal.toUpperCase()
-        console.log(placaFinal)
-        if (placaFinal.length < 7 || placaFinal.length > 8 || placaFinal === ""){
+        if (placaFinal.length < 6 || placaFinal.length > 8 || placaFinal === ""){
             setLoadingButton(false);
             estadoIf = false;
             setMensagem("Placa inválida")
