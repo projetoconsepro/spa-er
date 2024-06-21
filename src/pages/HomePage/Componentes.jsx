@@ -54,6 +54,7 @@ import PlacaIsenta from '../../components/PlacaIsenta';
 import BuscarMovimentoTxId from '../../components/BuscarMovimentoTxId';
 import ListagemMovimentoVeiculo from '../../components/ListagemMovimentoVeiculo';
 import RelatorioMonitorAdmin from '../../components/RelatorioMonitorAdmin';
+import ListarMovimentosAdmin from '../../components/ListarMovimentosAdmin';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -110,6 +111,7 @@ const componentesMap = {
     SugestoesAdmin: <SugestoesAdmin />,
     ListagemMovimentoVeiculo: <ListagemMovimentoVeiculo />,
     RelatorioMonitorAdmin: <RelatorioMonitorAdmin />,
+    ListarMovimentosAdmin: <ListarMovimentosAdmin />,
     Error: <Error />,
 };
 

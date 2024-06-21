@@ -14,6 +14,7 @@ import {
   FaCalendarAlt,
   FaClipboardList,
   FaSearch,
+  FaRegChartBar
 } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin } from "react-icons/bs";
 import {
@@ -176,7 +177,8 @@ const Sidebar = () => {
           { icon: <FaHistory />, name: "‎ Históricos",
           subitem: [
               { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "ListarNotificacoesAdmin", className: commonStyles },
-              { icon: <FaParking />, name: "‎ Estacionamentos", componente: "OcupacaoVagasAdmin", className: commonStyles },
+              { icon: <FaParking />, name: "‎ Estacionamentos", componente: "OcupacaoVagasAdmin", className: commonStyles }, 
+              { icon: <FaRegChartBar />, name: "‎ Movimentos", componente: "ListarMovimentosAdmin", className: commonStyles },
               { icon: <FaCar />, name: "‎ Veículos", componente: "ListagemMovimentoVeiculo", className: commonStyles },
               { icon: <FcIdea />, name: "‎ Sugestões", componente: "SugestoesAdmin", className: commonStyles },
             ]
