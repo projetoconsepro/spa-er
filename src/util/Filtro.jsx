@@ -280,14 +280,6 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       ]);
     }else if (nome === "ListarMovimentosAdmin") {
     
-      const requisicao = createAPI();
-      requisicao.get("/estacionamento/movimentos/tipos").then((response) => {
-        const newData = response?.data?.data?.map((item) => ({
-          label: item.tipo,
-          value: item.id_movimento,
-        }));
-        setTiposNot(newData);
-      });
       setOptions([
     
         { value: "Placa", label: "Placa" },

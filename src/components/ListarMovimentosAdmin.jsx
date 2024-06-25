@@ -29,7 +29,7 @@ const ListarMovimentosAdmin = () => {
       setMensagem("");
       const requisicao = createAPI();
       try {
-        const response = await requisicao.get(`/estacionamento/movimentos`, { params: { page } });
+        const response = await requisicao.get(`/movimento`, { params: { page } });
         if (response.data.resultado) {
           setEstado2(true);
           const newData = response.data.data.map((item) => ({
@@ -87,7 +87,7 @@ const ListarMovimentosAdmin = () => {
     const requisicao = createAPI();
     const base64 = btoa(where);
     requisicao
-      .get(`/estacionamento/?query=${base64}`, { params: { pageFiltro } })
+      .get(`/movimento/filtro/?query=${base64}`, { params: { pageFiltro } })
       .then((response) => {
         setEstadoLoading(false);
         setEstado2(true);
@@ -107,7 +107,7 @@ const ListarMovimentosAdmin = () => {
             nome_setor: item.nome_setor,
           }));
           setData(newData);
-          setTotalPagesFiltro(response.data.totalPagesFiltro);
+          setTotalPagesFiltro(response.data.totalPages);
         } else {
           setData([]);
           setEstado(true);
@@ -130,7 +130,6 @@ const ListarMovimentosAdmin = () => {
   };
 
   const deletar = (item, index) => {
-    console.log(item);
     Swal.fire({
       title: "Tem certeza que deseja deletar esse movimento?",
       icon: "error",
@@ -144,7 +143,7 @@ const ListarMovimentosAdmin = () => {
         const requisicao = createAPI();
         const id_movimento = item.id_movimento;
         requisicao
-          .delete(`/estacionamento/movimentos/${id_movimento}`)
+          .delete(`/movimento/${id_movimento}`)
           .then((response) => {
             Swal.fire(
               "Deletado!",
@@ -190,7 +189,7 @@ const ListarMovimentosAdmin = () => {
                 radius="md"
                 size="sm"
                 onClick={() => {
-                  setPage(prevPage => prevPage);
+                  setPage(0); 
                   setEstado2(false);
                 }}
               >
