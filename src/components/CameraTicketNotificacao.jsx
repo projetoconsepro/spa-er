@@ -93,7 +93,7 @@ function CameraTicketNotificacao() {
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const photoDataUrl = canvas.toDataURL("image/png");
+    const photoDataUrl = canvas.toDataURL("image/jpeg", 0.5);
 
     const updatedPhotos = [...photos, { id: cont, photo: photoDataUrl }];
     setPhotos(updatedPhotos);
