@@ -278,6 +278,17 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       setOptions([
         { value: "Placa", label: "Placa" },
       ]);
+    }else if (nome === "ListarMovimentosAdmin") {
+    
+      setOptions([
+    
+        { value: "Placa", label: "Placa" },
+        { value: "Vaga", label: "Vaga" },
+        { value: "Tipo", label: "Tipo" },
+        { value: "Nome", label: "Nome" }, 
+        { value: "Data", label: "Data" },
+        { value: "DataHora", label: "Data e Hora" },
+      ]);
     }
     
     else {
@@ -629,7 +640,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                 </div>
               ) : selectedOption.value === "Vaga" ? (
                 <div>
-                  {nome === "HistoricoVeiculoAdmin" ||
+                  {nome === "HistoricoVeiculoAdmin" || 
                   nome === "ListarNotificacoesAdmin" ? (
                     placaCarro !== null ? (
                       <div className="fs-6">
@@ -666,30 +677,57 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                   ) : null}
                   <div>
                     <div className="mt-2 mb-3">Selecione o tipo:</div>
-                    <Radio.Group
-                      name="Escolha algum opção"
-                      onChange={(e) => setRadioTipo(e)}
-                    >
-                      {nome === "HistoricoVeiculoAdmin" ? (
-                        <Grid>
-                          <Grid.Col span={12}>
-                            <Radio value="'S'" label="Notificado" />
-                          </Grid.Col>
-                          <Grid.Col span={12}>
-                            <Radio value="'N'" label="Normal" />
-                          </Grid.Col>
-                        </Grid>
-                      ) : (
-                        <Grid>
-                          <Grid.Col span={12}>
-                            <Radio value="'PAGO'" label="Pago" />
-                          </Grid.Col>
-                          <Grid.Col span={12}>
-                            <Radio value="'PENDENTE'" label="Pendente" />
-                          </Grid.Col>
-                        </Grid>
-                      )}
-                    </Radio.Group>
+                   <Radio.Group
+  name="Escolha algum opção"
+  onChange={(e) => setRadioTipo(e)}
+>
+  {nome === "HistoricoVeiculoAdmin" ? (
+    <Grid>
+      <Grid.Col span={12}>
+        <Radio value="'S'" label="Notificado" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="'N'" label="Normal" />
+      </Grid.Col>
+    </Grid>
+  ) : nome === "ListarMovimentosAdmin" ? (
+    <Grid className="mb-3">
+      <Grid.Col span={12}>
+        <Radio value="credito" label="Crédito" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="tolerancia" label="Tolerância" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="saida" label="Saída" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="infracao" label="Infração" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="ajuste" label="Ajuste" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="cancelamento" label="Cancelamento" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="regularizacao" label="Regularização" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="notificacao" label="Notificação" />
+      </Grid.Col>
+    </Grid>
+  ) : (
+    <Grid>
+      <Grid.Col span={12}>
+        <Radio value="'PAGO'" label="Pago" />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Radio value="'PENDENTE'" label="Pendente" />
+      </Grid.Col>
+    </Grid>
+  )}
+</Radio.Group>
                   </div>
                 </div>
               ) : selectedOption.value === "Estado" ? (
@@ -865,7 +903,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
               ) : null}
             </div>
           ) : null}
-          <div className="mt-auto">
+          <div className="mt-auto pb-3">
             <Group position="center" spacing="sm" grow>
               <Button
                 color="gray"
