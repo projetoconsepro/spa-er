@@ -19,16 +19,12 @@ const ListarNotificacoesAdmin = () => {
   const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+  const [mostrarPaginacao, setMostrarPaginacao] = useState(true);
+  const [filtroAtual, setFiltroAtual] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageFiltro, setPageFiltro] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalPagesFiltro, setTotalPagesFiltro] = useState(1);
 
   function ArrumaHora(data, hora) {
     const data2 = data.split("T");
@@ -158,18 +154,18 @@ const ListarNotificacoesAdmin = () => {
 
   useEffect(() => {
     reload();
-  }, []);
+  }, [page]);
 
   const reload = () => {
     setEstado(false);
     setMensagem("");
     const requisicao = createAPI();
     requisicao
-      .get("/notificacao")
+      .get("/notificacao", { params: { page } })
       .then((response) => {
         setEstado2(true);
         if (response.data.msg.resultado) {
-          setEstado(false);
+          setEstado2(true);
           const newData = response.data.data.map((item) => ({
             data: ArrumaHora(item.data),
             placa: item.veiculo.placa,
@@ -194,6 +190,8 @@ const ListarNotificacoesAdmin = () => {
             hora: ArrumaHora2(item.data),
           }));
           setData(newData);
+          setTotalPages(response.data.totalPages);
+          setMostrarPaginacao(true);
         } else {
           setData([]);
           setEstado(true);
@@ -311,20 +309,25 @@ const ListarNotificacoesAdmin = () => {
     });
   };
 
+
   const handleConsultaSelected = (consulta) => {
+    setFiltroAtual(consulta);
     handleFiltro(consulta);
   };
 
-  const handleFiltro = (where) => {
+  const handleFiltro = async (where, pageFiltro) => {
     setEstadoLoading(true);
     setEstado(false);
     setMensagem("");
+    setMostrarPaginacao(false);
     const requisicao = createAPI();
     const base64 = btoa(where);
+    const page = pageFiltro;
     requisicao
-      .get(`/notificacao/?query=${base64}`)
+      .get(`/notificacao/?query=${base64}`, { params: { page } })
       .then((response) => {
         setEstadoLoading(false);
+        setEstado2(true);
         if (response.data.msg.resultado) {
           setEstado(false);
           const newData = response.data.data.map((item) => ({
@@ -351,6 +354,7 @@ const ListarNotificacoesAdmin = () => {
             hora: ArrumaHora2(item.data),
           }));
           setData(newData);
+          setTotalPagesFiltro(response.data.totalPages);
         } else {
           setData([]);
           setEstado(true);
@@ -440,7 +444,10 @@ const ListarNotificacoesAdmin = () => {
                 gradient={{ from: "indigo", to: "blue", deg: 60 }}
                 radius="md"
                 size="sm"
-                onClick={() => reload()}
+                onClick={() => {
+                  setPage(0);
+                  setEstado2(false);
+                }}
               >
                 <AiOutlineReload color="white" size={20} />
               </Button>
@@ -527,7 +534,7 @@ const ListarNotificacoesAdmin = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {currentItems.map((item, index) => (
+                        {data.map((item, index) => (
                           <tr
                             key={index}
                             className={
@@ -611,17 +618,25 @@ const ListarNotificacoesAdmin = () => {
           </div>
         </div>
         <Group position="center" mb="md">
-          <Pagination
-            value={currentPage}
-            size="sm"
-            onChange={handlePageChange}
-            total={
-              Math.floor(data.length / 50) === data.length / 50
-                ? data.length / 50
-                : Math.floor(data.length / 50) + 1
-            }
-            limit={itemsPerPage}
-          />
+          {mostrarPaginacao ? (
+            <Pagination
+              page={page}
+              total={totalPages}
+              onChange={(newPage) => {
+                setPage(newPage);
+                setEstado2(false);
+              }}
+            />
+          ) : (
+            <Pagination
+              page={pageFiltro}
+              total={totalPagesFiltro}
+              onChange={(newPage) => {
+                setPageFiltro(newPage);
+                handleFiltro(filtroAtual, newPage);
+                setEstado2(false);
+              }}
+            />)}
         </Group>
       </div>
       <VoltarComponente />
