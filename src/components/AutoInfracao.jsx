@@ -29,11 +29,9 @@ const AutoInfracao = () => {
   const [codigo, setCodigo] = useState("");
   const [dataImagem, setDataImagem] = useState([]);
   const [imagemLocal, setImagemLocal] = useState("");
-  const [local, setLocal] = useState('');
 
   useEffect(() => {
     let infos = JSON.parse(localStorage.getItem("autoInfracao"));
-    setLocal(infos.local);
     setData([infos]);
 
     const requisicao = createAPI();
@@ -256,7 +254,7 @@ const AutoInfracao = () => {
               <Group position="apart">
                 <Text size={20}>
                   {" "}
-                  <FaParking className="mb-1" /> Local: {local}{" "}
+                  <FaParking className="mb-1" />  Local: {data[0].local}{" "}
                 </Text>
               </Group>
             {item.fabricante === undefined ||
