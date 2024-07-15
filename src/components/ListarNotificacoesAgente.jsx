@@ -111,6 +111,7 @@ const ListarNotificacoesAgente = () => {
             id_notificacao: item.id_notificacao,
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
+            local: item.local
           }));
           setEstadoLoading(false)
           setData(newData)
@@ -175,6 +176,7 @@ const ListarNotificacoesAgente = () => {
         id_notificacao: item.id_notificacao,
         monitor: item.monitor.nome,
         hora: ArrumaHora2(item.data),
+        local: item.local
       }));
       setData(newData)
     }
