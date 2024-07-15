@@ -367,12 +367,22 @@ export const VagaMonitor = ({
           if (result.isConfirmed) {
             funcLiberVaga(vaga.id_vaga_veiculo, vaga.numero, index);
           } else if (result.isDenied) {
+            Swal.fire({
+              title: 'Processando...',
+              html: '<div style="display: flex; justify-content: center;"><div class="loader"></div></div>',
+              showConfirmButton: false,
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading();
             registroDebitoAutomatico(
               vaga.placa,
               vaga.numero,
               vaga.id_vaga_veiculo,
               index
-            );
+            ).then(() => {
+                Swal.close();
+              })  }
+            });
           }
         });
 
