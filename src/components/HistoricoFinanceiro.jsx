@@ -6,7 +6,7 @@ import { Badge, Group, Pagination } from "@mantine/core";
 import { IconCash } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 
-const HistoricoFinanceiro = () => {
+const HistoricoFinanceiro = (id_usuario = 0) => {
   const [resposta, setResposta] = useState([]);
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
@@ -34,9 +34,10 @@ const HistoricoFinanceiro = () => {
   }
 
   useEffect(() => {
+    let id = id_usuario.id_usuario ?? 0;
     const requisicao = createAPI();
     requisicao
-      .get("/financeiro/cliente")
+    .get(`/financeiro/cliente/${id}`)
       .then((response) => {
         setSaldo(response?.data.dados.saldo);
         const newData = response?.data.dados.movimentos.map((item) => ({
@@ -77,11 +78,12 @@ const HistoricoFinanceiro = () => {
     setEstadoLoading(true);
     setEstadoLoading(true);
 
+    let id = id_usuario.id_usuario ?? 0;
     const requisicao = createAPI();
 
     const base64 = btoa(where);
     requisicao
-      .get(`/financeiro/cliente/?query=${base64}`)
+    .get(`/financeiro/cliente/${id}/?query=${base64}`)
       .then((response) => {
         if (response.data.msg.resultado) {
           setEstadoLoading(false);
