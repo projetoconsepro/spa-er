@@ -11,7 +11,7 @@ import { IconReload, IconX } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
-import { Button } from "@mantine/core";
+import { Button, Group, Loader, Pagination } from "@mantine/core";
 import ModalErroBanco from "./ModalErroBanco";
 
 const Irregularidades = () => {
@@ -30,6 +30,9 @@ const Irregularidades = () => {
   const [loadingButton, setLoadingButton] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
+  const [filtroAtual, setFiltroAtual] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -318,15 +321,18 @@ const Irregularidades = () => {
     handleFiltro(consulta);
   };
 
-  const handleFiltro = (consulta) => {
+  const handleFiltro = (where, page) => { 
     setOnLoading(true);
+    setFiltroAtual(where);
     setEstado(false);
+  
     setMensagem("");
     const requisicao = createAPI();
-    const base64 = btoa(consulta);
+    const base64 = btoa(where);
     requisicao
-      .get(`/notificacao/?query=${base64}`)
+    .get(`/notificacao/?query=${base64}`, { params: { page } })
       .then((response) => {
+
         setOnLoading(false);
         if (response.data.msg.resultado) {
           setEstado(false);
@@ -344,6 +350,7 @@ const Irregularidades = () => {
             pago: item.pago,
           }));
           setData(newData);
+          setTotalPages(response.data.totalPages);
         } else {
           setData([]);
           setEstado(true);
@@ -396,8 +403,8 @@ const Irregularidades = () => {
           </div>
         </div>
       </div>
-
-      {data.map((link, index) => (
+      
+    {data.map((link, index) => (
         <div className="card border-0 shadow mt-2 mb-3" key={index}>
           <div
             className={
@@ -586,7 +593,17 @@ const Irregularidades = () => {
       >
         {mensagem}
       </div>
-
+      <Group position="center" mb="md">
+         
+         <Pagination
+           page={page}
+           total={totalPages}
+           onChange={(newPage) => {
+             setPage(newPage);
+             handleFiltro(filtroAtual, newPage);
+           }}
+         />
+     </Group>
       <VoltarComponente />
 
       <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
