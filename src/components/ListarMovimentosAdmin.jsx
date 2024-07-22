@@ -9,12 +9,10 @@ import Filtro from "../util/Filtro";
 import { RiDeleteBinFill, RiEditLine } from "react-icons/ri";
 
 const ListarMovimentosAdmin = () => {
-
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-
   const [mostrarPaginacao, setMostrarPaginacao] = useState(true);
   const [filtroAtual, setFiltroAtual] = useState("");
   const [data, setData] = useState([]);
@@ -39,7 +37,6 @@ const ListarMovimentosAdmin = () => {
           setEstado2(true);
           const newData = response.data.data.map((item) => ({
             id_movimento: item.id_movimento,
-            id_credito: item.id_credito,
             hora: item.hora,
             tipo: item.tipo,
             tipo_movimento: item.tipo_movimento,
@@ -60,6 +57,7 @@ const ListarMovimentosAdmin = () => {
         } else {
           setData([]);
           setEstado(true);
+          setEstado2(true);
           setMensagem("Não há movimentos para exibir");
         }
       } catch (error) {
@@ -105,7 +103,6 @@ const ListarMovimentosAdmin = () => {
           setEstado(false);
           const newData = response.data.data.map((item) => ({
             id_movimento: item.id_movimento,
-            id_credito: item.id_credito,
             hora: item.hora,
             tipo_movimento: item.tipo_movimento,
             nome_usuario: item.nome_usuario,
@@ -125,6 +122,7 @@ const ListarMovimentosAdmin = () => {
         } else {
           setData([]);
           setEstado(true);
+          setEstado2(true);
           setMensagem("Não há movimentos para exibir");
         }
       }).catch((error) => {
@@ -340,7 +338,7 @@ const ListarMovimentosAdmin = () => {
                 className="bg-blue-50 m-2"
                 size="md"
                 radius="md"
-                onClick={() => editarTempo(index, selectedItem.id_credito, tempoSelecionado)}
+                onClick={() => editarTempo(index, selectedItem.id_movimento, tempoSelecionado)}
               >
                 Salvar
               </Button>
