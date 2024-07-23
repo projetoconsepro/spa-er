@@ -44,6 +44,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
           valor: Math.abs(item.valor),
           data: ArrumaHora(item.data),
           tipo: item.tipo,
+          placa: item.placa,
         }));
         for (let i = 0; i < newData.length; i++) {
           if (newData[i].tipo === "credito") {
@@ -92,6 +93,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
             valor: Math.abs(item.valor),
             data: ArrumaHora(item.data),
             tipo: item.tipo,
+            placa: item.placa,
           }));
           for (let i = 0; i < newData.length; i++) {
             if (newData[i].tipo === "credito") {
@@ -175,7 +177,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
                     <div className="spacer"></div>
                   </div>
                 </div>
-                <div className="col-5 p-0">
+                <div className="col-4 p-0">
                   <div className="titulo text-start">
                     {item.tipo === "credito"
                       ? "Estacionamento"
@@ -190,10 +192,11 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
                       : item.tipo === "Transferencia de credito"
                       ? "Transferencia de crédito"
                       : item.tipo}
+                        {item.placa && <span> - {item.placa}</span>}
                   </div>
                 </div>
-                <div className="col-5 p-0">
-                  <div className="data text-end mt-2">{item.data}</div>
+                <div className="col-6 p-0">
+                  <div className="data text-end mt-1 ps-4"> A partir de <span className="text-nowrap">{item.data}</span></div>
                 </div>
                 <div className="col-2"></div>
                 <div className="col-5 p-0">
