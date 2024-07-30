@@ -36,6 +36,7 @@ const Irregularidades = () => {
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
+    
     setData([...data]);
   };
 
@@ -145,6 +146,7 @@ const Irregularidades = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          SaldoCredito();
           setLoadingButton(false);
           Swal.fire({
             title: "Regularizado!",
@@ -281,7 +283,7 @@ const Irregularidades = () => {
     }, 4000);
   };
 
-  useEffect(() => {
+  const SaldoCredito = () => {
     const requisicao = createAPI();
 
     requisicao
@@ -315,8 +317,11 @@ const Irregularidades = () => {
     } else {
       startNotificao();
     }
-  }, []);
+  }
 
+ useEffect(() => {
+    SaldoCredito();
+  }, []);
   const handleConsultaSelected = (consulta) => {
     handleFiltro(consulta);
   };
