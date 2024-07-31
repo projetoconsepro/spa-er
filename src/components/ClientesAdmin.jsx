@@ -7,7 +7,9 @@ import {
   FaEye,
   FaParking,
   FaPowerOff,
+  FaHistory,
 } from "react-icons/fa";
+import HistoricoFinanceiro from './HistoricoFinanceiro'; 
 import ScrollTopArrow from "./ScrollTopArrow";
 import Swal from "sweetalert2";
 import { BsCashCoin, BsPaintBucket } from "react-icons/bs";
@@ -68,6 +70,19 @@ const ClientesAdmin = () => {
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
+  const [modalAberto, setModalAberto] = useState(false);
+  const [UserId, setUserId] = useState(null);
+  const [nomeHistorico, setNomeHistorico] = useState(null);
+
+  const abreModalUserId = (id_usuario, nome) => {
+    setUserId(id_usuario);
+    setNomeHistorico(nome);
+    setModalAberto(true);
+  };
+
+  const fecharModal = () => {
+    setModalAberto(false);
+  };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -559,6 +574,15 @@ const ClientesAdmin = () => {
 
   return (
     <div className="dashboard-container mb-5">
+      <Modal
+        opened={modalAberto}
+        onClose={fecharModal}
+        title={`Histórico de ${nomeHistorico}`}
+        centered
+      > 
+        <HistoricoFinanceiro id_usuario={UserId}/>
+      </Modal>
+
       <Modal
         opened={opened}
         onClose={() => {
@@ -1120,6 +1144,13 @@ const ClientesAdmin = () => {
                                 >
                                   <FaPowerOff size={13} className="mb-1" /> ‎‎{" "}
                                   {item.ativo === "S" ? "Desativar" : "Ativar"}
+                                </h6>
+                                <h6
+                                   className="dropdown-item d-flex align-items-center"
+                                   onClick={() => abreModalUserId(item.id_usuario, item.nome)}
+                                   >
+                                      <FaHistory />
+                                       ‎‎ Histórico
                                 </h6>
                               </div>
                             </div>

@@ -16,20 +16,13 @@ const ListarNotificacoesAgente = () => {
     const [mensagem, setMensagem] = useState('')
     const [sortAsc, setSortAsc] = useState(true);
     const [estadoLoading, setEstadoLoading] = useState(false)
-      
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
-
-  const handlePageChange = (pageNumber) => {
-      setCurrentPage(pageNumber);
-
-  };
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-
+    const [estado2, setEstado2] = useState(false);
+    const [mostrarPaginacao, setMostrarPaginacao] = useState(true);
+    const [filtroAtual, setFiltroAtual] = useState("");
+    const [page, setPage] = useState(1);
+    const [pageFiltro, setPageFiltro] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalPagesFiltro, setTotalPagesFiltro] = useState(1);
 
     function ArrumaHora(data, hora ) {
         const data2 = data.split("T");
@@ -44,15 +37,15 @@ const ListarNotificacoesAgente = () => {
       const data5 = (data6[0]-3) + ":" + data6[1] + ":";
       const data7 = data5 + data6[2].split(".")[0];
       return data7;
-    }
-
+    } 
+    
     useEffect(() => {
-        localStorage.removeItem('autoInfracao')
-        for (let i = 0; i < 8; i++) {
-          localStorage.removeItem(`fotoInfracao`);
-        }
-        reload()
-    }, [])
+    localStorage.removeItem('autoInfracao')
+    for (let i = 0; i < 8; i++) {
+      localStorage.removeItem(`fotoInfracao`);
+    }
+    reload();
+  }, [page]);
 
     const mostrar = async (item) => {
         const width = window.innerWidth
@@ -92,9 +85,12 @@ const ListarNotificacoesAgente = () => {
       setEstado(false)
       setMensagem("")
       const requisicao = createAPI();
-      requisicao.get('/notificacao').then((response) => {
+      requisicao 
+      .get("/notificacao", { params: { page } })
+      .then((response) => {
         if (response.data.msg.resultado){
           setEstado(false)
+          setEstado2(true)
           const newData = response.data.data.map((item) => ({
             data: ArrumaHora(item.data),
             placa: item.veiculo.placa,
@@ -111,9 +107,12 @@ const ListarNotificacoesAgente = () => {
             id_notificacao: item.id_notificacao,
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
+            local: item.local
           }));
           setEstadoLoading(false)
           setData(newData)
+          setTotalPages(response.data.totalPages);
+          setMostrarPaginacao(true);
         }
         else {
           setData([])
@@ -147,18 +146,23 @@ const ListarNotificacoesAgente = () => {
 
   const handleConsultaSelected = (consulta) => {
     handleFiltro(consulta)
+    setFiltroAtual(consulta);
   }
 
-  const handleFiltro = (where) => {
+  const handleFiltro = async (where, pageFiltro) => {
     setEstado(false)
     setEstadoLoading(true)
     setMensagem("")
+    setMostrarPaginacao(false);
     const requisicao = createAPI();
     const base64 = btoa(where)
-    requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
+    const page = pageFiltro;
+    requisicao
+    .get(`/notificacao/?query=${base64}`, { params: { page } })
+    .then((response) => {
       if (response.data.data.length !== 0){
       setEstadoLoading(false)
-      setEstado(false)
+      setEstado2(true)
       const newData = response.data.data.map((item) => ({
         data: ArrumaHora(item.data),
         placa: item.veiculo.placa,
@@ -175,8 +179,10 @@ const ListarNotificacoesAgente = () => {
         id_notificacao: item.id_notificacao,
         monitor: item.monitor.nome,
         hora: ArrumaHora2(item.data),
+        local: item.local
       }));
       setData(newData)
+      setTotalPagesFiltro(response.data.totalPages);
     }
     else {
       setEstadoLoading(false)
@@ -228,9 +234,11 @@ const ListarNotificacoesAgente = () => {
           <div className="col-12">
             <div className="row">
               <div className="col-12 mb-4">
+           
                 <div className="card border-0 shadow">
                   <div className="table-responsive">
-                    <table className="table align-items-center table-flush">
+                    <table className="table align-items-center table-flush">  
+                       
                       <thead className="thead-light">
                         <tr>
                         <th className="border-bottom" id="tabelaUsuarios" scope="col" onClick={()=>{handleSort()}}>
@@ -263,41 +271,65 @@ const ListarNotificacoesAgente = () => {
                         </tr>
                       </thead>
                       <tbody>
-
-                    {currentItems.map((item, index) => (
-                        <tr key={index} onClick={()=>{mostrar(item)}}>
-                          <td>{item.data}</td>
-                          <td>{item.placa}</td>
-                          <td> {item.vaga}</td>
-                          <td id="tabelaUsuarios2" style={
-                            item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}
-                          }> {item.pendente}</td>
-                          <td id="tabelaUsuarios2">{item.fabricante}</td>
-                          <td id="tabelaUsuarios2">{item.modelo}</td>
-                          <td id="tabelaUsuarios2">{item.tipo}</td>
-                          <td id="tabelaUsuarios2">{item.valor}</td>
-                          <td id="tabelaUsuarios2">{item.hora}</td>
-                        </tr>
-                    ))}
-                      </tbody>
-                    </table>
+{estado2 ? (
+  data.map((item, index) => (
+    <tr key={index} onClick={() => { mostrar(item); }}>
+      <td>{item.data}</td>
+      <td>{item.placa}</td>
+      <td>{item.vaga}</td>
+      <td id="tabelaUsuarios2" style={
+        item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}
+      }> {item.pendente}</td>
+      <td id="tabelaUsuarios2">{item.fabricante}</td>
+      <td id="tabelaUsuarios2">{item.modelo}</td>
+      <td id="tabelaUsuarios2">{item.tipo}</td>
+      <td id="tabelaUsuarios2">{item.valor}</td>
+      <td id="tabelaUsuarios2">{item.hora}</td>
+    </tr>
+  ))
+) : (
+<tr>
+      <td colSpan="9" style={{ textAlign: 'center' }}> 
+        <div>
+          <CarroLoading />
+        </div>
+      </td>
+    </tr>
+)}
+                     </tbody>  
+                    
+                    </table>  
                   </div>
                   <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                         {mensagem}
                     </div>
 
-                    {data.length === 0 ?
-                    <div>
-                      <CarroLoading />
-                    </div>
-                  : null}
                 </div>
+                 
               </div>
 
             </div>
             <Group position="center" mb="md">
-                <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
-            </Group>
+          {mostrarPaginacao ? (
+            <Pagination
+              page={page}
+              total={totalPages}
+              onChange={(newPage) => {
+                setPage(newPage);
+                setEstado2(false)
+              }}
+            />
+          ) : (
+            <Pagination
+              page={pageFiltro}
+              total={totalPagesFiltro}
+              onChange={(newPage) => {
+                setPageFiltro(newPage);
+                handleFiltro(filtroAtual, newPage);
+                setEstado2(false)
+              }}
+            />)}
+        </Group>
             <VoltarComponente />
           </div>
         </div>
