@@ -251,6 +251,12 @@ const AutoInfracao = () => {
                 </Text>
               </Group>
             )}
+              <Group position="apart">
+                <Text size={20}>
+                  {" "}
+                  <FaParking className="mb-1" />  Local: {data[0].local}{" "}
+                </Text>
+              </Group>
             {item.fabricante === undefined ||
             item.modelo === undefined ? null : (
               <Group position="apart">

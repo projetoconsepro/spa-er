@@ -289,6 +289,12 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Data", label: "Data" },
         { value: "DataHora", label: "Data e Hora" },
       ]);
+    }else if (nome === "ListarLogsMovimentosAdmin") {
+    
+      setOptions([
+        { value: "Nome", label: "Nome" }, 
+        { value: "Data", label: "Data" },
+      ]);
     }
     
     else {
