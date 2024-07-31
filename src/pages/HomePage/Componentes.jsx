@@ -117,10 +117,8 @@ const componentesMap = {
     Error: <Error />,
 };
 
-export default function Veiculos({Componente}) {
+export default function Veiculos({ Componente }) {
+  const ComponenteSelecionado = componentesMap[Componente];
 
-    const ComponenteSelecionado = componentesMap[Componente];
-
-    return ComponenteSelecionado || <Error />;
-
-};
+  return ComponenteSelecionado || <Error />;
+}
