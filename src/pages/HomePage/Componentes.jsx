@@ -55,6 +55,7 @@ import BuscarMovimentoTxId from '../../components/BuscarMovimentoTxId';
 import ListagemMovimentoVeiculo from '../../components/ListagemMovimentoVeiculo';
 import RelatorioMonitorAdmin from '../../components/RelatorioMonitorAdmin';
 import ListarMovimentosAdmin from '../../components/ListarMovimentosAdmin';
+import ListarLogsMovimentosAdmin from '../../components/ListarLogsMovimentosAdmin';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -112,13 +113,12 @@ const componentesMap = {
     ListagemMovimentoVeiculo: <ListagemMovimentoVeiculo />,
     RelatorioMonitorAdmin: <RelatorioMonitorAdmin />,
     ListarMovimentosAdmin: <ListarMovimentosAdmin />,
+    ListarLogsMovimentosAdmin: <ListarLogsMovimentosAdmin />,
     Error: <Error />,
 };
 
-export default function Veiculos({Componente}) {
+export default function Veiculos({ Componente }) {
+  const ComponenteSelecionado = componentesMap[Componente];
 
-    const ComponenteSelecionado = componentesMap[Componente];
-
-    return ComponenteSelecionado || <Error />;
-
-};
+  return ComponenteSelecionado || <Error />;
+}
