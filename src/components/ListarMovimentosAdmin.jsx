@@ -33,7 +33,7 @@ const ListarMovimentosAdmin = () => {
       const requisicao = createAPI();
       try {
         const response = await requisicao.get(`/movimento`, { params: { page } });
-        if (response.data.resultado) {
+        if (response.data.data && response.data.data.length > 0) {
           setEstado2(true);
           const newData = response.data.data.map((item) => ({
             id_movimento: item.id_movimento,
