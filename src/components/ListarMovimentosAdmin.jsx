@@ -162,8 +162,12 @@ const ListarMovimentosAdmin = () => {
               "O Movimento foi deletado com sucesso.",
               "success"
             );
+            if(item.estado_notificacao === "Regularizada") {
+              data[index].estado_notificacao = "Pendente";
+              setData([...data]);
+            }else{
             setData((prevData) => prevData.filter((movimento) => movimento.id_movimento !== item.id_movimento));
-
+            }
           })
           .catch((error) => {
             if (
@@ -486,7 +490,7 @@ const ListarMovimentosAdmin = () => {
 
                             <td className="fw-bolder col" id="tabelaUsuarios3">
                             <div className="btn-group">
-                                {item.estado_notificacao === "Cancelada" || item.estado_notificacao === "Regularizada" || item.tipo_movimento === "cancelamento" ? (
+                                {item.estado_notificacao === "Cancelada" || item.tipo_movimento === "cancelamento" ? (
                                   <div></div>
                                 ) : (
                                   <button
@@ -499,13 +503,13 @@ const ListarMovimentosAdmin = () => {
                                   </button>
                                 )}
                                 <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                  {item.tipo_movimento !== "notificacao" ? (
+                                {item.tipo_movimento !== "notificacao" || item.estado_notificacao === "Regularizada" ? (
                                     <div>
                                       <h6 className="dropdown-item d-flex justify-content-center align-items-center text-danger"
                                         onClick={() => deletar(item, index)}
                                       >
                                         <RiDeleteBinFill />
-                                        ‎‎ Remover {tipoMovimentoComAcentos[item.tipo_movimento]}
+                                        ‎‎ Remover {item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}
                                       </h6>
                                       {item.tempo && (
                                         <h6 className="dropdown-item d-flex justify-content-center align-items-center text-info"
