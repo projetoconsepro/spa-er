@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
 import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
-import { BsCalendarDate, BsFillPersonFill, BsCashCoin } from "react-icons/bs";
+import { BsCalendarDate, BsFillPersonFill, BsCashCoin, BsConeStriped  } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
@@ -15,6 +15,7 @@ import createAPI from "../services/createAPI";
 import { IconPrinter, IconReceipt } from "@tabler/icons-react";
 import ImpressaoTicketRegularizacao from "../util/ImpressaoTicketRegularizacao";
 import ModalErroBanco from "./ModalErroBanco";
+import { IconX } from "@tabler/icons-react";
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -395,7 +396,12 @@ const ListarNotificacoes = () => {
       });
   }
 
-    
+      const quebrarTexto = (texto, comprimentoMaximo) => {
+      if (texto.length > comprimentoMaximo) {
+        return texto.substring(0, comprimentoMaximo) + '...';
+      }
+      return texto;
+    };  
 
   return (
     <>
@@ -573,74 +579,128 @@ const ListarNotificacoes = () => {
         </div>
         {estado2 ? (
           <div>
-            {data.map((link, index) => (
-              <div className="card border-0 shadow mt-2 mb-2" key={index}>
+       {data.map((link, index) => (
+        <div className="card border-0 shadow mt-2 mb-3" key={index}>
+          <div
+            className={
+              link.pago === "S" ? "card-body10 mb-4 pb-0" : "card-body9 mb-3"
+            }
+            onClick={() => (link.pago === "S" ? atualiza(index) : null)}
+          >
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <div className="h2 mb-3 d-flex align-items-center">
+                  {link.placa}
+                </div>
                 <div
-                  className="card-body"
-                  onClick={() => {
-                    atualiza(index);
-                  }}
+                  className="h6 d-flex align-items-center "
+                  id="estacionadocarro"
                 >
-                  <div className="d-flex align-items-center justify-content-between pb-3">
-                    <div>
-                      <div className="h2 mb-0 d-flex align-items-center">
-                        {link.placa}
-                      </div>
-                      <div
-                        className="h6 mt-2 d-flex align-items-center fs-6"
-                        id="estacionadocarro"
-                      >
-                        <h6>
-                          {" "}
-                          <BsCalendarDate />‎ {link.data}
-                        </h6>
-                      </div>
-                      {link.estado ? (
-                        <div
-                          className="h6 d-flex align-items-center fs-6"
-                          id="bordaBaixo"
-                        >
-                          <h6>
-                            {" "}
-                            <FaClipboardList />‎{" "}
-                            <small>Motivo: {link.tipo_notificacao}</small>
-                          </h6>
-                        </div>
-                      ) : (
-                        <div className="h6 d-flex align-items-center fs-6">
-                          <h6>
-                            {" "}
-                            <FaClipboardList />‎{" "}
-                            <small>Motivo: {link.tipo_notificacao}</small>
-                          </h6>
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      {link.pago === "N" ? (
-                        <div className="d-flex align-items-center fw-bold">
-                          <BiErrorCircle size={30} color="red" />
-                        </div>
-                      ) : (
-                        <div className="d-flex align-items-center fw-bold">
-                          <AiFillCheckCircle size={30} color="green" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <h6>
+                    {" "}
+                    <div className="d-flex align-items-center mb-2">
+      <BsCalendarDate />
+      <span className="ms-1">{link.data}</span>
+    </div>
+                  </h6>
                 </div>
                 {link.estado ? (
-                  <div className="justify-content-between pb-3 mb-1">
-                    <div
-                      className="h6 align-items-start text-start px-4"
-                      id="estacionadocarroo"
-                    >
+              <div className="h6 d-flex align-items-center m-0">
+             
+                
+                <h6 className="text-start">
+                  {" "}
+                  <FaClipboardList />‎
+                  {window.innerWidth <= 360 ? (
+                    <small>Motivo: {link.tipo_notificacao}</small>
+                  ) : (
+                    `Motivo: ${link.tipo_notificacao}`
+                  )}
+                </h6>
+             
+            </div>
+                ) : (
+                  <div className="">
+                    
                       <h6>
                         {" "}
-                        <FaParking />‎ Vaga: {link.vaga}
+                        <div className="d-flex align-items-center">
+
+                        <FaClipboardList />‎
+                        {window.innerWidth <= 360 ? (
+                          <small className="ms-1">Motivo: {quebrarTexto(link.tipo_notificacao, 15)}</small>
+                        ) : (
+                          `Motivo: ${quebrarTexto(link.tipo_notificacao, 40)}`
+                        )} </div>
                       </h6>
-                    </div>
-                    <div
+                    
+                  </div>
+                )}
+                <div className="h6 d-flex align-items-center">
+                <div className="d-flex align-items-center">
+                <FaClipboardList /> <small className="ms-1">Status:</small>{" "} 
+                  <h6
+                    className={
+                      link.pago === "S"
+                        ? "text-success mt-2 mx-1"
+                        : "text-danger mt-2 mx-1"
+                    }
+                  >
+                    {" "}
+                    {link.pago === "S" ? "Quitado" : "Pendente"}
+                  </h6></div>
+                </div>
+              </div>
+              <div>
+                {link.pago === "N" ? (
+                  <div className="d-flex align-items-center fw-bold mb-6">
+                    <BiErrorCircle size={30} color="red" />
+                  </div>
+                ) : (
+                  <div className="d-flex align-items-center fw-bold mb-6">
+                    <AiFillCheckCircle size={30} color="green" />
+                  </div>
+                )}
+              </div>
+            </div>
+            {link.pago === "N" ? (
+              <div className="row">
+                <div className="col-12">
+                  <Button
+                    variant="outline"
+                    color="red"
+                    radius="md"
+                    fullWidth
+                    className="mt-1"
+                    leftIcon={
+                      link.estado ? (
+                        <IconX size={20} />
+                      ) : (
+                        <BsConeStriped size={20} />
+                      )
+                    }
+                    onClick={() => {
+                      atualiza(index);
+                    }}
+                  >
+                    {link.estado ? "Fechar" : "Regularize aqui"}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+          {link.estado ? (
+            <div className="justify-content-between pb-3 mb-1 mt-4">
+              <div
+                className="h6 align-items-start text-start px-4"
+                id="estacionadocarroo"
+              >
+                <h6>
+                  {" "}
+                  <FaParking />‎ Vaga: {link.vaga}
+                </h6>
+              </div>
+              <div
                       className="h6 align-items-start text-start px-4"
                       id="estacionadocarroo"
                     >
@@ -648,27 +708,27 @@ const ListarNotificacoes = () => {
                         {" "}
                         <BsFillPersonFill />‎ Monitor: {link.monitor}
                       </h6>
-                    </div>
+                    </div>              
                     <div
-                      className="h6 align-items-start text-start px-4"
-                      id="estacionadocarroo"
-                    >
-                      <h6>
-                        {" "}
-                        <FaCarAlt />‎ Modelo: {link.modelo}
-                      </h6>
-                    </div>
-                    <div
-                      className="h6 align-items-start text-start px-4"
-                      id="estacionadocarroo"
-                    >
-                      <h6>
-                        {" "}
-                        <BsCashCoin />‎ Valor: R${link.valor}
-                      </h6>
-                    </div>
+                className="h6 align-items-start text-start px-4"
+                id="estacionadocarroo"
+              >
+                <h6>
+                  {" "}
+                  <FaCarAlt />‎ Modelo: {link.modelo}
+                </h6>
+              </div>
+              <div
+                className="h6 align-items-start text-start px-4"
+                id="estacionadocarroo"
+              >
+                <h6>
+                  {" "}
+                  <BsCashCoin />‎ Valor: R${link.valor}
+                </h6>
+              </div>
 
-                    {link.pago === "S" ? (
+              {link.pago === "S" ? (
                       <div className="px-3">
                         {perfil === "monitor" ? (
                           <Button
@@ -683,51 +743,53 @@ const ListarNotificacoes = () => {
                           </Button>
                         ) : null}
                       </div>
-                    ) : (
-                      <div className="h6 mt-3 mx-5">
-                        <select
-                          className="form-select form-select-lg mb-1"
-                          aria-label=".form-select-lg example"
-                          id="pagamentos"
-                          defaultValue="01:00:00"
-                        >
-                          <option value="pix">PIX</option>
-                          <option value="dinheiro">Dinheiro</option>
-                        </select>
-                        <div className="pt-3 gap-6 d-md-block">
-                          <div className="row">
-                            <div className="col-10">
-                              <Button
-                                className="btn5 botao align-itens-center fs-6"
-                                onClick={() => {
-                                  pagamento(index);
-                                }}
-                                loading={buttonLoading}
-                              >
-                                Regularizar
-                              </Button>
-                            </div>
-                            {perfil === "monitor" ? (
-                              <div className="col-2 pt-1">
-                                <ActionIcon
-                                  variant="outline"
-                                  color="indigo"
-                                  size="lg"
-                                >
-                                  <IconPrinter
-                                    onClick={() => imprimirSegundaVia(link)}
-                                  />
-                                </ActionIcon>
-                              </div>
-                            ) : null}
+                    ) : (                            
+                    <div className="h6 mt-4 mx-4">
+                      <select
+                        className="form-select form-select-lg mb-1"
+                        aria-label=".form-select-lg example"
+                        id="pagamentos"
+                        defaultValue="01:00:00"
+                      >
+                        <option value="pix">PIX</option>
+                        <option value="dinheiro">Dinheiro</option>
+                      </select>
+                      <div className="pt-3 gap-6 d-md-block">
+                        <div className="row">
+                          <div className="col-10 m-0">
+                            <Button
+                              className="btn5 botao align-itens-center fs-6"
+                              variant="gradient"
+                              gradient={{ from: "blue", to: "cyan" }}
+                              onClick={() => {
+                                pagamento(index);
+                              }}
+                              loading={buttonLoading}
+                            >
+                              Regularizar
+                            </Button>
                           </div>
+                          {perfil === "monitor" ? (
+                            <div className="col-2 ps-0">
+                              <ActionIcon
+                                variant="outline"
+                                color="indigo"
+                                size="lg"
+                              >
+                                <IconPrinter
+                                  onClick={() => imprimirSegundaVia(link)}
+                                />
+                              </ActionIcon>
+                            </div>
+                          ) : null}
                         </div>
                       </div>
-                    )}
-                  </div>
-                ) : null}
-              </div>
-            ))}
+                    </div>
+              )}
+            </div>
+          ) : null}
+        </div>
+      ))}
           </div>
         ) : (
           <div className="col-12 text-center mt-4 mb-4">
