@@ -413,7 +413,7 @@ const Irregularidades = () => {
         <div className="card border-0 shadow mt-2 mb-3" key={index}>
           <div
             className={
-              link.pago === "S" ? "card-body10 mb-0 pb-0" : "card-body9"
+              link.pago === "S" ? "card-body10 mb-3 pb-0" : "card-body9 mb-2 "
             }
             onClick={() => (link.pago === "S" ? atualiza(index) : null)}
           >
@@ -428,7 +428,8 @@ const Irregularidades = () => {
                 >
                   <h6>
                     {" "}
-                    <BsCalendarDate />‎ {link.data}
+                    <div className="d-flex align-items-center mb-2">
+                    <BsCalendarDate />‎ <span className="ms-1">{link.data}</span></div>
                   </h6>
                 </div>
                 {link.estado ? (
@@ -456,36 +457,40 @@ const Irregularidades = () => {
                   <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
                     {link.tipo_notificacao === "Ocupando vaga de deficiente" ||
                     link.tipo_notificacao === "Ocupando vaga de idoso" ? (
-                      <h6>
+                                <div className="d-flex align-items-center"><h6>
                         {" "}
+              
                         <FaClipboardList />‎{" "}
-                        <small>Motivo: {link.tipo_notificacao}</small>
-                      </h6>
-                    ) : (
+                        <small className="ms-1">Motivo: {link.tipo_notificacao}</small>
+                        
+                      </h6></div>
+                    ) : (<div className="d-flex align-items-center">
                       <h6>
                         {" "}
+                        
                         <FaClipboardList />‎
                         {window.innerWidth <= 360 ? (
-                          <small>Motivo: {link.tipo_notificacao}</small>
+                          <small className="ms-1">Motivo: {link.tipo_notificacao}</small>
                         ) : (
                           `Motivo: ${link.tipo_notificacao}`
                         )}
-                      </h6>
+                      </h6></div>
                     )}
                   </div>
                 )}
                 <div className="h6 d-flex align-items-center fs-6">
-                  <FaClipboardList /> Status:{" "}
+                <div className="d-flex align-items-center">
+                  <FaClipboardList /> <span className="ms-1">Status:</span> {" "}
                   <h6
-                    className={
+                    className={ 
                       link.pago === "S"
-                        ? "text-success mt-2 mx-1"
+                        ? "text-success mt-2 mx-1 "
                         : "text-danger mt-2 mx-1"
                     }
                   >
                     {" "}
                     {link.pago === "S" ? "Quitado" : "Pendente"}
-                  </h6>
+                  </h6>   </div>
                 </div>
               </div>
               <div>
