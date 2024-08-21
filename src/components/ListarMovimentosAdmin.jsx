@@ -143,7 +143,7 @@ const ListarMovimentosAdmin = () => {
 
   const deletar = (item, index) => {
     Swal.fire({
-      title: "Tem certeza que deseja deletar esse movimento?",
+      title: `Tem certeza que deseja deletar o movimento de ${item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}?`,
       icon: "error",
       showCancelButton: true,
       cancelButtonText: "Não",
@@ -164,7 +164,11 @@ const ListarMovimentosAdmin = () => {
             );
             if(item.estado_notificacao === "Regularizada") {
               data[index].estado_notificacao = "Pendente";
-              setData([...data]);
+              setData((prevData) => 
+                prevData.filter((movimento) => {
+                  return !(movimento.id_vaga_veiculo === item.id_vaga_veiculo && movimento.tipo_movimento === 'regularizacao');
+                })
+              );
             }else{
             setData((prevData) => prevData.filter((movimento) => movimento.id_movimento !== item.id_movimento));
             }
