@@ -37,7 +37,8 @@ const ListarNotificacoes = () => {
   const [filtroAtual, setFiltroAtual] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
@@ -396,12 +397,15 @@ const ListarNotificacoes = () => {
       });
   }
 
-      const quebrarTexto = (texto, comprimentoMaximo) => {
-      if (texto.length > comprimentoMaximo) {
-        return texto.substring(0, comprimentoMaximo) + '...';
-      }
-      return texto;
-    };  
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <>
@@ -627,10 +631,12 @@ const ListarNotificacoes = () => {
                         <div className="d-flex align-items-center">
 
                         <FaClipboardList />‎
-                        {window.innerWidth <= 360 ? (
-                          <small className="ms-1">Motivo: {quebrarTexto(link.tipo_notificacao, 15)}</small>
-                        ) : (
-                          `Motivo: ${quebrarTexto(link.tipo_notificacao, 40)}`
+                        {window.innerWidth <= 400 ? (
+                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '170px' }}>
+                            Motivo: {link.tipo_notificacao}
+                          </small>                        ) : (
+                          `Motivo: ${link.tipo_notificacao}`
+
                         )} </div>
                       </h6>
                     
