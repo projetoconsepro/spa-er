@@ -631,13 +631,18 @@ const ListarNotificacoes = () => {
                         <div className="d-flex align-items-center">
 
                         <FaClipboardList />‎
-                        {window.innerWidth <= 400 ? (
-                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '170px' }}>
+                        
+                        {window.innerWidth <= 310 ? (
+                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '160px' }}>
                             Motivo: {link.tipo_notificacao}
-                          </small>                        ) : (
+                          </small>
+                        ) : window.innerWidth <= 400 ? (
+                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '200px' }}>
+                            Motivo: {link.tipo_notificacao}
+                          </small>
+                        ) : (
                           `Motivo: ${link.tipo_notificacao}`
-
-                        )} </div>
+                        )}</div>
                       </h6>
                     
                   </div>
