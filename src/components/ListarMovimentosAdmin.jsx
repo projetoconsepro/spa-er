@@ -143,7 +143,7 @@ const ListarMovimentosAdmin = () => {
 
   const deletar = (item, index) => {
     Swal.fire({
-      title: "Tem certeza que deseja deletar esse movimento?",
+      title: `Tem certeza que deseja deletar o movimento de ${item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}?`,
       icon: "error",
       showCancelButton: true,
       cancelButtonText: "Não",
@@ -162,8 +162,16 @@ const ListarMovimentosAdmin = () => {
               "O Movimento foi deletado com sucesso.",
               "success"
             );
+            if(item.estado_notificacao === "Regularizada") {
+              data[index].estado_notificacao = "Pendente";
+              setData((prevData) => 
+                prevData.filter((movimento) => {
+                  return !(movimento.id_vaga_veiculo === item.id_vaga_veiculo && movimento.tipo_movimento === 'regularizacao');
+                })
+              );
+            }else{
             setData((prevData) => prevData.filter((movimento) => movimento.id_movimento !== item.id_movimento));
-
+            }
           })
           .catch((error) => {
             if (
@@ -486,7 +494,7 @@ const ListarMovimentosAdmin = () => {
 
                             <td className="fw-bolder col" id="tabelaUsuarios3">
                             <div className="btn-group">
-                                {item.estado_notificacao === "Cancelada" || item.estado_notificacao === "Regularizada" || item.tipo_movimento === "cancelamento" ? (
+                                {item.estado_notificacao === "Cancelada" || item.tipo_movimento === "cancelamento" ? (
                                   <div></div>
                                 ) : (
                                   <button
@@ -499,13 +507,13 @@ const ListarMovimentosAdmin = () => {
                                   </button>
                                 )}
                                 <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                  {item.tipo_movimento !== "notificacao" ? (
+                                {item.tipo_movimento !== "notificacao" || item.estado_notificacao === "Regularizada" ? (
                                     <div>
                                       <h6 className="dropdown-item d-flex justify-content-center align-items-center text-danger"
                                         onClick={() => deletar(item, index)}
                                       >
                                         <RiDeleteBinFill />
-                                        ‎‎ Remover {tipoMovimentoComAcentos[item.tipo_movimento]}
+                                        ‎‎ Remover {item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}
                                       </h6>
                                       {item.tempo && (
                                         <h6 className="dropdown-item d-flex justify-content-center align-items-center text-info"

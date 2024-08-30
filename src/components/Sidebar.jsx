@@ -82,7 +82,7 @@ const Sidebar = () => {
         }, 1);
         ConfigImpressora("conectar");
       } else {
-        window.open("https://app.hiperchat.com.br/", "_blank");
+        window.open("https://concepro.optbot.com.br/", "_blank");
       }
     }
   };
