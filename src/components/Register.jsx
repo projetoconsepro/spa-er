@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { AuthContext } from "../pages/contexts/auth";
 import Swal from 'sweetalert2'
 import { cpf, cnpj } from 'cpf-cnpj-validator';
@@ -6,7 +6,7 @@ import emailValidator from 'email-validator';
 import InputMask from "react-input-mask";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { Input, Loader, PasswordInput } from "@mantine/core";
-import { IconClipboardText, IconLock, IconMail, IconPhone, IconPhoneX, IconUser } from "@tabler/icons-react";
+import { IconClipboardText, IconLock, IconMail, IconPhone, IconUser } from "@tabler/icons-react";
 import { IconLockCheck } from "@tabler/icons-react";
 
 const RegisterPage = () => {
@@ -22,7 +22,6 @@ const RegisterPage = () => {
     const [estado, setEstado] = useState(false);
     const [estado2, setEstado2] = useState(false);
     const [sucesso, setSucesso] = useState(false);
-    const [passwordType, setPasswordType] = useState("password");
     const [errorNome, setErrorNome] = useState(false);
     const [errorMail, setErrorMail] = useState(false);
     const [errorCpf, setErrorCpf] = useState(false);
@@ -224,7 +223,7 @@ const RegisterPage = () => {
             <div className="container">
                 <div className="row justify-content-center form-bg-image" data-background-lg="../../assets/img/illustrations/signin.svg">
                     <div className="col-12 d-flex align-items-center justify-content-center">
-                        <div className="bg-gray-50 shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500 mb-4">
+                        <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500 mb-4">
                             <div className="text-center text-md-center mb-2 mt-1 mt-md-0">
                                 <img src="../../assets/img/logoconseproof2.png" alt="logo" />
                             </div>
@@ -299,17 +298,18 @@ const RegisterPage = () => {
                                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div className="modal-body" id="modalTexto">
-                                                                <small><strong>SEÇÃO 1 - O QUE FAREMOS COM ESTA INFORMAÇÃO?</strong><br /><br />
+                                                                <small>
+                                                                    <strong>SEÇÃO 1 - O QUE FAREMOS COM ESTA INFORMAÇÃO?</strong><br/><br/>
                                                                     Quando você realiza alguma transação com nossa loja, como parte do processo de compra e venda, coletamos as informações pessoais que você nos dá tais como: nome, e-mail e endereço.
 
                                                                     Quando você acessa nosso site, também recebemos automaticamente o protocolo de internet do seu computador, endereço de IP, a fim de obter informações que nos ajudam a aprender sobre seu navegador e sistema operacional.
 
                                                                     Email Marketing será realizado apenas caso você permita. Nestes emails você poderá receber notícia sobre nossa loja, novos produtos e outras atualizações.
                                                                 </small>
-                                                                <br />
-                                                                <br />
+                                                                <br/>
+                                                                <br/>
                                                                 <small>
-                                                                    <strong>SEÇÃO 2 - CONSENTIMENTO</strong><br /><br />
+                                                                    <strong>SEÇÃO 2 - CONSENTIMENTO</strong><br/><br/>
                                                                     Como vocês obtêm meu consentimento?
 
                                                                     Quando você fornece informações pessoais como nome, telefone e endereço, para completar: uma transação, verificar seu cartão de crédito, fazer um pedido, providenciar uma entrega ou retornar uma compra. Após a realização de ações entendemos que você está de acordo com a coleta de dados para serem utilizados pela nossa empresa.
@@ -318,18 +318,23 @@ const RegisterPage = () => {
 
                                                                     E caso você queira retirar seu consentimento, como proceder?
 
-                                                                    Se após você nos fornecer seus dados, você mudar de ideia, você pode retirar o seu consentimento para que possamos entrar em contato, para a coleção de dados contínua, uso ou divulgação de suas informações, a qualquer momento, entrando em contato conosco em consepro@gmail.com ou nos enviando uma correspondência em: Condominio Viena Shopping - R. Júlio de Castilhos, 2500 - 12 - Centro, Taquara - RS, 95600-000
+                                                                    Se após você nos fornecer seus dados, você mudar de ideia, você pode retirar o seu consentimento para que possamos entrar em contato, para a coleção de dados contínua, uso ou divulgação de suas informações, a qualquer momento, entrando em contato conosco em consepro@gmail.com ou nos enviando uma correspondência em: Condominio Viena Shopping - R. Júlio de Castilhos, 2500 - 12 - Centro, Taquara - RS, 95600-030
                                                                 </small>
-                                                                <br />
-                                                                <br />
+                                                                <br/>
+                                                                <br/>
                                                                 <small>
-                                                                    <strong>SEÇÃO 3 - DIVULGAÇÃO</strong><br /><br />
+                                                                    <strong>SEÇÃO 3 - DIVULGAÇÃO</strong><br/><br/>
                                                                     Podemos divulgar suas informações pessoais caso sejamos obrigados pela lei para fazê-lo ou se você violar nossos Termos de Serviço.
                                                                 </small>
-                                                                <br />
-                                                                <br />
+                                                                <br/>
+                                                                <br/>
                                                                 <small>
-                                                                    <strong>SEÇÃO 4 - SERVIÇOS DE TERCEIROS</strong><br /><br />
+                                                                    <strong>SEÇÃO 4 - CONTATO</strong><br/><br/>
+                                                                    Em caso de dúvidas referentes a qualquer informação contida nesta política de privacidade ou referentes ao uso do aplicativo, entre em contato conosco através do e-mail: consepro@gmail.com. Ou presencialmente em: Condominio Viena Shopping - R. Júlio de Castilhos, 2500 - 12 - Centro, Taquara - RS, 95600-030.                                                                </small>
+                                                                <br/>
+                                                                <br/>
+                                                                <small>
+                                                                    <strong>SEÇÃO 5 - SERVIÇOS DE TERCEIROS</strong><br/><br/>
                                                                     No geral, os fornecedores terceirizados usados por nós irão apenas coletar, usar e divulgar suas informações na medida do necessário para permitir que eles realizem os serviços que eles nos fornecem.
 
                                                                     Entretanto, certos fornecedores de serviços terceirizados, tais como gateways de pagamento e outros processadores de transação de pagamento, têm suas próprias políticas de privacidade com respeito à informação que somos obrigados a fornecer para eles de suas transações relacionadas com compras.
@@ -342,18 +347,18 @@ const RegisterPage = () => {
 
                                                                     Uma vez que você deixe o site da nossa loja ou seja redirecionado para um aplicativo ou site de terceiros, você não será mais regido por essa Política de Privacidade ou pelos Termos de Serviço do nosso site.
                                                                 </small>
-                                                                <br />
-                                                                <br />
+                                                                <br/>
+                                                                <br/>
                                                                 <small>
-                                                                    <strong>SEÇÃO 5 - SEGURANÇA</strong><br /><br />
+                                                                    <strong>SEÇÃO 6 - SEGURANÇA</strong><br/><br/>
                                                                     Para proteger suas informações pessoais, tomamos precauções razoáveis e seguimos as melhores práticas da indústria para nos certificar que elas não serão perdidas inadequadamente, usurpadas, acessadas, divulgadas, alteradas ou destruídas.
 
                                                                     Se você nos fornecer as suas informações de cartão de crédito, essa informação é criptografada usando tecnologia "secure socket layer" (SSL) e armazenada com uma criptografia AES-256. Embora nenhum método de transmissão pela Internet ou armazenamento eletrônico é 100% seguro, nós seguimos todos os requisitos da PCI-DSS e implementamos padrões adicionais geralmente aceitos pela indústria.
                                                                 </small>
-                                                                <br />
-                                                                <br />
+                                                                <br/>
+                                                                <br/>
                                                                 <small>
-                                                                    <strong>SEÇÃO 6 - ALTERAÇÕES PARA ESSA POLÍTICA DE PRIVACIDADE</strong><br /><br />
+                                                                    <strong>SEÇÃO 7 - ALTERAÇÕES PARA ESSA POLÍTICA DE PRIVACIDADE</strong><br/><br/>
                                                                     Reservamos o direito de modificar essa política de privacidade a qualquer momento, então por favor, revise-a com frequência. Alterações e esclarecimentos vão surtir efeito imediatamente após sua publicação no site. Se fizermos alterações de materiais para essa política, iremos notificá-lo aqui que eles foram atualizados, para que você tenha ciência sobre quais informações coletamos, como as usamos, e sob que circunstâncias, se alguma, usamos e/ou divulgamos elas.
 
                                                                     Se nossa loja for adquirida ou fundida com outra empresa, suas informações podem ser transferidas para os novos proprietários para que possamos continuar a vender produtos para você.

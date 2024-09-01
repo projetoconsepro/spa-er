@@ -4,7 +4,6 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import adapter from "webrtc-adapter";
 import { Button, Card, Group } from "@mantine/core";
 import { IconCamera, IconCheck, IconPrinter, IconReload } from "@tabler/icons-react";
-import axios from "axios";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketNotificacao from '../util/ImpressaoTicketNotificacao';
 
@@ -94,7 +93,7 @@ function CameraTicketNotificacao() {
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const photoDataUrl = canvas.toDataURL("image/png");
+    const photoDataUrl = canvas.toDataURL("image/jpeg", 0.5);
 
     const updatedPhotos = [...photos, { id: cont, photo: photoDataUrl }];
     setPhotos(updatedPhotos);

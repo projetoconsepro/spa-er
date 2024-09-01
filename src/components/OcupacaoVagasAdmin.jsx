@@ -1,10 +1,8 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import CarroLoading from "./Carregamento";
 import Filtro from "../util/Filtro";
 import { AiFillPrinter } from "react-icons/ai";
-import { FaSearch } from "react-icons/fa";
 import RelatoriosPDF from "../util/RelatoriosPDF";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
@@ -17,7 +15,6 @@ const OcupacaoVagasAdmin = () => {
   const [estado2, setEstado2] = useState(false);
   const [estado3, setEstado3] = useState(false);
   const [mensagem, setMensagem] = useState("");
-  const [dataHoje, setDataHoje] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
@@ -85,12 +82,10 @@ const OcupacaoVagasAdmin = () => {
     const requisicao = createAPI();
 
     const data = new Date();
-      const dia = data.getDate().toString().padStart(2, '0');
-      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
-      const ano = data.getFullYear();
-      const dataHoje = ano + "-" + mes + "-" + dia;
-
-        setDataHoje(dataHoje);
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    const ano = data.getFullYear();
+    const dataHoje = ano + "-" + mes + "-" + dia;
 
     const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
     const passar = btoa(idrequisicao)
@@ -107,7 +102,7 @@ const OcupacaoVagasAdmin = () => {
             const newData = arraySemNulos.map((item) => ({
               vaga: item.numerovaga,
               chegada:
-                item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+                item.chegada,
               horafinal:
                 item.horafinal[0] +
                 ":" +
@@ -173,7 +168,7 @@ const OcupacaoVagasAdmin = () => {
       const newData = arraySemNulos.map((item) => ({
         vaga: item.numerovaga,
         chegada:
-          item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+        item.chegada,
         horafinal:
           item.horafinal[0] +
           ":" +

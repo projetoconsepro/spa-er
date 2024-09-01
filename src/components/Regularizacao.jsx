@@ -3,14 +3,11 @@ import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from '../util/VoltarComponente';
 import { Button, Divider } from '@mantine/core';
 
-
 const Regularizacao = () => {
     const [placa, setPlaca] = useState("placa")
     const [textoPlaca, setTextoPlaca] = useState("")
     const [limite, setLimite] = useState(8)
     const [inputVazio, setInputVazio] = useState("inputvazio3")
-    const [mensagem, setMensagem] = useState("");
-    const [estado, setEstado] = useState(false);
     const [cont, setCont] = useState(0);
     const [teste, setTeste] = useState("")
 
@@ -92,9 +89,6 @@ const Regularizacao = () => {
                                     <VoltarComponente space={true} />
                                     <Button size="md" radius="md" className="bg-blue-50" onClick={()=>{handleRequisicao()}}>Buscar</Button>
                                 </div>
-                                <div className="alert alert-danger mt-4" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-                                    {mensagem}
-                                </div> 
                         </div>
                     </div>
                 </div>

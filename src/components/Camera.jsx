@@ -12,7 +12,7 @@ function Camera() {
   const [photos, setPhotos] = useState([]);
   const [cont, setCont] = useState(0);
   const [cont2, setCont2] = useState(0);
-  const [tamanho, setTamanho] = useState(90);
+  const [ tamanho ] = useState(90);
   const [divErro, setDivErro] = useState(false);
   const [cameraLoaded, setCameraLoaded] = useState(false); 
 
@@ -70,7 +70,7 @@ function Camera() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const photoDataUrl = canvas.toDataURL("image/png");
+    const photoDataUrl = canvas.toDataURL("image/jpeg", 0.5);
     const updatedPhotos = [...photos, { id: cont, photo: photoDataUrl }];
     setPhotos(updatedPhotos);
     setCont(cont + 1);

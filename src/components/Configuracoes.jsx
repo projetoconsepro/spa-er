@@ -1,13 +1,10 @@
-import axios from "axios";
-import { React, useState, useEffect, useRef } from "react";
-import { FaCarAlt, FaCheck, FaParking } from "react-icons/fa";
+import { React, useState, useEffect } from "react";
 import { TbHandClick } from "react-icons/tb";
 import { BsFillTrashFill } from "react-icons/bs";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Card, Divider, Grid, Group, Modal, Text } from "@mantine/core";
-import { Carousel } from '@mantine/carousel';
+import { Button, Card, Divider, Group, Modal, Text } from "@mantine/core";
 import createAPI from "../services/createAPI";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -20,20 +17,8 @@ const Configuracoes = () => {
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [cardBody] = useState("card-body3");
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [estadoDiv, setEstadoDiv] = useState(false);
   const [estadoDiv2, setEstadoDiv2] = useState(true);
-  const [debito, setDebito] = useState(true);
-
-  const handleCheckboxChange = (index) => {
-    data[index].check = !data[index].check;
-    setData([...data]);
-  };
-
-  const abrirDiv = (index) => {
-    data[index].estado = !data[index].estado;
-    setData([...data]);
-  };
 
   const Atualizarequisicao = async () => {
     const requisicao = createAPI();
@@ -50,6 +35,8 @@ const Configuracoes = () => {
           estadoOn: false,
           check: false,
           idVeiculo: item.id_veiculo,
+          estacionado: item?.estacionado || "N",
+          vaga: item?.numerovaga || 0,
         }));
         for (let index = 0; index < newData.length; index++) {
           if (newData[index].debito == "S") {
@@ -58,11 +45,16 @@ const Configuracoes = () => {
             newData[index].check = false;
           }
 
+          if (newData[index].estacionado === "S" && newData[index].vaga !== 0) {
+            newData[index].estado = false;
+          }
+
           if ((newData[index].debitoDisponivel === "N" && newData[index].debito === "N") ||
             (newData[index].debitoDisponivel === "N" && newData[index].debito !== "S")) {
             newData[index].estado = false;
           }
         }
+
         setData(newData);
       })
       .catch((error) => {
@@ -97,7 +89,6 @@ const Configuracoes = () => {
       Atualizarequisicao();
     } else {
       open()
-      setDebito(false)
     }
   }, []);
 
@@ -212,6 +203,7 @@ const Configuracoes = () => {
           key={index}
           id="divD"
           disabled={
+            (link.estacionado === "S" && link.vaga !== 0) ||
             (link.debitoDisponivel === "N" && link.debito === "N") ||
               (link.debitoDisponivel === "N" && link.debito !== "S")
               ? true
@@ -283,17 +275,18 @@ const Configuracoes = () => {
 
           <h6
             style={{
-              display:
+              display: (link.estacionado === "S" && link.vaga !== 0) ||
                 (link.debitoDisponivel === "N" && link.debito === "N") ||
                   (link.debitoDisponivel === "N" && link.debito !== "S")
                   ? "block"
                   : "none",
             }}
-            className="px-4 fs-6"
+            className="px-4 fs-6 text-center mt-4"
+            id="modalTexto"
           >
             <small>
-              Este veículo já possui débito automático ativo em outro
-              dispositivo.
+            {link.estacionado === "S" && link.vaga !== 0 ? "Não é possível ativar/desativar o débito automático de veículos que estão estacionados no momento."
+            : "Este veículo já possui débito automático ativo em outro dispositivo."}
             </small>
           </h6>
 
@@ -301,7 +294,7 @@ const Configuracoes = () => {
       ))}
       <VoltarComponente />
       <Modal opened={opened} onClose={() => { close() }} closeOnClickOutside={false} style={{ zIndex: 51 }} centered title="Termos de uso débito automático">
-        <div>
+        <div id="modalTexto">
           <small><strong>Ao solicitar a ativação automática do estacionamento, o usuário concorda com os seguintes termos:</strong></small> <br />
           <small>a) Quando o monitor fiscalizar, será realizada uma ativação de 30 minutos, sendo repetida a ativação por um período máximo de 2 horas em cada vaga;</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
@@ -312,6 +305,8 @@ const Configuracoes = () => {
           <small>d) Declaro ter ciência, que ao optar pela ativação automática, não terei direito ao período de tolerância de 10 minutos, sendo que na primeira fiscalização do monitor, será realizada a ativação de 30 minutos;</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
           <small>e) A ativação fica vinculada a placa do veículo.</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
+          <small>f) Declaro ter ciência, que não será impresso o comprovante de estacionamento! E caso necessário, irei requisitar uma segunda via com uma monitora.</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
           <small><strong> APÓS CONCORDAR COM OS TERMOS, HABILITE O DÉBITO AUTOMÁTICO NAS PLACAS DESEJADAS.</strong></small> <br />
         </div>
@@ -350,6 +345,13 @@ const Configuracoes = () => {
           </>
           : null}
       </Modal>
+      <div
+              className="alert alert-danger mt-4"
+              role="alert"
+              style={{ display: estado ? "block" : "none" }}
+            >
+              {mensagem}
+      </div>
     </div>
   );
 };

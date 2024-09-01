@@ -7,8 +7,9 @@ import {
   FaEye,
   FaParking,
   FaPowerOff,
-  FaSearch,
+  FaHistory,
 } from "react-icons/fa";
+import HistoricoFinanceiro from './HistoricoFinanceiro'; 
 import ScrollTopArrow from "./ScrollTopArrow";
 import Swal from "sweetalert2";
 import { BsCashCoin, BsPaintBucket } from "react-icons/bs";
@@ -21,7 +22,6 @@ import {
   Stepper,
   Button,
   Input,
-  Grid,
   ActionIcon,
   Pagination,
   Loader,
@@ -54,7 +54,6 @@ const ClientesAdmin = () => {
   const [step, setStep] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [data, setData] = useState([]);
-  const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
   const [mensagemStep, setMensagemStep] = useState(false);
   const [infoRemetente, setInfoRemetente] = useState("");
@@ -65,13 +64,25 @@ const ClientesAdmin = () => {
   const [veiculos, setVeiculos] = useState([]);
   const [detalhesVeiculo, setDetalhesVeiculo] = useState([]);
   const [nome, setNome] = useState("");
-  const [senhaParam, setSenhaParam] = useState("");
   const [estado, setEstado] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [readyTransfer, setReadyTransfer] = useState(false);
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
+  const [modalAberto, setModalAberto] = useState(false);
+  const [UserId, setUserId] = useState(null);
+  const [nomeHistorico, setNomeHistorico] = useState(null);
+
+  const abreModalUserId = (id_usuario, nome) => {
+    setUserId(id_usuario);
+    setNomeHistorico(nome);
+    setModalAberto(true);
+  };
+
+  const fecharModal = () => {
+    setModalAberto(false);
+  };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -84,15 +95,6 @@ const ClientesAdmin = () => {
   function extrairNumeros(string) {
     return string ? string.replace(/\D/g, "") : string;
   }
-
-  useEffect(() => {
-    const parametros = axios.create({
-      baseURL: process.env.REACT_APP_HOST,
-    });
-    parametros.get("/parametros").then((response) => {
-      setSenhaParam(response.data.data.param.usuario.default);
-    });
-  }, []);
 
   useEffect(() => {
     if (step >= 1 && step <= 4) {
@@ -137,7 +139,6 @@ const ClientesAdmin = () => {
           saldo: parseFloat(item.saldo),
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (
@@ -514,7 +515,6 @@ const ClientesAdmin = () => {
           saldo: parseFloat(item.saldo),
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (
@@ -555,7 +555,6 @@ const ClientesAdmin = () => {
           saldo: parseFloat(item.saldo),
         }));
         setData(newData);
-        setData2(newData);
       })
       .catch(function (error) {
         if (
@@ -575,6 +574,15 @@ const ClientesAdmin = () => {
 
   return (
     <div className="dashboard-container mb-5">
+      <Modal
+        opened={modalAberto}
+        onClose={fecharModal}
+        title={`Histórico de ${nomeHistorico}`}
+        centered
+      > 
+        <HistoricoFinanceiro id_usuario={UserId}/>
+      </Modal>
+
       <Modal
         opened={opened}
         onClose={() => {
@@ -1136,6 +1144,13 @@ const ClientesAdmin = () => {
                                 >
                                   <FaPowerOff size={13} className="mb-1" /> ‎‎{" "}
                                   {item.ativo === "S" ? "Desativar" : "Ativar"}
+                                </h6>
+                                <h6
+                                   className="dropdown-item d-flex align-items-center"
+                                   onClick={() => abreModalUserId(item.id_usuario, item.nome)}
+                                   >
+                                      <FaHistory />
+                                       ‎‎ Histórico
                                 </h6>
                               </div>
                             </div>
