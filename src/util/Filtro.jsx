@@ -113,6 +113,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Tipo", label: "Tipo" },
         { value: "Periodo", label: "Período" },
         { value: "Motivo", label: "Motivo" },
+        { value: "Nome", label: "Nome" },
       ]);
     } else if (nome === "RelatorioMonitorAdmin") {
       setOptions([
@@ -361,7 +362,11 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
           )}", "${data4}"] },{ "field": "hora", "operator": "BETWEEN", "value": ["${dataHora}", "${dataHora2}"] }]}`;
           break;
         case "Nome":
+          if (nome === "ListarNotificacoesAdmin") {
+            consulta = `{"where": [{"field": "tipo", "operator": "=", "value": "${radioTipo}"},{ "field": "nome", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
+          } else{
           consulta = `{"where": [{ "field": "nome", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
+        }
           break;
         case "Periodo":
           const data = FormatDate(valuePeriodo[1]);
@@ -625,15 +630,44 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                     </div>
                   </div>
                 </div>
-              ) : selectedOption.value === "Nome" ? (
-                <div>
-                  <div className="mt-4 mb-1">Digite o nome:</div>
-                  <Input
-                    icon={<IconUser size={16} />}
-                    placeholder="Digite o nome"
-                    onChange={(e) => setInputNome(e.target.value)}
-                  />
-                </div>
+                    ) : selectedOption.value === "Nome" ? (
+                      
+                      nome === "ListarNotificacoesAdmin" ? (
+                        <div>
+                          <div className="mt-4 mb-1">Digite o nome:</div>
+                          <Input
+                            icon={<IconUser size={16} />}
+                            placeholder="Digite o nome"
+                            onChange={(e) => setInputNome(e.target.value)}
+                          />
+                          
+                          <div>
+                            <div className="mt-2 mb-3">Selecione o tipo:</div>
+                            <Radio.Group
+                              name="Escolha algum opção"
+                              onChange={(e) => setRadioTipo(e)}
+                            >
+                              <Grid>
+                                <Grid.Col span={12}>
+                                  <Radio value="'PAGO'" label="Pago" />
+                                </Grid.Col>
+                                <Grid.Col span={12}>
+                                  <Radio value="'PENDENTE'" label="Pendente" />
+                                </Grid.Col>
+                              </Grid>
+                            </Radio.Group>
+                          </div>
+                        </div>
+                      ) : (
+                                                    <div>
+                            <div className="mt-4 mb-1">Digite o nome:</div>
+                            <Input
+                              icon={<IconUser size={16} />}
+                              placeholder="Digite o nome"
+                              onChange={(e) => setInputNome(e.target.value)}
+                            />
+                          </div>
+                        )
               ) : selectedOption.value === "Placa" ? (
                 <div>
                   <div className="mt-4 mb-1">Digite a placa:</div>
