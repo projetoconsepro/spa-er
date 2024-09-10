@@ -2,7 +2,7 @@ import { Button } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 
-const VoltarComponente = ({ space, arrow }) => {
+const VoltarComponente = ({ space, arrow, fullWidth}) => {
   const [componenteAnterior, setComponenteAnterior] = useState("");
   const [componenteProximo, setComponenteProximo] = useState("");
 
@@ -29,13 +29,13 @@ const VoltarComponente = ({ space, arrow }) => {
         />
       ) : (
         <Button
-          className={space ? "bg-gray-500 mx-2" : "bg-gray-500"}
-          size="md"
-          radius="md"
-          onClick={() => {
-            voltar();
-          }}
-        >
+        className={`${space ? "bg-gray-500 mx-2" : "bg-gray-500"} ${fullWidth ? "w-100 d-block" : ""}`}
+        size="md"
+        radius="md"
+        onClick={() => {
+          voltar();
+        }}
+      >
           Voltar
         </Button>
       )}

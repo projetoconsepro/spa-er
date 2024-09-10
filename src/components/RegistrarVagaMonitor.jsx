@@ -7,7 +7,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button, Divider, Grid, Text } from "@mantine/core";
+import { Button, Divider, Grid, Text, Modal } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
@@ -37,7 +37,7 @@ const RegistrarVagaMonitor = () => {
   const [selectedButton, setSelectedButton] = useState("pix");
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
-
+  const [modalOpened, setModalOpened] = useState(false);
 
 
   const user = localStorage.getItem("user");
@@ -524,8 +524,8 @@ const RegistrarVagaMonitor = () => {
   };
 
   const atualizafunc = () => {
-    const tempoo = document.getElementById("tempos").value;
-    setTempo(tempoo);
+    const tempoo = tempo;
+
     if (tempoo === "00:10:00") {
       SetMostrapag(false);
     } else if (tempoo === "notificacao"){
@@ -562,6 +562,10 @@ const RegistrarVagaMonitor = () => {
     }
   };
 
+useEffect(() => {
+atualizafunc();
+}, [tempo]);
+
   const HangleBack = () => {
     localStorage.removeItem("vaga");
     localStorage.removeItem("popup");
@@ -583,8 +587,7 @@ const RegistrarVagaMonitor = () => {
   const handleSubmit = async () => {
     setLoadingButton(true);
     let select = selectedButton;
-    const tolerancia = document.getElementById("tempos").value;
-
+    const tolerancia = tempo;
     if (tolerancia === "notificacao" && textoPlaca !== ""){
       const placaString = textoPlaca.toString();
       const placaMaiuscula = placaString.toUpperCase();
@@ -630,6 +633,20 @@ const RegistrarVagaMonitor = () => {
     }
   }, []);
 
+
+  const handleConfirmClick = () => {
+    if (tempo === 'notificacao') {
+      handleSubmit();
+    } else {
+      setModalOpened(true);
+    }
+  };
+
+  const handleModalConfirm = () => {
+    setModalOpened(false);
+    handleSubmit();
+  };
+
   return (
     <section className="vh-lg-100 mt-2 mt-lg-0 bg-soft d-flex align-items-center">
       <div className="container">
@@ -651,7 +668,7 @@ const RegistrarVagaMonitor = () => {
               ) : null}
               <div className="h5 mt-2 align-items-center">
                 <small>Registrar estacionamento</small>
-                <p id="tempoCusto" className=" pt-2">
+                <p id="tempoCusto" className=" pt-2 fs-6">
                   {" "}
                   Vaga selecionada: {vaga}{" "}
                 </p>
@@ -693,42 +710,109 @@ const RegistrarVagaMonitor = () => {
               <div className="h6 mt-3 " onChange={atualizafunc}>
                 <p className="text-start">Determine um tempo:</p>
                 {visible ? (
-                  <select
-                    className="form-select form-select-lg mb-3"
-                    aria-label=".form-select-lg example"
-                    id="tempos"
-                  >
-                    <option value="00:30:00">30 Minutos</option>
-                    <option value="01:00:00">60 Minutos</option>
-                    <option value="01:30:00">90 Minutos</option>
-                    <option value="02:00:00">120 Minutos</option>
-                  </select>
+                  <div className="h6 mt-3 mx-2">
+                    <Grid>
+                      <Grid.Col span={3}>
+                        <button
+                          onClick={() => setTempo('00:30:00')}
+                          className={`btn fs-6 shadow-none icon-shape icon-shape rounded align-center  ${tempo === "00:30:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                          value="00:30:00"
+                          id="tempos">
+                          <Text fz="lg" weight={700}>
+                            30
+                          </Text></button>
+                      </Grid.Col>
+                      <Grid.Col span={3}>
+                        <button
+                          onClick={() => setTempo('01:00:00')}
+                          className={`btn fs-6 shadow-none icon-shape icon-shape rounded align-center  ${tempo === "01:00:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                          value="01:00:00"
+                          id="tempos">
+                          <Text fz="lg" weight={700}>
+                            60
+                          </Text></button>
+                      </Grid.Col>
+                      <Grid.Col span={3}>
+                        <button
+                          onClick={() => setTempo('01:30:00')}
+                          className={`btn fs-6 shadow-none icon-shape icon-shape rounded align-center  ${tempo === "01:30:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                          value="01:30:00"
+                          id="tempos">
+                          <Text fz="lg" weight={700}>
+                            90
+                          </Text></button>
+                      </Grid.Col>
+                      <Grid.Col span={3}>
+                        <button
+                          onClick={() => setTempo('02:00:00')}
+                          className={`btn fs-6 shadow-none icon-shape icon-shape rounded align-center  ${tempo === "02:00:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                          value="02:00:00"
+                          id="tempos">
+                          <Text fz="lg" weight={700}>
+                            120
+                          </Text></button>
+                      </Grid.Col>
+                    </Grid></div>
                 ) : (
-                  <select
-                    className="form-select form-select-lg mb-3"
-                    defaultValue="00:10:00"
-                    aria-label=".form-select-lg example"
-                    id="tempos"
-                  >
-                    <option value="00:10:00">Tolerância</option>
+                  <div>
+
+                    <button type="button"
+                      onClick={() => setTempo('00:10:00')}
+                      className={`btn w-100 d-block mb-2 shadow-none fs-6 ${tempo === "00:10:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                      value="00:10:00"
+                      id="tempos">TOLERÂNCIA</button>
+                    <button
+                      onClick={() => setTempo('notificacao')}
+                      className={`btn w-100 d-block fs-6 shadow-none  ${tempo === "notificacao" ? "border-danger fw-bold text-danger border-3" : "bg-danger text-white"}`}
+                      value="notificacao"
+                      id="tempos">NOTIFICAÇÃO</button>
                     {tipoVaga === "cadeirante" ||
-                    tipoVaga === "idoso" ? null : (
-                      <option value="00:30:00">30 Minutos</option>
-                    )}
-                    {tipoVaga === "cadeirante" ||
-                    tipoVaga === "idoso" ? null : (
-                      <option value="01:00:00">60 Minutos</option>
-                    )}
-                    {tipoVaga === "cadeirante" ||
-                    tipoVaga === "idoso" ? null : (
-                      <option value="01:30:00">90 Minutos</option>
-                    )}
-                    {tipoVaga === "cadeirante" ||
-                    tipoVaga === "idoso" ? null : (
-                      <option value="02:00:00">120 Minutos</option>
-                    )}
-                    <option value="notificacao">Notificação</option>
-                  </select>
+                      tipoVaga === "idoso" ? null : (
+                      <div>
+                        <div className="h6 mt-3 mx-2">
+                          <Grid>
+                            <Grid.Col span={3}>
+                              <button
+                                onClick={() => setTempo('00:30:00')}
+                                className={`btn fs-6 shadow-none icon-shape icon-shape rounded align-center  ${tempo === "00:30:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                                value="00:30:00"
+                                id="tempos">
+                                <Text fz="lg" weight={700}>
+                                  30
+                                </Text></button>
+                            </Grid.Col>
+                            <Grid.Col span={3}>
+                              <button
+                                onClick={() => setTempo('01:00:00')}
+                                className={`btn fs-6 shadow-none icon-shape icon-shape rounded align-center  ${tempo === "01:00:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                                value="01:00:00"
+                                id="tempos">
+                                <Text fz="lg" weight={700}>
+                                  60
+                                </Text></button>
+                            </Grid.Col>
+                            <Grid.Col span={3}>
+                              <button
+                                onClick={() => setTempo('01:30:00')}
+                                className={`btn fs-6 shadow-none icon-shape icon-shape rounded align-center  ${tempo === "01:30:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                                value="01:30:00"
+                                id="tempos">
+                                <Text fz="lg" weight={700}>
+                                  90
+                                </Text></button>
+                            </Grid.Col>
+                            <Grid.Col span={3}>
+                              <button
+                                onClick={() => setTempo('02:00:00')}
+                                className={`btn fs-6 shadow-none icon-shape icon-shape rounded align-center  ${tempo === "02:00:00" ? "border-info fw-bold text-info border-3" : "bg-blue-50 text-white"}`}
+                                value="02:00:00"
+                                id="tempos">
+                                <Text fz="lg" weight={700}>
+                                  120
+                                </Text></button>
+                            </Grid.Col>
+                          </Grid></div>
+                      </div>)}</div>
                 )}
                 <p id="tempoCusto" className="text-end">
                   {" "}
@@ -771,17 +855,18 @@ const RegistrarVagaMonitor = () => {
                   </Grid>
               </div>
 
-              <div className="pt-4 mb-4 gap-2 d-md-block">
-                <VoltarComponente space={true} onClick={() => HangleBack()} />
+              <div className="pt-4 mb-4 gap-2 d-md-block ">
+                
                 <Button
                   loading={loadingButton}
-                  onClick={handleSubmit}
+                  onClick={handleConfirmClick}
                   size="md"
                   radius="md"
-                  className="bg-blue-50"
+                  className="bg-blue-50 w-100 d-block mb-2"
                 >
                   Confirmar
                 </Button>
+                <VoltarComponente  fullWidth={true}  onClick={() => HangleBack()} />
               </div>
               <div
                 className="alert alert-danger mt-3"
@@ -793,6 +878,58 @@ const RegistrarVagaMonitor = () => {
             </div>
           </div>
         </div>
+               <Modal
+               centered
+          opened={modalOpened}
+          onClose={() => setModalOpened(false)}
+        >
+          <div className="text-center">
+          <div className="h3 mt-2 align-items-center">
+                <small>Confirme as informações da placa abaixo:</small>
+                <p id="tempoCusto" className=" pt-2 fs-5 mt-3 mb-4">
+                  {" "}
+                  Vaga: {vaga}{" "}
+                </p>
+              </div>
+        
+            <div className="form-group mb-5">
+              <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
+                <input
+                  autoFocus
+                  type="text"
+                  id={inputVazio}
+                  className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
+                  value={textoPlaca}
+                  readOnly
+                />
+              </div>
+              
+            </div>
+        
+            <div className="mt-4"> 
+              <Button
+                  loading={loadingButton}
+    onClick={handleModalConfirm}
+                   size="lg"
+                  radius="md"
+                  className="bg-blue-50 w-100 fs-5 d-block mb-2"
+                >
+                  Estacionar
+                </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                radius="md"
+                className="bg-gray-500 w-100 d-block mb-3 fs-5 text-white"
+                onClick={() => setModalOpened(false)}
+              >
+                Voltar
+              </Button>
+             
+            </div>
+          </div>
+        </Modal>
+
         <ModalErroBanco
           onOpen={onOpenError}
           onClose={onCloseError}
