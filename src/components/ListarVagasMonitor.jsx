@@ -118,7 +118,7 @@ const ListarVagasMonitor = () => {
               tipo: response.data.data[i].tipo,
               id_vaga: response.data.data[i].id_vaga,
             };
-
+             
             if (response.data.data[i].estacionado === "N") {
               updatedItem.chegada = "";
               updatedItem.placa = "";
@@ -146,7 +146,7 @@ const ListarVagasMonitor = () => {
               updatedItem.tempo = response.data.data[i].tempo;
 
               updatedItem.numero_notificacoes_pendentess = response.data.data[i].numero_notificacoes_pendentess;
-
+           
               if (updatedItem.numero_notificacoes_pendentess !== 0) {
                 const horaOriginal = new Date(response.data.data[i].hora_notificacao);
                 horaOriginal.setHours(horaOriginal.getHours() + 2);
@@ -352,14 +352,41 @@ useEffect(() => {
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {resposta.length !== 0 ? (
-                        resposta.map((vaga, index) => (
-                        vaga !== null && (
-                          <VagaMonitor vaga={vaga} index={index} key={index} setMensagem={setMensagem} setEstado={setEstado} setResposta={setResposta} resposta={resposta} funcAttResposta={funcAttResposta} setor={salvaSetor} />
-                        )
-                      ))) : ( null )}
-                    </tbody>
+                                                                     <tbody>
+                                        {resposta.length !== 0 ? (
+                                          resposta.map((vaga, index) => {
+                                            if (vaga !== null) {
+                                              console.log(vaga);
+                                              if (vaga.temporestante === 'Invalid Date') {
+                                                vaga.estacionado = 'N';
+                                                vaga.chegada = "";
+                                                vaga.placa = "";
+                                                vaga.temporestante = "";
+                                                vaga.Countdown = "";
+                                                vaga.variaDisplay = "escondido";
+                                                vaga.corvaga = "#3a58c8"
+                                                vaga.tipo = "normal"
+                                              }
+                                              return (
+                                                <VagaMonitor
+                                                  vaga={vaga}
+                                                  index={index}
+                                                  key={index}
+                                                  setMensagem={setMensagem}
+                                                  setEstado={setEstado}
+                                                  setResposta={setResposta}
+                                                  resposta={resposta}
+                                                  funcAttResposta={funcAttResposta}
+                                                  setor={salvaSetor}
+                                                />
+                                              );
+                                            }
+                                            return null;
+                                          })
+                                        ) : (
+                                          null
+                                        )}
+                                      </tbody>
                   </table>
                 </div>
               </div>
