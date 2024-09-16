@@ -13,11 +13,16 @@ const ListagemMovimentoVeiculo = () => {
   const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-  const [mostrarPaginacao, setMostrarPaginacao] = useState(true);
-  const [filtroAtual, setFiltroAtual] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageFiltro, setPageFiltro] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
   const createPDF = () => {
     const nomeArquivo = "Relatório de Movimento de Veículos";
@@ -51,21 +56,20 @@ const ListagemMovimentoVeiculo = () => {
 
   useEffect(() => {
     handdleFunc();
-  }, [page]);
+  }, []);
 
-  const handdleFunc = (consulta, pageFiltro) => {
+  const handdleFunc = (consulta) => {
     setEstadoLoading(true);
     setEstado(false);
     setMensagem("");
 
     const url = consulta
       ? `/veiculo/historico/movimento?query=${btoa(consulta)}`
-      : `/veiculo/historico/movimento`;
-    setMostrarPaginacao(!consulta);
-    const currentPage = consulta ? pageFiltro : page;
+      : "/veiculo/historico/movimento/";
+
     const requisicao = createAPI();
     requisicao
-      .get(url, { params: { page: currentPage } })
+      .get(url)
       .then((response) => {
         setEstado2(true);
         setEstadoLoading(false);
@@ -77,17 +81,16 @@ const ListagemMovimentoVeiculo = () => {
               item.acao === "v.add"
                 ? "Veículo Cadastrado"
                 : item.acao === "v.rm"
-                  ? "Veículo Removido"
-                  : item.acao === "da.add"
-                    ? "Débito Automático Ativado"
-                    : item.acao === "da.rm"
-                      ? "Débito Automático Desativado"
-                      : "",
+                ? "Veículo Removido"
+                : item.acao === "da.add"
+                ? "Débito Automático Ativado"
+                : item.acao === "da.rm"
+                ? "Débito Automático Desativado"
+                : "",
             usuario: item.nome,
             hora: FixDate(item.hora),
           }));
           setData(newData);
-          setTotalPages(response.data.totalPages);
         } else {
           setData([]);
           setEstado(true);
@@ -99,7 +102,7 @@ const ListagemMovimentoVeiculo = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -110,9 +113,8 @@ const ListagemMovimentoVeiculo = () => {
       });
   };
 
-  const handleConsultaSelected = (consulta, pageFiltro) => {
-    setFiltroAtual(consulta);
-    handdleFunc(consulta, pageFiltro);
+  const handleConsultaSelected = (consulta) => {
+    handdleFunc(consulta);
   };
 
   return (
@@ -147,8 +149,7 @@ const ListagemMovimentoVeiculo = () => {
                 radius="md"
                 size="md"
                 onClick={() => {
-                  setPage(0);
-                  setEstado(false);
+                  handdleFunc();
                 }}
               >
                 <AiOutlineReload size={20} />
@@ -198,7 +199,7 @@ const ListagemMovimentoVeiculo = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {data.map((item, index) => (
+                        {currentItems.map((item, index) => (
                           <tr key={index}>
                             <td>{item.placa}</td>
                             <td>{item.hora}</td>
@@ -226,26 +227,17 @@ const ListagemMovimentoVeiculo = () => {
           </div>
         </div>
         <Group position="center" mb="md">
-          {mostrarPaginacao ? (
-            <Pagination
-              page={page}
-              total={totalPages}
-              onChange={(newPage) => {
-                setPage(newPage);
-                setEstado2(false);
-              }}
-            />
-          ) : (<Pagination
-            page={pageFiltro}
-            total={totalPages}
-            onChange={(newPage) => {
-              setPageFiltro(newPage);
-              handleConsultaSelected(filtroAtual, newPage);
-              setEstado2(false);
-            }}
+          <Pagination
+            value={currentPage}
+            size="sm"
+            onChange={handlePageChange}
+            total={
+              Math.floor(data.length / 50) === data.length / 50
+                ? data.length / 50
+                : Math.floor(data.length / 50) + 1
+            }
+            limit={itemsPerPage}
           />
-
-          )}
         </Group>
       </div>
       <VoltarComponente />

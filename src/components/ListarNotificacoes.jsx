@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import { ActionIcon, Button, Grid, Loader, Modal, Text, Group, Pagination } from "@mantine/core";
+import { ActionIcon, Button, Grid, Loader, Modal, Text } from "@mantine/core";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
@@ -34,10 +34,8 @@ const ListarNotificacoes = () => {
   const [onCloseError, setOnCloseError] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
   const [estadoModal, setEstadoModal] = useState("select");
-  const [filtroAtual, setFiltroAtual] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
@@ -231,13 +229,12 @@ const ListarNotificacoes = () => {
     handleFiltro(consulta);
   };
 
-  const handleFiltro = (where, page) => { 
-    setFiltroAtual(where);
+  const handleFiltro = (where) => {
     setEstadoLoading(true);
     const requisicao = createAPI();
     const base64 = btoa(where);
     requisicao
-      .get(`/notificacao/?query=${base64}`, { params: { page } })
+      .get(`/notificacao/?query=${base64}`)
       .then((response) => {
         setEstadoLoading(false);
         if (response.data.msg.resultado) {
@@ -261,7 +258,6 @@ const ListarNotificacoes = () => {
             checked: false,
           }));
           setData(newData);
-          setTotalPages(response.data.totalPages);
         } else {
           setData([]);
           setEstado(true);
@@ -396,12 +392,18 @@ const ListarNotificacoes = () => {
       });
   }
 
-      const quebrarTexto = (texto, comprimentoMaximo) => {
-      if (texto.length > comprimentoMaximo) {
-        return texto.substring(0, comprimentoMaximo) + '...';
-      }
-      return texto;
-    };  
+  
+    
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <>
@@ -627,11 +629,18 @@ const ListarNotificacoes = () => {
                         <div className="d-flex align-items-center">
 
                         <FaClipboardList />‎
-                        {window.innerWidth <= 360 ? (
-                          <small className="ms-1">Motivo: {quebrarTexto(link.tipo_notificacao, 15)}</small>
+                        
+                        {window.innerWidth <= 310 ? (
+                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '160px' }}>
+                            Motivo: {link.tipo_notificacao}
+                          </small>
+                        ) : window.innerWidth <= 400 ? (
+                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '200px' }}>
+                            Motivo: {link.tipo_notificacao}
+                          </small>
                         ) : (
-                          `Motivo: ${quebrarTexto(link.tipo_notificacao, 40)}`
-                        )} </div>
+                          `Motivo: ${link.tipo_notificacao}`
+                        )}</div>
                       </h6>
                     
                   </div>
@@ -796,18 +805,6 @@ const ListarNotificacoes = () => {
             <Loader />
           </div>
         )}
-          <Group position="center" mb="md">
-         
-            <Pagination
-              page={page}
-              total={totalPages}
-              onChange={(newPage) => {
-                setPage(newPage);
-                setEstado2(false);
-                handleFiltro(filtroAtual, newPage);
-              }}
-            />
-        </Group>
         <div
           className="alert alert-danger mt-4"
           role="alert"
