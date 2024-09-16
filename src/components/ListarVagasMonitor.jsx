@@ -356,7 +356,6 @@ useEffect(() => {
                                         {resposta.length !== 0 ? (
                                           resposta.map((vaga, index) => {
                                             if (vaga !== null) {
-                                              console.log(vaga);
                                               if (vaga.temporestante === 'Invalid Date') {
                                                 vaga.estacionado = 'N';
                                                 vaga.chegada = "";
