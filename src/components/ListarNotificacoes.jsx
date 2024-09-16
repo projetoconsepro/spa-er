@@ -392,9 +392,6 @@ const ListarNotificacoes = () => {
       });
   }
 
-  
-    
-
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
