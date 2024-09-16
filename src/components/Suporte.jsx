@@ -119,7 +119,7 @@ const Suporte = () => {
                     <Text size="sm" color="dimmed">
                       O horário de funcionamento do estacionamento rotativo é
                       das 9h às 18h, de segunda a sexta-feira, e aos sábados até
-                      às 13h.
+                      às 12h.
                     </Text>
                   </Accordion.Panel>
                 </Accordion.Item>

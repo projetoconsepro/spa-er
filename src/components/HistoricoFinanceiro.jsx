@@ -44,6 +44,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
           valor: Math.abs(item.valor),
           data: ArrumaHora(item.data),
           tipo: item.tipo,
+          placa: item.placa,
         }));
         for (let i = 0; i < newData.length; i++) {
           if (newData[i].tipo === "credito") {
@@ -92,6 +93,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
             valor: Math.abs(item.valor),
             data: ArrumaHora(item.data),
             tipo: item.tipo,
+            placa: item.placa,
           }));
           for (let i = 0; i < newData.length; i++) {
             if (newData[i].tipo === "credito") {
@@ -190,6 +192,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
                       : item.tipo === "Transferencia de credito"
                       ? "Transferencia de crédito"
                       : item.tipo}
+                      {item.placa && <span> - {item.placa}</span>}
                   </div>
                 </div>
                 <div className="col-5 p-0">

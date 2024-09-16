@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
-import { ActionIcon, Button, Grid, Loader, Modal, Text, Group, Pagination } from "@mantine/core";
+import { ActionIcon, Button, Grid, Loader, Modal, Text } from "@mantine/core";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import ImpressaoTicketNotificacao from "../util/ImpressaoTicketNotificacao";
@@ -34,9 +34,6 @@ const ListarNotificacoes = () => {
   const [onCloseError, setOnCloseError] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
   const [estadoModal, setEstadoModal] = useState("select");
-  const [filtroAtual, setFiltroAtual] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const atualiza = (index) => {
@@ -232,13 +229,12 @@ const ListarNotificacoes = () => {
     handleFiltro(consulta);
   };
 
-  const handleFiltro = (where, page) => { 
-    setFiltroAtual(where);
+  const handleFiltro = (where) => {
     setEstadoLoading(true);
     const requisicao = createAPI();
     const base64 = btoa(where);
     requisicao
-      .get(`/notificacao/?query=${base64}`, { params: { page } })
+      .get(`/notificacao/?query=${base64}`)
       .then((response) => {
         setEstadoLoading(false);
         if (response.data.msg.resultado) {
@@ -262,7 +258,6 @@ const ListarNotificacoes = () => {
             checked: false,
           }));
           setData(newData);
-          setTotalPages(response.data.totalPages);
         } else {
           setData([]);
           setEstado(true);
@@ -807,18 +802,6 @@ const ListarNotificacoes = () => {
             <Loader />
           </div>
         )}
-          <Group position="center" mb="md">
-         
-            <Pagination
-              page={page}
-              total={totalPages}
-              onChange={(newPage) => {
-                setPage(newPage);
-                setEstado2(false);
-                handleFiltro(filtroAtual, newPage);
-              }}
-            />
-        </Group>
         <div
           className="alert alert-danger mt-4"
           role="alert"
