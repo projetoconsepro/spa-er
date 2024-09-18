@@ -641,20 +641,23 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                             onChange={(e) => setInputNome(e.target.value)}
                           />
                           
-                          <div>
-                            <div className="mt-2 mb-3">Selecione o tipo:</div>
+                          <div className="mb-4">
+                            <div className="mt-4 mb-3">Selecione o tipo:</div>
                             <Radio.Group
                               name="Escolha algum opção"
                               onChange={(e) => setRadioTipo(e)}
                             >
-                              <Grid>
-                                <Grid.Col span={12}>
-                                  <Radio value="'PAGO'" label="Pago" />
-                                </Grid.Col>
-                                <Grid.Col span={12}>
-                                  <Radio value="'PENDENTE'" label="Pendente" />
-                                </Grid.Col>
-                              </Grid>
+                                <Grid>
+                                  <Grid.Col span={12}>
+                                    <Radio value="" label="Todos" />
+                                  </Grid.Col>
+                                  <Grid.Col span={12}>
+                                    <Radio value="'PAGO'" label="Pago" />
+                                  </Grid.Col>
+                                  <Grid.Col span={12}>
+                                    <Radio value="'PENDENTE'" label="Pendente" />
+                                  </Grid.Col>
+                                </Grid>
                             </Radio.Group>
                           </div>
                         </div>
