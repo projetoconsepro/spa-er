@@ -216,35 +216,42 @@ const ListarNotificacoesAdmin = () => {
       });
   };
 
-  const imagens = (item) => {
+    const imagens = async (item) => {
     const requisicao = createAPI();
-
-    requisicao
-      .get(`/notificacao/imagens/${item.id_notificacao}`)
-      .then((response) => {
-        const newData =
+  
+    try {
+      let response = await requisicao.get(`/notificacao/imagens/${item.id_notificacao}`);
+      let newData =
+        response.data.data && response.data.data.length > 0
+          ? response.data.data.map((item) => ({
+              imagem: item.imagem ? item.imagem : undefined,
+            }))
+          : undefined;
+      if (!newData || newData.every((item) => item.imagem === undefined)) {
+        response = await requisicao.get(`/trigger/imagens/${item.id_notificacao}`);
+        newData =
           response.data.data && response.data.data.length > 0
             ? response.data.data.map((item) => ({
                 imagem: item.imagem ? item.imagem : undefined,
               }))
             : undefined;
-        setDataImagem(newData);
-      })
-      .catch((error) => {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("perfil");
-        } else {
-          console.log(error);
-        }
-      });
-
+      }
+  
+      setDataImagem(newData);
+    } catch (error) {
+      if (
+        error?.response?.data?.msg === "Cabeçalho inválido!" ||
+        error?.response?.data?.msg === "Token inválido!" ||
+        error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"
+      ) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("perfil");
+      } else {
+        console.log(error);
+      }
+    }
+  
     open();
   };
 
