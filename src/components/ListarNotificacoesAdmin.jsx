@@ -227,7 +227,6 @@ const ListarNotificacoesAdmin = () => {
               imagem: item.imagem ? item.imagem : undefined,
             }))
           : undefined;
-  console.log(newData);
       if (!newData || newData.every((item) => item.imagem === undefined)) {
         response = await requisicao.get(`/trigger/imagens/${item.id_notificacao}`);
         newData =
