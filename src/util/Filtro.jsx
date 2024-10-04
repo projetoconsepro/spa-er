@@ -311,7 +311,8 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         selectedOption.value === "Tipo financeiro" ||
         selectedOption.value === "Perfil" ||
         selectedOption.value === "DataHora" ||
-        selectedOption.value === "PeriodoHora"
+        selectedOption.value === "PeriodoHora" || 
+        selectedOption.value === "Nome" && nome === "ListarNotificacoesAdmin"
       ) {
         setCardBody("card-body8 d-flex flex-column text-black");
       } else if (selectedOption.value === "Motivo") {
@@ -363,8 +364,22 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
           break;
         case "Nome":
           if (nome === "ListarNotificacoesAdmin") {
-            consulta = `{"where": [{"field": "tipo", "operator": "=", "value": "${radioTipo}"},{ "field": "nome", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
-          } else{
+            let whereClauses = [
+              {"field": "tipo", "operator": "=", "value": radioTipo},
+              {"field": "nome", "operator": "LIKE", "value": `%${inputNome}%`}
+            ];
+
+            if (valuePeriodo[1] != null) {
+              const data = FormatDate(valuePeriodo[1]);
+              const data2 = await calculateFinalDate(data);
+              whereClauses.push({
+                "field": "periodo",
+                "operator": "BETWEEN",
+                "value": FormatDate(valuePeriodo[0]), data2
+              });
+            }
+           consulta = JSON.stringify({ where: whereClauses });
+          } else {
           consulta = `{"where": [{ "field": "nome", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
         }
           break;
@@ -634,14 +649,26 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                       
                       nome === "ListarNotificacoesAdmin" ? (
                         <div>
-                          <div className="mt-4 mb-1">Digite o nome:</div>
+                          <div className="mt-3 mb-1">Digite o nome:</div>
                           <Input
                             icon={<IconUser size={16} />}
                             placeholder="Digite o nome"
                             onChange={(e) => setInputNome(e.target.value)}
                           />
-                          
-                          <div className="mb-4">
+                          <div className="mb-3">
+                              <div className="mt-4 mb-1">
+                              Selecione a data de início e fim (opcional):
+                              </div>
+                              <DatePickerInput
+                                type="range"
+                                locale="pt-br"
+                                allowSingleDateInRange
+                                placeholder="Selecione o periodo"
+                                value={valuePeriodo}
+                                onChange={setValuePeriodo}
+                              />
+                            </div>
+                          <div className="mb-5">
                             <div className="mt-4 mb-3">Selecione o tipo:</div>
                             <Radio.Group
                               name="Escolha algum opção"
@@ -659,7 +686,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                                   </Grid.Col>
                                 </Grid>
                             </Radio.Group>
-                          </div>
+                          </div>     
                         </div>
                       ) : (
                                                     <div>
