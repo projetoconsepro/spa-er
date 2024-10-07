@@ -218,7 +218,7 @@ const ListarVeiculos = () => {
               nofityvar[i] = { notifi: "notify2" };
               notificacao[i] = { estado: false };
             }
-          } else {
+          } else { 
             EnviarNotificacao(
               calcularValidade2(
                 response.data.data[i].chegada,
@@ -231,7 +231,7 @@ const ListarVeiculos = () => {
             resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
             mostrardiv[i] = { estado: false };
             resposta[i].notificacoesVaga =
-              response.data.data[i].numero_notificacoes_pendentess;
+              response.data.data[i].numero_notificacoes_pendentes;
             resposta[i].vaga = response.data.data[i].numerovaga;
             resposta[i].estacionado =
               "Estacionado - Vaga: " + response.data.data[i].numerovaga;
@@ -241,10 +241,10 @@ const ListarVeiculos = () => {
             resposta[i].temporestante = calcularValidade(
               response.data.data[i].chegada,
               response.data.data[i].tempo
-            );
+            ); 
             const diffDate = FormatDate(response.data.data[i].date);
             resposta[i].data = `${diffDate} - ${resposta[i].temporestante}`;
-            if (response.data.data[i].numero_notificacoes_pendentess > 0) {
+            if (response.data.data[i].numero_notificacoes_pendentes > 0) {
               resposta[i].textoestacionado = "Clique aqui para regularizar";
             }
             if (response.data.data[i].numero_notificacoes_pendentes === 0) {
@@ -886,7 +886,7 @@ const ListarVeiculos = () => {
             </div>
             {mostrar2[index].estado ? (
               <div className="mb-1">
-                {link.notificacoesVaga > 0 ? (
+                {link.notificacoesVaga > 0 ? (        
                   <div className="card border-0">
                     <div className="card-body9">
                       <div className="d-flex align-items-center justify-content-between">
