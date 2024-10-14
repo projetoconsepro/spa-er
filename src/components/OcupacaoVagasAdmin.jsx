@@ -8,6 +8,7 @@ import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Group, Loader, Pagination } from "@mantine/core";
 import createAPI from "../services/createAPI";
+import {ArrumaHora3} from "../util/ArrumaHora";
 
 const OcupacaoVagasAdmin = () => {
   const [data, setData] = useState([]);
@@ -27,13 +28,6 @@ const OcupacaoVagasAdmin = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-  function ArrumaHora(data, hora) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    return data4;
-  }
 
   const imprimir = () => {
     const dataD = [...data.map((item) => ([item.placa, item.data + ' - ' + item.chegada, 
@@ -111,7 +105,7 @@ const OcupacaoVagasAdmin = () => {
                 item.horafinal[2],
               saida: item.saida,
               local: item.local,
-              data: ArrumaHora(item.data),
+              data: ArrumaHora3(item.data),
               estado: false,
               placa: item.placa,
               regularizacao: item.regularizacao,
@@ -177,7 +171,7 @@ const OcupacaoVagasAdmin = () => {
           item.horafinal[2],
         saida: item.saida,
         local: item.local,
-        data: ArrumaHora(item.data),
+        data: ArrumaHora3(item.data),
         estado: false,
         placa: item.placa,
         regularizacao: item.regularizacao,

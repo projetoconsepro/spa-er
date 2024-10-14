@@ -11,6 +11,7 @@ import createAPI from '../services/createAPI';
 import ptLocale from "@fullcalendar/core/locales/pt";
 import { IconCalendar } from "@tabler/icons-react";
 import Swal from "sweetalert2";
+import {FormatDate} from "../util/formatDate";
 
 const Feriados = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -20,16 +21,6 @@ const Feriados = () => {
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [data, setData] = useState({});
 
-  function formatDate (date) {
-    const data = new Date(date);
-    const dia = data.getUTCDate();
-    const mes = data.getUTCMonth() + 1; 
-    const ano = data.getUTCFullYear();
-    const dataFormatada = `${ano}-${mes < 10 ? '0' : ''}${mes}-${dia < 10 ? '0' : ''}${dia}`;
-
-    return dataFormatada;
-  }
-
   useEffect(() => {
     const requisicao = createAPI();
     requisicao
@@ -38,7 +29,7 @@ const Feriados = () => {
       if (response.data.msg.resultado) {
         const newData = response.data.data.map((item) => ({
           title: item.feriado,
-          start: formatDate(item.data),
+          start: FormatDate(item.data),
         }));
         setData(newData)
       }

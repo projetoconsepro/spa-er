@@ -7,6 +7,7 @@ import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
 import { Button, Group, Pagination } from "@mantine/core";
 import { IconReload } from "@tabler/icons-react";
+import {ArrumaHora3} from "../util/ArrumaHora";
 
 const HistoricoVeiculo = () => {
   const [data, setData] = useState([]);
@@ -16,14 +17,6 @@ const HistoricoVeiculo = () => {
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [user2, setUser2] = useState(null);
 
-  function ArrumaHora(data, hora) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    return data4;
-  }
-
-  
   const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
 
@@ -85,7 +78,7 @@ const HistoricoVeiculo = () => {
                 item.horafinal[2],
               saida: item.saida,
               local: item.local,
-              data: ArrumaHora(item.data),
+              data: ArrumaHora3(item.data),
               dataFixed: item.data,
               estado: false,
               pago: item.pago,
@@ -204,7 +197,7 @@ const HistoricoVeiculo = () => {
           saida: item.saida,
           local: item.local,
           tempo: item.tempo,
-          data: ArrumaHora(item.data),
+          data: ArrumaHora3(item.data),
           estado: false,
           pago: item.pago,
           placa: item.placa,

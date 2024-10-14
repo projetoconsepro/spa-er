@@ -8,6 +8,8 @@ import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import { Input, Loader, PasswordInput } from "@mantine/core";
 import { IconClipboardText, IconLock, IconMail, IconPhone, IconUser } from "@tabler/icons-react";
 import { IconLockCheck } from "@tabler/icons-react";
+import extrairNumeros from "../util/extrairNumeros";
+
 
 const RegisterPage = () => {
     const { register } = useContext(AuthContext);
@@ -33,9 +35,6 @@ const RegisterPage = () => {
         FuncTrocaComp( "LoginPage");
     }
 
-    function extrairNumeros(string) {
-        return string ? string.replace(/\D/g, '') : string;
-    }
 
     const handleSubmit = async (e) => {
         const checkValidate = document.getElementById("flexCheckDefault").checked;

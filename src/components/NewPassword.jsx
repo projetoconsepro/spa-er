@@ -8,6 +8,7 @@ import { Button, Input, PasswordInput } from "@mantine/core";
 import { IconLock, IconPhone } from "@tabler/icons-react";
 import { IconLockCheck } from "@tabler/icons-react";
 import ReactInputMask from "react-input-mask";
+import extrairNumeros from "../util/extrairNumeros";
 
 const NewPassword = () => {
   const [senha, setSenha] = useState("");
@@ -20,9 +21,6 @@ const NewPassword = () => {
   const [telefone] = useState(localStorage.getItem("telefone"));
   const [input, setInput] = useState("");
 
-  function extrairNumeros(string) {
-    return string ? string.replace(/\D/g, '') : string;
-}
 
   const handleSubmit = async () => {
 

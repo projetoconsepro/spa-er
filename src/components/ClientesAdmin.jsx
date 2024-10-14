@@ -42,6 +42,7 @@ import Cronometro from "./Cronometro";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import createAPI from "../services/createAPI";
+import extrairNumeros from "../util/extrairNumeros";
 
 const ClientesAdmin = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -91,10 +92,6 @@ const ClientesAdmin = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-  function extrairNumeros(string) {
-    return string ? string.replace(/\D/g, "") : string;
-  }
 
   useEffect(() => {
     if (step >= 1 && step <= 4) {
