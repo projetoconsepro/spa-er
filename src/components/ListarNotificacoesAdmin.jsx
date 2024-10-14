@@ -10,6 +10,7 @@ import { Carousel } from "@mantine/carousel";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
+import {ArrumaHora3, ArrumaHora2} from "../util/ArrumaHora";
 
 const ListarNotificacoesAdmin = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -30,20 +31,6 @@ const ListarNotificacoesAdmin = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
-  function ArrumaHora(data, hora) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    return data4;
-  }
-
-  function ArrumaHora2(data) {
-    const data2 = data.split("T");
-    const data6 = data2[1].split(":");
-    const data5 = data6[0] - 3 + ":" + data6[1] + ":";
-    const data7 = data5 + data6[2].split(".")[0];
-    return data7;
-  }
 
   const createPDF = () => {
     const nomeArquivo = "Relatório de irregularidades";
@@ -171,7 +158,7 @@ const ListarNotificacoesAdmin = () => {
         if (response.data.msg.resultado) {
           setEstado(false);
           const newData = response.data.data.map((item) => ({
-            data: ArrumaHora(item.data),
+            data: ArrumaHora3(item.data),
             placa: item.veiculo.placa,
             cancelada: item.cancelada,
             cancelada_motivo: item.cancelada_motivo,
@@ -335,7 +322,7 @@ const ListarNotificacoesAdmin = () => {
         if (response.data.msg.resultado) {
           setEstado(false);
           const newData = response.data.data.map((item) => ({
-            data: ArrumaHora(item.data),
+            data: ArrumaHora3(item.data),
             placa: item.veiculo.placa,
             cancelada: item.cancelada,
             cancelada_motivo: item.cancelada_motivo,

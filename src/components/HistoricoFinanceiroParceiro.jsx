@@ -5,6 +5,7 @@ import Filtro from "../util/Filtro";
 import { Badge, Group, Pagination } from "@mantine/core";
 import { IconCash } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
+import {ArrumaHora} from "../util/ArrumaHora";
 
 const HistoricoFinanceiroParceiro = () => {
   const [resposta, setResposta] = useState([]);
@@ -24,14 +25,6 @@ const HistoricoFinanceiroParceiro = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = resposta.slice(indexOfFirstItem, indexOfLastItem);
 
-  function ArrumaHora(data) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    const data6 = data2[1].split(":");
-    const data5 = data4 + " " + (data6[0] - 3) + ":" + data6[1];
-    return data5;
-  }
 
   useEffect(() => {
     const requisicao = createAPI();

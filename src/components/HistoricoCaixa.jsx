@@ -6,19 +6,13 @@ import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
 import { Button } from "@mantine/core";
+import {ArrumaHora3} from "../util/ArrumaHora";
 
 const HistoricoCaixa = () => {
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
-
-  function ArrumaHora(data, hora) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    return data4;
-  }
 
   const createPDF = () => {
     const dataD = [];
@@ -98,7 +92,7 @@ const HistoricoCaixa = () => {
       .get(`/turno/caixa/admin/?query=${passar}`)
       .then((response) => {
         const newData = response.data.data.map((item) => ({
-          data: ArrumaHora(item.data),
+          data: ArrumaHora3(item.data),
           nome: item.nome,
           abertura: item.hora_abertura,
           fechamento: item.hora_fechamento,
@@ -139,7 +133,7 @@ const HistoricoCaixa = () => {
       .then((response) => {
         setEstadoLoading(false);
         const newData = response.data.data.map((item) => ({
-          data: ArrumaHora(item.data),
+          data: ArrumaHora3(item.data),
           nome: item.nome,
           abertura: item.hora_abertura,
           fechamento: item.hora_fechamento,

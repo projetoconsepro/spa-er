@@ -4,6 +4,7 @@ import VoltarComponente from '../util/VoltarComponente'
 import FuncTrocaComp from '../util/FuncTrocaComp'
 import { Button, Divider } from '@mantine/core'
 import createAPI from '../services/createAPI'
+import validarPlaca from "../util/validarPlaca";
 
 const RegistrarVeiculo = () => {
     const [placa, setPlaca] = useState("placa")
@@ -35,18 +36,6 @@ const RegistrarVeiculo = () => {
     const user2 = JSON.parse(user);
     const uppercase = teste.toUpperCase();
     const veiculo = createAPI();
-
-
-    function validarPlaca(placa) {
-        const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-        const regexPlacaNova = /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/;
-
-        if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
-          return true;
-        } else {
-          return false;
-        }
-      }
 
       let estadoIf = false;
 

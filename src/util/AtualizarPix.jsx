@@ -6,6 +6,8 @@ import Select from "react-select";
 import 'dayjs/locale/pt-br';
 import { IconAlertCircle } from '@tabler/icons-react';
 import moment from 'moment';
+import {FormatDate} from "../util/formatDate";
+
 
 const AtualizarPix = ({ nome, onConsultaSelected, onLoading }) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -20,15 +22,6 @@ const AtualizarPix = ({ nome, onConsultaSelected, onLoading }) => {
   const [dataHora, setDataHora] = useState("09:00");
   const [dataHora2, setDataHora2] = useState("18:00");
 
-  const FormatDate = (date) => {
-    const data = new Date(date);
-    const year = data.getFullYear();
-    const month = String(data.getMonth() + 1).padStart(2, '0');
-    const day = String(data.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-
-    return formattedDate;
-  }
 
   function calculateFinalDate(initialDate) {
     const parsedDate = moment(initialDate);
