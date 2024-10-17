@@ -56,19 +56,26 @@ const ListarVeiculos = () => {
   const [divError, setDivError] = useState(false);
   const [encerramento, setEncerramento] = useState("");
   const [ModalContent, setModalContent] = useState("ModalTermos");
+  const dataAtual = new Date();
+  const horasAtuais = dataAtual.getHours();
+  const minutosAtuais = dataAtual.getMinutes();
+  const tempoLimite = "17:35:00";
+  const condicaoHorario60 = (horasAtuais >= 17 && minutosAtuais >= 30 && horasAtuais <= 18);
+  const condicaoHorario90 = (horasAtuais >= 17 && horasAtuais <= 18);
+  const condicaoHorario120 = (horasAtuais == 16 && minutosAtuais >= 30) || (horasAtuais == 17 && horasAtuais <= 18);
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = btoa(unescape(encodeURIComponent(localStorage.getItem("token"))));
-    const id_usuario = btoa(user.id_usuario);
-    if (window.ReactNativeWebView) {
-      const data = {
-        type: "listarVeiculos",
-        token: token,
-        id_usuario: id_usuario,
-      };
-      window.ReactNativeWebView.postMessage(JSON.stringify(data));
-    }
-    
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = btoa(unescape(encodeURIComponent(localStorage.getItem("token"))));
+  const id_usuario = btoa(user.id_usuario);
+  if (window.ReactNativeWebView) {
+    const data = {
+      type: "listarVeiculos",
+      token: token,
+      id_usuario: id_usuario,
+    };
+    window.ReactNativeWebView.postMessage(JSON.stringify(data));
+  }
+
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
     const tempo1 = buttonIndex;
@@ -271,7 +278,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -291,7 +298,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -314,7 +321,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -455,7 +462,7 @@ const ListarVeiculos = () => {
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
             error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
           ) {
             localStorage.removeItem("user");
             localStorage.removeItem("token");
@@ -545,7 +552,7 @@ const ListarVeiculos = () => {
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
             error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
           ) {
             localStorage.removeItem("user");
             localStorage.removeItem("token");
@@ -641,93 +648,93 @@ const ListarVeiculos = () => {
         size="xl"
         title= {ModalContent === "Comprovante" ?"Comprovante de estacionamento:" : "Aviso!"}
       >
-       {ModalContent === "Comprovante" ? (
-        <>
-        <div
-          className="rounded border border-gray p-3 text-center"
-          id="conteudoParaPDF"
-        >
-          <div className="mb-4">CONSEPRO TAQUARA</div>
-          <Divider my="sm" size="md" variant="dashed" />
-          <div>
-            <h6>Tipo: Estacionamento avulso</h6>
-          </div>
-          <div>
-            <h6>
-              Início: {date} - {emissao}{" "}
-            </h6>
-          </div>
-          <div>
-            <h6>
-              Validade: {date} - {validade}{" "}
-            </h6>
-          </div>
-          <div>
-            <h6>Placa: {data2.placa}</h6>
-          </div>
-          <div>
-            <h6>Tempo: {data2.tempoCredito}</h6>
-          </div>
-          <div>
-            <h6>Valor: R$ {data2.valor}</h6>
-          </div>
-          <Divider my="sm" size="md" variant="dashed" />
-          CNPJ: 89.668.040/0001-10
-          <br />
-          Rua Julio de Castilhos, 2500
-          <br />
-          Taquara - RS
-          <br />
-          (51) 9 8660-4241
-          <br />
-        </div>
+        {ModalContent === "Comprovante" ? (
+          <>
+            <div
+              className="rounded border border-gray p-3 text-center"
+              id="conteudoParaPDF"
+            >
+              <div className="mb-4">CONSEPRO TAQUARA</div>
+              <Divider my="sm" size="md" variant="dashed" />
+              <div>
+                <h6>Tipo: Estacionamento avulso</h6>
+              </div>
+              <div>
+                <h6>
+                  Início: {date} - {emissao}{" "}
+                </h6>
+              </div>
+              <div>
+                <h6>
+                  Validade: {date} - {validade}{" "}
+                </h6>
+              </div>
+              <div>
+                <h6>Placa: {data2.placa}</h6>
+              </div>
+              <div>
+                <h6>Tempo: {data2.tempoCredito}</h6>
+              </div>
+              <div>
+                <h6>Valor: R$ {data2.valor}</h6>
+              </div>
+              <Divider my="sm" size="md" variant="dashed" />
+              CNPJ: 89.668.040/0001-10
+              <br />
+              Rua Julio de Castilhos, 2500
+              <br />
+              Taquara - RS
+              <br />
+              (51) 9 8660-4241
+              <br />
+            </div>
 
-        <div className="mt-4">
-          <Button
-            variant="gradient"
-            gradient={{ from: "teal", to: "indigo", deg: 300 }}
-            size="md"
-            radius="md"
-            fullWidth
-            rightIcon={<IconPrinter size={23} />}
-            loaderPosition="right"
-            loading={pdfLoading}
-            onClick={() => {
-              gerarJSON(data2);
-            }}
-          >
-            Salvar
-          </Button>
-        </div>
-        </>
-       ) :  (
-        <div className="rounded border border-gray p-3 modal-body" id="modalTexto">
-          <div className='text-center m-3'>
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+            <div className="mt-4">
+              <Button
+                variant="gradient"
+                gradient={{ from: "teal", to: "indigo", deg: 300 }}
+                size="md"
+                radius="md"
+                fullWidth
+                rightIcon={<IconPrinter size={23} />}
+                loaderPosition="right"
+                loading={pdfLoading}
+                onClick={() => {
+                  gerarJSON(data2);
+                }}
+              >
+                Salvar
+              </Button>
+            </div>
+          </>
+        ) :  (
+          <div className="rounded border border-gray p-3 modal-body" id="modalTexto">
+            <div className='text-center m-3'>
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
               <path fill="none" stroke="#424242" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 13V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13c0 1-.6 3-3 3m0 0H6c-1 0-3-.6-3-3v-2h12v2c0 2.4 2 3 3 3M9 7h8m-8 4h4"/>
-            </svg>
+              </svg>
+            </div>
+            <small >
+              Gostaríamos de informar que o CONSEPRO - Conselho Comunitário Pró-Segurança Pública de Taquara, a partir de agora,
+              estará reduzindo o uso de papel no estacionamento rotativo.
+              Para os usuários com débito automático ativo, não será mais impresso o comprovante de estacionamento.
+              Atualizando assim os termos de uso do Débito Automático!  <br />  <br />
+            </small>
+            <small>
+              Agradecemos a compreensão e colaboração de todos.
+            </small>
+            <div className="row">
+              <div className="col-12 text-center mt-3">
+                <Button onClick={() => closeModal()} variant="gradient" gradient={{ from: "teal", to: "indigo", deg: 300 }} size="md" radius="md" fullWidth>
+                  <Text>
+                    Ok!
+                  </Text>
+                </Button>
+              </div>
+            </div>
           </div>
-          <small >
-          Gostaríamos de informar que o CONSEPRO - Conselho Comunitário Pró-Segurança Pública de Taquara, a partir de agora, 
-          estará reduzindo o uso de papel no estacionamento rotativo. 
-          Para os usuários com débito automático ativo, não será mais impresso o comprovante de estacionamento.
-          Atualizando assim os termos de uso do Débito Automático!  <br />  <br /> 
-          </small>
-          <small>
-            Agradecemos a compreensão e colaboração de todos. 
-          </small>
-         <div className="row">
-          <div className="col-12 text-center mt-3">
-            <Button onClick={() => closeModal()} variant="gradient" gradient={{ from: "teal", to: "indigo", deg: 300 }} size="md" radius="md" fullWidth>
-              <Text>
-                Ok!
-              </Text>
-            </Button>
-          </div>
-         </div>
-          </div>
-       )
-       }
+        )
+        }
       </Modal>
       <div className="col-12 px-3 mb-7">
         <div className="row">
@@ -844,8 +851,8 @@ const ListarVeiculos = () => {
                             window.innerWidth > 1500
                               ? "w-25"
                               : window.innerWidth > 760
-                              ? "w-50"
-                              : ""
+                                ? "w-50"
+                                : ""
                           }
                         />
                       </div>
@@ -931,7 +938,7 @@ const ListarVeiculos = () => {
                     </Group>
                     <Grid>
                       <Grid.Col span={3}>
-                        <button
+                      <button
                           type="button"
                           className={`btn icon-shape icon-shape rounded align-center ${
                             selectedButton === "00:30:00"
@@ -946,49 +953,55 @@ const ListarVeiculos = () => {
                         </button>
                       </Grid.Col>
                       <Grid.Col span={3}>
+                        {condicaoHorario60 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            60
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          60
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario90 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center  ${
-                            selectedButton === "01:30:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:30:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            90
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center  ${
+                          selectedButton === "01:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          90
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario120 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "02:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("02:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            120
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                     </Grid>
                     <div className="h6 mt-3 mx-2">
@@ -1029,10 +1042,10 @@ const ListarVeiculos = () => {
                       <p className="text-start mb-3">
                         Determine o tempo (minutos):
                       </p>
-                    </Group>
-                    <Grid>
-                      <Grid.Col span={3}>
-                        <button
+                        </Group>
+                        <Grid>
+                          <Grid.Col span={3}>
+                          <button
                           type="button"
                           className={`btn icon-shape icon-shape rounded align-center ${
                             selectedButton === "00:30:00"
@@ -1047,51 +1060,57 @@ const ListarVeiculos = () => {
                         </button>
                       </Grid.Col>
                       <Grid.Col span={3}>
+                        {condicaoHorario60 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            60
-                          </Text>
-                        </button>
-                      </Grid.Col>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          60
+                        </Text>
+                      </button>
+                            )}
+                    </Grid.Col>
                       <Grid.Col span={3}>
+                        {condicaoHorario90 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:30:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:30:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            90
-                          </Text>
-                        </button>
-                      </Grid.Col>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          90
+                        </Text>
+                      </button>
+                            )}
+                    </Grid.Col>
                       <Grid.Col span={3}>
+                        {condicaoHorario120 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "02:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("02:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            120
-                          </Text>
-                        </button>
-                      </Grid.Col>
-                    </Grid>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
+                      </button>
+                            )}
+                          </Grid.Col>
+                        </Grid>
                     <div className="h6 mx-2 mt-3">
                       <p id="tempoCusto" className="text-end">
                         Esse tempo irá custar: R$ {valorcobranca2}{" "}
