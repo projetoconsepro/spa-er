@@ -15,7 +15,7 @@ const RegistrarEstacionamentoParceiro = () => {
   const [data, setData] = useState([]);
   const [placa, setPlaca] = useState("placa");
   const [textoPlaca, setTextoPlaca] = useState("");
-  const [limite, setLimite] = useState(8);
+  const [limite, setLimite] = useState(7);
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
@@ -587,7 +587,7 @@ const RegistrarEstacionamentoParceiro = () => {
     if (sim === true) {
       setLimite(10);
     } else {
-      setLimite(8);
+      setLimite(7);
     }
   };
 
