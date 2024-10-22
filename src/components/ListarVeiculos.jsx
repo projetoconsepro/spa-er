@@ -63,6 +63,14 @@ const ListarVeiculos = () => {
   const [tempoValidade, setTempoValidade] = useState();
   const [textoBotao, setTextoBotao] = useState("30");
   const [valorBotao, setValorBotao] = useState("00:30:00");
+  const dataAtual = new Date();
+  const horasAtuais = dataAtual.getHours();
+  const minutosAtuais = dataAtual.getMinutes();
+  const tempoLimite = "17:35:00";
+  const condicaoHorario60 = (horasAtuais >= 17 && minutosAtuais >= 30 && horasAtuais <= 18);
+  const condicaoHorario90 = (horasAtuais >= 17 && horasAtuais <= 18);
+  const condicaoHorario120 = (horasAtuais == 16 && minutosAtuais >= 30) || (horasAtuais == 17 && horasAtuais <= 18);
+
   if (window.ReactNativeWebView) {
     const data = {
       type: "listarVeiculos",
@@ -985,49 +993,55 @@ const ListarVeiculos = () => {
               </button>
                       </Grid.Col>
                       <Grid.Col span={3}>
+                        {condicaoHorario60 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            60
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          60
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario90 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center  ${
-                            selectedButton === "01:30:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:30:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            90
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center  ${
+                          selectedButton === "01:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          90
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario120 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "02:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("02:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            120
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                     </Grid>
                     <div className="h6 mt-3 mx-2">
@@ -1082,49 +1096,55 @@ const ListarVeiculos = () => {
               </button>
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario60 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            60
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          60
+                        </Text>
+                      </button>
+                            )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario90 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:30:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:30:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            90
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          90
+                        </Text>
+                      </button>
+                            )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario120 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "02:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("02:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            120
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
+                      </button>
+                            )}
                       </Grid.Col>
                     </Grid>
                     <div className="h6 mx-2 mt-3">
