@@ -30,6 +30,7 @@ import { IconX } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import jsPDF from "jspdf";
 import moment from "moment";
+import calcularValorCobranca from '../util/ValorCobranca';
 
 const ListarVeiculos = () => {
   const [resposta] = useState([]);
@@ -41,7 +42,7 @@ const ListarVeiculos = () => {
   const [nofityvar] = useState([]);
   const [saldoCredito, setSaldoCredito] = useState("0.00");
   const [vaga] = useState([]);
-  const [notificacao] = useState([]);
+  const [notificacao] = useState([]);  
   const [selectedButton, setSelectedButton] = useState("01:00:00");
   const [botaoOff, setBotaoOff] = useState(false);
   const [contador, setContador] = useState(0);
@@ -56,30 +57,35 @@ const ListarVeiculos = () => {
   const [divError, setDivError] = useState(false);
   const [encerramento, setEncerramento] = useState("");
   const [ModalContent, setModalContent] = useState("ModalTermos");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = btoa(unescape(encodeURIComponent(localStorage.getItem("token"))));
+  const id_usuario = btoa(user.id_usuario);
+  const [tempoValidade, setTempoValidade] = useState();
+  const [textoBotao, setTextoBotao] = useState("30");
+  const [valorBotao, setValorBotao] = useState("00:30:00");
+  const dataAtual = new Date();
+  const horasAtuais = dataAtual.getHours();
+  const minutosAtuais = dataAtual.getMinutes();
+  const tempoLimite = "17:35:00";
+  const condicaoHorario60 = (horasAtuais >= 17 && minutosAtuais >= 30 && horasAtuais <= 18);
+  const condicaoHorario90 = (horasAtuais >= 17 && horasAtuais <= 18);
+  const condicaoHorario120 = (horasAtuais == 16 && minutosAtuais >= 30) || (horasAtuais == 17 && horasAtuais <= 18);
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = btoa(unescape(encodeURIComponent(localStorage.getItem("token"))));
-    const id_usuario = btoa(user.id_usuario);
-    if (window.ReactNativeWebView) {
-      const data = {
-        type: "listarVeiculos",
-        token: token,
-        id_usuario: id_usuario,
-      };
-      window.ReactNativeWebView.postMessage(JSON.stringify(data));
-    }
-    
+  if (window.ReactNativeWebView) {
+    const data = {
+      type: "listarVeiculos",
+      token: token,
+      id_usuario: id_usuario,
+    };
+    window.ReactNativeWebView.postMessage(JSON.stringify(data));
+  }
+
   const handleButtonClick = (buttonIndex) => {
     setSelectedButton(buttonIndex);
     const tempo1 = buttonIndex;
-    if (tempo1 === "02:00:00") {
-      setValorCobranca2(valorcobranca * 2);
-    } else if (tempo1 === "01:00:00") {
+    if (tempo1) {
+      const valorcobranca = calcularValorCobranca(tempo1);
       setValorCobranca2(valorcobranca);
-    } else if (tempo1 === "01:30:00") {
-      setValorCobranca2(valorcobranca * 1.5);
-    } else if (tempo1 === "00:30:00") {
-      setValorCobranca2(valorcobranca / 2);
     }
   };
 
@@ -271,7 +277,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -291,7 +297,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -314,7 +320,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -361,18 +367,18 @@ const ListarVeiculos = () => {
   function mexerValores() {
     const tempo1 = selectedButton;
 
-    if (tempo1 === "02:00:00") {
-      return valorcobranca * 2;
-    } else if (tempo1 === "01:00:00") {
+    if (tempo1) {
+      const valorcobranca = calcularValorCobranca(tempo1);
       return valorcobranca;
-    } else if (tempo1 === "01:30:00") {
-      return valorcobranca * 1.5;
-    } else if (tempo1 === "00:30:00") {
-      return valorcobranca / 2;
     }
   }
 
+
   function handleClick(index) {
+    let validades;
+    if(resposta[index].chegada){
+    validades = calcularValidade(resposta[index].chegada, resposta[index].tempo);
+    setTempoValidade(validades);}
     setMostrar(!mostrar);
     mostrar2[index].estado = !mostrar2[index].estado;
   }
@@ -455,7 +461,7 @@ const ListarVeiculos = () => {
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
             error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
           ) {
             localStorage.removeItem("user");
             localStorage.removeItem("token");
@@ -545,7 +551,7 @@ const ListarVeiculos = () => {
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
             error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
           ) {
             localStorage.removeItem("user");
             localStorage.removeItem("token");
@@ -629,6 +635,51 @@ const ListarVeiculos = () => {
       setPdfLoading(false);
     }
   }
+
+  const calcularMinutos = (hora) => {
+    const horaLimite = new Date();
+    horaLimite.setHours(18, 0, 0, 0);
+    const diferencaMinutos = horaLimite - hora;
+    return Math.max(Math.floor(diferencaMinutos / 60000) + 1, 0);
+  };
+
+  const atualizarBotao = (hora) => {
+    const minutosAte = calcularMinutos(hora);
+    setTextoBotao(minutosAte.toString().padStart(2, '0'));
+    setValorBotao(`00:${minutosAte.toString().padStart(2, '0')}:00`);
+  };
+
+  const verificarTempo = () => {
+    const agora = new Date();
+    const tempoAtual = agora.getHours() * 60 + agora.getMinutes();
+    const tempoLimite = 17 * 60 + 30;
+    const tempoFim = 18 * 60; 
+
+    if (tempoValidade) {
+      const [horas, minutos, segundos] = tempoValidade.split(':').map(Number);
+      const dataValidade = new Date();
+      dataValidade.setHours(horas, minutos, segundos, 0);
+      const tempoValidadeMinutos = dataValidade.getHours() * 60 + dataValidade.getMinutes();
+
+      if (tempoValidadeMinutos > tempoLimite) {
+        atualizarBotao(dataValidade);
+        return;
+      }
+    }
+
+    if (tempoAtual > tempoLimite && tempoAtual < tempoFim) {
+      atualizarBotao(agora);
+    } else {
+      setTextoBotao("30");
+      setValorBotao("00:30:00");
+    }
+  };
+
+  useEffect(() => {
+    verificarTempo();
+    const intervalo = setInterval(verificarTempo, 60000); 
+    return () => clearInterval(intervalo);
+  }, [tempoValidade]);
 
   return (
     <>
@@ -931,64 +982,66 @@ const ListarVeiculos = () => {
                     </Group>
                     <Grid>
                       <Grid.Col span={3}>
-                        <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "00:30:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("00:30:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            30
-                          </Text>
-                        </button>
+                      <button
+                type="button"
+                className={`btn icon-shape icon-shape rounded align-center ${
+                  selectedButton === valorBotao ? "corTempoSelecionado" : "corTempo"
+                }`}
+                onClick={() => handleButtonClick(valorBotao)}
+              >
+                <Text fz="lg" weight={700}>{textoBotao}</Text>
+              </button>
                       </Grid.Col>
                       <Grid.Col span={3}>
+                        {condicaoHorario60 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            60
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          60
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario90 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center  ${
-                            selectedButton === "01:30:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:30:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            90
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center  ${
+                          selectedButton === "01:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          90
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario120 ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "02:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("02:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            120
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
+                      </button>
+                        )}
                       </Grid.Col>
                     </Grid>
                     <div className="h6 mt-3 mx-2">
@@ -1032,64 +1085,66 @@ const ListarVeiculos = () => {
                     </Group>
                     <Grid>
                       <Grid.Col span={3}>
-                        <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "00:30:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("00:30:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            30
-                          </Text>
-                        </button>
+                      <button
+                type="button"
+                className={`btn icon-shape icon-shape rounded align-center ${
+                  selectedButton === valorBotao ? "corTempoSelecionado" : "corTempo"
+                }`}
+                onClick={() => handleButtonClick(valorBotao)}
+              >
+                <Text fz="lg" weight={700}>{textoBotao}</Text>
+              </button>
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario60 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            60
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          60
+                        </Text>
+                      </button>
+                            )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario90 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "01:30:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("01:30:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            90
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "01:30:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("01:30:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          90
+                        </Text>
+                      </button>
+                            )}
                       </Grid.Col>
                       <Grid.Col span={3}>
+                      {condicaoHorario120 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "02:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("02:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            120
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
+                      </button>
+                            )}
                       </Grid.Col>
                     </Grid>
                     <div className="h6 mx-2 mt-3">
