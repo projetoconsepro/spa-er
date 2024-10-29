@@ -8151,6 +8151,33 @@ textarea.form-control-lg {
     padding: 1.25rem 1.5rem;
 }
 
+.card-body19 {
+    height: 12.5rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+.card-body20 {
+    height: 10.7rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-body11 {
+    height: 7rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #ffffff;
+    background-clip: border-box;
+    border: 0.0625rem solid rgba(17, 24, 39, 0.125);
+    border-radius: 0.5rem;
+}
+
 #divD[disabled]{
     pointer-events: none;
   opacity: 0.5;
@@ -13295,15 +13322,15 @@ textarea.form-control-lg {
 }
 
 .corTempo {
-    background: #3a58c8 !important;
+    background: #3381D4 !important;
     color: white;
-    border: 1px solid rgba(43, 135, 200, .80);
+    border: 1px solid #3381D4;
 }
 
 .corTempoSelecionado {
     background: white !important;
-    color: black !important;
-    border: 2px solid green  !important;
+    color: #3381D4 !important;
+    border: 2px solid #3381D4  !important;
 }
 
 .bg-green-50 {
