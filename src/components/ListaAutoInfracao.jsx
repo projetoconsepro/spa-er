@@ -11,6 +11,7 @@ import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
 import { Button, Group, Pagination } from "@mantine/core";
 import CarroLoading from "./Carregamento";
+import {ArrumaHora2, ArrumaHora3} from "../util/ArrumaHora";
 
 const ListaAutoInfracao = () => {
   const [data, setData] = useState([]);
@@ -29,21 +30,6 @@ const ListaAutoInfracao = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-  function ArrumaHora(data, hora) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    return data4;
-  }
-
-  function ArrumaHora2(data) {
-    const data2 = data.split("T");
-    const data6 = data2[1].split(":");
-    const data5 = data6[0] - 3 + ":" + data6[1] + ":";
-    const data7 = data5 + data6[2].split(".")[0];
-    return data7;
-  }
 
   useEffect(() => {
     localStorage.removeItem("autoInfracao");
@@ -89,7 +75,7 @@ const ListaAutoInfracao = () => {
         if (response.data.msg.resultado) {
           setEstado(false);
           const newData = response.data.data.map((item) => ({
-            data: ArrumaHora(item.hora),
+            data: ArrumaHora3(item.hora),
             placa: item.placa,
             modelo: item.modelo,
             cor: item.cor,
@@ -155,7 +141,7 @@ const ListaAutoInfracao = () => {
         if (response.data.msg.resultado) {
           setEstado(false);
           const newData = response.data.data.map((item) => ({
-            data: ArrumaHora(item.hora),
+            data: ArrumaHora3(item.hora),
             placa: item.placa,
             modelo: item.modelo,
             cor: item.cor,

@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import "../pages/Style/styles.css";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import validarPlaca from "../util/validarPlaca";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import { Button, Divider, Grid, Text } from "@mantine/core";
@@ -567,18 +568,6 @@ const RegistrarVagaMonitor = () => {
     localStorage.removeItem("popup");
     localStorage.removeItem("id_vagaveiculo");
   };
-
-  function validarPlaca(placa) {
-    placa = placa.replace(/\s+/g, '');
-    const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-    const regexPlacaNova = /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/;
-
-    if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   const handleSubmit = async () => {
     setLoadingButton(true);

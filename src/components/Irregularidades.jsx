@@ -13,6 +13,7 @@ import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
 import { Button } from "@mantine/core";
 import ModalErroBanco from "./ModalErroBanco";
+import {ArrumaHora} from "../util/ArrumaHora";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -119,14 +120,6 @@ const Irregularidades = () => {
       });
   }
 
-  function ArrumaHora(data) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    const data6 = data2[1].split(":");
-    const data5 = data4 + " " + (data6[0] - 3) + ":" + data6[1];
-    return data5;
-  }
 
   const onClose = () => {
     setLoadingButton(false);

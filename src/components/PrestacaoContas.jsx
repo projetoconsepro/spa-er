@@ -9,6 +9,7 @@ import CarroLoading from '../components/Carregamento';
 import Filtro from '../util/Filtro';
 import createAPI from '../services/createAPI';
 import AtualizarPix from '../util/AtualizarPix';
+import formatNumero from '../util/formatNumero';
 
 const PrestacaoContas = () => {
   const [data, setData] = useState([]);
@@ -19,10 +20,6 @@ const PrestacaoContas = () => {
   const [estadoLoadingPix, setEstadoLoadingPix] = useState(false);
   const [mensagem, setMensagem] = useState('');
 
-
-  function formatNumero(number) {
-    return new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(number);
-  }
 
   function calcularTotaisPorCategoria(categoria, indice) {
     return [

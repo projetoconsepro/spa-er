@@ -11,6 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import VoltarComponente from "../util/VoltarComponente";
 import createAPI from "../services/createAPI";
+import extrairNumeros from "../util/extrairNumeros";
 
 const TransferirCreditoCliente = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -28,10 +29,6 @@ const TransferirCreditoCliente = () => {
     setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
-
-  function extrairNumeros(string) {
-    return string ? string.replace(/\D/g, "") : string;
-  }
 
   useEffect(() => {
     if (step >= 1 && step <= 4) {

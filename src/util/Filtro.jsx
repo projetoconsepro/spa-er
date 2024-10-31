@@ -24,6 +24,8 @@ import {
 import moment from "moment";
 import createAPI from "../services/createAPI";
 import InputMask from "react-input-mask";
+import {FormatDate} from "../util/formatDate";
+import extrairNumeros from "../util/extrairNumeros";
 
 const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -57,15 +59,6 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
   const [telefone, setTelefone] = useState("");
   const telefoneRef = useRef(null);
 
-  const FormatDate = (date) => {
-    const data = new Date(date);
-    const year = data.getFullYear();
-    const month = String(data.getMonth() + 1).padStart(2, "0");
-    const day = String(data.getDate()).padStart(2, "0");
-    const formattedDate = `${year}-${month}-${day}`;
-
-    return formattedDate;
-  };
 
   function calculateFinalDate(initialDate) {
     const parsedDate = moment(initialDate);
@@ -331,10 +324,6 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       setState(true);
     }
   };
-
-  function extrairNumeros(string) {
-    return string ? string.replace(/\D/g, "") : string;
-  }
 
   const handleSalvar = async () => {
     if (selectedOption !== null) {

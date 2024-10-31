@@ -26,10 +26,12 @@ import {
 import createAPI from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
+import {FormatDateBr} from "../util/formatDate";
 import { IconX } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import jsPDF from "jspdf";
 import moment from "moment";
+import calcularValidade from "../util/CalcularValidade";
 
 const ListarVeiculos = () => {
   const [resposta] = useState([]);
@@ -97,18 +99,6 @@ const ListarVeiculos = () => {
     return true;
   }
 
-  const calcularValidade = (horaInicio, duracao) => {
-    const [horas, minutos, segundos] = duracao.split(":").map(Number);
-    const dataInicio = new Date(`2000-01-01T${horaInicio}`);
-    const dataValidade = new Date(
-      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
-    );
-    const horaValidade = dataValidade.toLocaleTimeString("pt-BR", {
-      timeZone: "America/Sao_Paulo",
-    });
-    return horaValidade;
-  };
-
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
   });
@@ -161,16 +151,6 @@ const ListarVeiculos = () => {
     const timestamp = dataAtual.getTime();
 
     return timestamp;
-  };
-
-  const FormatDate = (date) => {
-    const data = new Date(date);
-    const year = data.getFullYear();
-    const month = String(data.getMonth() + 1).padStart(2, "0");
-    const day = String(data.getDate()).padStart(2, "0");
-    const formattedDate = `${day}/${month}/${year}`;
-
-    return formattedDate;
   };
 
   const atualizacomp = async () => {
@@ -242,7 +222,7 @@ const ListarVeiculos = () => {
               response.data.data[i].chegada,
               response.data.data[i].tempo
             );
-            const diffDate = FormatDate(response.data.data[i].date);
+            const diffDate = FormatDateBr(response.data.data[i].date);
             resposta[i].data = `${diffDate} - ${resposta[i].temporestante}`;
             if (response.data.data[i].numero_notificacoes_pendentess > 0) {
               resposta[i].textoestacionado = "Clique aqui para regularizar";
@@ -431,7 +411,7 @@ const ListarVeiculos = () => {
           if (response.data.msg.resultado === true) {
             setModalContent("Comprovante");
             setData2(response.data.data);
-            setDate(FormatDate(response.data.data.data));
+            setDate(FormatDateBr(response.data.data.data));
             setEmissao(response.data.data.chegada);
             const validade = await calcularValidade(
               response.data.data.chegada,
@@ -521,7 +501,7 @@ const ListarVeiculos = () => {
           if (response.data.msg.resultado === true) {
             setModalContent("Comprovante");
             setData2(response.data.data);
-            setDate(FormatDate(response.data.data.data));
+            setDate(FormatDateBr(response.data.data.data));
             setEmissao(response.data.data.chegada);
             const validade = await calcularValidade(
               response.data.data.chegada,

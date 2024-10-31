@@ -16,6 +16,7 @@ import { IconPrinter, IconReceipt } from "@tabler/icons-react";
 import ImpressaoTicketRegularizacao from "../util/ImpressaoTicketRegularizacao";
 import ModalErroBanco from "./ModalErroBanco";
 import { IconX } from "@tabler/icons-react";
+import {ArrumaHora} from "../util/ArrumaHora";
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -164,14 +165,6 @@ const ListarNotificacoes = () => {
       });
   };
 
-  function ArrumaHora(data) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    const data6 = data2[1].split(":");
-    const data5 = data4 + " " + (data6[0] - 3) + ":" + data6[1];
-    return data5;
-  }
 
   const startVagaVeiculo = async (localVagaVeiculo) => {
     const idrequisicao = `{"where": [{ "field": "vaga_veiculo", "operator": "=", "value": "${localVagaVeiculo}" }]}`;

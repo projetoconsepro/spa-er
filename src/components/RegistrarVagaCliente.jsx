@@ -11,6 +11,8 @@ import { FaCar } from "react-icons/fa";
 import createAPI from "../services/createAPI";
 import jsPDF from "jspdf";
 import { useDisclosure } from "@mantine/hooks";
+import {FormatDateBr} from "../util/formatDate";
+import calcularValidade from "../util/CalcularValidade";
 
 const RegistrarVagaCliente = () => {
   const [mensagem, setMensagem] = useState("");
@@ -44,17 +46,6 @@ const RegistrarVagaCliente = () => {
     }
   };
 
-  const calcularValidade = (horaInicio, duracao) => {
-    const [horas, minutos, segundos] = duracao.split(":").map(Number);
-    const dataInicio = new Date(`2000-01-01T${horaInicio}`);
-    const dataValidade = new Date(
-      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
-    );
-    const horaValidade = dataValidade.toLocaleTimeString("pt-BR", {
-      timeZone: "America/Sao_Paulo",
-    });
-    return horaValidade;
-  };
 
   async function gerarPDF() {
     const pdfWidth = 80;
@@ -188,16 +179,6 @@ const RegistrarVagaCliente = () => {
     }
   }
 
-  const FormatDate = (date) => {
-    const data = new Date(date);
-    const year = data.getFullYear();
-    const month = String(data.getMonth() + 1).padStart(2, "0");
-    const day = String(data.getDate()).padStart(2, "0");
-    const formattedDate = `${day}/${month}/${year}`;
-
-    return formattedDate;
-  };
-
   const handleSubmit = async () => {
     setLoadingButton(true);
     const requisicao = createAPI();
@@ -264,7 +245,7 @@ const RegistrarVagaCliente = () => {
           setLoadingButton(false);
           if (response.data.msg.resultado) {
             setData2(response.data.data);
-            setDate(FormatDate(response.data.data.data));
+            setDate(FormatDateBr(response.data.data.data));
             setEmissao(response.data.data.chegada)
             const validade = await calcularValidade(response.data.data.chegada, response.data.data.tempo)
             saldo()
