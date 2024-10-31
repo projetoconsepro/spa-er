@@ -741,7 +741,7 @@ const ListarVeiculos = () => {
                 <div className="h6 mb-0 d-flex align-items-center text-black text-opacity-75">
                   Seu saldo é de:
                 </div>
-                <div className="h1 mt-2 d-flex align-items-cente pb-5" style={{ color: "#15A3B3", fontSize: "32px", fontWeight: 700 }}>
+                <div className="h1 mt-2 d-flex align-items-cente pb-5" style={{ color: '5B5B5B', fontSize: "32px", fontWeight: 700 }}>
                   R$ {saldoCredito}
                 </div>
               
@@ -802,7 +802,7 @@ const ListarVeiculos = () => {
             <div id="" className={link.div}>
               <div className="row d-flex align-items-center justify-content-between pb-3">
                 <div className="col-9">
-                <div className="h2 mb-2 ms-1 d-flex align-items-center" style={{ color: '#3381D4', fontFamily: 'Inter', fontSize: '24px', fontStyle: 'normal', fontWeight: 700, lineHeight: 'normal' }}>
+                <div className="h2 mb-2 ms-1 d-flex align-items-center" style={{ color: '5B5B5B', fontFamily: 'Inter', fontSize: '24px', fontStyle: 'normal', fontWeight: 700, lineHeight: 'normal' }}>
 
                     {link.placa}
                   </div>
@@ -874,14 +874,14 @@ const ListarVeiculos = () => {
                   {mostrar2[index].estado ? null : (
                     <div className="ms-2 me-2">
                    <Button
-                    style={{ borderRadius: '5px', border: '2px solid #1099A8', backgroundColor: '#ffff', color: '#15A3B3', fontSize: '15px', fontWeight: 600, height: '40px' }}
+                    style={{ borderRadius: '5px', border: '2px solid #3381D4', backgroundColor: '#ffff', color: '#3381D4', fontSize: '15px', fontWeight: 600, height: '40px' }}
                     fullWidth
                     onClick={() => {
                       removerVeiculo(link.id_veiculo);
                     }}
                   >
                    <FaRegTrashAlt
-                          color="#1099A8"
+                          color='#3381D4'
                           size={22}/>
                     
                   </Button>
@@ -926,7 +926,7 @@ const ListarVeiculos = () => {
                 ) : mostrardiv[index].estado ? (
                   <div className="h6 mt-2 mx-4">
                     <Group position="apart">
-                      <p className="text-start mb-3 ms-1" style={{color: '#3381D4', fontSize: '17px', fontWeight: '600'}}>
+                      <p className="text-start mb-3 ms-1" style={{color: '5B5B5B', fontSize: '17px', fontWeight: '600'}}>
                         Determine o tempo (minutos)
                       </p>
                     </Group>
@@ -1027,7 +1027,7 @@ const ListarVeiculos = () => {
                 ) : (
                   <div className="h6 mx-4">
                     <Group position="apart">
-                    <p className="text-start mb-3 ms-1" style={{color: '#3381D4', fontSize: '17px', fontWeight: '600'}}>
+                    <p className="text-start mb-3 ms-1" style={{color: '5B5B5B', fontSize: '17px', fontWeight: '600'}}>
                         Determine o tempo (minutos)
                       </p>
                     </Group>
@@ -1082,20 +1082,21 @@ const ListarVeiculos = () => {
                             )}
                     </Grid.Col>
                       <Grid.Col span={3}>
-                        {condicaoHorario120 || link.temporestante > tempoLimite ? null : (
+                      {condicaoHorario120 || link.temporestante > tempoLimite ? null : (
                         <button
-                          type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
-                            selectedButton === "02:00:00"
-                              ? "corTempoSelecionado"
-                              : "corTempo"
-                          }`}
-                          onClick={() => handleButtonClick("02:00:00")}
-                        >
-                          <Text fz="lg" weight={700}>
-                            120
-                          </Text>
-                        </button>
+                        type="button"
+                        className={`btn icon-shape icon-shape rounded align-center ${
+                          selectedButton === "02:00:00"
+                            ? "corTempoSelecionado"
+                            : "corTempo"
+                        }`}
+                        onClick={() => handleButtonClick("02:00:00")}
+                      >
+                        <Text fz="lg" weight={700}>
+                          120
+                        </Text>
+                      </button>
+                            )}
                       </Grid.Col>
                     </Grid>
                     <div className="h6 mx-2 mt-2"> 
