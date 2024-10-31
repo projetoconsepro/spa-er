@@ -12,6 +12,7 @@ import Filtro from "../util/Filtro";
 import { ActionIcon, Group, Input, Loader, Pagination } from "@mantine/core";
 import { IconSearch, IconUserCircle } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
+import extrairNumeros from "../util/extrairNumeros";
 
 const UsuariosAdmin = () => {
   const [data, setData] = useState([]);
@@ -31,10 +32,6 @@ const UsuariosAdmin = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-  function extrairNumeros(string) {
-    return string ? string.replace(/\D/g, "") : string;
-  }
 
   useEffect(() => {
     const parametros = axios.create({

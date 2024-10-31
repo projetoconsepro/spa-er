@@ -7,6 +7,7 @@ import Logo from '../util/logoconseproof2.png';
 import jsPDF from "jspdf";
 import { Button, Divider } from "@mantine/core";
 import Swal from "sweetalert2";
+import formatNumero from '../util/formatNumero';
 
 const RelatorioMonitorAdmin = () => {
   const [monitor, setMonitor] = useState([]);
@@ -261,10 +262,6 @@ const RelatorioMonitorAdmin = () => {
     });
 
     doc.save(`Relatorio Monitor - ${RelatorioNew.nome}.pdf`);
-  }
-
-  function formatNumero(number) {
-    return new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(number);
   }
 
   return (

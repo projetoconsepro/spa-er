@@ -21,6 +21,7 @@ import {
 import { IconLock } from "@tabler/icons-react";
 import { FaCar, FaClipboard, FaCoins} from "react-icons/fa";
 import axios from "axios";
+import extrairNumeros from "../util/extrairNumeros";
 
 const LoginPage = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -36,9 +37,6 @@ const LoginPage = () => {
   const [emailDois, setEmailDois] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function extrairNumeros(string) {
-    return string ? string.replace(/\D/g, "") : string;
-  }
 
   useEffect(() => {
     localStorage.removeItem("SenhaDefault");
