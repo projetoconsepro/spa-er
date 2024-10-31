@@ -862,7 +862,7 @@ const ListarVeiculos = () => {
                     </div>
                   )}
                 <div className={`h6 d-flex align-items-center fs-6 text-start ms-1 ${notificacao[index].estado ? 'mt-4' : 'mt-2'}`}>                  <Button
-                    style={{ borderRadius: '5px', border: '2px solid #1099A8', backgroundColor: '#ffff', color: '#15A3B3', fontSize: '18px', fontWeight: 600, height: '40px' }}
+                    style={{ borderRadius: '5px', border: '2px solid #3381D4', backgroundColor: '#ffff', color: '#3381D4', fontSize: '18px', fontWeight: 600, height: '40px' }}
                     fullWidth
                     onClick={() => {
                       handleClick(index);
