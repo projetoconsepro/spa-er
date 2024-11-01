@@ -57,6 +57,7 @@ import RelatorioMonitorAdmin from '../../components/RelatorioMonitorAdmin';
 import ListarMovimentosAdmin from '../../components/ListarMovimentosAdmin';
 import ListarLogsMovimentosAdmin from '../../components/ListarLogsMovimentosAdmin';
 import RecargaAutomatica from '../../components/RecargaAutomatica';
+import HistoricoRecargaAuto from '../../components/HistoricoRecargaAuto';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -116,6 +117,7 @@ const componentesMap = {
     ListarMovimentosAdmin: <ListarMovimentosAdmin />,
     ListarLogsMovimentosAdmin: <ListarLogsMovimentosAdmin />,
     RecargaAutomatica: <RecargaAutomatica />,
+    HistoricoRecargaAuto: <HistoricoRecargaAuto />,
     Error: <Error />,
 };
 

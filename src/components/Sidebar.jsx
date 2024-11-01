@@ -25,7 +25,7 @@ import {
   MdOutlineSubdirectoryArrowRight,
   MdPayment,
 } from "react-icons/md";
-import { RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
+import { RiSettings5Fill, RiFileAddFill, RiHistoryFill } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import { BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
 import {
@@ -159,10 +159,12 @@ const Sidebar = () => {
           { icon: <FaParking />, name: "‎ Registrar Estacionamento", componente: "RegistrarEstacionamento" },
           { icon: <BsCashCoin />, name: "‎ Financeiro",
               subitem: [
-                  { icon: <MdPayment />, name: "‎ Recarga automática", componente: "RecargaAutomatica", className: commonStyles },
+                 
                   { icon: <BsCashCoin />, name: "‎ Adicionar Créditos", componente: "InserirCreditos", className: commonStyles },
                   { icon: <BiTransfer />, name: "‎ Transferir Créditos", componente: "TransferirCreditoCliente", className: commonStyles },
-                  { icon: <TbReportSearch />, name: "‎ Histórico", componente: "HistoricoFinanceiro", className: commonStyles },
+                  { icon: <TbReportSearch />, name: "‎ Histórico", componente: "HistoricoFinanceiro", className: commonStyles }, 
+                  { icon: <MdPayment />, name: "‎ Recarga automática", componente: "RecargaAutomatica", className: commonStyles },
+                  { icon: <RiHistoryFill />, name: "‎ Histórico Recarga Auto", componente: "HistoricoRecargaAuto", className: commonStyles },
               ]
           },
           { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "Irregularidades" },
