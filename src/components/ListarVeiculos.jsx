@@ -1,13 +1,13 @@
 import axios from "axios";
-import { FaBell, FaCarAlt, FaParking } from "react-icons/fa";
+import { FaBell, FaCarAlt, FaParking, FaRegTrashAlt } from "react-icons/fa";
 import { RxLapTimer } from "react-icons/rx";
-import { IoTrashSharp } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import "../pages/Style/styles.css";
 import Swal from "sweetalert2";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
+import { IoMdAdd } from "react-icons/io";
 import {
   Button,
   Divider,
@@ -176,7 +176,7 @@ const ListarVeiculos = () => {
         }
         for (let i = 0; i < response?.data?.data.length; i++) {
           resposta[i] = {};
-          resposta[i].div = `card-body10 mb-2`;
+          resposta[i].div = `card-body20 mb-2`;
           notificacao[i] = { estado: true };
           mostrar2[i] = { estado: false };
           mostrardiv[i] = { estado: true };
@@ -184,17 +184,17 @@ const ListarVeiculos = () => {
           resposta[i].placa = response.data.data[i].usuario;
           resposta[i].id_veiculo = response.data.data[i].id_veiculo;
           if (response.data.data[i].estacionado === "N") {
-            resposta[i].div = "card-body10 mb-2";
-            resposta[i].textoestacionado = "Clique aqui para estacionar";
+            resposta[i].div = "card-body20 mb-2";
+            resposta[i].textoestacionado = "Adicionar tempo";
             resposta[i].estacionado = "Não estacionado";
             resposta[i].temporestante = "";
             notificacao[i] = { estado: true };
             if (response.data.data[i].numero_notificacoes_pendentes === 0) {
-              resposta[i].div = "card-body10 mb-2";
+              resposta[i].div = "card-body20 mb-2";
               resposta[i].numero_notificacoes_pendentes = "Sem notificações";
               notificacao[i] = { estado: true };
             } else {
-              resposta[i].div = "card-body9 mb-2";
+              resposta[i].div = "card-body19 mb-2";
               resposta[i].numero_notificacoes_pendentes = `${
                 response.data.data[i].numero_notificacoes_pendentes
               } ${
@@ -214,8 +214,8 @@ const ListarVeiculos = () => {
               response.data.data[i].id_vaga_veiculo,
               response.data.data[i].usuario
             );
-            resposta[i].div = "card-body9 mb-2";
-            resposta[i].textoestacionado = "Clique aqui para adicionar tempo";
+            resposta[i].div = "card-body19 mb-2";
+            resposta[i].textoestacionado = "Adicionar tempo";
             mostrardiv[i] = { estado: false };
             resposta[i].notificacoesVaga =
               response.data.data[i].numero_notificacoes_pendentess;
@@ -232,7 +232,7 @@ const ListarVeiculos = () => {
             const diffDate = FormatDateBr(response.data.data[i].date);
             resposta[i].data = `${diffDate} - ${resposta[i].temporestante}`;
             if (response.data.data[i].numero_notificacoes_pendentess > 0) {
-              resposta[i].textoestacionado = "Clique aqui para regularizar";
+              resposta[i].textoestacionado = "Regularizar";
             }
             if (response.data.data[i].numero_notificacoes_pendentes === 0) {
               resposta[i].numero_notificacoes_pendentes = "Sem notificações";
@@ -734,42 +734,61 @@ const ListarVeiculos = () => {
             </Button>
           </div>
         </div>
-        <div className="card border-0 shadow">
-          <div className="card-body10">
-            <div className="d-flex align-items-center justify-content-between pb-3">
+        <div className="border-0 mt-3">
+          <div className="card-body11 shadow ">
+            <div className="d-flex align-items-center justify-content-between ">
               <div>
-                <div className="h6 mb-0 d-flex align-items-center">
+                <div className="h6 mb-0 d-flex align-items-center text-black text-opacity-75">
                   Seu saldo é de:
                 </div>
-                <div className="h1 mt-2 d-flex align-items-center">
+                <div className="h1 mt-2 d-flex align-items-cente pb-5" style={{ color: '5B5B5B', fontSize: "32px", fontWeight: 700 }}>
                   R$ {saldoCredito}
                 </div>
-                <Button
-                  variant="gradient"
-                  gradient={{ from: "green", to: "teal" }}
-                  radius="xl"
-                  className="mt-3"
-                  fullWidth
-                  onClick={() => {
-                    FuncTrocaComp("InserirCreditos");
-                  }}
-                >
-                  <IconSquareRoundedPlusFilled className="mx-1" />
-                  Adicionar saldo
-                </Button>
+              
               </div>
               <div>
                 <div className="d-flex align-items-center fw-bold">
-                  <IconChevronRight
-                    size={30}
-                    className="mx-1 mb-5"
-                    onClick={() => FuncTrocaComp("HistoricoFinanceiro")}
-                  />
+                    <button className="mx-1 mb-5" style={{ width: '43px', height: '41px', borderRadius: '100px', background: '#3381D4', border: 'none' }}
+                     onClick={() => {
+                      FuncTrocaComp("InserirCreditos");
+                    }}>
+                    <IoMdAdd color="white" size="30px" />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
+          <div className="row text-center d-flex flex-column justify-content-center align-items-center">
+           <div className="row g-2">
+           <div className="col-6 col-lg-4" style={{ paddingLeft: '10px' }}>
+        <button className="btn w-100 text-white" style={{ borderRadius: '5px', background: '#3381D4'}}
+          onClick={() => {
+            FuncTrocaComp("Configuracoes");
+          }}>
+      Débito automático
+    </button>
         </div>
+        
+        <div className="col-6 col-lg-4" style={{ paddingRight: '10px' }}>
+        <button className="btn w-100 text-white" style={{ borderRadius: '5px', background: '#1099A8'}}
+           onClick={() => {
+            FuncTrocaComp("Irregularidades");
+          }}>
+    Notificação
+  </button>        </div>
+       
+        <div className="col-12 col-lg-4 px-2">
+        <button className="btn w-100 text-white" style={{ borderRadius: '5px', background: 'linear-gradient(90deg, #4076F1 0%, #0CA57B 100%)' }}
+         onClick={() => {
+          FuncTrocaComp("CadastrarVeiculo");
+        }}>
+        <FaCarAlt size={20} className="mx-1" /> Cadastrar novo veículo
+          </button>
+        </div></div>
+      </div>
+    </div>
+        
+
 
         {divError ? (
           <Notification color="red" title="Aviso!" mt={12}>
@@ -779,46 +798,39 @@ const ListarVeiculos = () => {
         ) : null}
 
         {resposta.map((link, index) => (
-          <div className="card border-0 shadow mt-5" key={index}>
+          <div className="card border-0 shadow mt-4" key={index}>
             <div id="" className={link.div}>
               <div className="row d-flex align-items-center justify-content-between pb-3">
                 <div className="col-9">
-                  <div className="h2 mb-0 d-flex align-items-center">
+                <div className="h2 mb-2 ms-1 d-flex align-items-center" style={{ color: '5B5B5B', fontFamily: 'Inter', fontSize: '24px', fontStyle: 'normal', fontWeight: 700, lineHeight: 'normal' }}>
+
                     {link.placa}
                   </div>
                   {mostrardiv[index].estado ? null : (
                     <div
-                      className="h6 d-flex align-items-center mt-2 fs-6"
+                      className="h6 d-flex align-items-center ms-1 fs-6"
                       id="estacionadocarro"
+                      style={{ opacity: 0.8 }}
                     >
                       <h6
                         className={link.data < horaAgora ? "text-danger" : ""}
                       >
-                        <RxLapTimer />‎ Validade:{" "}
+                        Válido até:{" "}
                         <span>{link.temporestante}</span>{" "}
                       </h6>
                     </div>
                   )}
 
                   <div
-                    className="h6 d-flex align-items-center mt-1 fs-6"
+                    className={`h6 d-flex align-items-center ms-1 fs-6 ${link.estacionado === 'Não estacionado' ? 'mt-2' : ''}`}
                     id="estacionadocarro"
+                    style={{ opacity: 0.8 }}
                   >
                     <h6>
-                      <FaParking />‎ {link.estacionado}
+                    {link.estacionado !== 'Não estacionado' ? `Estacionado: Vaga ${link.estacionado.match(/\d+/)}` : link.estacionado}
                     </h6>
                   </div>
-                  {notificacao[index].estado ? null : (
-                    <div
-                      className="h6 d-flex align-items-center fs-6"
-                      id="estacionadocarro"
-                    >
-                      <h6 className="text-danger">
-                        <AiOutlineInfoCircle />‎{" "}
-                        {link.numero_notificacoes_pendentes}
-                      </h6>
-                    </div>
-                  )}
+                  
                 </div>
                 <div className="col-3">
                   <div className="d-flex align-items-center fw-bold">
@@ -838,34 +850,41 @@ const ListarVeiculos = () => {
                       </div>
                     ) : null}
                   </div>
-                </div>
-                <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
-                  <Button
-                    variant="outline"
-                    radius="md"
+                </div>{notificacao[index].estado ? null : (
+                    <div
+                      className="h6 d-flex align-items-center fs-6 ms-1"
+                      id="estacionadocarro"
+                    >
+                      <h6 className="text-danger">
+                        <AiOutlineInfoCircle />‎{" "}
+                        {link.numero_notificacoes_pendentes}
+                      </h6>
+                    </div>
+                  )}
+                <div className={`h6 d-flex align-items-center fs-6 text-start ms-1 ${notificacao[index].estado ? 'mt-4' : 'mt-2'}`}>                  <Button
+                    style={{ borderRadius: '5px', border: '2px solid #3381D4', backgroundColor: '#ffff', color: '#3381D4', fontSize: '18px', fontWeight: 600, height: '40px' }}
                     fullWidth
                     onClick={() => {
                       handleClick(index);
                     }}
                   >
-                    {mostrar2[index].estado ? (
-                      <IconX size={20} className="mx-1" />
-                    ) : (
-                      <FaCarAlt size={20} className="mx-1" />
-                    )}
+                  
                     {mostrar2[index].estado ? "Fechar" : link.textoestacionado}
                   </Button>
                   {mostrar2[index].estado ? null : (
-                    <div className="mt-1">
-                      <span>
-                        <IoTrashSharp
-                          color="red"
-                          size={25}
-                          onClick={() => {
-                            removerVeiculo(link.id_veiculo);
-                          }}
-                        />
-                      </span>
+                    <div className="ms-2 me-2">
+                   <Button
+                    style={{ borderRadius: '5px', border: '2px solid #3381D4', backgroundColor: '#ffff', color: '#3381D4', fontSize: '15px', fontWeight: 600, height: '40px' }}
+                    fullWidth
+                    onClick={() => {
+                      removerVeiculo(link.id_veiculo);
+                    }}
+                  >
+                   <FaRegTrashAlt
+                          color='#3381D4'
+                          size={22}/>
+                    
+                  </Button>
                     </div>
                   )}
                 </div>
@@ -874,8 +893,8 @@ const ListarVeiculos = () => {
             {mostrar2[index].estado ? (
               <div className="mb-1">
                 {link.notificacoesVaga > 0 ? (
-                  <div className="card border-0">
-                    <div className="card-body9">
+                  <div className="card-body20 border-0">
+                    <div className="card-body20">
                       <div className="d-flex align-items-center justify-content-between">
                         <div>
                           <div
@@ -890,6 +909,7 @@ const ListarVeiculos = () => {
                       </div>
                       <button
                         className="btn3 botao mt-3"
+                        style={{ borderRadius: '5px', background: 'linear-gradient(90deg, #4076F1 0%, #0CA57B 100%)'}}
                         onClick={() => {
                           regularizarNot(link.placa);
                         }}
@@ -898,29 +918,23 @@ const ListarVeiculos = () => {
                       </button>
                       <div className="mt-4 text-end">
                         <span>
-                          <IoTrashSharp
-                            color="red"
-                            size={25}
-                            onClick={() => {
-                              removerVeiculo(link.id_veiculo);
-                            }}
-                          />
+                         
                         </span>
                       </div>
                     </div>
                   </div>
                 ) : mostrardiv[index].estado ? (
-                  <div className="h6 mt-3 mx-4">
+                  <div className="h6 mt-2 mx-4">
                     <Group position="apart">
-                      <p className="text-start mb-3">
-                        Determine o tempo (minutos):
+                      <p className="text-start mb-3 ms-1" style={{color: '5B5B5B', fontSize: '17px', fontWeight: '600'}}>
+                        Determine o tempo (minutos)
                       </p>
                     </Group>
                     <Grid>
                       <Grid.Col span={3}>
                       <button
                           type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
+                          className={`btn icon-shape icon-shape rounded align-center ms-1 ${
                             selectedButton === "00:30:00"
                               ? "corTempoSelecionado"
                               : "corTempo"
@@ -984,33 +998,27 @@ const ListarVeiculos = () => {
                         )}
                       </Grid.Col>
                     </Grid>
-                    <div className="h6 mt-3 mx-2">
-                      <p id="tempoCusto" className="text-end">
-                        Esse tempo irá custar: R$ {valorcobranca2}{" "}
+                    <div className="mt-3 mx-2">
+                    <p id="tempoCusto" className="text-end mb-2">
+                      Esse tempo irá custar: R$ {valorcobranca2}
                       </p>
-                      <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
+                      <div className="mb-3 mt-4 gap-0 d-flex justify-content-between">
                         <div></div>
                         <Button
                           type="submit"
                           variant="gradient"
-                          gradient={{ from: "blue", to: "indigo" }}
+                          style={{backgroundColor: '#3381D4', fontSize: '18px', fontWeight: '600', padding: '12px 0 12px 0',  height: 'auto'}}
                           fullWidth
                           onClick={() => {
                             hangleplaca(link.placa, index);
                           }}
                           loading={botaoOff}
                         >
-                          Ativar
+                         Ativar
                         </Button>
                         <div className="mt-1">
                           <span>
-                            <IoTrashSharp
-                              color="red"
-                              size={25}
-                              onClick={() => {
-                                removerVeiculo(link.id_veiculo);
-                              }}
-                            />
+                           
                           </span>
                         </div>
                       </div>
@@ -1019,15 +1027,15 @@ const ListarVeiculos = () => {
                 ) : (
                   <div className="h6 mx-4">
                     <Group position="apart">
-                      <p className="text-start mb-3">
-                        Determine o tempo (minutos):
+                    <p className="text-start mb-3 ms-1" style={{color: '5B5B5B', fontSize: '17px', fontWeight: '600'}}>
+                        Determine o tempo (minutos)
                       </p>
-                        </Group>
-                        <Grid>
-                          <Grid.Col span={3}>
-                          <button
+                    </Group>
+                    <Grid className="mb-1"> 
+                      <Grid.Col span={3}>
+                        <button
                           type="button"
-                          className={`btn icon-shape icon-shape rounded align-center ${
+                          className={`ms-1 btn icon-shape icon-shape rounded align-center ${
                             selectedButton === "00:30:00"
                               ? "corTempoSelecionado"
                               : "corTempo"
@@ -1074,7 +1082,7 @@ const ListarVeiculos = () => {
                             )}
                     </Grid.Col>
                       <Grid.Col span={3}>
-                        {condicaoHorario120 || link.temporestante > tempoLimite ? null : (
+                      {condicaoHorario120 || link.temporestante > tempoLimite ? null : (
                         <button
                         type="button"
                         className={`btn icon-shape icon-shape rounded align-center ${
@@ -1089,19 +1097,20 @@ const ListarVeiculos = () => {
                         </Text>
                       </button>
                             )}
-                          </Grid.Col>
-                        </Grid>
-                    <div className="h6 mx-2 mt-3">
-                      <p id="tempoCusto" className="text-end">
-                        Esse tempo irá custar: R$ {valorcobranca2}{" "}
+                      </Grid.Col>
+                    </Grid>
+                    <div className="h6 mx-2 mt-2"> 
+                      <p id="tempoCusto" className="text-end mb-2">
+                      Esse tempo irá custar: R$ {valorcobranca2}
                       </p>
                       <p className="text-start" id="horarioChegada">
-                        Horário chegada: {link.chegada}{" "}
+                      Tempo Creditado: {link.tempo}
+                      </p> 
+                      <p className="text-start mt-2" id="horarioChegada">
+                      Horário chegada: {link.chegada}
                       </p>
-                      <p className="text-start pb-3" id="horarioChegada">
-                        Tempo Creditado: {link.tempo}{" "}
-                      </p>
-                      <div className="mt-1 mb-5 gap-2 d-flex justify-content-between">
+                     
+                      <div className="mt-3 mb-3 gap-0 d-flex justify-content-between">
                         <div></div>
                         <Button
                           type="submit"
@@ -1115,20 +1124,14 @@ const ListarVeiculos = () => {
                           }}
                           fullWidth
                           variant="gradient"
-                          gradient={{ from: "blue", to: "indigo" }}
+                          style={{backgroundColor: '#3381D4', fontSize: '18px', fontWeight: '600', padding: '12px 0 12px 0',  height: 'auto'}}
                           loading={botaoOff}
                         >
                           Ativar
                         </Button>
                         <div className="mt-1 text-end">
                           <span>
-                            <IoTrashSharp
-                              color="red"
-                              size={25}
-                              onClick={() => {
-                                removerVeiculo(link.id_veiculo);
-                              }}
-                            />
+                           
                           </span>
                         </div>
                       </div>
@@ -1139,53 +1142,7 @@ const ListarVeiculos = () => {
             ) : null}
           </div>
         ))}
-        <div className="row mx-0" id="footerButton">
-          <div className="row">
-            <div className="col-12">
-              <Button
-                variant="gradient"
-                gradient={{ from: "blue", to: "indigo" }}
-                radius="md"
-                fullWidth
-                onClick={() => {
-                  FuncTrocaComp("CadastrarVeiculo");
-                }}
-              >
-                <FaCarAlt size={20} className="mx-1" /> Cadastrar novo veículo
-              </Button>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-7">
-              <Button
-                variant="gradient"
-                gradient={{ from: "cyan", to: "teal" }}
-                radius="md"
-                className="mt-2"
-                fullWidth
-                onClick={() => {
-                  FuncTrocaComp("Configuracoes");
-                }}
-              >
-                Débito automático
-              </Button>
-            </div>
-            <div className="col-5">
-              <Button
-                variant="gradient"
-                gradient={{ from: "red", to: "orange" }}
-                radius="md"
-                fullWidth
-                className="mt-2"
-                onClick={() => {
-                  FuncTrocaComp("Irregularidades");
-                }}
-              >
-                Notificação
-              </Button>
-            </div>
-          </div>
-        </div>
+       
       </div>
     </>
   );
