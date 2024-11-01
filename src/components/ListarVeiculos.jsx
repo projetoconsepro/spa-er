@@ -748,7 +748,7 @@ const ListarVeiculos = () => {
               </div>
               <div>
                 <div className="d-flex align-items-center fw-bold">
-                    <button className="mx-1 mb-5" style={{ width: '43px', height: '41px', borderRadius: '100px', background: 'linear-gradient(61deg, #4076F1 13.44%, #0CA57B 82.1%)', border: 'none' }}
+                    <button className="mx-1 mb-5" style={{ width: '43px', height: '41px', borderRadius: '100px', background: '#3381D4', border: 'none' }}
                      onClick={() => {
                       FuncTrocaComp("InserirCreditos");
                     }}>
