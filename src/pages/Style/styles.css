@@ -29841,3 +29841,156 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     background-repeat: no-repeat;
     background-size: 250px 250px;
 }
+
+.custom-switch .form-check-input {
+    width: 50px;
+    height: 25px;
+}
+
+.custom-switch .form-check-input:checked {
+    background-color: #3EA900;
+    border-color: #3EA900;
+}
+
+.div-saldo {
+    border-radius: 5px 5px 0px 0px;
+    ;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.div-saldo2 {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.text-saldo {
+    font-family: Inter;
+    font-style: normal;
+    line-height: normal;
+}
+
+.estilo1 {
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.estilo2 {
+    font-size: 16px;
+    font-weight: 600;
+    width: 134px;
+}
+
+.estilo4 {
+    font-size: 16px;
+    font-weight: 600;
+    width: 142px;
+}
+
+.estilo3 {
+    font-size: 20px;
+    font-weight: 700;
+
+}
+
+.saldo-botao {
+    border-radius: 0px 0px 5px 5px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #ffff;
+}
+
+.saldo-editar {
+
+    border-radius: 0px 0px 5px 5px;
+    width: 100%;
+
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #ffff;
+}
+
+.saldo-input {
+    position: relative;
+    padding: 5px 0 5px 0;
+    border-radius: 5px;
+    z-index: 0;
+    background: transparent;
+    width: 100%;
+    font-size: 16px;
+    text-align: end;
+}
+
+.saldo-input:focus {
+    outline: none;
+    box-shadow: 0 0 3px #0CA57B;
+
+}
+
+.input-wrapper {
+    width: 100%;
+    position: relative;
+    display: inline-block;
+}
+
+.text-input {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.button-confirm {
+    width: 100%;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+}
+
+.card-ativar {
+    background-color: rgba(0, 0, 0, 0.28);
+    position: fixed;
+    justify-content: space-between;
+    top: 77px;
+    right: 0;
+    left: 0;
+    width: 110%;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    z-index: 1;
+}
+
+@media (min-width: 992px) {
+    .card-ativar {
+        width: 80%;
+        position: fixed;
+        top: 0;
+        left: 20%;
+    }
+}
+
+@media (min-width: 1299px) {
+    .card-ativar {
+        width: 85%;
+        position: fixed;
+        top: 0;
+        left: 17%;
+
+    }
+}
+
+.botao-add {
+    border-radius: 5px;
+    border: 2px solid #0CA57B;
+    width: 100%;
+    background-color: #ffff;
+    color: #0CA57B;
+    font-size: 16px;
+    height: auto;
+}

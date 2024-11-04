@@ -11,6 +11,7 @@ import ModalErroBanco from "./ModalErroBanco";
 import { MdPix } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
 import Swal from "sweetalert2";
+import ListarCartao from "../util/ListarCartao";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -30,6 +31,7 @@ const InserirCreditos = () => {
   const [CreditCardSelected, setCreditCardSelected] = useState(null);
   const [creditCard, setCreditCard] = useState([]);
   const [valorPadrao, setValorPadrao] = useState('3');
+  const [cardNull, setCardNull] = useState(true);
 
   useEffect(() => {
     if (metodo === 'pix') {
@@ -40,30 +42,6 @@ const InserirCreditos = () => {
   }, [metodo]);
 
 
-  const getCreditCardFUNC = async () => {
-    const requisicao = createAPI();
-
-    await requisicao
-      .get("/cartao/")
-      .then((resposta) => {
-        if (resposta.data.msg.resultado) {
-          const newData = resposta.data.data.map((item) => ({
-            cartao: item.id_cartao,
-            bandeira: item.bandeira,
-            numero:  `#### #### #### ${item.cartao}`,
-            debito: item.debito,
-            credito: item.credito,
-          }));
-          setCreditCard(newData);
-        } else {
-          setCreditCard([]);
-        }
-      })
-      .catch((err) => {
-        setCreditCard([]);
-      });
-    }
-    
   useEffect(() => {
     if (localStorage.getItem("cartaoCredito") == 'true') {
 
@@ -76,9 +54,8 @@ const InserirCreditos = () => {
       }
 
       localStorage.removeItem("cartaoCredito");
-
+      
     }
-    getCreditCardFUNC();
   }, []);
 
 
@@ -314,97 +291,26 @@ const InserirCreditos = () => {
                 </Group>
 
                 <Group position="apart" className="d-block">
-                <div className='col-3 d-flex align-items-center justify-content-center border border-success rounded' style={{ height: '75px', width: '80px',background: metodo === 'cartaoDeb' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
-                onClick={() => { setMetodo('cartaoDeb'); localStorage.setItem('tipoCard', 'debito')}}>
-                  <BsCreditCard2Back className="mx-1" size={35}
-                    style={{ color: metodo === 'cartaoDeb' ? 'white' : 'black' }}
-                  />
-                </div>
-                <Text weight={500} color='green'>Débito</Text>
-                </Group>
-                <Group position="apart" className="d-block">
-                <div className="col-3 d-flex align-items-center justify-content-center border border-success rounded" style={{ height: '75px', width: '80px', background: metodo === 'cartaoCred' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
-                onClick={() => {setMetodo('cartaoCred'); localStorage.setItem('tipoCard', 'credito')}}>
-                <BsCreditCard2Front className="mx-1" size={35}
-                style={{ color: metodo === 'cartaoCred' ? 'white' : 'black' }}
-                />
-                </div>
-                 <Text weight={500} color='green'>Crédito</Text>
-              </Group>
-              </Group>
+            <div className='col-3 d-flex align-items-center justify-content-center border border-success rounded' style={{ height: '75px', width: '80px', background: metodo === 'cartaoDeb' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
+              onClick={() => { setMetodo('cartaoDeb'); localStorage.setItem('tipoCard', 'debito'); setCardNull(true); }}>
+              <BsCreditCard2Back className="mx-1" size={35} style={{ color: metodo === 'cartaoDeb' ? 'white' : 'black' }} />
+            </div>
+            <Text weight={500} color='green'>Débito</Text>
+          </Group>
 
-              {metodo !== "pix" ? (
-                <Group position="apart" mt="md" mb="xs">
-                  <Text weight={500}>2. Selecione seu cartão:</Text>
-                </Group>
-              ) : ( null )}
+          <Group position="apart" className="d-block">
+            <div className="col-3 d-flex align-items-center justify-content-center border border-success rounded" style={{ height: '75px', width: '80px', background: metodo === 'cartaoCred' ? 'linear-gradient(to right, #0CA678,  #1098AD)' : 'transparent' }}
+              onClick={() => { setMetodo('cartaoCred'); localStorage.setItem('tipoCard', 'credito'); setCardNull(true); }}>
+              <BsCreditCard2Front className="mx-1" size={35} style={{ color: metodo === 'cartaoCred' ? 'white' : 'black' }} />
+            </div>
+            <Text weight={500} color='green'>Crédito</Text>
+          </Group>
+        </Group>
 
-                {metodo !== "pix" && creditCard.length > 0 ? (
-                  <div>
-                  {creditCard.map((item, index) => (
-                    item.credito === 'S' && metodo === 'cartaoCred' || item.debito === 'S' && metodo === 'cartaoDeb' ? (
-                    <div key={index}>
-                    <Box className="border border-black rounded mb-2 align-items-center" 
-                    style={{ maxWidth: '400px', minHeight : '50px', backgroundImage: CreditCardSelected === index ?'linear-gradient(45deg, #0CA678,  #1098AD)' : 'none'  }}
-                    onClick={() => setCreditCardSelected(index)}
-                    >
-                      <div className="d-flex align-items-center">
-                        <div className="align-items-center">
-                        {item.bandeira === 'visa' ? (
-                              CreditCardSelected !== index ? (
-                                <Image
-                                  src='../../assets/img/cartaoCredito/visa-unselected.png'
-                                  alt="image"
-                                  style={{ width: 45, height: 45, display: 'flex', alignItems: 'center', marginLeft: '5px'  }}
-                                />
-                              ) : (
-                                <Image
-                                  src='../../assets/img/cartaoCredito/visa.png'
-                                  alt="image"
-                                  style={{ width: 45, height: 45, display: 'flex', alignItems: 'center', marginLeft: '5px'  }}
-                                />
-                              )
-                          ) : item.bandeira === 'mastercard' ? (
-                            <Image
-                              src='../../assets/img/cartaoCredito/mastercard.png'
-                              alt="image"
-                              style={{ width: 50, height: 50, display: 'flex', alignItems: 'center'}}
-                            />
-                          ) : item.bandeira === 'elocard' ? (
-                            CreditCardSelected === index ? (
-                            <Image
-                              src='../../assets/img/cartaoCredito/elocard.png'
-                              alt="image"
-                              style={{ width: 50, height: 50, display: 'flex', alignItems: 'center', marginLeft: '2px'}}
-                            />
-                            ) : (
-                              <Image
-                              src='../../assets/img/cartaoCredito/elocard-unselected.png'
-                              alt="image"
-                              style={{ width: 50, height: 50, display: 'flex', alignItems: 'center', marginLeft: '2px'}}
-                            />
-                          )
-                          )
-                          :
-                          <BsCreditCard2Back className="m-2"
-                          size={30}
-                          color={CreditCardSelected === index ? 'white' : 'black'}
-                          />
-                          }
-                        </div>
-                        <div className={CreditCardSelected === index ? "text-start text-white mx-2" : "text-start mx-2" }>
-                          <Text weight={400}  style={{ marginTop: '-3px' }}>{item.numero}</Text>
-                        </div>
-                      </div>
-                    </Box>
-                  </div>
-                    ) : null 
-                  ))}
-                      <Button className='mt-3 mb-3' variant="outline" leftIcon={<IconArrowForwardUpDouble size="1rem" />} onClick={() => { FuncTrocaComp('CartaoCredito') }}>
-                            Adicionar novo cartão
-                      </Button>
-                </div>
-                ) : metodo !== "pix" && creditCard.length === 0 ? (
+
+                {metodo !== "pix" && cardNull ? (
+               <ListarCartao metodo={metodo} onNoCards={() => setCardNull(false)} />
+                ) : metodo !== "pix" && !cardNull ? (
                   <div className="mb-5">
                 <div>
                   <div className="d-flex align-items-center justify-content-center" onClick={()=> FuncTrocaComp('CartaoCredito')}>

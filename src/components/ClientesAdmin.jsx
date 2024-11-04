@@ -1101,6 +1101,12 @@ const ClientesAdmin = () => {
                               </button>
                               <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
                                 <h6
+                                   className="dropdown-item d-flex align-items-center"
+                                   onClick={() => abreModalUserId(item.id_usuario, item.nome)}
+                                   >
+                                      <FaHistory />
+                                       ‎‎ Histórico
+                                </h6><h6
                                   className="dropdown-item d-flex align-items-center"
                                   onClick={() => {
                                     informacoes(item);
@@ -1142,13 +1148,7 @@ const ClientesAdmin = () => {
                                   <FaPowerOff size={13} className="mb-1" /> ‎‎{" "}
                                   {item.ativo === "S" ? "Desativar" : "Ativar"}
                                 </h6>
-                                <h6
-                                   className="dropdown-item d-flex align-items-center"
-                                   onClick={() => abreModalUserId(item.id_usuario, item.nome)}
-                                   >
-                                      <FaHistory />
-                                       ‎‎ Histórico
-                                </h6>
+                                
                               </div>
                             </div>
                           </td>
