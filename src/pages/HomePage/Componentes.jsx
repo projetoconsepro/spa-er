@@ -56,7 +56,7 @@ import ListagemMovimentoVeiculo from '../../components/ListagemMovimentoVeiculo'
 import RelatorioMonitorAdmin from '../../components/RelatorioMonitorAdmin';
 import ListarMovimentosAdmin from '../../components/ListarMovimentosAdmin';
 import ListarLogsMovimentosAdmin from '../../components/ListarLogsMovimentosAdmin';
-
+import RelatorioParceiroAdmin from '../../components/RelatorioParceiroAdmin';
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
     AdicionarModelo: <AdicionarModelo />,
@@ -114,6 +114,7 @@ const componentesMap = {
     RelatorioMonitorAdmin: <RelatorioMonitorAdmin />,
     ListarMovimentosAdmin: <ListarMovimentosAdmin />,
     ListarLogsMovimentosAdmin: <ListarLogsMovimentosAdmin />,
+    RelatorioParceiroAdmin: <RelatorioParceiroAdmin />,
     Error: <Error />,
 };
 
