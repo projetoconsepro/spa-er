@@ -47,7 +47,8 @@ const VagasAdmin = () => {
             corStatus: item.corStatus,
             status: item.status,
             id_status_vaga: item.id_status_vaga,
-          }));
+            coordenada: item.coordenada,
+          })); 
           setData(newData);
         } else {
           setEstado(true);
@@ -116,6 +117,7 @@ const VagasAdmin = () => {
               status: item.status,
               id_status_vaga: item.id_status_vaga,
             }));
+
             setData(newData);
           } else {
             setEstado(true);
@@ -192,6 +194,25 @@ const VagasAdmin = () => {
     }
   }, []);
 
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      document.getElementById("swal-input6").value = position.coords.latitude;
+      document.getElementById("swal-input7").value = position.coords.longitude;
+    });
+  } else {
+    Swal.fire({
+      title: "Erro!",
+      text: "Geolocalização não é suportada pelo seu navegador.",
+      icon: "error",
+    });
+  }
+}
+
+
+
+
   const adicionarVaga = async () => {
     const setoresMap = data2.map(
       (option) =>
@@ -228,10 +249,20 @@ const VagasAdmin = () => {
                    <div className="form-group">
                    <label for="status" class="form-label col-3 fs-6">Status:</label>
                    <select id="swal-input5" class="swal2-input">
-                       <option value="1">Ativo</option>
-                       <option value="2">Não ativo</option>
+                    <option value="1">Ativo</option>
+                    <option value="2">Não ativo</option>
                    </select>
-                   </div>`,
+                   </div>    
+                   <div className="form-group">
+                      <label for="numero" class="form-label col-3 fs-6">Latitude:</label>
+                      <input id="swal-input6" class="swal2-input" >
+                    </div>
+                    <div className="form-group">
+                      <label for="numero" class="form-label col-3 fs-6 me-1">Longitude:</label>
+                      <input id="swal-input7" class="swal2-input me-0 pe-0">
+                      <button style="background-color: #FFFF; width: 30px; height: 30px; border: none;" id="get-location-btn" class="m-0 p-0"><img style=" width: 20px; height: 20px;"  src='https://img.icons8.com/material-sharp/24/address.png'/></button>
+                    </div>
+                   `,
       showCancelButton: true,
       confirmButtonText: "Salvar",
       confirmButtonColor: "#3A58C8",
@@ -243,6 +274,8 @@ const VagasAdmin = () => {
         const setor = document.getElementById("swal-input3").value;
         const tipo = document.getElementById("swal-input4").value;
         const status = document.getElementById("swal-input5").value;
+        const latitude = document.getElementById("swal-input6").value;
+        const longitude = document.getElementById("swal-input7").value;
 
         const requisicao = createAPI();
 
@@ -253,6 +286,7 @@ const VagasAdmin = () => {
             setor: setor,
             tipo: tipo,
             status: status,
+            coordenada: [latitude, longitude],
           })
           .then((response) => {
             if (response.data.msg.resultado) {
@@ -286,117 +320,132 @@ const VagasAdmin = () => {
           });
       },
     });
+    document.getElementById("get-location-btn").addEventListener("click", getLocation);
   };
 
   const editarVaga = async (vaga, index) => {
-    Swal.fire({
-      title: "Editar vaga",
-      html: `
-            <div className="form-group">
-                    <label for="numero" class="form-label col-3 fs-6">Número da vaga:</label>
-                    <input id="swal-input1" class="swal2-input" value="${
-                      vaga.numero_vaga
-                    }">
-                    </div>
-                    <div className="form-group">
-                     <label for="endereco" class="form-label col-3 fs-6">Endereço:</label>
-                        <input id="swal-input2" class="swal2-input" value="${
-                          vaga.local
-                        }">
-                    </div>
-                    <div className="form-group">
-                    <label for="setor" class="form-label col-3 fs-6">Setor da vaga:</label>
-                    <select id="swal-input3" class="swal2-input">
-                    ${data2
-                      .map(
-                        (option) =>
-                          `<option value="${option.id_setor}" ${
-                            option.setores === salvaSetor ? "selected" : null
-                          }>${option.setores}</option>`
-                      )
-                      .join("")}
-                    </select>
-                    </div>
-                    <div className="form-group">
-                    <label for="tipo" class="form-label col-3 fs-6">Tipo da vaga:</label>
-                    <select id="swal-input4" class="swal2-input">
-                    ${tipoVaga
-                      .map(
-                        (option) =>
-                          `<option value="${option.id_tipo}" ${
-                            option.tipo === vaga.tipo ? "selected" : null
-                          }>${option.tipo}</option>`
-                      )
-                      .join("")}
-                    </select>
-                    </div>
-                    <div className="form-group">
-                    <label for="status" class="form-label col-3 fs-6">Status:</label>
-                    <select id="swal-input5" class="swal2-input">
-                    ${data3
-                      .map(
-                        (option) =>
-                          `<option value="${option.id_status_vaga}" ${
-                            option.status === vaga.status ? "selected" : null
-                          }>${option.status}</option>`
-                      )
-                      .join("")}
-                    </select>
-                    </div>`,
-      showCancelButton: true,
-      confirmButtonText: "Salvar",
-      confirmButtonColor: "#3A58C8",
-      cancelButtonText: "Cancelar",
-      showLoaderOnConfirm: true,
-      preConfirm: () => {
-        const numero = document.getElementById("swal-input1").value;
-        const endereco = document.getElementById("swal-input2").value;
-        const setor = document.getElementById("swal-input3").value;
-        const tipo = document.getElementById("swal-input4").value;
-        const status = document.getElementById("swal-input5").value;
-
-        const requisicao = createAPI();
-        requisicao
-          .put(`/vagas/${vaga.id_vaga}`, {
-            numero: numero,
-            local: endereco,
-            setor: setor,
-            tipo: tipo,
-            status: status,
-          })
-          .then((response) => {
-            if (response.data.msg.resultado) {
-              getVagas(salvaSetor);
-              Swal.fire({
-                title: "Sucesso!",
-                text: `${response.data.msg.msg}`,
-                icon: "success",
-              });
-            } else {
-              Swal.fire({
-                title: "Erro!",
-                text: `${response.data.msg.msg}`,
-                icon: "error",
-              });
-            }
-          })
-          .catch(function (error) {
-            if (
-              error?.response?.data?.msg === "Cabeçalho inválido!" ||
-              error?.response?.data?.msg === "Token inválido!" ||
-              error?.response?.data?.msg ===
-                "Usuário não possui o perfil mencionado!"
-            ) {
-              localStorage.removeItem("user");
-              localStorage.removeItem("token");
-              localStorage.removeItem("perfil");
-            } else {
-              console.log(error);
-            }
-          });
-      },
-    });
-  };
+      Swal.fire({
+        title: "Editar vaga",
+        html: `
+              <div className="form-group">
+                      <label for="numero" class="form-label col-3 fs-6">Número da vaga:</label>
+                      <input id="swal-input1" class="swal2-input" value="${
+                        vaga.numero_vaga
+                      }">
+                      </div>
+                      <div className="form-group">
+                       <label for="endereco" class="form-label col-3 fs-6">Endereço:</label>
+                          <input id="swal-input2" class="swal2-input" value="${
+                            vaga.local
+                          }">
+                      </div>
+                      <div className="form-group">
+                      <label for="setor" class="form-label col-3 fs-6">Setor da vaga:</label>
+                      <select id="swal-input3" class="swal2-input">
+                      ${data2
+                        .map(
+                          (option) =>
+                            `<option value="${option.id_setor}" ${
+                              option.setores === salvaSetor ? "selected" : null
+                            }>${option.setores}</option>`
+                        )
+                        .join("")}
+                      </select>
+                      </div>
+                      <div className="form-group">
+                      <label for="tipo" class="form-label col-3 fs-6">Tipo da vaga:</label>
+                      <select id="swal-input4" class="swal2-input">
+                      ${tipoVaga
+                        .map(
+                          (option) =>
+                            `<option value="${option.id_tipo}" ${
+                              option.tipo === vaga.tipo ? "selected" : null
+                            }>${option.tipo}</option>`
+                        )
+                        .join("")}
+                      </select>
+                      </div>
+                      <div className="form-group">
+                      <label for="status" class="form-label col-3 fs-6">Status:</label>
+                      <select id="swal-input5" class="swal2-input">
+                      ${data3
+                        .map(
+                          (option) =>
+                            `<option value="${option.id_status_vaga}" ${
+                              option.status === vaga.status ? "selected" : null
+                            }>${option.status}</option>`
+                        )
+                        .join("")}
+                      </select>
+                      </div>
+                      <div className="form-group">
+                        <label for="numero" class="form-label col-3 fs-6">Latitude:</label>
+                        <input id="swal-input6" class="swal2-input" value="${vaga.coordenada.split(',')[0]}">
+                      </div>
+                      <div className="form-group">
+                        <label for="numero" class="form-label col-3 fs-6 me-1">Longitude:</label>
+                        <input id="swal-input7" class="swal2-input me-0 pe-0" value="${vaga.coordenada.split(',')[1]}">
+                        <button style="background-color: #FFFF; width: 30px; height: 30px; border: none;" id="get-location-btn" class="m-0 p-0"><img style=" width: 20px; height: 20px;"  src='https://img.icons8.com/material-sharp/24/address.png'/></button>
+                      </div>
+                       `,
+        showCancelButton: true,
+        confirmButtonText: "Salvar",
+        confirmButtonColor: "#3A58C8",
+        cancelButtonText: "Cancelar",
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+          const numero = document.getElementById("swal-input1").value;
+          const endereco = document.getElementById("swal-input2").value;
+          const setor = document.getElementById("swal-input3").value;
+          const tipo = document.getElementById("swal-input4").value;
+          const status = document.getElementById("swal-input5").value;
+          const latitude = document.getElementById("swal-input6").value;
+          const longitude = document.getElementById("swal-input7").value;
+    
+          const requisicao = createAPI();
+          requisicao
+            .put(`/vagas/${vaga.id_vaga}`, {
+              numero: numero,
+              local: endereco,
+              setor: setor,
+              tipo: tipo,
+              status: status,
+              coordenada: [latitude, longitude],
+            })
+            .then((response) => {
+              if (response.data.msg.resultado) {
+                getVagas(salvaSetor);
+                Swal.fire({
+                  title: "Sucesso!",
+                  text: `${response.data.msg.msg}`,
+                  icon: "success",
+                });
+              } else {
+                Swal.fire({
+                  title: "Erro!",
+                  text: `${response.data.msg.msg}`,
+                  icon: "error",
+                });
+              }
+            })
+            .catch(function (error) {
+              if (
+                error?.response?.data?.msg === "Cabeçalho inválido!" ||
+                error?.response?.data?.msg === "Token inválido!" ||
+                error?.response?.data?.msg ===
+                  "Usuário não possui o perfil mencionado!"
+              ) {
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                localStorage.removeItem("perfil");
+              } else {
+                console.log(error);
+              }
+            });
+        },
+      });
+      document.getElementById("get-location-btn").addEventListener("click", getLocation);
+    };
 
   const imprimir = () => {
     const dataD = [
