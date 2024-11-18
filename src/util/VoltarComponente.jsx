@@ -14,6 +14,9 @@ const VoltarComponente = ({ space, arrow }) => {
   }, []);
 
   const voltar = () => {
+    if (componenteProximo === "EscolherPerfil") {
+      return;
+    }
     localStorage.setItem("componenteAnterior", componenteAnterior);
     localStorage.setItem("componente", componenteProximo);
   };
