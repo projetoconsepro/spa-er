@@ -16,7 +16,8 @@ import {
   FaSearch,
   FaRegChartBar,
   FaChalkboardTeacher,
-  FaUsers 
+  FaUsers,
+  FaRegMap
 } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin } from "react-icons/bs";
 import {
@@ -165,6 +166,7 @@ const Sidebar = () => {
               ]
           },
           { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "Irregularidades" },
+          {icon: <FaRegMap />, name: "‎ Mapa de vagas", componente: "MapaCliente" , className: commonStyles},
           { icon: <MdHelp />, name: "‎ Ajuda", componente: "Suporte" }
       ];
 
