@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Button } from '@mantine/core';
@@ -71,9 +71,9 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
       
       {sectors && sectors.length > 0 && sectors.map((sector) =>
         selectedSectors.includes(sector.name) ? (
-          <Rectangle
+          <Polygon
             key={sector.name}
-            bounds={sector.bounds}
+            positions={sector.bounds}
             pathOptions={{ color: sector.color }}
             eventHandlers={{
               click: () => handleSectorClick(sector.name),
