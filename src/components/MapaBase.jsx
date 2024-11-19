@@ -89,43 +89,44 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
           </Popup>
         </Marker>
       )}
-
-      {Array.isArray(vagas) && vagas.map((vaga, index) => {
-        const position = [
-          basePosition[0] + (index * 0.0005),
-          basePosition[1] + (index * 0.0001)
-        ];
-        let icon;
-        if (vaga.tipo === 'idoso' && vaga.estacionado === 'N' && showIdoso) {
-          icon = iconIdoso;
-        } else if (vaga.tipo === 'cadeirante' && vaga.estacionado === 'N' && showDeficiente) {
-          icon = iconDeficiente;
-        } else if (vaga.estacionado === 'N' && vaga.tipo === 'normal' && showLivres) {
-          icon = iconNaoEstacionado;
-        } else if (vaga.estacionado === 'S' && vaga.tipo === 'cadeirante' && showDeficiente && showOcupadas) {
-          icon = iconEstacionadoDeficiente;
-        } else if (vaga.estacionado === 'S' && vaga.tipo === 'idoso' && showIdoso && showOcupadas) {
-          icon = iconEstacionadoIdoso;
-        } else if (vaga.estacionado === 'S' && vaga.tipo === 'normal' && showOcupadas) {
-          icon = iconEstacionado;
-        }
-        else {
-          return null;
-        }
-        return (
-          <Marker key={vaga.numero} position={position} icon={icon}>
-            <Popup className='m-1 p-0 text-center' >
-              <p className='m-1 mt-2 p-0 text-center' style={{ minWidth: '150px' }}>{vaga.estacionado === 'S' ? 'Vaga Ocupada' : 'Vaga Livre'}</p>
-              <p className='m-1 p-0 text-capitalize text-center'><strong>Tipo:</strong> {vaga.tipo === 'cadeirante' ? 'Deficiente' : vaga.tipo}</p>
-              <p className='m-1 p-0 text-center'><strong>Número:</strong> {vaga.numero}</p>
-              {!locationError && basePosition && (
-              <Button className='mt-2' style={{ width: '100%' }} onClick={() => openMaps(position)}>Ver rota</Button>
-            )}
-            </Popup>
-          </Marker>
-        );
-      })}
-
+{Array.isArray(vagas) && vagas.map((vaga) => {
+  if (!vaga.coordenada) {
+    return null;
+  }
+  
+  const [lat, lng] = vaga.coordenada.split(',').map(coord => parseFloat(coord.trim()));
+  const position = [lat, lng];
+  
+  let icon;
+  if (vaga.tipo === 'idoso' && vaga.estacionado === 'N' && showIdoso) {
+    icon = iconIdoso;
+  } else if (vaga.tipo === 'cadeirante' && vaga.estacionado === 'N' && showDeficiente) {
+    icon = iconDeficiente;
+  } else if (vaga.estacionado === 'N' && vaga.tipo === 'normal' && showLivres) {
+    icon = iconNaoEstacionado;
+  } else if (vaga.estacionado === 'S' && vaga.tipo === 'cadeirante' && showDeficiente && showOcupadas) {
+    icon = iconEstacionadoDeficiente;
+  } else if (vaga.estacionado === 'S' && vaga.tipo === 'idoso' && showIdoso && showOcupadas) {
+    icon = iconEstacionadoIdoso;
+  } else if (vaga.estacionado === 'S' && vaga.tipo === 'normal' && showOcupadas) {
+    icon = iconEstacionado;
+  } else {
+    return null;
+  }
+  
+  return (
+    <Marker key={vaga.numero} position={position} icon={icon}>
+      <Popup className='m-1 p-0 text-center' >
+        <p className='m-1 mt-2 p-0 text-center' style={{ minWidth: '150px' }}>{vaga.estacionado === 'S' ? 'Vaga Ocupada' : 'Vaga Livre'}</p>
+        <p className='m-1 p-0 text-capitalize text-center'><strong>Tipo:</strong> {vaga.tipo === 'cadeirante' ? 'Deficiente' : vaga.tipo}</p>
+        <p className='m-1 p-0 text-center'><strong>Número:</strong> {vaga.numero}</p>
+        {!locationError && basePosition && (
+        <Button className='mt-2' style={{ width: '100%' }} onClick={() => openMaps(position)}>Ver rota</Button>
+      )}
+      </Popup>
+    </Marker>
+  );
+})}
     </MapContainer>
   );
 };
