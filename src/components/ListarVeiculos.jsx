@@ -748,11 +748,23 @@ const ListarVeiculos = () => {
               </div>
               <div>
                 <div className="d-flex align-items-center fw-bold">
-                    <button className="mx-1 mb-5" style={{ width: '43px', height: '41px', borderRadius: '100px', background: '#3381D4', border: 'none' }}
-                     onClick={() => {
+                <button
+                    className="mb-5 p-0"
+                    style={{
+                      width: '43px',
+                      height: '41px',
+                      borderRadius: '100px',
+                      background: '#3381D4',
+                      border: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onClick={() => {
                       FuncTrocaComp("InserirCreditos");
-                    }}>
-                    <IoMdAdd color="white" size="30px" />
+                    }}
+                  >
+                    <IoMdAdd color="white" className="p-0 m-0" size="35px" />
                   </button>
                 </div>
               </div>
