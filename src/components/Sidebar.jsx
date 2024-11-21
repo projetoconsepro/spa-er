@@ -15,7 +15,9 @@ import {
   FaClipboardList,
   FaSearch,
   FaRegChartBar,
-  FaChalkboardTeacher
+  FaChalkboardTeacher,
+  FaUsers,
+  FaRegMap
 } from "react-icons/fa";
 import { BsConeStriped, BsCashCoin } from "react-icons/bs";
 import {
@@ -26,7 +28,7 @@ import {
 } from "react-icons/md";
 import { RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
 import { useState, useEffect } from "react";
-import { BiLogOut, BiSearchAlt, BiTransfer } from "react-icons/bi";
+import { BiLogOut, BiSearchAlt, BiTransfer} from "react-icons/bi";
 import {
   AiFillEdit,
   AiFillPrinter,
@@ -164,6 +166,7 @@ const Sidebar = () => {
               ]
           },
           { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "Irregularidades" },
+          {icon: <FaRegMap />, name: "‎ Mapa de vagas", componente: "MapaCliente" , className: commonStyles},
           { icon: <MdHelp />, name: "‎ Ajuda", componente: "Suporte" }
       ];
 
@@ -207,6 +210,7 @@ const Sidebar = () => {
           subitem: [
             { icon: <AiFillPrinter />, name: "‎ Prestação de Contas", componente: "PrestacaoContas", className: commonStyles },
             { icon: <TbClipboardList />, name: "‎ Relatório Monitor", componente: "RelatorioMonitorAdmin", className: commonStyles },
+            { icon: <FaUsers  />, name: "‎ Relatório Parceiro", componente: "RelatorioParceiroAdmin", className: commonStyles },
             { icon: <FaHistory />, name: "‎ Caixa Monitor", componente: "HistoricoCaixa", className: commonStyles },
             { icon: <FcMoneyTransfer />, name: "‎ Depósito Parceiro", componente: "TransferenciaParceiro", className: commonStyles },
             ]
