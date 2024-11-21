@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap } from 'react-leaflet';
+import React, { useRef, useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Button } from '@mantine/core';
@@ -43,6 +43,18 @@ export { iconEstacionado, iconNaoEstacionado, iconIdoso, iconDeficiente, iconCur
 
 const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorClick, locationError, showIdoso, showDeficiente, showOcupadas, showLivres, openMaps, heightMapa, styleButton }) => {
   const mapRef = useRef(null);
+  const [center, setCenter] = useState(basePosition);
+
+  useEffect(() => {
+    setCenter(basePosition);
+  }, [basePosition]);
+
+  const MapEvents = () => {
+    useMapEvent('moveend', () => {
+      setCenter(basePosition);
+    });
+    return null;
+  };
 
   const centerMap = () => {
     if (mapRef.current && basePosition) {
@@ -53,7 +65,7 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
   return (
     <MapContainer
       style={{ height: `${heightMapa}`, width: '100%', zIndex: 2 ,overflow: 'hidden',}}
-      center={basePosition}
+      center={center}
       zoom={17}
     >
       <TileLayer
@@ -68,7 +80,7 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
       >
         <img className='p-1' src="https://img.icons8.com/ios-filled/50/center-direction.png" alt="centralizar" />
       </Button>
-      
+      <MapEvents />
       {sectors && sectors.length > 0 && sectors.map((sector) =>
         selectedSectors.includes(sector.name) ? (
           <Polygon
