@@ -1,4 +1,3 @@
-// FILE: MapaCliente.jsx
 import React, { useEffect, useState } from 'react';
 import createAPI from "../services/createAPI";
 import { Button } from '@mantine/core';
@@ -8,7 +7,16 @@ import MapaBase, { iconEstacionado, iconNaoEstacionado, iconIdoso, iconDeficient
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const MapaCliente = () => {
+const gerarCorAleatoria = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
+const MapaAdmin = () => {
   const [vagas, setVagas] = useState([]);
   const [showIdoso, setShowIdoso] = useState(true);
   const [showDeficiente, setShowDeficiente] = useState(true);
@@ -18,6 +26,7 @@ const MapaCliente = () => {
   const [selectedSectors, setSelectedSectors] = useState([]);
   const [sectorInfo, setSectorInfo] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const [setoresFormatado, setSetoresFormatado] = useState([]);
 
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
@@ -50,19 +59,68 @@ const MapaCliente = () => {
     fetchVagas();
   }, []);
 
-  const sectors = [
-    { name: 'A', bounds: [[-29.6525234, -50.7825585], [-29.6505234, -50.7805585]], color: 'red' },
-    { name: 'B', bounds: [[-29.6525234, -50.7805585], [-29.6505234, -50.7785585]], color: 'blue' },
-    { name: 'C', bounds: [[-29.6525234, -50.7785585], [-29.6505234, -50.7765585]], color: 'green' },
-    { name: 'D', bounds: [[-29.6525234, -50.7765585], [-29.6505234, -50.7745585]], color: 'yellow' },
-    { name: 'E', bounds: [[-29.6525234, -50.7745585], [-29.6505234, -50.7725585]], color: 'purple' },
-    { name: 'F', bounds: [[-29.6525234, -50.7725585], [-29.6505234, -50.7705585]], color: 'orange' },
-    { name: 'G', bounds: [[-29.6525234, -50.7705585], [-29.6505234, -50.7685585]], color: 'pink' },
-    { name: 'H', bounds: [[-29.6525234, -50.7685585], [-29.6505234, -50.7665585]], color: 'brown' },
-    { name: 'I', bounds: [[-29.6525234, -50.7665585], [-29.6505234, -50.7645585]], color: 'cyan' },
-    { name: 'J', bounds: [[-29.6525234, -50.7645585], [-29.6505234, -50.7625585]], color: 'magenta' },
-    { name: 'K', bounds: [[-29.6525234, -50.7625585], [-29.6505234, -50.7605585]], color: 'lime' },
-  ];
+  const setores = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
+  
+  const calcularExtremos = (vagas, setor) => {
+    const vagasSetor = vagas.filter(vaga => vaga.setor === setor && vaga.coordenada);
+    if (vagasSetor.length === 0) {
+      return null; 
+    }
+    const coordenadas = vagasSetor.map(vaga => {
+      const [lat, lng] = vaga.coordenada.split(',').map(parseFloat);
+      return [lat, lng];
+    });
+  
+    const convexHull = (points) => {
+      points.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  
+      const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  
+      const lower = [];
+      for (let point of points) {
+        while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0) {
+          lower.pop();
+        }
+        lower.push(point);
+      }
+  
+      const upper = [];
+      for (let i = points.length - 1; i >= 0; i--) {
+        const point = points[i];
+        while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], point) <= 0) {
+          upper.pop();
+        }
+        upper.push(point);
+      }
+  
+      lower.pop();
+      upper.pop();
+      return lower.concat(upper);
+    };
+  
+    return convexHull(coordenadas);
+  }; 
+ 
+  useEffect(() => {
+    const coresSetores = setores.reduce((acc, setor) => {
+      acc[setor] = gerarCorAleatoria();
+      return acc;
+    }, {});
+  const setoresComPoligonos = setores.map(setor => {
+    const bounds = calcularExtremos(vagas, setor);
+    if (!bounds) {
+      return null;
+    } 
+    
+    return {
+      name: setor,
+      bounds: bounds,
+      color: coresSetores[setor]
+    };
+   
+  }).filter(Boolean);
+  setSetoresFormatado(setoresComPoligonos); 
+}, [vagas]);
 
   const handleSectorChange = (sectorName) => {
     setSelectedSectors((prevSelectedSectors) =>
@@ -159,7 +217,7 @@ const MapaCliente = () => {
             ))}
           </div>
           <div className="sector-card d-flex justify-content-center py-4 bg-white mt-3" style={{ flexWrap: 'wrap' }}>
-            {sectors.map((sector) => (
+            {setoresFormatado.map((sector) => (
               <label key={sector.name} className="sector-option m-2 d-flex align-items-center" style={{ wordBreak: 'break-word' }}>
                 <input
                   type="checkbox"
@@ -197,7 +255,7 @@ const MapaCliente = () => {
               basePosition={basePosition}
               vagas={vagas}
               selectedSectors={selectedSectors}
-              sectors={sectors}
+              sectors={setoresFormatado}
               handleSectorClick={handleSectorClick}
               locationError={locationError}
               showIdoso={showIdoso}
@@ -214,4 +272,4 @@ const MapaCliente = () => {
   );
 };
 
-export default MapaCliente;
+export default MapaAdmin;

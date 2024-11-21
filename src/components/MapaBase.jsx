@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle, useMap } from 'react-leaflet';
+import React, { useRef, useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Button } from '@mantine/core';
@@ -43,6 +43,18 @@ export { iconEstacionado, iconNaoEstacionado, iconIdoso, iconDeficiente, iconCur
 
 const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorClick, locationError, showIdoso, showDeficiente, showOcupadas, showLivres, openMaps, heightMapa, styleButton }) => {
   const mapRef = useRef(null);
+  const [center, setCenter] = useState(basePosition);
+
+  useEffect(() => {
+    setCenter(basePosition);
+  }, [basePosition]);
+
+  const MapEvents = () => {
+    useMapEvent('moveend', () => {
+      setCenter(basePosition);
+    });
+    return null;
+  };
 
   const centerMap = () => {
     if (mapRef.current && basePosition) {
@@ -53,7 +65,7 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
   return (
     <MapContainer
       style={{ height: `${heightMapa}`, width: '100%', zIndex: 2 ,overflow: 'hidden',}}
-      center={basePosition}
+      center={center}
       zoom={17}
     >
       <TileLayer
@@ -68,12 +80,12 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
       >
         <img className='p-1' src="https://img.icons8.com/ios-filled/50/center-direction.png" alt="centralizar" />
       </Button>
-      
+      <MapEvents />
       {sectors && sectors.length > 0 && sectors.map((sector) =>
         selectedSectors.includes(sector.name) ? (
-          <Rectangle
+          <Polygon
             key={sector.name}
-            bounds={sector.bounds}
+            positions={sector.bounds}
             pathOptions={{ color: sector.color }}
             eventHandlers={{
               click: () => handleSectorClick(sector.name),
@@ -89,43 +101,44 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
           </Popup>
         </Marker>
       )}
-
-      {Array.isArray(vagas) && vagas.map((vaga, index) => {
-        const position = [
-          basePosition[0] + (index * 0.0005),
-          basePosition[1] + (index * 0.0001)
-        ];
-        let icon;
-        if (vaga.tipo === 'idoso' && vaga.estacionado === 'N' && showIdoso) {
-          icon = iconIdoso;
-        } else if (vaga.tipo === 'cadeirante' && vaga.estacionado === 'N' && showDeficiente) {
-          icon = iconDeficiente;
-        } else if (vaga.estacionado === 'N' && vaga.tipo === 'normal' && showLivres) {
-          icon = iconNaoEstacionado;
-        } else if (vaga.estacionado === 'S' && vaga.tipo === 'cadeirante' && showDeficiente && showOcupadas) {
-          icon = iconEstacionadoDeficiente;
-        } else if (vaga.estacionado === 'S' && vaga.tipo === 'idoso' && showIdoso && showOcupadas) {
-          icon = iconEstacionadoIdoso;
-        } else if (vaga.estacionado === 'S' && vaga.tipo === 'normal' && showOcupadas) {
-          icon = iconEstacionado;
-        }
-        else {
-          return null;
-        }
-        return (
-          <Marker key={vaga.numero} position={position} icon={icon}>
-            <Popup className='m-1 p-0 text-center' >
-              <p className='m-1 mt-2 p-0 text-center' style={{ minWidth: '150px' }}>{vaga.estacionado === 'S' ? 'Vaga Ocupada' : 'Vaga Livre'}</p>
-              <p className='m-1 p-0 text-capitalize text-center'><strong>Tipo:</strong> {vaga.tipo === 'cadeirante' ? 'Deficiente' : vaga.tipo}</p>
-              <p className='m-1 p-0 text-center'><strong>Número:</strong> {vaga.numero}</p>
-              {!locationError && basePosition && (
-              <Button className='mt-2' style={{ width: '100%' }} onClick={() => openMaps(position)}>Ver rota</Button>
-            )}
-            </Popup>
-          </Marker>
-        );
-      })}
-
+{Array.isArray(vagas) && vagas.map((vaga) => {
+  if (!vaga.coordenada) {
+    return null;
+  }
+  
+  const [lat, lng] = vaga.coordenada.split(',').map(coord => parseFloat(coord.trim()));
+  const position = [lat, lng];
+  
+  let icon;
+  if (vaga.tipo === 'idoso' && vaga.estacionado === 'N' && showIdoso) {
+    icon = iconIdoso;
+  } else if (vaga.tipo === 'cadeirante' && vaga.estacionado === 'N' && showDeficiente) {
+    icon = iconDeficiente;
+  } else if (vaga.estacionado === 'N' && vaga.tipo === 'normal' && showLivres) {
+    icon = iconNaoEstacionado;
+  } else if (vaga.estacionado === 'S' && vaga.tipo === 'cadeirante' && showDeficiente && showOcupadas) {
+    icon = iconEstacionadoDeficiente;
+  } else if (vaga.estacionado === 'S' && vaga.tipo === 'idoso' && showIdoso && showOcupadas) {
+    icon = iconEstacionadoIdoso;
+  } else if (vaga.estacionado === 'S' && vaga.tipo === 'normal' && showOcupadas) {
+    icon = iconEstacionado;
+  } else {
+    return null;
+  }
+  
+  return (
+    <Marker key={vaga.numero} position={position} icon={icon}>
+      <Popup className='m-1 p-0 text-center' >
+        <p className='m-1 mt-2 p-0 text-center' style={{ minWidth: '150px' }}>{vaga.estacionado === 'S' ? 'Vaga Ocupada' : 'Vaga Livre'}</p>
+        <p className='m-1 p-0 text-capitalize text-center'><strong>Tipo:</strong> {vaga.tipo === 'cadeirante' ? 'Deficiente' : vaga.tipo}</p>
+        <p className='m-1 p-0 text-center'><strong>Número:</strong> {vaga.numero}</p>
+        {!locationError && basePosition && (
+        <Button className='mt-2' style={{ width: '100%' }} onClick={() => openMaps(position)}>Ver rota</Button>
+      )}
+      </Popup>
+    </Marker>
+  );
+})}
     </MapContainer>
   );
 };
