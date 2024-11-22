@@ -257,11 +257,12 @@ function getLocation() {
                       <label for="numero" class="form-label col-3 fs-6">Latitude:</label>
                       <input id="swal-input6" class="swal2-input" >
                     </div>
-                    <div className="form-group">
-                      <label for="numero" class="form-label col-3 fs-6 me-1">Longitude:</label>
-                      <input id="swal-input7" class="swal2-input me-0 pe-0">
-                      <button style="background-color: #FFFF; width: 30px; height: 30px; border: none;" id="get-location-btn" class="m-0 p-0"><img style=" width: 20px; height: 20px;"  src='https://img.icons8.com/material-sharp/24/address.png'/></button>
-                    </div>
+                      <div className="form-group">
+                        <label for="numero" class="form-label col-3 fs-6">Longitude</label>
+                        <input id="swal-input7" class="swal2-input">
+                      </div>                        
+                      <button style="background-color: #FFFF; width: 85%; border: 1px solid #aaaa; color:#545454; font-size: 14px;" id="get-location-btn" class="rounded-1 mt-3 me-4 py-2"><img style=" width: 23px; height: 23px;" class="me-1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAADtUlEQVR4nO2aS4hURxSGjy8waoQsxkQNxBBXMZCs1BCwxYUoaQbq/uenm5mGycYJUcheXcxO3BhQNyKK+MCVKx97kagjiYYsgjK6EVwlzioJOsKoFN6RsdTprvuq6uF+cKDp7nvuOX89T90rUlNTU1NTPiTXA9ijqudV9Q6ASQDPrKnqY/td+tvuVqv1hcwHGo3GYlUdBnBDVV942nWSQyQXST9CcoeqTmRI/A0DcA/AdukXms3mMgAn8ib+DjtO8gOJGWPMKlW9XULyM/YbyQGJNXkA90pM/vWQiE6EZrO5rOSWf6snjIyMLJVYQDljvltPOCYxAGB71cnPEmFnDOv8RCgBVPVu0H0CgE7A5GesHUwAVb0ZgQC/Btvba7aAn6rqYQCbOp3Ocmv2M4Aj6W++/p6T/LxyAVR1t2+wAB4ZY75+n0+S39j/ZBDhxxACnPdt+bmSny2Cb08AcE6qBsAfngIc9vB91NP3bakafVXD9xwkyY29+jbGbPbsAX9L1QCY8hRgRa++7X99h5dUDV6d5JQiwPDw8ErPHjAlVQNgMqIh8I/EPgkCODLfJsGzvuPULnHd/KZ7gal+WAY7WTZCc4mQdSNE8qdQJ0DTGUSYsl3cjnM7Mab2rf3Ot+VTe54kyWcSAlW9liHgou2ahILk96EFsMfvEhIAvwcU4I6ILAgqAMltWeaCvGbvCWCrxICqHgwgwAGJhdHR0SWqOl6hAOP2nhITJAfsIWUFLX+f5CcSI8aYTwE8LDH5R61Wa53EDMkvfc8KerTH1rf0AyQ3Avi3wOT/T5LkO+knSG7LeMrrdvtnwTc7FgBnKpzlZ5KfJtkSB5I/dLnutBQJyUX20CGAAD+7sQDYAOC/LtdN2sd2hQkAYGuA5Pe5caQPUf7q5XqSjcIEUNVfKk7+6Hsa4pSHj0NFCjDhqGsyuFmgqid7CP7s2NjYQl/nABJHgAdSBMaYr5wAnw4ODn6YdS5R1QtzJH8x69hNh8cTR4QNWXy9Acn9TpCXJAf2TS8AV9/RZW/YV23y+AZwuds8ksXpLcfprrw+03P/2e8U/Tk0NPRRXr8kRx1hx3M5bLfba+yZ26zkp40xq/MGmgY7kL4E+aCo4qbdbn/snE3YR+dr41HUwRY2RRc3blluc8jj7IojwF6JHDvunSF7OZMjkivcWbUfqjE78xeyaiVJglLW1Qpw9y12j9AXxY+Wt7M83RfFj5YngF9xRLIROuiiLUmSLdEWP1pNLyiuOKqpqampqZF5wUthHhOfsD9SDgAAAABJRU5ErkJggg==" alt="address">Salvar coordenadas</button>
+
                    `,
       showCancelButton: true,
       confirmButtonText: "Salvar",
