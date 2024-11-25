@@ -747,9 +747,9 @@ const ListarVeiculos = () => {
               
               </div>
               <div>
-                <div>
-                  <button
-                    className="mb-5"
+                 <div className="d-flex align-items-center fw-bold">
+                <button
+                    className="mb-5 p-0"
                     style={{
                       width: '43px',
                       height: '41px',
@@ -764,7 +764,7 @@ const ListarVeiculos = () => {
                       FuncTrocaComp("InserirCreditos");
                     }}
                   >
-                    <IoMdAdd color="white" size="30px" />
+                    <IoMdAdd color="white" className="p-0 m-0" size="35px" />
                   </button>
                 </div>
               </div>
