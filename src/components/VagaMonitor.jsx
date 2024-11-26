@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import CalcularHoras from "../util/CalcularHoras";
@@ -35,7 +35,38 @@ export const VagaMonitor = ({
     const [horas2, minutos2, segundos2] = tempo.split(":").map(Number);
     return horas2 * 3600 + minutos2 * 60 + segundos2;
   }
+  const [lastPosition, setLastPosition] = useState(null);
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const { id_usuario, nome } = user;
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        const newPosition = { latitude, longitude };
+
+        if (!lastPosition || lastPosition.latitude !== latitude || lastPosition.longitude !== longitude) {
+          const data = {
+            idUsuario: id_usuario,
+            nome: nome,
+            coordenadas: `${latitude},${longitude}`,
+          };
+          socket.emit('localizacaoSalvar', data);
+          setLastPosition(newPosition); 
+        }
+      }, (error) => {
+        console.error('Error ao buscar localização', error);
+      }, {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      });
+    } else {
+      console.error('Localização não suportada');
+    }
+  }, [lastPosition]);
+  
   const horaAgoraFunc = async () => {
     const dataAtual = new Date();
     const hora = dataAtual.getHours().toString().padStart(2, "0");

@@ -4,9 +4,11 @@ import { Button } from '@mantine/core';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import MapaBase, { iconEstacionado, iconNaoEstacionado, iconIdoso, iconDeficiente } from './MapaBase';
-
+import io from 'socket.io-client';
 ChartJS.register(ArcElement, Tooltip, Legend);
-
+const socket = io(
+  `${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`
+);
 const gerarCorAleatoria = () => {
   const letters = '0123456789ABCDEF';
   let color = '#';
@@ -44,7 +46,7 @@ const MapaAdmin = () => {
 
     return () => navigator.geolocation.clearWatch(watchId); 
   }, []);
-
+ 
   useEffect(() => {
 
     const fetchVagas = async () => {
@@ -56,20 +58,21 @@ const MapaAdmin = () => {
         console.error('Erro ao buscar vagas:', error);
       }
     };
-
-    const fetchLocalizacoes = async () => {
-      try {
-        const requisicao = createAPI();
-        const response = await requisicao.get('/usuario/localizacao');   
-        setLocalizacaoMonitoras(response.data);   
-       } catch (error) {
-        console.error('Erro ao buscar localizações:', error);
-      }
-    };
   
     fetchVagas();
-    fetchLocalizacoes();
+   
   }, []);
+  
+
+  useEffect(() => { 
+    socket.emit('enviarLocalizacao');
+    socket.on('localizacaoDados', (data) => {
+      setLocalizacaoMonitoras(data);
+    });
+    return () => {
+      socket.off('localizacaoDados');
+    };
+  }, [localizacaoMonitoras]);
 
   const setores = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
   

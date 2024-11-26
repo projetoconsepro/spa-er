@@ -80,12 +80,12 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
       >
         <img className='p-1' src="https://img.icons8.com/ios-filled/50/center-direction.png" alt="centralizar" />
       </Button>
-      {localizacaoMonitoras.map((localizacao, index) => {
+      {localizacaoMonitoras && localizacaoMonitoras.length > 0 && localizacaoMonitoras.map((localizacao, index) => {
         if (localizacao.coordenadas) {
           const [lat, lng] = localizacao.coordenadas.split(',').map(Number);
           return (
             <Marker key={index} position={[lat, lng]} icon={iconMonitoras}>
-                  <Tooltip direction="top" offset={[0, -35]} permanent>
+              <Tooltip direction="top" offset={[0, -35]} permanent>
                 {localizacao.nome}
               </Tooltip>
             </Marker>
