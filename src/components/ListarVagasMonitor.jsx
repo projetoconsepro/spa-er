@@ -21,6 +21,43 @@ const ListarVagasMonitor = () => {
   const [vagasOcupadas, setVagasOcupadas] = useState(0);
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [localVagas, setLocalVagas] = useState(true);
+  const [locations, setLocations] = useState([]);
+
+     const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        const newLocation = { latitude, longitude };
+        setLocations((prevLocations) => {
+          const updatedLocations = prevLocations.filter(loc => loc.latitude !== latitude && loc.longitude !== longitude);
+          return [...updatedLocations, newLocation];
+        });
+        const requisicao = createAPI();
+        requisicao.post('/usuario/localizacao', {
+        coordenadas: `${latitude},${longitude}`
+        })
+        .catch(error => console.error('Error:', error));
+      });
+    } else {
+      console.error("Não foi possível obter a localização");
+    }
+  };
+  
+  useEffect(() => {
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        getLocation(position);
+      },
+      (error) => {
+        console.error(error);
+      },{ enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      }
+    );
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
+  
   let variavelAuxiliarVagas = [];
 
   const funcCalcVgas = (array) => {

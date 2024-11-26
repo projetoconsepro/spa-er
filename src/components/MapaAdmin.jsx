@@ -27,7 +27,7 @@ const MapaAdmin = () => {
   const [sectorInfo, setSectorInfo] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const [setoresFormatado, setSetoresFormatado] = useState([]);
-
+  const [localizacaoMonitoras, setLocalizacaoMonitoras] = useState([]);
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
@@ -46,6 +46,7 @@ const MapaAdmin = () => {
   }, []);
 
   useEffect(() => {
+
     const fetchVagas = async () => {
       try {
         const requisicao = createAPI();
@@ -56,7 +57,18 @@ const MapaAdmin = () => {
       }
     };
 
+    const fetchLocalizacoes = async () => {
+      try {
+        const requisicao = createAPI();
+        const response = await requisicao.get('/usuario/localizacao');   
+        setLocalizacaoMonitoras(response.data);   
+       } catch (error) {
+        console.error('Erro ao buscar localizações:', error);
+      }
+    };
+  
     fetchVagas();
+    fetchLocalizacoes();
   }, []);
 
   const setores = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
@@ -158,13 +170,12 @@ const MapaAdmin = () => {
   const closeSectorInfo = () => {
     setSectorInfo(null);
   };
-
   return (
     <div>
       {basePosition && (
         <div>
           <div
-            className="filter-card d-flex justify-content-center p-3 bg-white"
+            className="filter-card d-flex justify-content-center p-1 bg-white"
             style={{
               flexWrap: 'wrap',
               borderRadius: '12px',
@@ -179,11 +190,11 @@ const MapaAdmin = () => {
             ].map((option, index) => (
               <label
                 key={index}
-                className="filter-option d-flex flex-column align-items-center m-4 p-2"
+                className="filter-option d-flex align-items-center m-2 p-2 px-4"
                 style={{
                   backgroundColor: '#f8f8f8',
                   borderRadius: '8px',
-                  width: '190px',
+                  width: '285px',
                   textAlign: 'center',
                   transition: 'transform 0.2s',
                   cursor: 'pointer',
@@ -194,7 +205,7 @@ const MapaAdmin = () => {
                 <img
                   src={option.icon}
                   alt={option.label}
-                  style={{ width: 40, height: 45, marginBottom: '8px' }}
+                  style={{ width: 40, height: 45, marginBottom: '8px', marginRight: '9px' }}
                 />
 
                 <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#333' }}>
@@ -216,7 +227,7 @@ const MapaAdmin = () => {
               </label>
             ))}
           </div>
-          <div className="sector-card d-flex justify-content-center py-4 bg-white mt-3" style={{ flexWrap: 'wrap' }}>
+          <div className="sector-card d-flex justify-content-center py-3 bg-white mt-2 rounded-2" style={{ flexWrap: 'wrap' }}>
             {setoresFormatado.map((sector) => (
               <label key={sector.name} className="sector-option m-2 d-flex align-items-center" style={{ wordBreak: 'break-word' }}>
                 <input
@@ -234,7 +245,7 @@ const MapaAdmin = () => {
             ))}
           </div>
           {sectorInfo && (
-            <div className="sector-info bg-white p-3 mt-3" style={{ width: '100%', height: '250px' }}>
+            <div className="sector-info bg-white p-3 mt-2" style={{ width: '100%', height: '250px' }}>
               <div className="d-flex justify-content-center align-items-center position-relative">
                 <h5 className="mx-auto">Setor {sectorInfo.name}</h5>
                 <Button
@@ -249,7 +260,7 @@ const MapaAdmin = () => {
               </div>
             </div>
           )}
-          <div className='bg-white rounded-2 p-4 mt-3'>
+          <div className='bg-white rounded-2 p-4 mt-2'>
             <MapaBase
               heightMapa={"600px"}
               basePosition={basePosition}
@@ -264,6 +275,7 @@ const MapaAdmin = () => {
               showLivres={showLivres}
               openMaps={openMaps}
               styleButton={styleButton}
+              localizacaoMonitoras={localizacaoMonitoras}
             />
           </div>
         </div>
