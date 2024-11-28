@@ -41,9 +41,17 @@ const iconCurrentLocation = new L.Icon({
 
 export { iconEstacionado, iconNaoEstacionado, iconIdoso, iconDeficiente, iconCurrentLocation };
 
-const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorClick, locationError, showIdoso, showDeficiente, showOcupadas, showLivres, openMaps, heightMapa, styleButton, localizacaoMonitoras }) => {
+const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorClick, locationError, showIdoso, showDeficiente, showOcupadas, showLivres, openMaps, localizacaoMonitoras, centerMap }) => {
   const mapRef = useRef(null);
   const [center, setCenter] = useState(basePosition);
+
+  useEffect(() => {
+    if (centerMap) {
+        if (mapRef.current && basePosition) {
+      mapRef.current.setView(basePosition, 17);
+    }
+    }
+  }, [centerMap]);
 
   useEffect(() => {
     setCenter(basePosition);
@@ -56,15 +64,10 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
     return null;
   };
 
-  const centerMap = () => {
-    if (mapRef.current && basePosition) {
-      mapRef.current.setView(basePosition, 17);
-    }
-  };
 
   return (
     <MapContainer
-      style={{ height: `${heightMapa}`, width: '100%', zIndex: 2 ,overflow: 'hidden',}}
+      style={{ height: `100%`, width: '100%', zIndex: 2 ,overflow: 'hidden', position: 'absolute', top: '0', left: '0' }}
       center={center}
       zoom={17}
     >
@@ -73,13 +76,7 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
        
       />
       <MapInstanceGetter mapRef={mapRef} />
-      <Button
-        onClick={centerMap}
-        className='bg-white p-0 m-0'
-        style={styleButton}
-      >
-        <img className='p-1' src="https://img.icons8.com/ios-filled/50/center-direction.png" alt="centralizar" />
-      </Button>
+  
       {localizacaoMonitoras && localizacaoMonitoras.length > 0 && localizacaoMonitoras.map((localizacao, index) => {
         if (localizacao.coordenadas) {
           const [lat, lng] = localizacao.coordenadas.split(',').map(Number);

@@ -7,7 +7,6 @@ const MapaAdmin = () => {
   const [vagas, setVagas] = useState([]);
   const [basePosition, setBasePosition] = useState(null);
   const [locationError, setLocationError] = useState(null);
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const [showModal, setShowModal] = useState(false);
   const [showIdoso, setShowIdoso] = useState(true);
   const [showDeficiente, setShowDeficiente] = useState(true);
@@ -15,18 +14,10 @@ const MapaAdmin = () => {
   const [showLivres, setShowLivres] = useState(true);
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+  const [centerMap, setCenterMap] = useState(false);
+    
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowHeight(window.innerHeight);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
+  useEffect(() => { 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -57,14 +48,6 @@ const MapaAdmin = () => {
     fetchVagas();
   }, []);
 
-  const styleButton = {
-    width: '40px',
-    height: '40px',
-    position: 'fixed',
-    top: '103px',
-    right: '15px',
-    zIndex: 600,
-  };
 
   const openMaps = (vagaPosition) => {
     const url = `https://www.google.com/maps/dir/?api=1&origin=${basePosition[0]},${basePosition[1]}&destination=${vagaPosition[0]},${vagaPosition[1]}&travelmode=driving`;
@@ -72,7 +55,7 @@ const MapaAdmin = () => {
   };
 
   return (
-    <div style={{ height: `${windowHeight - 70}px`, width: '100%', overflow: 'hidden', zIndex: '0'}}>
+    <div style={{ width: '100%', overflow: 'hidden', zIndex: '0'}}>
       <Button onClick={handleOpenModal} className='bg-white p-0 m-0'
         style={{ width: '40px', height: '40px', position: 'fixed', top: '150px', right: '15px',zIndex: 4,}}> 
         <img src="https://img.icons8.com/glyph-neue/64/horizontal-settings-mixer.png" alt="filtrar" /></Button>
@@ -131,9 +114,25 @@ const MapaAdmin = () => {
           ))}
         </div>
       </Modal>
+
       {basePosition && (
-        <MapaBase
-          heightMapa={"100%"}
+        <div>
+          <Button
+            onClick={() => setCenterMap(!centerMap)}
+            className='bg-white p-0 m-0'
+            style={{
+              width: '40px',
+              height: '40px',
+              position: 'fixed',
+              top: '103px',
+              right: '15px',
+              zIndex: 4
+            }}
+          >
+          <img className='p-1' src="https://img.icons8.com/ios-filled/50/center-direction.png" alt="centralizar" />
+          </Button>
+          <MapaBase
+
           basePosition={basePosition}
           vagas={vagas}
           selectedSectors={null}
@@ -145,8 +144,9 @@ const MapaAdmin = () => {
           showOcupadas={showOcupadas}
           showLivres={showLivres}
           openMaps={openMaps}
-          styleButton={styleButton}
-        />
+          localizacaoMonitoras={null}
+          centerMap={centerMap}
+        /></div>
       )}
     </div>
   );
