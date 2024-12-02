@@ -279,7 +279,7 @@ const MapaAdmin = () => {
                                 onChange={() => option.onChange(!option.checked)}
                                 className="m-2"
                                 style={{
-                                  accentColor: selectedSectors.includes(option.label) ? option.color : '#000000',
+                                  accentColor: '#000000',
                                   width: '60px',
                                   height: '20px',
                                   color: '#000000',
@@ -400,7 +400,7 @@ const MapaAdmin = () => {
             </div>
           </Modal>
           {sectorInfo && (
-            <div className="sector-info bg-white p-3 mb-2" style={{ width: '100%', height: '250px' }}>
+            <div className="sector-info bg-white p-3 mb-2" style={{ width: '81%', height: '250px', position: 'fixed', bottom: '5px', zIndex: 3 }}>
               <div className="d-flex justify-content-center align-items-center position-relative">
                 <h5 className="mx-auto">Setor {sectorInfo.name}</h5>
                 <button
