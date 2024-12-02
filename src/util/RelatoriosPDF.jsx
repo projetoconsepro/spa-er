@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import Logo from "../util/logoconseproof2.png";
 
-const RelatoriosPDF = (nomeArquivo, cabecalho, array) => {
+const RelatoriosPDF = (nomeArquivo, cabecalho, array, quantidades = null) => {
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
 
@@ -35,6 +35,8 @@ const RelatoriosPDF = (nomeArquivo, cabecalho, array) => {
     const formattedDate = `${day}/${month}/${year} ${hour}:${minute}`;
     doc.text(`Gerado por: ${user2.nome}`, 15, 17);
     doc.text(`Data: ${formattedDate}`, 15, 23);
+    if (quantidades) {
+      doc.text(`Regularizadas: ${quantidades.pagas}      Canceladas: ${quantidades.canceladas}      Pendentes: ${quantidades.pendentes}      Total: ${quantidades.total}`, 15, 30);    }
   };
 
   header();
@@ -43,7 +45,7 @@ const RelatoriosPDF = (nomeArquivo, cabecalho, array) => {
   dataD.push(...array.map((item) => Object.values(item)));
 
   doc.autoTable({
-    startY: 30,
+    startY: 35,
     head: [cabecalho],
     body: dataD,
     styles: {

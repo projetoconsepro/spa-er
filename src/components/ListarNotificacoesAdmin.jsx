@@ -22,6 +22,7 @@ const ListarNotificacoesAdmin = () => {
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
+  const [quantidade, setQuantidade] = useState(0);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -56,8 +57,7 @@ const ListarNotificacoesAdmin = () => {
       "Tipo",
       "Valor",
     ];
-    RelatoriosPDF(nomeArquivo, cabecalho, dataD);
-  };
+    RelatoriosPDF(nomeArquivo, cabecalho, dataD, quantidade);  };
 
   const mostrar = async (item, index) => {
     const requisicao = createAPI();
@@ -148,6 +148,7 @@ const ListarNotificacoesAdmin = () => {
   }, []);
 
   const reload = () => {
+    setQuantidade(0);
     setEstado(false);
     setMensagem("");
     const requisicao = createAPI();
@@ -344,8 +345,10 @@ const ListarNotificacoesAdmin = () => {
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
           }));
+          setQuantidade(response.data.quantidade);
           setData(newData);
         } else {
+          setQuantidade(0);
           setData([]);
           setEstado(true);
           setMensagem("Não há notificações para exibir");
@@ -406,11 +409,11 @@ const ListarNotificacoesAdmin = () => {
           )}
         </Carousel>
       </Modal>
-      <p className="mx-3 text-start fs-4 fw-bold">Listar notificações</p>
-      <div className="row mb-3">
+      <p className="mx-2 text-start fs-4 fw-bold">Listar notificações</p>
+      <div className="row mb-4">
         <div className="col-12">
           <div className="row">
-            <div className="col-6 mx-2">
+            <div className="col-6 mx-1">
               <Filtro
                 nome={"ListarNotificacoesAdmin"}
                 onConsultaSelected={handleConsultaSelected}
@@ -439,9 +442,18 @@ const ListarNotificacoesAdmin = () => {
                 <AiOutlineReload color="white" size={20} />
               </Button>
             </div>
-          </div>
+            
+
         </div>
-      </div>
+      </div>          </div>           
+      {quantidade ? (
+        <div className="text-start py-2 flex-wrap bg-white mb-2 rounded-1 thead-light">
+        <h6 className="text-start mx-3  my-2">
+          REGULARIZADAS:&nbsp;&nbsp; {quantidade.pagas}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          CANCELADAS:&nbsp;&nbsp; {quantidade.canceladas}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          PENDENTES:&nbsp;&nbsp; {quantidade.pendentes}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          TOTAL:&nbsp;&nbsp; {quantidade.total}
+        </h6></div>) : null}
       <div className="row">
         <div className="col-12">
           <div className="row">
