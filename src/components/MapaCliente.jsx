@@ -7,7 +7,6 @@ const MapaAdmin = () => {
   const [vagas, setVagas] = useState([]);
   const [basePosition, setBasePosition] = useState(null);
   const [locationError, setLocationError] = useState(null);
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const [showModal, setShowModal] = useState(false);
   const [showIdoso, setShowIdoso] = useState(true);
   const [showDeficiente, setShowDeficiente] = useState(true);
@@ -15,18 +14,10 @@ const MapaAdmin = () => {
   const [showLivres, setShowLivres] = useState(true);
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+  const [centerMap, setCenterMap] = useState(false);
+    
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowHeight(window.innerHeight);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
+  useEffect(() => { 
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -57,14 +48,6 @@ const MapaAdmin = () => {
     fetchVagas();
   }, []);
 
-  const styleButton = {
-    width: '40px',
-    height: '40px',
-    position: 'fixed',
-    top: '103px',
-    right: '15px',
-    zIndex: 600,
-  };
 
   const openMaps = (vagaPosition) => {
     const url = `https://www.google.com/maps/dir/?api=1&origin=${basePosition[0]},${basePosition[1]}&destination=${vagaPosition[0]},${vagaPosition[1]}&travelmode=driving`;
@@ -72,68 +55,101 @@ const MapaAdmin = () => {
   };
 
   return (
-    <div style={{ height: `${windowHeight - 70}px`, width: '100%', overflow: 'hidden', zIndex: '0'}}>
+    <div style={{ width: '100%', overflow: 'hidden', zIndex: '0'}}>
       <Button onClick={handleOpenModal} className='bg-white p-0 m-0'
         style={{ width: '40px', height: '40px', position: 'fixed', top: '150px', right: '15px',zIndex: 4,}}> 
         <img src="https://img.icons8.com/glyph-neue/64/horizontal-settings-mixer.png" alt="filtrar" /></Button>
 
-      <Modal opened={showModal} onClose={handleCloseModal} title="Filtros">
-        <div
-          className="d-flex justify-content-center align-items-center flex-column text-center bg-white"
-          style={{
-            margin: '0 auto',
-            width: '100%',
-          }}
-        >
-          {
-          [{ icon: iconNaoEstacionado.options.iconUrl, label: 'Vagas Livres', checked: showLivres, onChange: setShowLivres },
-          { icon: iconEstacionado.options.iconUrl, label: 'Vagas Ocupadas', checked: showOcupadas, onChange: setShowOcupadas },
-          { icon: iconIdoso.options.iconUrl, label: 'Vagas para Idosos', checked: showIdoso, onChange: setShowIdoso },
-          { icon: iconDeficiente.options.iconUrl, label: 'Vagas para Deficientes', checked: showDeficiente, onChange: setShowDeficiente },
-          ].map((option, index) => (
-            <label
-              key={index}
-              className="filter-option d-flex flex-column align-items-center m-4 p-3"
-              style={{
-                backgroundColor: '#f8f8f8',
-                borderRadius: '8px',
-                width: '190px',
-                textAlign: 'center',
-                transition: 'transform 0.2s',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-            >
-              <img
-                src={option.icon}
-                alt={option.label}
-                style={{ width: 40, height: 45, marginBottom: '8px' }}
-              />
+        <Modal centered
+            styles={{ content: { backgroundColor: '#ECECEC', }, header: { backgroundColor: '#ECECEC', }, }}
+            size="xl"
+            opened={showModal} onClose={handleCloseModal}>
+            <div className="row mb-4 px-5">
+              <div className='bg-white rounded-1 shadow'>
+                {basePosition && (
+                  <div>
+                    <div
+                      className="filter-card d-flex justify-content-center text-start p-2 py-3 bg-white rounded-2 mb-3"
+                      style={{
+                        flexWrap: 'wrap',
+                        margin: '0 auto',
+                      }}
+                    >
+                      <div className="row">
+                        {[
+                          { icon: iconIdoso.options.iconUrl, label: 'Vagas para Idosos', checked: showIdoso, onChange: setShowIdoso },
+                          { icon: iconDeficiente.options.iconUrl, label: 'Vagas para Deficientes', checked: showDeficiente, onChange: setShowDeficiente },
+                          { icon: iconEstacionado.options.iconUrl, label: 'Vagas Ocupadas', checked: showOcupadas, onChange: setShowOcupadas },
+                          { icon: iconNaoEstacionado.options.iconUrl, label: 'Vagas Livres', checked: showLivres, onChange: setShowLivres },
+                        ].map((option, index) => (
+                          <div key={index} className="col-md-6">
+                            <label
+                              className="filter-option d-flex align-items-center p-2 px-4 m-2"
+                              style={{
+                                backgroundColor: '#f8f8f8',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                transition: 'transform 0.2s',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                              }}
+                              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                            >
+                              <img
+                                src={option.icon}
+                                alt={option.label}
+                                className='p-1'
+                                style={{ width: 40, height: 45, marginRight: '9px' }}
+                              />
+                              <span style={{ fontSize: '0.9rem', fontWeight: '500', color: '#333', flex: 1, textAlign: 'center' }}>
+                                {option.label}
+                              </span>
+                              <input
+                                type="checkbox"
+                                checked={option.checked}
+                                onChange={() => option.onChange(!option.checked)}
+                                className="m-2"
+                                style={{
+                                  accentColor: '#000000',
+                                  width: '60px',
+                                  height: '20px',
+                                  color: '#000000',
+                                  border: '1px solid #000000',
+                                  marginLeft: 'auto',
+                                }}
+                              />
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-              <span style={{ fontSize: '1rem', color: '#333', fontWeight: '600' }}>
-                {option.label}
-              </span>        
-              <input
-                type="checkbox"
-                checked={option.checked}
-                onChange={() => option.onChange(!option.checked)}
-                className="m-2"
-                style={{
-                  accentColor: '#ffffff',
-                  width: '60px',
-                  height: '20px',
-                  color: '#000000',
-                  border: '1px solid #000000',
-                }}
-              />
-            </label>
-          ))}
-        </div>
+                  </div>
+                )} </div>
+                 </div>
       </Modal>
+
       {basePosition && (
-        <MapaBase
-          heightMapa={"100%"}
+        <div>
+          <Button
+            onClick={() => setCenterMap(!centerMap)}
+            className='bg-white p-0 m-0'
+            style={{
+              width: '40px',
+              height: '40px',
+              position: 'fixed',
+              top: '103px',
+              right: '15px',
+              zIndex: 4
+            }}
+          >
+          <img className='p-1' src="https://img.icons8.com/ios-filled/50/center-direction.png" alt="centralizar" />
+          </Button>
+          <MapaBase
+
           basePosition={basePosition}
           vagas={vagas}
           selectedSectors={null}
@@ -145,8 +161,9 @@ const MapaAdmin = () => {
           showOcupadas={showOcupadas}
           showLivres={showLivres}
           openMaps={openMaps}
-          styleButton={styleButton}
-        />
+          localizacaoMonitoras={null}
+          centerMap={centerMap}
+        /></div>
       )}
     </div>
   );

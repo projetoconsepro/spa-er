@@ -21,6 +21,7 @@ const ListarVagasMonitor = () => {
   const [vagasOcupadas, setVagasOcupadas] = useState(0);
   const [vagasVencidas, setVagasVencidas] = useState(0);
   const [localVagas, setLocalVagas] = useState(true);
+  
   let variavelAuxiliarVagas = [];
 
   const funcCalcVgas = (array) => {

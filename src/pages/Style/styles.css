@@ -29904,3 +29904,63 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     padding: 8px;
     text-align: left;
   }
+
+.selected-monitoras .chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px 5px 15px;
+  margin: 5px;
+  background-color: #287ED4; 
+  border-radius: 25px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.form-control {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+}
+
+.form-control:focus {
+  background-color: #fff !important;
+  border: 1px solid #ccc !important;
+  box-shadow: none !important; 
+}  
+
+.button-fixed {
+    height: 40px;
+    padding: 0;
+    color: #000;
+    z-index: 4;
+  }
+
+#fixed1{
+    width: 140px;
+    position: absolute;
+    top: 10px;
+    right: 62px;
+}
+#fixed2{
+    width: 40px;
+    position: absolute;
+    top: 10px;
+    margin: 0;
+
+}
+
+@media (max-width: 768px) {
+    #fixed1, #fixed2{
+        margin-bottom: 20px;
+      position: fixed;
+      top: 90px;
+      
+    }
+    #fixed1{
+        position: fixed;
+        right:65px;
+        top: 90px;
+        
+    }
+  }
