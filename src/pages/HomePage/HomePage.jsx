@@ -2,14 +2,16 @@ import { React, useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import Componentes from "./Componentes";
 import "bootstrap/dist/css/bootstrap.min.css";
+import io from "socket.io-client";
 
 const HomePage = () => {
   const [data, setData] = useState("");
-  const teste = localStorage.getItem("user");
-  const teste2 = JSON.parse(teste);
-  const [cont, setCont] = useState(0);
+  const user = localStorage.getItem("user");
+  const userDados = JSON.parse(user);
+  const [cont, setCont] = useState(0);  
+  const [lastPosition, setLastPosition] = useState(null);
 
-  if (teste === null || teste === undefined) {
+  if (user === null || user === undefined) {
     const allowedComponents = [
       "RegisterPage",
       "LoginPage",
@@ -19,8 +21,8 @@ const HomePage = () => {
     ];
     if (!allowedComponents.includes(localStorage.getItem("componente"))) {
       localStorage.setItem("componente", "LoginPage");
-    }
-  } else {
+    }   
+  } else { 
     const allowedComponents = [
       "RegisterPage",
       "LoginPage",
@@ -29,7 +31,7 @@ const HomePage = () => {
       "ResetPassword",
     ];
     if (allowedComponents.includes(localStorage.getItem("componente"))) {
-      const perfil = teste2.perfil[0];
+      const perfil = userDados.perfil[0];
       switch (perfil) {
         case "cliente":
           localStorage.setItem("componente", "MeusVeiculos");
@@ -48,6 +50,41 @@ const HomePage = () => {
       }
     }
   }
+  
+  useEffect(() => {
+    if (user != null && userDados.perfil[0] != null) {
+      if (userDados.perfil[0] == 'monitor') {
+        const socket = io(`${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`);
+        const { id_usuario, nome } = userDados;
+        
+        if (navigator.geolocation) {
+          navigator.geolocation.watchPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            const newPosition = { latitude, longitude };
+
+            if (!lastPosition || lastPosition.latitude !== latitude || lastPosition.longitude !== longitude) {
+              const data = {
+                idUsuario: id_usuario,
+                nome: nome,
+                coordenadas: `${latitude},${longitude}`,
+              };
+              socket.emit('localizacaoSalvar', data);
+              setLastPosition(newPosition);
+            }
+          }, (error) => {
+            console.error('Error ao buscar localização', error);
+          }, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+          });
+        } else {
+          console.error('Localização não suportada');
+        }
+      }
+    }
+
+  }, [lastPosition, user]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -58,8 +95,8 @@ const HomePage = () => {
 
   return (
     <>
-      {teste2 === null || data === "EscolherPerfil" ? null : <Sidebar />}
-      {teste2 !== null && data !== "EscolherPerfil" ? (
+      {userDados === null || data === "EscolherPerfil" ? null : <Sidebar />}
+      {userDados !== null && data !== "EscolherPerfil" ? (
         <main className="content">
           {data === "" ? null : <Componentes Componente={data} />}
         </main>

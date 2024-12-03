@@ -82,7 +82,7 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
           const [lat, lng] = localizacao.coordenadas.split(',').map(Number);
           return (
             <Marker key={index} position={[lat, lng]} icon={iconMonitoras}>
-              <Tooltip direction="top" offset={[0, -35]} permanent>
+              <Tooltip direction="top" offset={[5, -38]} permanent>
                 {localizacao.nome}
               </Tooltip>
             </Marker>
