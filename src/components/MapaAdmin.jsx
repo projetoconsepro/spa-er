@@ -22,6 +22,7 @@ const gerarCorAleatoria = () => {
 
 const MapaAdmin = () => {
   const [vagas, setVagas] = useState([]);
+  const [setores, setSetores] = useState([]);
   const [showIdoso, setShowIdoso] = useState(true);
   const [showDeficiente, setShowDeficiente] = useState(true);
   const [showOcupadas, setShowOcupadas] = useState(true);
@@ -62,15 +63,35 @@ const MapaAdmin = () => {
     const fetchVagas = async () => {
       try {
         const requisicao = createAPI();
-        const response = await requisicao.get('/vagas/listar');
-        setVagas(response.data.data);
+        requisicao.get('/vagas/listar').then((response) => {
+          if (response.data.data.length > 0) {
+            setVagas(response.data.data);
+          } else {
+            setVagas([]);
+          }
+        })
       } catch (error) {
         console.error('Erro ao buscar vagas:', error);
       }
     };
 
-    fetchVagas();
+    const fetchSetores = async () => {
+      try {
+        const requisicao = createAPI();
+        const response = await requisicao.get('/setores');
+        if (response.data.data.setores.length > 0) {
+          const nomesSetores = response.data.data.setores.map(setor => setor.nome);
+          setSetores(nomesSetores);
+        } else {
+          setSetores([]);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar setores:', error);
+      }
+    };
 
+    fetchVagas();
+    fetchSetores();
   }, []);
 
 
@@ -85,7 +106,6 @@ const MapaAdmin = () => {
     };
   }, [localizacaoMonitoras]);
 
-  const setores = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'];
 
   const calcularExtremos = (vagas, setor) => {
     const vagasSetor = vagas.filter(vaga => vaga.setor === setor && vaga.coordenada);
