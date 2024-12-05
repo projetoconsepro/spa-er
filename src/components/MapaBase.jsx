@@ -47,9 +47,9 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
 
   useEffect(() => {
     if (centerMap) {
-        if (mapRef.current && basePosition) {
-      mapRef.current.setView(basePosition, 17);
-    }
+      if (mapRef.current && basePosition) {
+        mapRef.current.setView(basePosition, 17);
+      }
     }
   }, [centerMap]);
 
@@ -67,16 +67,16 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
 
   return (
     <MapContainer
-      style={{ height: `100%`, width: '100%', zIndex: 2 ,overflow: 'hidden', position: 'absolute', top: '0', left: '0' }}
-      center={center}
+    style={{ height: `100%`, width: '100%', zIndex: 2 ,overflow: 'hidden', position: 'absolute', top: '0', left: '0' }}
+    center={center}
       zoom={17}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-       
+
       />
       <MapInstanceGetter mapRef={mapRef} />
-  
+
       {localizacaoMonitoras && localizacaoMonitoras.length > 0 && localizacaoMonitoras.map((localizacao, index) => {
         if (localizacao.coordenadas) {
           const [lat, lng] = localizacao.coordenadas.split(',').map(Number);
@@ -111,44 +111,46 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
           </Popup>
         </Marker>
       )}
-{Array.isArray(vagas) && vagas.map((vaga) => {
-  if (!vaga.coordenada) {
-    return null;
-  }
-  
-  const [lat, lng] = vaga.coordenada.split(',').map(coord => parseFloat(coord.trim()));
-  const position = [lat, lng];
-  
-  let icon;
-  if (vaga.tipo === 'idoso' && vaga.estacionado === 'N' && showIdoso) {
-    icon = iconIdoso;
-  } else if (vaga.tipo === 'cadeirante' && vaga.estacionado === 'N' && showDeficiente) {
-    icon = iconDeficiente;
-  } else if (vaga.estacionado === 'N' && vaga.tipo === 'normal' && showLivres) {
-    icon = iconNaoEstacionado;
-  } else if (vaga.estacionado === 'S' && vaga.tipo === 'cadeirante' && showDeficiente && showOcupadas) {
-    icon = iconEstacionadoDeficiente;
-  } else if (vaga.estacionado === 'S' && vaga.tipo === 'idoso' && showIdoso && showOcupadas) {
-    icon = iconEstacionadoIdoso;
-  } else if (vaga.estacionado === 'S' && vaga.tipo === 'normal' && showOcupadas) {
-    icon = iconEstacionado;
-  } else {
-    return null;
-  }
-  
-  return (
-    <Marker key={vaga.numero} position={position} icon={icon}>
-      <Popup className='m-1 p-0 text-center' >
-        <p className='m-1 mt-2 p-0 text-center' style={{ minWidth: '150px' }}>{vaga.estacionado === 'S' ? 'Vaga Ocupada' : 'Vaga Livre'}</p>
-        <p className='m-1 p-0 text-capitalize text-center'><strong>Tipo:</strong> {vaga.tipo === 'cadeirante' ? 'Deficiente' : vaga.tipo}</p>
-        <p className='m-1 p-0 text-center'><strong>Número:</strong> {vaga.numero}</p>
-        {!locationError && basePosition && (
-        <Button className='mt-2' style={{ width: '100%' }} onClick={() => openMaps(position)}>Ver rota</Button>
-      )}
-      </Popup>
-    </Marker>
-  );
-})}
+      {Array.isArray(vagas) && vagas.map((setor) => {
+        return setor.vagas.map((vaga) => {
+          if (!vaga.coordenada) {
+            return null;
+          }
+
+          const [lat, lng] = vaga.coordenada.split(',').map(coord => parseFloat(coord.trim()));
+          const position = [lat, lng];
+        
+          let icon;
+          if (vaga.tipoVaga === 'idoso' && vaga.estacionado === 'N' && showIdoso) {
+            icon = iconIdoso;
+          } else if (vaga.tipoVaga === 'cadeirante' && vaga.estacionado === 'N' && showDeficiente) {
+            icon = iconDeficiente;
+          } else if (vaga.estacionado === 'N' && vaga.tipoVaga === 'normal' && showLivres) {
+            icon = iconNaoEstacionado;
+          } else if (vaga.estacionado === 'S' && vaga.tipoVaga === 'cadeirante' && showDeficiente && showOcupadas) {
+            icon = iconEstacionadoDeficiente;
+          } else if (vaga.estacionado === 'S' && vaga.tipoVaga === 'idoso' && showIdoso && showOcupadas) {
+            icon = iconEstacionadoIdoso;
+          } else if (vaga.estacionado === 'S' && vaga.tipoVaga === 'normal' && showOcupadas) {
+            icon = iconEstacionado;
+          } else {
+            return null;
+          }
+
+          return (
+            <Marker key={vaga.numero} position={position} icon={icon}>
+              <Popup className='m-1 p-0 text-center' >
+                <p className='m-1 mt-2 p-0 text-center' style={{ minWidth: '150px' }}>{vaga.estacionado === 'S' ? 'Vaga Ocupada' : 'Vaga Livre'}</p>
+                <p className='m-1 p-0 text-capitalize text-center'><strong>Tipo:</strong> {vaga.tipoVaga === 'cadeirante' ? 'Deficiente' : vaga.tipoVaga}</p>
+                <p className='m-1 p-0 text-center'><strong>Número:</strong> {vaga.numero}</p>
+                {!locationError && basePosition && (
+                  <Button className='mt-2' style={{ width: '100%' }} onClick={() => openMaps(position)}>Ver rota</Button>
+                )}
+              </Popup>
+            </Marker>
+          );
+        });
+      })}
     </MapContainer>
   );
 };

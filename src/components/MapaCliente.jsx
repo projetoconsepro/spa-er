@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button} from '@mantine/core';
-import createAPI from "../services/createAPI";
 import MapaBase, { iconEstacionado, iconNaoEstacionado, iconIdoso, iconDeficiente } from './MapaBase';
-
+import io from 'socket.io-client';
+  const socket = io(
+    `${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`
+  );  
 const MapaAdmin = () => {
   const [vagas, setVagas] = useState([]);
   const [basePosition, setBasePosition] = useState(null);
@@ -16,6 +18,15 @@ const MapaAdmin = () => {
   const handleCloseModal = () => setShowModal(false);
   const [centerMap, setCenterMap] = useState(false);
     
+  useEffect(() => {
+    socket.emit('vagas');
+    socket.on('vagasDados', (data) => {
+      setVagas(data);
+    });
+    return () => {
+      socket.off('vagasDados');
+    };
+  }, [vagas]);
 
   useEffect(() => { 
     const watchId = navigator.geolocation.watchPosition(
@@ -34,19 +45,6 @@ const MapaAdmin = () => {
     return () => navigator.geolocation.clearWatch(watchId); 
   }, []);
 
-  useEffect(() => {
-    const fetchVagas = async () => {
-      try {
-        const requisicao = createAPI();
-        const response = await requisicao.get('/vagas/listar');
-        setVagas(response.data.data);
-      } catch (error) {
-        console.error('Erro ao buscar vagas:', error);
-      }
-    };
-
-    fetchVagas();
-  }, []);
 
 
   const openMaps = (vagaPosition) => {
