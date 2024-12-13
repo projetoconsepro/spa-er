@@ -40,6 +40,7 @@ const MapaAdmin = () => {
   const [pageLoaded, setPageLoaded] = useState(false);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [centerMap, setCenterMap] = useState(false);
+  const coresSetoresRef = useRef({});
 
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
@@ -59,22 +60,6 @@ const MapaAdmin = () => {
   }, []);
 
   useEffect(() => {
-
-    const fetchVagas = async () => {
-      try {
-        const requisicao = createAPI();
-        requisicao.get('/vagas/listar').then((response) => {
-          if (response.data.data.length > 0) {
-            setVagas(response.data.data);
-          } else {
-            setVagas([]);
-          }
-        })
-      } catch (error) {
-        console.error('Erro ao buscar vagas:', error);
-      }
-    };
-
     const fetchSetores = async () => {
       try {
         const requisicao = createAPI();
@@ -90,10 +75,18 @@ const MapaAdmin = () => {
       }
     };
 
-    fetchVagas();
     fetchSetores();
   }, []);
 
+  useEffect(() => {
+    socket.emit('vagas');
+    socket.on('vagasDados', (data) => {
+      setVagas(data);
+    });
+    return () => {
+      socket.off('vagasDados');
+    };
+  }, [vagas]);
 
   useEffect(() => {
     socket.emit('enviarLocalizacao');
@@ -105,10 +98,10 @@ const MapaAdmin = () => {
       socket.off('localizacaoDados');
     };
   }, [localizacaoMonitoras]);
-
+  
 
   const calcularExtremos = (vagas, setor) => {
-    const vagasSetor = vagas.filter(vaga => vaga.setor === setor && vaga.coordenada);
+    const vagasSetor = vagas.find(v => v.setor === setor)?.vagas.filter(vaga => vaga.coordenada) || [];
     if (vagasSetor.length === 0) {
       return null;
     }
@@ -149,7 +142,10 @@ const MapaAdmin = () => {
 
   useEffect(() => {
     const coresSetores = setores.reduce((acc, setor) => {
-      acc[setor] = gerarCorAleatoria();
+      if (!coresSetoresRef.current[setor]) {
+        coresSetoresRef.current[setor] = gerarCorAleatoria();
+      }
+      acc[setor] = coresSetoresRef.current[setor];
       return acc;
     }, {});
     const setoresComPoligonos = setores.map(setor => {
@@ -166,7 +162,7 @@ const MapaAdmin = () => {
 
     }).filter(Boolean);
     setSetoresFormatado(setoresComPoligonos);
-  }, [vagas]);
+  }, [vagas, setores]);
 
   const handleSectorChange = (sectorName) => {
     setSelectedSectors((prevSelectedSectors) =>
@@ -177,7 +173,7 @@ const MapaAdmin = () => {
   };
 
   const handleSectorClick = (sectorName) => {
-    const sectorVagas = vagas.filter(vaga => vaga.setor === sectorName);
+    const sectorVagas = vagas.find(v => v.setor === sectorName)?.vagas || [];
     const vagasLivres = sectorVagas.filter(vaga => vaga.estacionado === 'N').length;
     const vagasOcupadas = sectorVagas.filter(vaga => vaga.estacionado === 'S').length;
     setSectorInfo({ name: sectorName, vagasLivres, vagasOcupadas });
