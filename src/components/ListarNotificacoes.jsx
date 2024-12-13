@@ -249,6 +249,7 @@ const ListarNotificacoes = () => {
             estado: false,
             pago: item.pago,
             checked: false,
+            data_regularizacao: item.data_regularizacao ? ArrumaHora(item.data_regularizacao) : "",
           }));
           setData(newData);
         } else {
