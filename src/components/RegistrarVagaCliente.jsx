@@ -386,7 +386,8 @@ const RegistrarVagaCliente = () => {
                     },
                   }}
                 >
-                  {resposta2.map((item, index) => (
+                {resposta2.map((item, index) => (
+                  item.placa && (
                     <Carousel.Slide key={index}>
                       <Card
                         padding="xs"
@@ -408,7 +409,8 @@ const RegistrarVagaCliente = () => {
                         </Grid>
                       </Card>
                     </Carousel.Slide>
-                  ))}
+                  )
+                ))}
                 </Carousel>
               ) : (
                 <Group position= {resposta2.length == 3 ? 'apart' :'start' 
