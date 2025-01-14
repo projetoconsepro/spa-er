@@ -210,8 +210,8 @@ const BuscarVeiculo = () => {
         className="row justify-content-center form-bg-image"
         data-background-lg="../../assets/img/illustrations/signin.svg"
       >
-        <div className="col-12 d-flex align-items-center justify-content-center">
-          <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+        <div className="col-12 d-flex align-items-center justify-content-center p-1">
+          <div className="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500 ">
             <div className="h6 mt-1 align-items-left text-start">
               Consultar veículo
             </div>
@@ -267,9 +267,9 @@ const BuscarVeiculo = () => {
             {div ? (
               <div>
                 {data.map((link, index) => (
-                  <div className="card border-3 shadow mt-5" key={index}>
+                  <div className="card border-3 shadow mt-5 text-start " key={index}>
                     <div
-                      className="card-body8 h-75"
+                      className="card-body8 h-75 p-sm-4 p-3"
                     >
                       <div className="d-flex align-items-center justify-content-between pb-3">
                         <div>

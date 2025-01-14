@@ -593,11 +593,11 @@ const RegistrarEstacionamentoParceiro = () => {
               Registrar estacionamento
             </div>
             <Divider my="sm" size="md" variant="dashed" />
-            <div className="row">
-              <div className="col-9 px-3 pt-1">
+                     <div className="row">
+              <div className="col-9 pt-1 text-start ps-4" >
                 <h6>Placa estrangeira/Outra</h6>
               </div>
-              <div className="col-3 px-3">
+              <div className="col-3">
                 <div className="form-check3 form-switch gap-2 d-md-block">
                   <input
                     className="form-check-input align-self-end"
@@ -607,7 +607,8 @@ const RegistrarEstacionamentoParceiro = () => {
                     id="flexSwitchCheckDefault"
                     onChange={() => {
                       jae();
-                    } } />
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -659,7 +660,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       </button>
                     </Grid.Col>
                     <Grid.Col span={6}>
-                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                    <button type="button" className={`btn px-5 icon-shape w-75 icon-shape rounded align-center ${
                       selectedButton === "dinheiro"
                         ? "corTempoSelecionado"
                         : "corTempo"

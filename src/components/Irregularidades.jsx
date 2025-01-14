@@ -421,45 +421,49 @@ const Irregularidades = () => {
                   <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
                     {link.tipo_notificacao === "Ocupando vaga de deficiente" ||
                     link.tipo_notificacao === "Ocupando vaga de idoso" ? (
-                      <h6>
+                      <h6 className="text-start m-0">
                         {" "}
+                        
                         <FaClipboardList />‎{" "}
-                        <small>Motivo: {link.tipo_notificacao}</small>
+                        <small className="ms-1 flex-wrap">Motivo: {link.tipo_notificacao}</small>
+                     
                       </h6>
                     ) : (
-                      <h6>
+                      <h6 className="text-start m-0">
                         {" "}
+                        
                         <FaClipboardList />‎
                         {window.innerWidth <= 360 ? (
-                          <small>Motivo: {link.tipo_notificacao}</small>
+                          <small className="ms-1 flex-wrap">Motivo: {link.tipo_notificacao}</small>
                         ) : (
                           `Motivo: ${link.tipo_notificacao}`
                         )}
-                      </h6>
+                       
+                      </h6> 
                     )}
                   </div>
                 ) : (
                   <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
                     {link.tipo_notificacao === "Ocupando vaga de deficiente" ||
                     link.tipo_notificacao === "Ocupando vaga de idoso" ? (
-                                <div className="d-flex align-items-center"><h6>
+                                <h6>
                         {" "}
-              
+                      <div className="d-flex align-items-center">
                         <FaClipboardList />‎{" "}
-                        <small className="ms-1">Motivo: {link.tipo_notificacao}</small>
-                        
-                      </h6></div>
-                    ) : (<div className="d-flex align-items-center">
+                        <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '200px' }}>Motivo: {link.tipo_notificacao}</small>
+                        </div>
+                      </h6>
+                    ) : (
                       <h6>
                         {" "}
-                        
+                        <div className="d-flex align-items-center">
                         <FaClipboardList />‎
                         {window.innerWidth <= 360 ? (
-                          <small className="ms-1">Motivo: {link.tipo_notificacao}</small>
+                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '160px' }}>Motivo: {link.tipo_notificacao}</small>
                         ) : (
                           `Motivo: ${link.tipo_notificacao}`
-                        )}
-                      </h6></div>
+                        )}</div>
+                      </h6>
                     )}
                   </div>
                 )}
@@ -519,7 +523,7 @@ const Irregularidades = () => {
           {link.estado ? (
             <div className="justify-content-between pb-3 mb-1">
               <div
-                className="h6 align-items-start text-start px-4"
+                className="h6 align-items-start text-start px-4 mt-2"
                 id="estacionadocarroo"
               >
                 <h6>
@@ -557,7 +561,7 @@ const Irregularidades = () => {
                     <option value="pix">PIX</option>
                     <option value="credito">Saldo</option>
                   </select>
-                  <div className="pt-3 gap-6 d-md-block">
+                  <div className="pt-2 gap-6 d-md-block">
                     <div className="row">
                       <div className="col-12">
                         <Button

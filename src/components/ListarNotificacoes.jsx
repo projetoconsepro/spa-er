@@ -689,9 +689,9 @@ const ListarNotificacoes = () => {
             ) : null}
           </div>
           {link.estado ? (
-            <div className="justify-content-between pb-3 mb-1 mt-4">
+            <div className="justify-content-between pb-3 mb-1">
               <div
-                className="h6 align-items-start text-start px-4"
+                className="h6 align-items-start text-start mt-4 px-4"
                 id="estacionadocarroo"
               >
                 <h6>

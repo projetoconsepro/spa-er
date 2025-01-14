@@ -244,20 +244,20 @@ const AdicionarCreditos = () => {
               <small>Adicionar créditos</small>
             </div>
             <Divider my="sm" size="md" variant="dashed" />
-            <div className="row align-items-center pt-2">
+            <div className="row align-items-center text-center pt-2">
               <div className="col-3">
                 <button
                   type="button"
-                  className="btn btn-info w-100"
+                  className="btn btn-info w-100 p-2"
                   onClick={() => FuncArrumaInput('1000')}
                 >
-                  10
+                  10 
                 </button>
               </div>
               <div className="col-3">
                 <button
                   type="button"
-                  className="btn btn-info w-100"
+                  className="btn btn-info w-100 p-2"
                   onClick={() => FuncArrumaInput('2000')}
                 >
                   20
@@ -266,7 +266,7 @@ const AdicionarCreditos = () => {
               <div className="col-3">
                 <button
                   type="button"
-                  className="btn btn-info w-100"
+                  className="btn btn-info w-100 p-2"
                   onClick={() => FuncArrumaInput('3000')}
                 >
                   30
@@ -275,7 +275,7 @@ const AdicionarCreditos = () => {
               <div className="col-3">
                 <button
                   type="button"
-                  className="btn btn-info w-100"
+                  className="btn btn-info w-100 p-2"
                   onClick={() => FuncArrumaInput('5000')}
                 >
                   50
