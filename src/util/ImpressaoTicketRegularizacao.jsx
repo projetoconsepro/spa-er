@@ -31,7 +31,7 @@ const ImpressaoTicketRegularizacao = async (via, item) => {
   } else {
     const json = {
       tipo: "REGULARIZACAO",
-      dataEmissao: item.data,
+      dataEmissao: `${item.data_regularizacao} \n Hora Notif.: ${item.data} \n `,
       monitor: item.monitor,
       modelo: item.modelo,
       endereco: item.endereco,
