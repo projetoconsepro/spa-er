@@ -43,6 +43,10 @@ const MapaAdmin = () => {
   const coresSetoresRef = useRef({});
 
   useEffect(() => {
+    localStorage.setItem("componente", "Dashboard");
+  }, [])
+
+  useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -77,16 +81,6 @@ const MapaAdmin = () => {
 
     fetchSetores();
   }, []);
-
-  useEffect(() => {
-    socket.emit('vagas');
-    socket.on('vagasDados', (data) => {
-      setVagas(data);
-    });
-    return () => {
-      socket.off('vagasDados');
-    };
-  }, [vagas]);
 
   useEffect(() => {
     socket.emit('enviarLocalizacao');

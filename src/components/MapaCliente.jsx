@@ -17,16 +17,10 @@ const MapaAdmin = () => {
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
   const [centerMap, setCenterMap] = useState(false);
-    
+
   useEffect(() => {
-    socket.emit('vagas');
-    socket.on('vagasDados', (data) => {
-      setVagas(data);
-    });
-    return () => {
-      socket.off('vagasDados');
-    };
-  }, [vagas]);
+    localStorage.setItem("componente", "MeusVeiculos");
+  }, [])
 
   useEffect(() => { 
     const watchId = navigator.geolocation.watchPosition(
