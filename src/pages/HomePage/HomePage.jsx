@@ -2,14 +2,12 @@ import { React, useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import Componentes from "./Componentes";
 import "bootstrap/dist/css/bootstrap.min.css";
-import io from "socket.io-client";
 
 const HomePage = () => {
   const [data, setData] = useState("");
   const user = localStorage.getItem("user");
   const userDados = JSON.parse(user);
-  const [cont, setCont] = useState(0);  
-  const [lastPosition, setLastPosition] = useState(null);
+  const [cont, setCont] = useState(0);
 
   if (user === null || user === undefined) {
     const allowedComponents = [
@@ -50,41 +48,6 @@ const HomePage = () => {
       }
     }
   }
-  
-  useEffect(() => {
-    if (user != null && userDados.perfil[0] != null) {
-      if (userDados.perfil[0] == 'monitor') {
-        const socket = io(`${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`);
-        const { id_usuario, nome } = userDados;
-        
-        if (navigator.geolocation) {
-          navigator.geolocation.watchPosition((position) => {
-            const { latitude, longitude } = position.coords;
-            const newPosition = { latitude, longitude };
-
-            if (!lastPosition || lastPosition.latitude !== latitude || lastPosition.longitude !== longitude) {
-              const data = {
-                idUsuario: id_usuario,
-                nome: nome,
-                coordenadas: `${latitude},${longitude}`,
-              };
-              socket.emit('localizacaoSalvar', data);
-              setLastPosition(newPosition);
-            }
-          }, (error) => {
-            console.error('Error ao buscar localização', error);
-          }, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-          });
-        } else {
-          console.error('Localização não suportada');
-        }
-      }
-    }
-
-  }, [lastPosition, user]);
 
   useEffect(() => {
     setTimeout(() => {

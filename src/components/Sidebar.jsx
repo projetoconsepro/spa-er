@@ -166,7 +166,6 @@ const Sidebar = () => {
               ]
           },
           { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "Irregularidades" },
-          {icon: <FaRegMap />, name: "‎ Mapa de vagas", componente: "MapaCliente" , className: commonStyles},
           { icon: <MdHelp />, name: "‎ Ajuda", componente: "Suporte" }
       ];
 

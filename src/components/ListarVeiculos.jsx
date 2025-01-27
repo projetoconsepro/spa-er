@@ -26,7 +26,7 @@ import {
 import createAPI from "../services/createAPI";
 import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
-import {FormatDateBr} from "../util/formatDate";
+import { FormatDateBr } from "../util/formatDate";
 import { IconX } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import jsPDF from "jspdf";
@@ -62,12 +62,17 @@ const ListarVeiculos = () => {
   const horasAtuais = dataAtual.getHours();
   const minutosAtuais = dataAtual.getMinutes();
   const tempoLimite = "17:35:00";
-  const condicaoHorario60 = (horasAtuais >= 17 && minutosAtuais >= 30 && horasAtuais <= 18);
-  const condicaoHorario90 = (horasAtuais >= 17 && horasAtuais <= 18);
-  const condicaoHorario120 = (horasAtuais == 16 && minutosAtuais >= 30) || (horasAtuais == 17 && horasAtuais <= 18);
+  const condicaoHorario60 =
+    horasAtuais >= 17 && minutosAtuais >= 30 && horasAtuais <= 18;
+  const condicaoHorario90 = horasAtuais >= 17 && horasAtuais <= 18;
+  const condicaoHorario120 =
+    (horasAtuais == 16 && minutosAtuais >= 30) ||
+    (horasAtuais == 17 && horasAtuais <= 18);
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const token = btoa(unescape(encodeURIComponent(localStorage.getItem("token"))));
+  const token = btoa(
+    unescape(encodeURIComponent(localStorage.getItem("token")))
+  );
   const id_usuario = btoa(user.id_usuario);
   if (window.ReactNativeWebView) {
     const data = {
@@ -626,7 +631,11 @@ const ListarVeiculos = () => {
         }}
         centered
         size="xl"
-        title= {ModalContent === "Comprovante" ?"Comprovante de estacionamento:" : "Aviso!"}
+        title={
+          ModalContent === "Comprovante"
+            ? "Comprovante de estacionamento:"
+            : "Aviso!"
+        }
       >
         {ModalContent === "Comprovante" ? (
           <>
@@ -687,34 +696,53 @@ const ListarVeiculos = () => {
               </Button>
             </div>
           </>
-        ) :  (
-          <div className="rounded border border-gray p-3 modal-body" id="modalTexto">
-            <div className='text-center m-3'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-              <path fill="none" stroke="#424242" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 13V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13c0 1-.6 3-3 3m0 0H6c-1 0-3-.6-3-3v-2h12v2c0 2.4 2 3 3 3M9 7h8m-8 4h4"/>
+        ) : (
+          <div
+            className="rounded border border-gray p-3 modal-body"
+            id="modalTexto"
+          >
+            <div className="text-center m-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="none"
+                  stroke="#424242"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1"
+                  d="M5 13V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13c0 1-.6 3-3 3m0 0H6c-1 0-3-.6-3-3v-2h12v2c0 2.4 2 3 3 3M9 7h8m-8 4h4"
+                />
               </svg>
             </div>
-            <small >
-              Gostaríamos de informar que o CONSEPRO - Conselho Comunitário Pró-Segurança Pública de Taquara, a partir de agora,
-              estará reduzindo o uso de papel no estacionamento rotativo.
-              Para os usuários com débito automático ativo, não será mais impresso o comprovante de estacionamento.
-              Atualizando assim os termos de uso do Débito Automático!  <br />  <br />
-            </small>
             <small>
-              Agradecemos a compreensão e colaboração de todos.
+              Gostaríamos de informar que o CONSEPRO - Conselho Comunitário
+              Pró-Segurança Pública de Taquara, a partir de agora, estará
+              reduzindo o uso de papel no estacionamento rotativo. Para os
+              usuários com débito automático ativo, não será mais impresso o
+              comprovante de estacionamento. Atualizando assim os termos de uso
+              do Débito Automático! <br /> <br />
             </small>
+            <small>Agradecemos a compreensão e colaboração de todos.</small>
             <div className="row">
               <div className="col-12 text-center mt-3">
-                <Button onClick={() => closeModal()} variant="gradient" gradient={{ from: "teal", to: "indigo", deg: 300 }} size="md" radius="md" fullWidth>
-                  <Text>
-                    Ok!
-                  </Text>
+                <Button
+                  onClick={() => closeModal()}
+                  variant="gradient"
+                  gradient={{ from: "teal", to: "indigo", deg: 300 }}
+                  size="md"
+                  radius="md"
+                  fullWidth
+                >
+                  <Text>Ok!</Text>
                 </Button>
               </div>
             </div>
           </div>
-        )
-        }
+        )}
       </Modal>
       <div className="col-12 px-3 mb-7">
         <div className="row">
@@ -741,24 +769,26 @@ const ListarVeiculos = () => {
                 <div className="h6 mb-0 d-flex align-items-center text-black text-opacity-75">
                   Seu saldo é de:
                 </div>
-                <div className="h1 mt-2 d-flex align-items-cente pb-5" style={{ color: '5B5B5B', fontSize: "32px", fontWeight: 700 }}>
+                <div
+                  className="h1 mt-2 d-flex align-items-cente pb-5"
+                  style={{ color: "5B5B5B", fontSize: "32px", fontWeight: 700 }}
+                >
                   R$ {saldoCredito}
                 </div>
-              
               </div>
               <div>
-                 <div className="d-flex align-items-center fw-bold">
-                <button
+                <div className="d-flex align-items-center fw-bold">
+                  <button
                     className="mb-5 p-0"
                     style={{
-                      width: '43px',
-                      height: '41px',
-                      borderRadius: '100px',
-                      background: '#3381D4',
-                      border: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
+                      width: "43px",
+                      height: "41px",
+                      borderRadius: "100px",
+                      background: "#3381D4",
+                      border: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                     onClick={() => {
                       FuncTrocaComp("InserirCreditos");
@@ -771,36 +801,49 @@ const ListarVeiculos = () => {
             </div>
           </div>
           <div className="row text-center d-flex flex-column justify-content-center align-items-center">
-           <div className="row g-2">
-           <div className="col-6 col-lg-4" style={{ paddingLeft: '10px' }}>
-        <button className="btn w-100 text-white" style={{ borderRadius: '5px', background: '#3381D4'}}
-          onClick={() => {
-            FuncTrocaComp("Configuracoes");
-          }}>
-      Débito automático
-    </button>
-        </div>
-        
-        <div className="col-6 col-lg-4" style={{ paddingRight: '10px' }}>
-        <button className="btn w-100 text-white" style={{ borderRadius: '5px', background: '#1099A8'}}
-           onClick={() => {
-            FuncTrocaComp("Irregularidades");
-          }}>
-    Notificação
-  </button>        </div>
-       
-        <div className="col-12 col-lg-4 px-2">
-        <button className="btn w-100 text-white" style={{ borderRadius: '5px', background: 'linear-gradient(90deg, #4076F1 0%, #0CA57B 100%)' }}
-         onClick={() => {
-          FuncTrocaComp("CadastrarVeiculo");
-        }}>
-        <FaCarAlt size={20} className="mx-1" /> Cadastrar novo veículo
-          </button>
-        </div></div>
-      </div>
-    </div>
-        
+            <div className="row g-2">
+              <div className="col-6 col-lg-4" style={{ paddingLeft: "10px" }}>
+                <button
+                  className="btn w-100 text-white"
+                  style={{ borderRadius: "5px", background: "#3381D4" }}
+                  onClick={() => {
+                    FuncTrocaComp("Configuracoes");
+                  }}
+                >
+                  Débito automático
+                </button>
+              </div>
 
+              <div className="col-6 col-lg-4" style={{ paddingRight: "10px" }}>
+                <button
+                  className="btn w-100 text-white"
+                  style={{ borderRadius: "5px", background: "#1099A8" }}
+                  onClick={() => {
+                    FuncTrocaComp("Irregularidades");
+                  }}
+                >
+                  Notificação
+                </button>{" "}
+              </div>
+
+              <div className="col-12 col-lg-4 px-2">
+                <button
+                  className="btn w-100 text-white"
+                  style={{
+                    borderRadius: "5px",
+                    background:
+                      "linear-gradient(90deg, #4076F1 0%, #0CA57B 100%)",
+                  }}
+                  onClick={() => {
+                    FuncTrocaComp("CadastrarVeiculo");
+                  }}
+                >
+                  <FaCarAlt size={20} className="mx-1" /> Cadastrar novo veículo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {divError ? (
           <Notification color="red" title="Aviso!" mt={12}>
@@ -809,354 +852,412 @@ const ListarVeiculos = () => {
           </Notification>
         ) : null}
 
-{resposta.map((link, index) => (
-  link.placa ? (
-    <div className="card border-0 shadow mt-4" key={index}>
-      <div id="" className={link.div}>
-        <div className="row d-flex align-items-center justify-content-between pb-3">
-          <div className="col-9">
-            <div className="h2 mb-2 ms-1 d-flex align-items-center" style={{ color: '5B5B5B', fontFamily: 'Inter', fontSize: '24px', fontStyle: 'normal', fontWeight: 700, lineHeight: 'normal' }}>
-
-              {link.placa}
-            </div>
-            {mostrardiv[index].estado ? null : (
-              <div
-                className="h6 d-flex align-items-center ms-1 fs-6"
-                id="estacionadocarro"
-                style={{ opacity: 0.8 }}
-              >
-                <h6
-                  className={link.data < horaAgora ? "text-danger" : ""}
-                >
-                  Válido até:{" "}
-                  <span>{link.temporestante}</span>{" "}
-                </h6>
-              </div>
-            )}
-
-            <div
-              className={`h6 d-flex align-items-center ms-1 fs-6 ${link.estacionado === 'Não estacionado' ? 'mt-2' : ''}`}
-              id="estacionadocarro"
-              style={{ opacity: 0.8 }}
-            >
-              <h6>
-                {link.estacionado !== 'Não estacionado' ? `Estacionado: Vaga ${link.estacionado.match(/\d+/)}` : link.estacionado}
-              </h6>
-            </div>
-
-          </div>
-          <div className="col-3">
-            <div className="d-flex align-items-center fw-bold">
-              {link.estacionado !== "Não estacionado" ? (
-                <div>
-                  <img
-                    src="../../assets/img/estacionamento.png"
-                    alt="Rich Logo"
-                    className={
-                      window.innerWidth > 1500
-                        ? "w-25"
-                        : window.innerWidth > 760
-                          ? "w-50"
-                          : ""
-                    }
-                  />
-                </div>
-              ) : null}
-            </div>
-          </div>{notificacao[index].estado ? null : (
-            <div
-              className="h6 d-flex align-items-center fs-6 ms-1"
-              id="estacionadocarro"
-            >
-              <h6 className="text-danger">
-                <AiOutlineInfoCircle />‎{" "}
-                {link.numero_notificacoes_pendentes}
-              </h6>
-            </div>
-          )}
-          <div className={`h6 d-flex align-items-center fs-6 text-start ms-1 ${notificacao[index].estado ? 'mt-4' : 'mt-2'}`}>                  <Button
-              style={{ borderRadius: '5px', border: '2px solid #3381D4', backgroundColor: '#ffff', color: '#3381D4', fontSize: '18px', fontWeight: 600, height: '40px' }}
-              fullWidth
-              onClick={() => {
-                handleClick(index);
-              }}
-            >
-
-              {mostrar2[index].estado ? "Fechar" : link.textoestacionado}
-            </Button>
-            {mostrar2[index].estado ? null : (
-              <div className="ms-2 me-2">
-                <Button
-                  style={{ borderRadius: '5px', border: '2px solid #3381D4', backgroundColor: '#ffff', color: '#3381D4', fontSize: '15px', fontWeight: 600, height: '40px' }}
-                  fullWidth
-                  onClick={() => {
-                    removerVeiculo(link.id_veiculo);
-                  }}
-                >
-                  <FaRegTrashAlt
-                    color='#3381D4'
-                    size={22}/>
-
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      {mostrar2[index].estado ? (
-        <div className="mb-1">
-          {link.notificacoesVaga > 0 ? (
-            <div className="card-body20 border-0">
-              <div className="card-body20">
-                <div className="d-flex align-items-center justify-content-between">
-                  <div>
+        {resposta.map((link, index) =>
+          link.placa ? (
+            <div className="card border-0 shadow mt-4" key={index}>
+              <div id="" className={link.div}>
+                <div className="row d-flex align-items-center justify-content-between pb-3">
+                  <div className="col-9">
                     <div
-                      className="h6 d-flex text-start fs-6"
-                      id="estacionadocarroo"
+                      className="h2 mb-2 ms-1 d-flex align-items-center"
+                      style={{
+                        color: "5B5B5B",
+                        fontFamily: "Inter",
+                        fontSize: "24px",
+                        fontStyle: "normal",
+                        fontWeight: 700,
+                        lineHeight: "normal",
+                      }}
+                    >
+                      {link.placa}
+                    </div>
+                    {mostrardiv[index].estado ? null : (
+                      <div
+                        className="h6 d-flex align-items-center ms-1 fs-6"
+                        id="estacionadocarro"
+                        style={{ opacity: 0.8 }}
+                      >
+                        <h6
+                          className={link.data < horaAgora ? "text-danger" : ""}
+                        >
+                          Válido até: <span>{link.temporestante}</span>{" "}
+                        </h6>
+                      </div>
+                    )}
+
+                    <div
+                      className={`h6 d-flex align-items-center ms-1 fs-6 ${
+                        link.estacionado === "Não estacionado" ? "mt-2" : ""
+                      }`}
+                      id="estacionadocarro"
+                      style={{ opacity: 0.8 }}
                     >
                       <h6>
-                        <FaBell /> Você foi notificado nesta vaga.{" "}
+                        {link.estacionado !== "Não estacionado"
+                          ? `Estacionado: Vaga ${link.estacionado.match(/\d+/)}`
+                          : link.estacionado}
                       </h6>
                     </div>
                   </div>
-                </div>
-                <button
-                  className="btn3 botao mt-3"
-                  style={{ borderRadius: '5px', background: 'linear-gradient(90deg, #4076F1 0%, #0CA57B 100%)'}}
-                  onClick={() => {
-                    regularizarNot(link.placa);
-                  }}
-                >
-                  Regularizar
-                </button>
-                <div className="mt-4 text-end">
-                  <span>
-
-                  </span>
-                </div>
-              </div>
-            </div>
-          ) : mostrardiv[index].estado ? (
-            <div className="h6 mt-2 mx-4">
-              <Group position="apart">
-                <p className="text-start mb-3 ms-1" style={{color: '5B5B5B', fontSize: '17px', fontWeight: '600'}}>
-                  Determine o tempo (minutos)
-                </p>
-              </Group>
-              <Grid>
-                <Grid.Col span={3}>
-                  <button
-                    type="button"
-                    className={`btn icon-shape icon-shape rounded align-center ms-1 ${
-                      selectedButton === "00:30:00"
-                        ? "corTempoSelecionado"
-                        : "corTempo"
+                  <div className="col-3">
+                    <div className="d-flex align-items-center fw-bold">
+                      {link.estacionado !== "Não estacionado" ? (
+                        <div>
+                          <img
+                            src="../../assets/img/estacionamento.png"
+                            alt="Rich Logo"
+                            className={
+                              window.innerWidth > 1500
+                                ? "w-25"
+                                : window.innerWidth > 760
+                                ? "w-50"
+                                : ""
+                            }
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  {notificacao[index].estado ? null : (
+                    <div
+                      className="h6 d-flex align-items-center fs-6 ms-1"
+                      id="estacionadocarro"
+                    >
+                      <h6 className="text-danger">
+                        <AiOutlineInfoCircle />‎{" "}
+                        {link.numero_notificacoes_pendentes}
+                      </h6>
+                    </div>
+                  )}
+                  <div
+                    className={`h6 d-flex align-items-center fs-6 text-start ms-1 ${
+                      notificacao[index].estado ? "mt-4" : "mt-2"
                     }`}
-                    onClick={() => handleButtonClick("00:30:00")}
                   >
-                    <Text fz="lg" weight={700}>
-                      30
-                    </Text>
-                  </button>
-                </Grid.Col>
-                <Grid.Col span={3}>
-                  {condicaoHorario60 ? null : (
-                    <button
-                      type="button"
-                      className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "01:00:00"
-                          ? "corTempoSelecionado"
-                          : "corTempo"
-                      }`}
-                      onClick={() => handleButtonClick("01:00:00")}
+                    {" "}
+                    <Button
+                      style={{
+                        borderRadius: "5px",
+                        border: "2px solid #3381D4",
+                        backgroundColor: "#ffff",
+                        color: "#3381D4",
+                        fontSize: "18px",
+                        fontWeight: 600,
+                        height: "40px",
+                      }}
+                      fullWidth
+                      onClick={() => {
+                        handleClick(index);
+                      }}
                     >
-                      <Text fz="lg" weight={700}>
-                        60
-                      </Text>
-                    </button>
-                  )}
-                </Grid.Col>
-                <Grid.Col span={3}>
-                  {condicaoHorario90 ? null : (
-                    <button
-                      type="button"
-                      className={`btn icon-shape icon-shape rounded align-center  ${
-                        selectedButton === "01:30:00"
-                          ? "corTempoSelecionado"
-                          : "corTempo"
-                      }`}
-                      onClick={() => handleButtonClick("01:30:00")}
-                    >
-                      <Text fz="lg" weight={700}>
-                        90
-                      </Text>
-                    </button>
-                  )}
-                </Grid.Col>
-                <Grid.Col span={3}>
-                  {condicaoHorario120 ? null : (
-                    <button
-                      type="button"
-                      className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "02:00:00"
-                          ? "corTempoSelecionado"
-                          : "corTempo"
-                      }`}
-                      onClick={() => handleButtonClick("02:00:00")}
-                    >
-                      <Text fz="lg" weight={700}>
-                        120
-                      </Text>
-                    </button>
-                  )}
-                </Grid.Col>
-              </Grid>
-              <div className="mt-3 mx-2">
-                <p id="tempoCusto" className="text-end mb-2">
-                  Esse tempo irá custar: R$ {valorcobranca2}
-                </p>
-                <div className="mb-3 mt-4 gap-0 d-flex justify-content-between">
-                  <div></div>
-                  <Button
-                    type="submit"
-                    variant="gradient"
-                    style={{backgroundColor: '#3381D4', fontSize: '18px', fontWeight: '600', padding: '12px 0 12px 0',  height: 'auto'}}
-                    fullWidth
-                    onClick={() => {
-                      hangleplaca(link.placa, index);
-                    }}
-                    loading={botaoOff}
-                  >
-                    Ativar
-                  </Button>
-                  <div className="mt-1">
-                    <span>
-
-                    </span>
+                      {mostrar2[index].estado
+                        ? "Fechar"
+                        : link.textoestacionado}
+                    </Button>
+                    {mostrar2[index].estado ? null : (
+                      <div className="ms-2 me-2">
+                        <Button
+                          style={{
+                            borderRadius: "5px",
+                            border: "2px solid #3381D4",
+                            backgroundColor: "#ffff",
+                            color: "#3381D4",
+                            fontSize: "15px",
+                            fontWeight: 600,
+                            height: "40px",
+                          }}
+                          fullWidth
+                          onClick={() => {
+                            removerVeiculo(link.id_veiculo);
+                          }}
+                        >
+                          <FaRegTrashAlt color="#3381D4" size={22} />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="h6 mx-4">
-              <Group position="apart">
-              <p className="text-start mb-3 ms-1" style={{color: '5B5B5B', fontSize: '17px', fontWeight: '600'}}>
-                    Determine o tempo (minutos)
-                </p>
-              </Group>
-              <Grid className="mb-1">
-                <Grid.Col span={3}>
-                  <button
-                    type="button"
-                    className={`ms-1 btn icon-shape icon-shape rounded align-center ${
-                      selectedButton === "00:30:00"
-                        ? "corTempoSelecionado"
-                        : "corTempo"
-                    }`}
-                    onClick={() => handleButtonClick("00:30:00")}
-                  >
-                    <Text fz="lg" weight={700}>
-                      30
-                    </Text>
-                  </button>
-                </Grid.Col>
-                <Grid.Col span={3}>
-                  {condicaoHorario60 || link.temporestante > tempoLimite ? null : (
-                    <button
-                      type="button"
-                      className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "01:00:00"
-                          ? "corTempoSelecionado"
-                          : "corTempo"
-                      }`}
-                      onClick={() => handleButtonClick("01:00:00")}
-                    >
-                      <Text fz="lg" weight={700}>
-                        60
-                      </Text>
-                    </button>
-                  )}
-                </Grid.Col>
-                <Grid.Col span={3}>
-                  {condicaoHorario90 || link.temporestante > tempoLimite ? null : (
-                    <button
-                      type="button"
-                      className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "01:30:00"
-                          ? "corTempoSelecionado"
-                          : "corTempo"
-                      }`}
-                      onClick={() => handleButtonClick("01:30:00")}
-                    >
-                      <Text fz="lg" weight={700}>
-                        90
-                      </Text>
-                    </button>
-                  )}
-                </Grid.Col>
-                <Grid.Col span={3}>
-                  {condicaoHorario120 || link.temporestante > tempoLimite ? null : (
-                    <button
-                      type="button"
-                      className={`btn icon-shape icon-shape rounded align-center ${
-                        selectedButton === "02:00:00"
-                          ? "corTempoSelecionado"
-                          : "corTempo"
-                      }`}
-                      onClick={() => handleButtonClick("02:00:00")}
-                    >
-                      <Text fz="lg" weight={700}>
-                        120
-                      </Text>
-                    </button>
-                  )}
-                </Grid.Col>
-              </Grid>
-              <div className="h6 mx-2 mt-2">
-                <p id="tempoCusto" className="text-end mb-2">
-                  Esse tempo irá custar: R$ {valorcobranca2}
-                </p>
-                <p className="text-start" id="horarioChegada">
-                  Tempo Creditado: {link.tempo}
-                </p>
-                <p className="text-start mt-2" id="horarioChegada">
-                  Horário chegada: {link.chegada}
-                </p>
+              {mostrar2[index].estado ? (
+                <div className="mb-1">
+                  {link.notificacoesVaga > 0 ? (
+                    <div className="card-body20 border-0">
+                      <div className="card-body20">
+                        <div className="d-flex align-items-center justify-content-between">
+                          <div>
+                            <div
+                              className="h6 d-flex text-start fs-6"
+                              id="estacionadocarroo"
+                            >
+                              <h6>
+                                <FaBell /> Você foi notificado nesta vaga.{" "}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          className="btn3 botao mt-3"
+                          style={{
+                            borderRadius: "5px",
+                            background:
+                              "linear-gradient(90deg, #4076F1 0%, #0CA57B 100%)",
+                          }}
+                          onClick={() => {
+                            regularizarNot(link.placa);
+                          }}
+                        >
+                          Regularizar
+                        </button>
+                        <div className="mt-4 text-end">
+                          <span></span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : mostrardiv[index].estado ? (
+                    <div className="h6 mt-2 mx-4">
+                      <Group position="apart">
+                        <p
+                          className="text-start mb-3 ms-1"
+                          style={{
+                            color: "5B5B5B",
+                            fontSize: "17px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          Determine o tempo (minutos)
+                        </p>
+                      </Group>
+                      <Grid>
+                        <Grid.Col span={3}>
+                          <button
+                            type="button"
+                            className={`btn icon-shape icon-shape rounded align-center ms-1 ${
+                              selectedButton === "00:30:00"
+                                ? "corTempoSelecionado"
+                                : "corTempo"
+                            }`}
+                            onClick={() => handleButtonClick("00:30:00")}
+                          >
+                            <Text fz="lg" weight={700}>
+                              30
+                            </Text>
+                          </button>
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                          {condicaoHorario60 ? null : (
+                            <button
+                              type="button"
+                              className={`btn icon-shape icon-shape rounded align-center ${
+                                selectedButton === "01:00:00"
+                                  ? "corTempoSelecionado"
+                                  : "corTempo"
+                              }`}
+                              onClick={() => handleButtonClick("01:00:00")}
+                            >
+                              <Text fz="lg" weight={700}>
+                                60
+                              </Text>
+                            </button>
+                          )}
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                          {condicaoHorario90 ? null : (
+                            <button
+                              type="button"
+                              className={`btn icon-shape icon-shape rounded align-center  ${
+                                selectedButton === "01:30:00"
+                                  ? "corTempoSelecionado"
+                                  : "corTempo"
+                              }`}
+                              onClick={() => handleButtonClick("01:30:00")}
+                            >
+                              <Text fz="lg" weight={700}>
+                                90
+                              </Text>
+                            </button>
+                          )}
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                          {condicaoHorario120 ? null : (
+                            <button
+                              type="button"
+                              className={`btn icon-shape icon-shape rounded align-center ${
+                                selectedButton === "02:00:00"
+                                  ? "corTempoSelecionado"
+                                  : "corTempo"
+                              }`}
+                              onClick={() => handleButtonClick("02:00:00")}
+                            >
+                              <Text fz="lg" weight={700}>
+                                120
+                              </Text>
+                            </button>
+                          )}
+                        </Grid.Col>
+                      </Grid>
+                      <div className="mt-3 mx-2">
+                        <p id="tempoCusto" className="text-end mb-2">
+                          Esse tempo irá custar: R$ {valorcobranca2}
+                        </p>
+                        <div className="mb-3 mt-4 gap-0 d-flex justify-content-between">
+                          <div></div>
+                          <Button
+                            type="submit"
+                            variant="gradient"
+                            style={{
+                              backgroundColor: "#3381D4",
+                              fontSize: "18px",
+                              fontWeight: "600",
+                              padding: "12px 0 12px 0",
+                              height: "auto",
+                            }}
+                            fullWidth
+                            onClick={() => {
+                              hangleplaca(link.placa, index);
+                            }}
+                            loading={botaoOff}
+                          >
+                            Ativar
+                          </Button>
+                          <div className="mt-1">
+                            <span></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="h6 mx-4">
+                      <Group position="apart">
+                        <p
+                          className="text-start mb-3 ms-1"
+                          style={{
+                            color: "5B5B5B",
+                            fontSize: "17px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          Determine o tempo (minutos)
+                        </p>
+                      </Group>
+                      <Grid className="mb-1">
+                        <Grid.Col span={3}>
+                          <button
+                            type="button"
+                            className={`ms-1 btn icon-shape icon-shape rounded align-center ${
+                              selectedButton === "00:30:00"
+                                ? "corTempoSelecionado"
+                                : "corTempo"
+                            }`}
+                            onClick={() => handleButtonClick("00:30:00")}
+                          >
+                            <Text fz="lg" weight={700}>
+                              30
+                            </Text>
+                          </button>
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                          {condicaoHorario60 ||
+                          link.temporestante > tempoLimite ? null : (
+                            <button
+                              type="button"
+                              className={`btn icon-shape icon-shape rounded align-center ${
+                                selectedButton === "01:00:00"
+                                  ? "corTempoSelecionado"
+                                  : "corTempo"
+                              }`}
+                              onClick={() => handleButtonClick("01:00:00")}
+                            >
+                              <Text fz="lg" weight={700}>
+                                60
+                              </Text>
+                            </button>
+                          )}
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                          {condicaoHorario90 ||
+                          link.temporestante > tempoLimite ? null : (
+                            <button
+                              type="button"
+                              className={`btn icon-shape icon-shape rounded align-center ${
+                                selectedButton === "01:30:00"
+                                  ? "corTempoSelecionado"
+                                  : "corTempo"
+                              }`}
+                              onClick={() => handleButtonClick("01:30:00")}
+                            >
+                              <Text fz="lg" weight={700}>
+                                90
+                              </Text>
+                            </button>
+                          )}
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                          {condicaoHorario120 ||
+                          link.temporestante > tempoLimite ? null : (
+                            <button
+                              type="button"
+                              className={`btn icon-shape icon-shape rounded align-center ${
+                                selectedButton === "02:00:00"
+                                  ? "corTempoSelecionado"
+                                  : "corTempo"
+                              }`}
+                              onClick={() => handleButtonClick("02:00:00")}
+                            >
+                              <Text fz="lg" weight={700}>
+                                120
+                              </Text>
+                            </button>
+                          )}
+                        </Grid.Col>
+                      </Grid>
+                      <div className="h6 mx-2 mt-2">
+                        <p id="tempoCusto" className="text-end mb-2">
+                          Esse tempo irá custar: R$ {valorcobranca2}
+                        </p>
+                        <p className="text-start" id="horarioChegada">
+                          Tempo Creditado: {link.tempo}
+                        </p>
+                        <p className="text-start mt-2" id="horarioChegada">
+                          Horário chegada: {link.chegada}
+                        </p>
 
-                <div className="mt-3 mb-3 gap-0 d-flex justify-content-between">
-                  <div></div>
-                  <Button
-                    type="submit"
-                    onClick={() => {
-                      AddTempo(
-                        link.placa,
-                        index,
-                        link.id_vaga_veiculo,
-                        link.vaga
-                      );
-                    }}
-                    fullWidth
-                    variant="gradient"
-                    style={{backgroundColor: '#3381D4', fontSize: '18px', fontWeight: '600', padding: '12px 0 12px 0',  height: 'auto'}}
-                    loading={botaoOff}
-                  >
-                    Ativar
-                  </Button>
-                  <div className="mt-1 text-end">
-                    <span>
-                      
-                    </span>
-                  </div>
+                        <div className="mt-3 mb-3 gap-0 d-flex justify-content-between">
+                          <div></div>
+                          <Button
+                            type="submit"
+                            onClick={() => {
+                              AddTempo(
+                                link.placa,
+                                index,
+                                link.id_vaga_veiculo,
+                                link.vaga
+                              );
+                            }}
+                            fullWidth
+                            variant="gradient"
+                            style={{
+                              backgroundColor: "#3381D4",
+                              fontSize: "18px",
+                              fontWeight: "600",
+                              padding: "12px 0 12px 0",
+                              height: "auto",
+                            }}
+                            loading={botaoOff}
+                          >
+                            Ativar
+                          </Button>
+                          <div className="mt-1 text-end">
+                            <span></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
+              ) : null}
             </div>
-          )}
-        </div>
-      ) : null}
-    </div>
-  ) : null
-))}
-       
+          ) : null
+        )}
       </div>
     </>
   );
