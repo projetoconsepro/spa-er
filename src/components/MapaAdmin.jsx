@@ -42,9 +42,7 @@ const MapaAdmin = () => {
   const [centerMap, setCenterMap] = useState(false);
   const coresSetoresRef = useRef({});
 
-  useEffect(() => {
-    localStorage.setItem("componente", "Dashboard");
-  }, [])
+ 
 
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
@@ -91,8 +89,17 @@ const MapaAdmin = () => {
     return () => {
       socket.off('localizacaoDados');
     };
-  }, [localizacaoMonitoras]);
+  }, []);
   
+  useEffect(() => {
+    socket.emit('vagas');
+    socket.on('vagasDados', (data) => {
+      setVagas(data);
+    });
+    return () => {
+      socket.off('vagasDados');
+    };
+  }, []);
 
   const calcularExtremos = (vagas, setor) => {
     const vagasSetor = vagas.find(v => v.setor === setor)?.vagas.filter(vaga => vaga.coordenada) || [];

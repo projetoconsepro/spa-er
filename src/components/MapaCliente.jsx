@@ -39,7 +39,15 @@ const MapaAdmin = () => {
     return () => navigator.geolocation.clearWatch(watchId); 
   }, []);
 
-
+  useEffect(() => {
+    socket.emit('vagas');
+    socket.on('vagasDados', (data) => {
+      setVagas(data);
+    });
+    return () => {
+      socket.off('vagasDados');
+    };
+  }, []);
 
   const openMaps = (vagaPosition) => {
     const url = `https://www.google.com/maps/dir/?api=1&origin=${basePosition[0]},${basePosition[1]}&destination=${vagaPosition[0]},${vagaPosition[1]}&travelmode=driving`;
