@@ -7,6 +7,7 @@ import { Button, Group, Loader, Pagination, Modal } from "@mantine/core";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { RiDeleteBinFill, RiEditLine } from "react-icons/ri";
+import { Divider } from '@mantine/core';
 
 const ListarMovimentosAdmin = () => {
   const [estado, setEstado] = useState(false);
@@ -25,6 +26,25 @@ const ListarMovimentosAdmin = () => {
   const [loadingButton, setLoadingButton] = useState(false);
   const [index, setindex] = useState(false);
   const [tempoSelecionado, setTempoSelecionado] = useState('');
+  // Estados para a placa
+  const [placa, setPlaca] = useState("placa");
+  const [limite, setLimite] = useState(8);
+  const [inputVazio, setInputVazio] = useState("inputvazio3");
+  const [placaSelecionada, setPlacaSelecionada] = useState('');
+
+  // Função handlePlaca
+  const handlePlaca = () => {
+    const clicado = document.getElementById("flexSwitchCheckDefault").checked;
+    if (clicado === true) {
+      setPlaca("placa2");
+      setLimite(10);
+      setInputVazio("inputvazio2");
+    } else {
+      setPlaca("placa");
+      setLimite(8);
+      setInputVazio("inputvazio3");
+    }
+  };
 
   useEffect(() => {
     const listar = async () => {
@@ -162,15 +182,15 @@ const ListarMovimentosAdmin = () => {
               "O Movimento foi deletado com sucesso.",
               "success"
             );
-            if(item.estado_notificacao === "Regularizada") {
+            if (item.estado_notificacao === "Regularizada") {
               data[index].estado_notificacao = "Pendente";
-              setData((prevData) => 
+              setData((prevData) =>
                 prevData.filter((movimento) => {
                   return !(movimento.id_vaga_veiculo === item.id_vaga_veiculo && movimento.tipo_movimento === 'regularizacao');
                 })
               );
-            }else{
-            setData((prevData) => prevData.filter((movimento) => movimento.id_movimento !== item.id_movimento));
+            } else {
+              setData((prevData) => prevData.filter((movimento) => movimento.id_movimento !== item.id_movimento));
             }
           })
           .catch((error) => {
@@ -260,31 +280,58 @@ const ListarMovimentosAdmin = () => {
     cancelamento: 'Cancelamento',
     infracao: 'Infração',
     saida: 'Saída',
-  }; 
+  };
 
-  const editarTempo = (index, id, tempo) => {
-    setLoadingButton(true)
+  const isSameDay = (date1, date2) => {
+    
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  };
+
+  const editarMovimento = (index, id, tempo, placa) => {
+    setLoadingButton(true);
     const requisicao = createAPI();
+  
+    // Verifica se a placa foi alterada
+    const placaAtualizada = placa !== selectedItem.placa_veiculo ? placa : selectedItem.placa_veiculo;
+  
     requisicao
       .put(`/movimento`, {
+        id: id,
         tempo: tempo,
-        id: id
+        placa_veiculo: placaAtualizada, // Usa a placa atualizada ou a original
       })
       .then((response) => {
-        setLoadingButton(false)
-        setModalAberto(false)
-        Swal.fire(
-          "Atualizado!",
-          "O tempo do movimento foi atualizado com sucesso.",
-          "success"
-        );
+        setLoadingButton(false);
+        setModalAberto(false);
+  
+        // Atualiza os dados locais
         const valorAtualizado = response.data.valor;
         const tempoAtualizado = response.data.tempo;
+  
+        // Mantém a placa original se não houve alteração
+        const placaAtualizadaResponse = placa !== selectedItem.placa_veiculo ? response.data.placa_veiculo : selectedItem.placa_veiculo;
+  
         data[index].valor = valorAtualizado;
         data[index].tempo = tempoAtualizado;
+        data[index].placa_veiculo = placaAtualizadaResponse; // Usa a placa correta
+  
         setData([...data]);
+  
+        // Exibe uma única mensagem de sucesso
+        Swal.fire(
+          "Atualizado!",
+          "O movimento foi atualizado com sucesso.",
+          "success"
+        );
       })
       .catch((error) => {
+        setLoadingButton(false);
+  
+        // Tratamento de erros
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
@@ -296,23 +343,28 @@ const ListarMovimentosAdmin = () => {
         } else {
           console.log(error);
         }
+  
+        // Exibe uma única mensagem de erro
+        Swal.fire(
+          "Erro!",
+          "Ocorreu um erro ao atualizar o movimento.",
+          "error"
+        );
       });
   };
 
   useEffect(() => {
     if (selectedItem) {
-      const opcoes = ["00:30:00", "01:00:00", "01:30:00", "02:00:00"].filter(opcao => opcao !== selectedItem.tempo);
-      if (opcoes.length > 0) {
-        setTempoSelecionado(opcoes[0]);
-      }
+      setTempoSelecionado(selectedItem.tempo); // Inicializa com o tempo atual
+      setPlacaSelecionada(selectedItem.placa_veiculo);
     }
   }, [selectedItem]);
 
-  const abrirModalEditarTempo = (item, index) => {
+  const abrirModalEditarMovimento = (item, index) => {
     setModalAberto(true);
     setSelectedItem(item);
-    setindex(index)
-  };  
+    setindex(index);
+  };
 
   return (
     <div className="dashboard-container mb-3">
@@ -323,30 +375,66 @@ const ListarMovimentosAdmin = () => {
           setSelectedItem(null);
         }}
         centered
-        title="Editar Tempo"
+        title="Editar Movimento"
         size="md"
         className="flex items-center justify-center"
       >
         {selectedItem && (
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center w-100">
+
+            {/* Campo de edição de placa */}
+            <div className="row">
+              <div className="col-9 px-3">
+                <h5 id="h5Placa">Placa Estrangeira</h5>
+              </div>
+              <div className="col-3 px-3">
+                <div className="form-check3 form-switch gap-2 d-md-block">
+                  <input
+                    className="form-check-input align-self-end"
+                    type="checkbox"
+                    role="switch"
+                    onClick={handlePlaca}
+                    id="flexSwitchCheckDefault"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Input da placa */}
+            <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
+              <input
+                type="text"
+                id={inputVazio}
+                className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
+                value={placaSelecionada}
+                onChange={(e) => setPlacaSelecionada(e.target.value)}
+                maxLength={limite} // Use o estado "limite" aqui
+              />
+            </div>
+
+            {/* Campo de seleção de tempo */}
             <select
               className="form-select form-select-lg mb-4 mt-5"
               aria-label=".form-select-lg example"
               value={tempoSelecionado}
               onChange={(e) => setTempoSelecionado(e.target.value)}
             >
-              {selectedItem.tempo !== "00:30:00" && <option value="00:30:00">30 Minutos</option>}
-              {selectedItem.tempo !== "01:00:00" && <option value="01:00:00">60 Minutos</option>}
-              {selectedItem.tempo !== "01:30:00" && <option value="01:30:00">90 Minutos</option>}
-              {selectedItem.tempo !== "02:00:00" && <option value="02:00:00">120 Minutos</option>}
+              <option value="00:30:00">30 Minutos</option>
+              <option value="01:00:00">60 Minutos</option>
+              <option value="01:30:00">90 Minutos</option>
+              <option value="02:00:00">120 Minutos</option>
             </select>
+
+            {/* Botões de ação */}
             <div className="mb-2 mt-3 gap-2 flex justify-center items-center w-full text-center">
               <Button
                 loading={loadingButton}
                 className="bg-blue-50 m-2"
                 size="md"
                 radius="md"
-                onClick={() => editarTempo(index, selectedItem.id_movimento, tempoSelecionado)}
+                onClick={() => {
+                  editarMovimento(index, selectedItem.id_movimento, tempoSelecionado, placaSelecionada);
+                }}
               >
                 Salvar
               </Button>
@@ -360,7 +448,7 @@ const ListarMovimentosAdmin = () => {
         <div className="col-12">
           <div className="row">
             <div className="col-lg-6 col-6">
-            <Filtro nome={"ListarMovimentosAdmin"} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading} />
+              <Filtro nome={"ListarMovimentosAdmin"} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading} />
             </div>
             <div className="col-lg-3 col-3">
             </div>
@@ -390,7 +478,7 @@ const ListarMovimentosAdmin = () => {
                   <div className="table-responsive" style={{ overflowX: 'auto' }}>
                     <table className="table align-items-center table-flush">
                       <thead className="thead-light">
-                      <tr>
+                        <tr>
                           <th
                             className="border-bottom"
                             id="tabelaUsuarios"
@@ -468,72 +556,77 @@ const ListarMovimentosAdmin = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {data.map((item, index) => (
-                          <tr key={index}>
-                            <td id="tabelaUsuarios">{item.placa_veiculo}</td>
-                            <td id="tabelaUsuarios">
-                              {tipoMovimentoComAcentos[item.tipo_movimento]}
-                            </td>
-                            <td id="tabelaUsuarios">{new Date(item.hora).toLocaleString()}</td>
-                            <td id="tabelaUsuarios2">{item.nome_setor}</td>
-                            <td id="tabelaUsuarios">{item.numero_vaga}</td>
-                            {item.tipo_movimento == 'notificacao' ? (
-                              <td id="tabelaUsuarios" colSpan="3" style={{ fontWeight: 'medium', marginTop: '2rem', color: item.estado_notificacao === 'Cancelada' ? 'black' : item.estado_notificacao === 'Regularizada' ? '#20E300' : item.estado_notificacao === 'Pendente' ? '#E30000' : 'black' }}>    
-                              Notificação {item.estado_notificacao}
+                        {data.map((item, index) => {
+                          const movimentoDate = new Date(item.hora); // Data do movimento
+                          const today = new Date(); // Data atual
+                          const isMovimentoToday = isSameDay(movimentoDate, today); // Verifica se é do mesmo dia
 
+                          return (
+                            <tr key={index}>
+                              <td id="tabelaUsuarios">{item.placa_veiculo}</td>
+                              <td id="tabelaUsuarios">
+                                {tipoMovimentoComAcentos[item.tipo_movimento]}
                               </td>
-                            ) : (
-                              <>
-                                <td id="tabelaUsuarios2">{item.tipo || '...'}</td>
-                                <td id="tabelaUsuarios">{item.valor ? `R$ ${parseFloat(item.valor).toFixed(2)}` : '...'}</td>
-                                <td id="tabelaUsuarios">{item.tempo || '...'}</td>
-                              </>
-                            )}
-                            <td id="tabelaUsuarios">{item.nome_usuario}</td>
-                            <td id="tabelaUsuarios2">{item.perfil_usuario.charAt(0).toUpperCase() + item.perfil_usuario.slice(1)}</td>
+                              <td id="tabelaUsuarios">{new Date(item.hora).toLocaleString()}</td>
+                              <td id="tabelaUsuarios2">{item.nome_setor}</td>
+                              <td id="tabelaUsuarios">{item.numero_vaga}</td>
+                              {item.tipo_movimento == 'notificacao' ? (
+                                <td id="tabelaUsuarios" colSpan="3" style={{ fontWeight: 'medium', marginTop: '2rem', color: item.estado_notificacao === 'Cancelada' ? 'black' : item.estado_notificacao === 'Regularizada' ? '#20E300' : item.estado_notificacao === 'Pendente' ? '#E30000' : 'black' }}>
+                                  Notificação {item.estado_notificacao}
+                                </td>
+                              ) : (
+                                <>
+                                  <td id="tabelaUsuarios2">{item.tipo || '...'}</td>
+                                  <td id="tabelaUsuarios">{item.valor ? `R$ ${parseFloat(item.valor).toFixed(2)}` : '...'}</td>
+                                  <td id="tabelaUsuarios">{item.tempo || '...'}</td>
+                                </>
+                              )}
+                              <td id="tabelaUsuarios">{item.nome_usuario}</td>
+                              <td id="tabelaUsuarios2">{item.perfil_usuario.charAt(0).toUpperCase() + item.perfil_usuario.slice(1)}</td>
 
-                            <td className="fw-bolder col" id="tabelaUsuarios3">
-                            <div className="btn-group">
-                                {item.estado_notificacao === "Cancelada" || item.tipo_movimento === "cancelamento" ? (
-                                  <div></div>
-                                ) : (
-                                  <button
-                                    className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
-                                    data-bs-toggle="dropdown"
-                                    aria-haspopup="true"
-                                    aria-expanded="false"
-                                  >
-                                    <FaEllipsisH />
-                                  </button>
-                                )}
-                                <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                {item.tipo_movimento !== "notificacao" || item.estado_notificacao === "Regularizada" ? (
-                                    <div>
-                                      <h6 className="dropdown-item d-flex justify-content-center align-items-center text-danger"
-                                        onClick={() => deletar(item, index)}
-                                      >
-                                        <RiDeleteBinFill />
-                                        ‎‎ Remover {item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}
-                                      </h6>
-                                      {item.tempo && (
-                                        <h6 className="dropdown-item d-flex justify-content-center align-items-center text-info"
-                                        onClick={() => abrirModalEditarTempo(item, index)}>
-                                          <RiEditLine />
-                                          Editar tempo
+                              <td className="fw-bolder col" id="tabelaUsuarios3">
+                                <div className="btn-group">
+                                  {item.estado_notificacao === "Cancelada" || item.estado_notificacao === "Regularizada" || item.tipo_movimento === "cancelamento" || (!isMovimentoToday && item.tipo_movimento !== 'notificacao') ? (
+                                    <div></div>
+                                  ) : (
+                                    <button
+                                      className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
+                                      data-bs-toggle="dropdown"
+                                      aria-haspopup="true"
+                                      aria-expanded="false"
+                                    >
+                                      <FaEllipsisH />
+                                    </button>
+                                  )}
+                                  <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
+                                    {item.tipo_movimento !== "notificacao" || item.estado_notificacao === "Regularizada" ? (
+                                      <div>
+                                        <h6 className="dropdown-item d-flex justify-content-center align-items-center text-danger"
+                                          onClick={() => deletar(item, index)}
+                                        >
+                                          <RiDeleteBinFill />
+                                          ‎‎ Remover {item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}
                                         </h6>
-                                      )}
-                                    </div>
-                                  ) : (<h6 className="dropdown-item d-flex justify-content-center align-items-center text-primary"
-                                    onClick={() => cancelar(item, index)}
-                                  >
-                                    <FaPowerOff />
-                                    ‎‎ ‎Cancelar
-                                  </h6>)}
+                                        {item.tempo && (
+                                          <h6 className="dropdown-item d-flex justify-content-center align-items-center text-info"
+                                            onClick={() => abrirModalEditarMovimento(item, index)}>
+                                            <RiEditLine />
+                                            Editar Movimento
+                                          </h6>
+                                        )}
+                                      </div>
+                                    ) : (<h6 className="dropdown-item d-flex justify-content-center align-items-center text-primary"
+                                      onClick={() => cancelar(item, index)}
+                                    >
+                                      <FaPowerOff />
+                                      ‎‎ ‎Cancelar
+                                    </h6>)}
+                                  </div>
                                 </div>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
