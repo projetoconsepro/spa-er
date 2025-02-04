@@ -8,6 +8,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { RiDeleteBinFill, RiEditLine } from "react-icons/ri";
 import { Divider } from '@mantine/core';
+import { IconArrowLeft } from "@tabler/icons-react";
 
 const ListarMovimentosAdmin = () => {
   const [estado, setEstado] = useState(false);
@@ -32,7 +33,6 @@ const ListarMovimentosAdmin = () => {
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [placaSelecionada, setPlacaSelecionada] = useState('');
 
-  // Função handlePlaca
   const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
     if (clicado === true) {
@@ -283,7 +283,7 @@ const ListarMovimentosAdmin = () => {
   };
 
   const isSameDay = (date1, date2) => {
-    
+
     return (
       date1.getFullYear() === date2.getFullYear() &&
       date1.getMonth() === date2.getMonth() &&
@@ -292,36 +292,43 @@ const ListarMovimentosAdmin = () => {
   };
 
   const editarMovimento = (index, id, tempo, placa) => {
+    if (placa === selectedItem.placa_veiculo && tempo === selectedItem.tempo) {
+      Swal.fire(
+        "Nenhuma alteração",
+        "Nenhuma alteração foi feita no movimento.",
+        "info"
+      );
+      setModalAberto(false);
+      return;
+    }
+
     setLoadingButton(true);
     const requisicao = createAPI();
-  
-    // Verifica se a placa foi alterada
+
     const placaAtualizada = placa !== selectedItem.placa_veiculo ? placa : selectedItem.placa_veiculo;
-  
+
     requisicao
       .put(`/movimento`, {
         id: id,
         tempo: tempo,
-        placa: placaAtualizada, // Usa a placa atualizada ou a original
+        placa: placaAtualizada, 
       })
       .then((response) => {
         setLoadingButton(false);
         setModalAberto(false);
-  
-        // Atualiza os dados locais
+
+        
         const valorAtualizado = response.data.valor;
         const tempoAtualizado = response.data.tempo;
-  
-        // Mantém a placa original se não houve alteração
+
         const placaAtualizadaResponse = placa !== selectedItem.placa_veiculo ? response.data.placa : selectedItem.placa_veiculo;
-  
+
         data[index].valor = valorAtualizado;
         data[index].tempo = tempoAtualizado;
-        data[index].placa_veiculo = placaAtualizadaResponse; // Usa a placa correta
-  
+        data[index].placa_veiculo = placaAtualizadaResponse; 
+
         setData([...data]);
-  
-        // Exibe uma única mensagem de sucesso
+
         Swal.fire(
           "Atualizado!",
           "O movimento foi atualizado com sucesso.",
@@ -330,8 +337,7 @@ const ListarMovimentosAdmin = () => {
       })
       .catch((error) => {
         setLoadingButton(false);
-  
-        // Tratamento de erros
+
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
@@ -343,8 +349,7 @@ const ListarMovimentosAdmin = () => {
         } else {
           console.log(error);
         }
-  
-        // Exibe uma única mensagem de erro
+
         Swal.fire(
           "Erro!",
           "Ocorreu um erro ao atualizar o movimento.",
@@ -355,7 +360,7 @@ const ListarMovimentosAdmin = () => {
 
   useEffect(() => {
     if (selectedItem) {
-      setTempoSelecionado(selectedItem.tempo); // Inicializa com o tempo atual
+      setTempoSelecionado(selectedItem.tempo); 
       setPlacaSelecionada(selectedItem.placa_veiculo);
     }
   }, [selectedItem]);
@@ -364,6 +369,32 @@ const ListarMovimentosAdmin = () => {
     setModalAberto(true);
     setSelectedItem(item);
     setindex(index);
+  };
+
+  const fecharModal = () => {
+    setModalAberto(false);
+  };
+
+  const VoltarComponenteModal = ({ onVoltar, space, arrow }) => {
+    return (
+      <>
+        {arrow ? (
+          <IconArrowLeft
+            className="mb-1"
+            onClick={onVoltar}
+          />
+        ) : (
+          <Button
+            className={space ? "bg-gray-500 mx-2" : "bg-gray-500"}
+            size="md"
+            radius="md"
+            onClick={onVoltar}
+          >
+            Voltar
+          </Button>
+        )}
+      </>
+    );
   };
 
   return (
@@ -381,8 +412,7 @@ const ListarMovimentosAdmin = () => {
       >
         {selectedItem && (
           <div className="flex flex-col items-center justify-center w-100">
-
-            {/* Campo de edição de placa */}
+            <Divider my="sm" size="md" variant="dashed" />
             <div className="row">
               <div className="col-9 px-3">
                 <h5 id="h5Placa">Placa Estrangeira</h5>
@@ -400,7 +430,6 @@ const ListarMovimentosAdmin = () => {
               </div>
             </div>
 
-            {/* Input da placa */}
             <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
               <input
                 type="text"
@@ -408,11 +437,10 @@ const ListarMovimentosAdmin = () => {
                 className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
                 value={placaSelecionada}
                 onChange={(e) => setPlacaSelecionada(e.target.value)}
-                maxLength={limite} // Use o estado "limite" aqui
+                maxLength={limite}
               />
             </div>
 
-            {/* Campo de seleção de tempo */}
             <select
               className="form-select form-select-lg mb-4 mt-5"
               aria-label=".form-select-lg example"
@@ -425,7 +453,6 @@ const ListarMovimentosAdmin = () => {
               <option value="02:00:00">120 Minutos</option>
             </select>
 
-            {/* Botões de ação */}
             <div className="mb-2 mt-3 gap-2 flex justify-center items-center w-full text-center">
               <Button
                 loading={loadingButton}
@@ -438,7 +465,7 @@ const ListarMovimentosAdmin = () => {
               >
                 Salvar
               </Button>
-              <VoltarComponente />
+              <VoltarComponenteModal onVoltar={fecharModal} />
             </div>
           </div>
         )}
@@ -557,9 +584,9 @@ const ListarMovimentosAdmin = () => {
                       </thead>
                       <tbody>
                         {data.map((item, index) => {
-                          const movimentoDate = new Date(item.hora); // Data do movimento
-                          const today = new Date(); // Data atual
-                          const isMovimentoToday = isSameDay(movimentoDate, today); // Verifica se é do mesmo dia
+                          const movimentoDate = new Date(item.hora); 
+                          const today = new Date();
+                          const isMovimentoToday = isSameDay(movimentoDate, today); 
 
                           return (
                             <tr key={index}>
@@ -570,7 +597,7 @@ const ListarMovimentosAdmin = () => {
                               <td id="tabelaUsuarios">{new Date(item.hora).toLocaleString()}</td>
                               <td id="tabelaUsuarios2">{item.nome_setor}</td>
                               <td id="tabelaUsuarios">{item.numero_vaga}</td>
-                              {item.tipo_movimento == 'notificacao' ? (
+                              {item.tipo_movimento === 'notificacao' ? (
                                 <td id="tabelaUsuarios" colSpan="3" style={{ fontWeight: 'medium', marginTop: '2rem', color: item.estado_notificacao === 'Cancelada' ? 'black' : item.estado_notificacao === 'Regularizada' ? '#20E300' : item.estado_notificacao === 'Pendente' ? '#E30000' : 'black' }}>
                                   Notificação {item.estado_notificacao}
                                 </td>
