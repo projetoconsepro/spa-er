@@ -302,7 +302,7 @@ const ListarMovimentosAdmin = () => {
       .put(`/movimento`, {
         id: id,
         tempo: tempo,
-        placa_veiculo: placaAtualizada, // Usa a placa atualizada ou a original
+        placa: placaAtualizada, // Usa a placa atualizada ou a original
       })
       .then((response) => {
         setLoadingButton(false);
@@ -313,7 +313,7 @@ const ListarMovimentosAdmin = () => {
         const tempoAtualizado = response.data.tempo;
   
         // Mantém a placa original se não houve alteração
-        const placaAtualizadaResponse = placa !== selectedItem.placa_veiculo ? response.data.placa_veiculo : selectedItem.placa_veiculo;
+        const placaAtualizadaResponse = placa !== selectedItem.placa_veiculo ? response.data.placa : selectedItem.placa_veiculo;
   
         data[index].valor = valorAtualizado;
         data[index].tempo = tempoAtualizado;
