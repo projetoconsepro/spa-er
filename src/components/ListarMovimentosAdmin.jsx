@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import createAPI from "../services/createAPI";
 import { AiOutlineReload } from "react-icons/ai";
 import { FaEllipsisH, FaPowerOff } from "react-icons/fa";
@@ -7,8 +7,9 @@ import { Button, Group, Loader, Pagination, Modal } from "@mantine/core";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { RiDeleteBinFill, RiEditLine } from "react-icons/ri";
-import { Divider } from '@mantine/core';
+import { Divider } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
+import validarPlaca from "../util/validarPlaca";
 
 const ListarMovimentosAdmin = () => {
   const [estado, setEstado] = useState(false);
@@ -26,25 +27,24 @@ const ListarMovimentosAdmin = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [loadingButton, setLoadingButton] = useState(false);
   const [index, setindex] = useState(false);
-  const [tempoSelecionado, setTempoSelecionado] = useState('');
-  // Estados para a placa
+  const [tempoSelecionado, setTempoSelecionado] = useState("");
   const [placa, setPlaca] = useState("placa");
   const [limite, setLimite] = useState(8);
   const [inputVazio, setInputVazio] = useState("inputvazio3");
-  const [placaSelecionada, setPlacaSelecionada] = useState('');
+  const [placaSelecionada, setPlacaSelecionada] = useState("");
 
   const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
     if (clicado === true) {
       setPlaca("placa2");
-      setLimite(10);
+      setLimite(10); 
       setInputVazio("inputvazio2");
     } else {
       setPlaca("placa");
-      setLimite(8);
+      setLimite(8); 
       setInputVazio("inputvazio3");
     }
-  };
+  };  
 
   useEffect(() => {
     const listar = async () => {
@@ -52,7 +52,9 @@ const ListarMovimentosAdmin = () => {
       setMensagem("");
       const requisicao = createAPI();
       try {
-        const response = await requisicao.get(`/movimento`, { params: { page } });
+        const response = await requisicao.get(`/movimento`, {
+          params: { page },
+        });
         if (response.data.data && response.data.data.length > 0) {
           setEstado2(true);
           const newData = response.data.data.map((item) => ({
@@ -84,7 +86,8 @@ const ListarMovimentosAdmin = () => {
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -96,10 +99,7 @@ const ListarMovimentosAdmin = () => {
     };
 
     listar();
-
   }, [page]);
-
-
 
   const handleConsultaSelected = (consulta) => {
     setFiltroAtual(consulta);
@@ -145,12 +145,13 @@ const ListarMovimentosAdmin = () => {
           setEstado2(true);
           setMensagem("Não há movimentos para exibir");
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -163,7 +164,11 @@ const ListarMovimentosAdmin = () => {
 
   const deletar = (item, index) => {
     Swal.fire({
-      title: `Tem certeza que deseja deletar o movimento de ${item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}?`,
+      title: `Tem certeza que deseja deletar o movimento de ${
+        item.tipo_movimento === "notificacao"
+          ? "Regularização"
+          : tipoMovimentoComAcentos[item.tipo_movimento]
+      }?`,
       icon: "error",
       showCancelButton: true,
       cancelButtonText: "Não",
@@ -186,11 +191,18 @@ const ListarMovimentosAdmin = () => {
               data[index].estado_notificacao = "Pendente";
               setData((prevData) =>
                 prevData.filter((movimento) => {
-                  return !(movimento.id_vaga_veiculo === item.id_vaga_veiculo && movimento.tipo_movimento === 'regularizacao');
+                  return !(
+                    movimento.id_vaga_veiculo === item.id_vaga_veiculo &&
+                    movimento.tipo_movimento === "regularizacao"
+                  );
                 })
               );
             } else {
-              setData((prevData) => prevData.filter((movimento) => movimento.id_movimento !== item.id_movimento));
+              setData((prevData) =>
+                prevData.filter(
+                  (movimento) => movimento.id_movimento !== item.id_movimento
+                )
+              );
             }
           })
           .catch((error) => {
@@ -198,7 +210,7 @@ const ListarMovimentosAdmin = () => {
               error?.response?.data?.msg === "Cabeçalho inválido!" ||
               error?.response?.data?.msg === "Token inválido!" ||
               error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
+                "Usuário não possui o perfil mencionado!"
             ) {
               localStorage.removeItem("user");
               localStorage.removeItem("token");
@@ -258,7 +270,7 @@ const ListarMovimentosAdmin = () => {
               error?.response?.data?.msg === "Cabeçalho inválido!" ||
               error?.response?.data?.msg === "Token inválido!" ||
               error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
+                "Usuário não possui o perfil mencionado!"
             ) {
               localStorage.removeItem("user");
               localStorage.removeItem("token");
@@ -272,18 +284,17 @@ const ListarMovimentosAdmin = () => {
   };
 
   const tipoMovimentoComAcentos = {
-    tolerancia: 'Tolerância',
-    credito: 'Crédito',
-    notificacao: 'Notificação',
-    regularizacao: 'Regularização',
-    ajuste: 'Ajuste',
-    cancelamento: 'Cancelamento',
-    infracao: 'Infração',
-    saida: 'Saída',
+    tolerancia: "Tolerância",
+    credito: "Crédito",
+    notificacao: "Notificação",
+    regularizacao: "Regularização",
+    ajuste: "Ajuste",
+    cancelamento: "Cancelamento",
+    infracao: "Infração",
+    saida: "Saída",
   };
 
   const isSameDay = (date1, date2) => {
-
     return (
       date1.getFullYear() === date2.getFullYear() &&
       date1.getMonth() === date2.getMonth() &&
@@ -292,41 +303,73 @@ const ListarMovimentosAdmin = () => {
   };
 
   const editarMovimento = (index, id, tempo, placa) => {
-    if (placa === selectedItem.placa_veiculo && tempo === selectedItem.tempo) {
+    console.log("Iniciando edição de movimento...");
+
+    const placaNormalizada = placa
+      .trim()
+      .replace(/\s+/g, "")
+      .toUpperCase()
+      .replace(/-/g, "");
+
+    console.log("Placa após normalização:", placaNormalizada);
+
+    if (
+      placaNormalizada === selectedItem.placa_veiculo &&
+      tempo === selectedItem.tempo
+    ) {
       Swal.fire(
         "Nenhuma alteração",
         "Nenhuma alteração foi feita no movimento.",
         "info"
       );
-      setModalAberto(false);
+      setModalAberto(false); // Fecha o modal
       return;
+    }
+
+    // Verifica se a placa está vazia
+    if (placaNormalizada === "") {
+      setLoadingButton(false);
+      Swal.fire("Erro!", "Preencha o campo placa", "error");
+      return;
+    }
+
+    const sim = document.getElementById("flexSwitchCheckDefault").checked;
+    if (!sim) {
+      if (!validarPlaca(placaNormalizada)) {
+        setLoadingButton(false);
+        Swal.fire("Erro!", "Placa inválida", "error");
+        return;
+      }
     }
 
     setLoadingButton(true);
     const requisicao = createAPI();
 
-    const placaAtualizada = placa !== selectedItem.placa_veiculo ? placa : selectedItem.placa_veiculo;
+    const placaAtualizada =
+      placaNormalizada !== selectedItem.placa_veiculo
+        ? placaNormalizada
+        : selectedItem.placa_veiculo;
 
     requisicao
       .put(`/movimento`, {
         id: id,
         tempo: tempo,
-        placa: placaAtualizada, 
+        placa: placaAtualizada,
       })
       .then((response) => {
         setLoadingButton(false);
         setModalAberto(false);
 
-        
         const valorAtualizado = response.data.valor;
         const tempoAtualizado = response.data.tempo;
-
-        const placaAtualizadaResponse = placa !== selectedItem.placa_veiculo ? response.data.placa : selectedItem.placa_veiculo;
+        const placaAtualizadaResponse =
+          placaNormalizada !== selectedItem.placa_veiculo
+            ? response.data.placa
+            : selectedItem.placa_veiculo;
 
         data[index].valor = valorAtualizado;
         data[index].tempo = tempoAtualizado;
         data[index].placa_veiculo = placaAtualizadaResponse; 
-
         setData([...data]);
 
         Swal.fire(
@@ -341,7 +384,8 @@ const ListarMovimentosAdmin = () => {
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -360,10 +404,23 @@ const ListarMovimentosAdmin = () => {
 
   useEffect(() => {
     if (selectedItem) {
-      setTempoSelecionado(selectedItem.tempo); 
+      setTempoSelecionado(selectedItem.tempo);
       setPlacaSelecionada(selectedItem.placa_veiculo);
     }
   }, [selectedItem]);
+
+  useEffect(() => {
+    const clicado = document.getElementById("flexSwitchCheckDefault")?.checked;
+    if (clicado) {
+      setPlaca("placa2");
+      setLimite(10); 
+      setInputVazio("inputvazio2");
+    } else {
+      setPlaca("placa");
+      setLimite(8); 
+      setInputVazio("inputvazio3");
+    }
+  }, [ModalAberto]);
 
   const abrirModalEditarMovimento = (item, index) => {
     setModalAberto(true);
@@ -379,10 +436,7 @@ const ListarMovimentosAdmin = () => {
     return (
       <>
         {arrow ? (
-          <IconArrowLeft
-            className="mb-1"
-            onClick={onVoltar}
-          />
+          <IconArrowLeft className="mb-1" onClick={onVoltar} />
         ) : (
           <Button
             className={space ? "bg-gray-500 mx-2" : "bg-gray-500"}
@@ -460,7 +514,12 @@ const ListarMovimentosAdmin = () => {
                 size="md"
                 radius="md"
                 onClick={() => {
-                  editarMovimento(index, selectedItem.id_movimento, tempoSelecionado, placaSelecionada);
+                  editarMovimento(
+                    index,
+                    selectedItem.id_movimento,
+                    tempoSelecionado,
+                    placaSelecionada
+                  );
                 }}
               >
                 Salvar
@@ -475,10 +534,13 @@ const ListarMovimentosAdmin = () => {
         <div className="col-12">
           <div className="row">
             <div className="col-lg-6 col-6">
-              <Filtro nome={"ListarMovimentosAdmin"} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading} />
+              <Filtro
+                nome={"ListarMovimentosAdmin"}
+                onConsultaSelected={handleConsultaSelected}
+                onLoading={estadoLoading}
+              />
             </div>
-            <div className="col-lg-3 col-3">
-            </div>
+            <div className="col-lg-3 col-3"></div>
             <div className="col-lg-3 col-3 text-end me-0">
               <Button
                 variant="gradient"
@@ -502,7 +564,10 @@ const ListarMovimentosAdmin = () => {
             <div className="col-12 mb-4">
               {estado2 ? (
                 <div className="card border-0 shadow">
-                  <div className="table-responsive" style={{ overflowX: 'auto' }}>
+                  <div
+                    className="table-responsive"
+                    style={{ overflowX: "auto" }}
+                  >
                     <table className="table align-items-center table-flush">
                       <thead className="thead-light">
                         <tr>
@@ -584,9 +649,12 @@ const ListarMovimentosAdmin = () => {
                       </thead>
                       <tbody>
                         {data.map((item, index) => {
-                          const movimentoDate = new Date(item.hora); 
+                          const movimentoDate = new Date(item.hora);
                           const today = new Date();
-                          const isMovimentoToday = isSameDay(movimentoDate, today); 
+                          const isMovimentoToday = isSameDay(
+                            movimentoDate,
+                            today
+                          );
 
                           return (
                             <tr key={index}>
@@ -594,26 +662,64 @@ const ListarMovimentosAdmin = () => {
                               <td id="tabelaUsuarios">
                                 {tipoMovimentoComAcentos[item.tipo_movimento]}
                               </td>
-                              <td id="tabelaUsuarios">{new Date(item.hora).toLocaleString()}</td>
+                              <td id="tabelaUsuarios">
+                                {new Date(item.hora).toLocaleString()}
+                              </td>
                               <td id="tabelaUsuarios2">{item.nome_setor}</td>
                               <td id="tabelaUsuarios">{item.numero_vaga}</td>
-                              {item.tipo_movimento === 'notificacao' ? (
-                                <td id="tabelaUsuarios" colSpan="3" style={{ fontWeight: 'medium', marginTop: '2rem', color: item.estado_notificacao === 'Cancelada' ? 'black' : item.estado_notificacao === 'Regularizada' ? '#20E300' : item.estado_notificacao === 'Pendente' ? '#E30000' : 'black' }}>
+                              {item.tipo_movimento === "notificacao" ? (
+                                <td
+                                  id="tabelaUsuarios"
+                                  colSpan="3"
+                                  style={{
+                                    fontWeight: "medium",
+                                    marginTop: "2rem",
+                                    color:
+                                      item.estado_notificacao === "Cancelada"
+                                        ? "black"
+                                        : item.estado_notificacao ===
+                                          "Regularizada"
+                                        ? "#20E300"
+                                        : item.estado_notificacao === "Pendente"
+                                        ? "#E30000"
+                                        : "black",
+                                  }}
+                                >
                                   Notificação {item.estado_notificacao}
                                 </td>
                               ) : (
                                 <>
-                                  <td id="tabelaUsuarios2">{item.tipo || '...'}</td>
-                                  <td id="tabelaUsuarios">{item.valor ? `R$ ${parseFloat(item.valor).toFixed(2)}` : '...'}</td>
-                                  <td id="tabelaUsuarios">{item.tempo || '...'}</td>
+                                  <td id="tabelaUsuarios2">
+                                    {item.tipo || "..."}
+                                  </td>
+                                  <td id="tabelaUsuarios">
+                                    {item.valor
+                                      ? `R$ ${parseFloat(item.valor).toFixed(
+                                          2
+                                        )}`
+                                      : "..."}
+                                  </td>
+                                  <td id="tabelaUsuarios">
+                                    {item.tempo || "..."}
+                                  </td>
                                 </>
                               )}
                               <td id="tabelaUsuarios">{item.nome_usuario}</td>
-                              <td id="tabelaUsuarios2">{item.perfil_usuario.charAt(0).toUpperCase() + item.perfil_usuario.slice(1)}</td>
+                              <td id="tabelaUsuarios2">
+                                {item.perfil_usuario.charAt(0).toUpperCase() +
+                                  item.perfil_usuario.slice(1)}
+                              </td>
 
-                              <td className="fw-bolder col" id="tabelaUsuarios3">
+                              <td
+                                className="fw-bolder col"
+                                id="tabelaUsuarios3"
+                              >
                                 <div className="btn-group">
-                                  {item.estado_notificacao === "Cancelada" || item.estado_notificacao === "Regularizada" || item.tipo_movimento === "cancelamento" || (!isMovimentoToday && item.tipo_movimento !== 'notificacao') ? (
+                                  {item.estado_notificacao === "Cancelada" ||
+                                  item.estado_notificacao === "Regularizada" ||
+                                  item.tipo_movimento === "cancelamento" ||
+                                  (!isMovimentoToday &&
+                                    item.tipo_movimento !== "notificacao") ? (
                                     <div></div>
                                   ) : (
                                     <button
@@ -626,28 +732,46 @@ const ListarMovimentosAdmin = () => {
                                     </button>
                                   )}
                                   <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                    {item.tipo_movimento !== "notificacao" || item.estado_notificacao === "Regularizada" ? (
+                                    {item.tipo_movimento !== "notificacao" ||
+                                    item.estado_notificacao ===
+                                      "Regularizada" ? (
                                       <div>
-                                        <h6 className="dropdown-item d-flex justify-content-center align-items-center text-danger"
+                                        <h6
+                                          className="dropdown-item d-flex justify-content-center align-items-center text-danger"
                                           onClick={() => deletar(item, index)}
                                         >
                                           <RiDeleteBinFill />
-                                          ‎‎ Remover {item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}
+                                          ‎‎ Remover{" "}
+                                          {item.tipo_movimento === "notificacao"
+                                            ? "Regularização"
+                                            : tipoMovimentoComAcentos[
+                                                item.tipo_movimento
+                                              ]}
                                         </h6>
                                         {item.tempo && (
-                                          <h6 className="dropdown-item d-flex justify-content-center align-items-center text-info"
-                                            onClick={() => abrirModalEditarMovimento(item, index)}>
+                                          <h6
+                                            className="dropdown-item d-flex justify-content-center align-items-center text-info"
+                                            onClick={() =>
+                                              abrirModalEditarMovimento(
+                                                item,
+                                                index
+                                              )
+                                            }
+                                          >
                                             <RiEditLine />
                                             Editar Movimento
                                           </h6>
                                         )}
                                       </div>
-                                    ) : (<h6 className="dropdown-item d-flex justify-content-center align-items-center text-primary"
-                                      onClick={() => cancelar(item, index)}
-                                    >
-                                      <FaPowerOff />
-                                      ‎‎ ‎Cancelar
-                                    </h6>)}
+                                    ) : (
+                                      <h6
+                                        className="dropdown-item d-flex justify-content-center align-items-center text-primary"
+                                        onClick={() => cancelar(item, index)}
+                                      >
+                                        <FaPowerOff />
+                                        ‎‎ ‎Cancelar
+                                      </h6>
+                                    )}
                                   </div>
                                 </div>
                               </td>
@@ -692,12 +816,13 @@ const ListarMovimentosAdmin = () => {
                 handleFiltro(filtroAtual, newPage);
                 setEstado2(false);
               }}
-            />)}
+            />
+          )}
         </Group>
       </div>
       <VoltarComponente />
     </div>
   );
-}
+};
 
 export default ListarMovimentosAdmin;
