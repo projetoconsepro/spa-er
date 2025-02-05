@@ -303,15 +303,12 @@ const ListarMovimentosAdmin = () => {
   };
 
   const editarMovimento = (index, id, tempo, placa) => {
-    console.log("Iniciando edição de movimento...");
 
     const placaNormalizada = placa
       .trim()
       .replace(/\s+/g, "")
       .toUpperCase()
       .replace(/-/g, "");
-
-    console.log("Placa após normalização:", placaNormalizada);
 
     if (
       placaNormalizada === selectedItem.placa_veiculo &&
@@ -322,11 +319,10 @@ const ListarMovimentosAdmin = () => {
         "Nenhuma alteração foi feita no movimento.",
         "info"
       );
-      setModalAberto(false); // Fecha o modal
+      setModalAberto(false);
       return;
     }
 
-    // Verifica se a placa está vazia
     if (placaNormalizada === "") {
       setLoadingButton(false);
       Swal.fire("Erro!", "Preencha o campo placa", "error");
@@ -406,6 +402,22 @@ const ListarMovimentosAdmin = () => {
     if (selectedItem) {
       setTempoSelecionado(selectedItem.tempo);
       setPlacaSelecionada(selectedItem.placa_veiculo);
+  
+      const isPlacaEstrangeira = !validarPlaca(selectedItem.placa_veiculo); 
+      const switchElement = document.getElementById("flexSwitchCheckDefault");
+      if (switchElement) {
+        if (isPlacaEstrangeira) {
+          switchElement.checked = true;
+          setPlaca("placa2");
+          setLimite(10);
+          setInputVazio("inputvazio2");
+        } else {
+          switchElement.checked = false;
+          setPlaca("placa");
+          setLimite(8);
+          setInputVazio("inputvazio3");
+        }
+      }
     }
   }, [selectedItem]);
 
