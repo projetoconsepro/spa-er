@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from "react";
 import createAPI from "../services/createAPI";
 import { AiOutlineReload } from "react-icons/ai";
 import { FaEllipsisH, FaPowerOff } from "react-icons/fa";
@@ -7,6 +7,9 @@ import { Button, Group, Loader, Pagination, Modal } from "@mantine/core";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { RiDeleteBinFill, RiEditLine } from "react-icons/ri";
+import { Divider } from "@mantine/core";
+import { IconArrowLeft } from "@tabler/icons-react";
+import validarPlaca from "../util/validarPlaca";
 
 const ListarMovimentosAdmin = () => {
   const [estado, setEstado] = useState(false);
@@ -24,7 +27,13 @@ const ListarMovimentosAdmin = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [loadingButton, setLoadingButton] = useState(false);
   const [index, setindex] = useState(false);
-  const [tempoSelecionado, setTempoSelecionado] = useState('');
+  const [tempoSelecionado, setTempoSelecionado] = useState("");
+  const [placa, setPlaca] = useState("placa");
+  const [limite, setLimite] = useState(8);
+  const [inputVazio, setInputVazio] = useState("inputvazio3");
+  const [placaSelecionada, setPlacaSelecionada] = useState("");
+  const [isPlacaEstrangeira, setIsPlacaEstrangeira] = useState(false);
+  const switchRef = useRef(null);
 
   useEffect(() => {
     const listar = async () => {
@@ -32,7 +41,9 @@ const ListarMovimentosAdmin = () => {
       setMensagem("");
       const requisicao = createAPI();
       try {
-        const response = await requisicao.get(`/movimento`, { params: { page } });
+        const response = await requisicao.get(`/movimento`, {
+          params: { page },
+        });
         if (response.data.data && response.data.data.length > 0) {
           setEstado2(true);
           const newData = response.data.data.map((item) => ({
@@ -64,7 +75,8 @@ const ListarMovimentosAdmin = () => {
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -76,10 +88,7 @@ const ListarMovimentosAdmin = () => {
     };
 
     listar();
-
   }, [page]);
-
-
 
   const handleConsultaSelected = (consulta) => {
     setFiltroAtual(consulta);
@@ -125,12 +134,13 @@ const ListarMovimentosAdmin = () => {
           setEstado2(true);
           setMensagem("Não há movimentos para exibir");
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -143,7 +153,11 @@ const ListarMovimentosAdmin = () => {
 
   const deletar = (item, index) => {
     Swal.fire({
-      title: `Tem certeza que deseja deletar o movimento de ${item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}?`,
+      title: `Tem certeza que deseja deletar o movimento de ${
+        item.tipo_movimento === "notificacao"
+          ? "Regularização"
+          : tipoMovimentoComAcentos[item.tipo_movimento]
+      }?`,
       icon: "error",
       showCancelButton: true,
       cancelButtonText: "Não",
@@ -162,15 +176,22 @@ const ListarMovimentosAdmin = () => {
               "O Movimento foi deletado com sucesso.",
               "success"
             );
-            if(item.estado_notificacao === "Regularizada") {
+            if (item.estado_notificacao === "Regularizada") {
               data[index].estado_notificacao = "Pendente";
-              setData((prevData) => 
+              setData((prevData) =>
                 prevData.filter((movimento) => {
-                  return !(movimento.id_vaga_veiculo === item.id_vaga_veiculo && movimento.tipo_movimento === 'regularizacao');
+                  return !(
+                    movimento.id_vaga_veiculo === item.id_vaga_veiculo &&
+                    movimento.tipo_movimento === "regularizacao"
+                  );
                 })
               );
-            }else{
-            setData((prevData) => prevData.filter((movimento) => movimento.id_movimento !== item.id_movimento));
+            } else {
+              setData((prevData) =>
+                prevData.filter(
+                  (movimento) => movimento.id_movimento !== item.id_movimento
+                )
+              );
             }
           })
           .catch((error) => {
@@ -178,7 +199,7 @@ const ListarMovimentosAdmin = () => {
               error?.response?.data?.msg === "Cabeçalho inválido!" ||
               error?.response?.data?.msg === "Token inválido!" ||
               error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
+                "Usuário não possui o perfil mencionado!"
             ) {
               localStorage.removeItem("user");
               localStorage.removeItem("token");
@@ -238,7 +259,7 @@ const ListarMovimentosAdmin = () => {
               error?.response?.data?.msg === "Cabeçalho inválido!" ||
               error?.response?.data?.msg === "Token inválido!" ||
               error?.response?.data?.msg ===
-              "Usuário não possui o perfil mencionado!"
+                "Usuário não possui o perfil mencionado!"
             ) {
               localStorage.removeItem("user");
               localStorage.removeItem("token");
@@ -252,67 +273,153 @@ const ListarMovimentosAdmin = () => {
   };
 
   const tipoMovimentoComAcentos = {
-    tolerancia: 'Tolerância',
-    credito: 'Crédito',
-    notificacao: 'Notificação',
-    regularizacao: 'Regularização',
-    ajuste: 'Ajuste',
-    cancelamento: 'Cancelamento',
-    infracao: 'Infração',
-    saida: 'Saída',
-  }; 
+    tolerancia: "Tolerância",
+    credito: "Crédito",
+    notificacao: "Notificação",
+    regularizacao: "Regularização",
+    ajuste: "Ajuste",
+    cancelamento: "Cancelamento",
+    infracao: "Infração",
+    saida: "Saída",
+  };
 
-  const editarTempo = (index, id, tempo) => {
-    setLoadingButton(true)
+    /**
+   * Compara duas datas e verifica se elas pertencem ao mesmo dia.
+    * @param {Date} date1 - A primeira data a ser comparada.
+    * @param {Date} date2 - A segunda data a ser comparada.
+    * @returns {boolean} Retorna true se as datas forem no mesmo dia.
+    */
+  const isSameDay = (date1, date2) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  };
+
+
+    /**
+   * Atualiza um movimento de veículo com novos dados de tempo e placa.
+   * Realiza validações antes de enviar a atualização ao backend.
+   * @param {number} index - O índice do movimento na lista.
+   * @param {number} id - O ID do movimento.
+   * @param {string} tempo - O novo tempo selecionado.
+   * @param {string} placa - A nova placa informada.
+   */
+  const editarMovimento = (index, id, tempo, placa) => {
+    const placaNormalizada = placa.trim().replace(/\s+/g, "").toUpperCase().replace(/-/g, "");
+
+    // Valida se houve alguma alteração significativa
+    if (placaNormalizada === selectedItem.placa_veiculo && tempo === selectedItem.tempo) {
+      Swal.fire("Nenhuma alteração", "Nenhuma alteração foi feita no movimento.", "info");
+      setModalAberto(false);
+      return;
+    }
+
+    // Verifica se a placa está vazia
+    if (placaNormalizada === "") {
+      setLoadingButton(false);
+      Swal.fire("Erro!", "Preencha o campo placa", "error");
+      return;
+    }
+
+    // Valida placa caso não seja estrangeira
+    const sim = document.getElementById("flexSwitchCheckDefault").checked;
+    if (!sim && !validarPlaca(placaNormalizada)) {
+      setLoadingButton(false);
+      Swal.fire("Erro!", "Placa inválida", "error");
+      return;
+    }
+
+    setLoadingButton(true);
+
+    // Envia a atualização para o backend
     const requisicao = createAPI();
+    const placaAtualizada = placaNormalizada !== selectedItem.placa_veiculo ? placaNormalizada : selectedItem.placa_veiculo;
+
     requisicao
-      .put(`/movimento`, {
-        tempo: tempo,
-        id: id
-      })
+      .put(`/movimento`, { id, tempo, placa: placaAtualizada })
       .then((response) => {
-        setLoadingButton(false)
-        setModalAberto(false)
-        Swal.fire(
-          "Atualizado!",
-          "O tempo do movimento foi atualizado com sucesso.",
-          "success"
-        );
+        setLoadingButton(false);
+        setModalAberto(false);
+
+        // Atualiza dados na tabela local
         const valorAtualizado = response.data.valor;
         const tempoAtualizado = response.data.tempo;
+        const placaAtualizadaResponse = placaNormalizada !== selectedItem.placa_veiculo ? response.data.placa : selectedItem.placa_veiculo;
+
         data[index].valor = valorAtualizado;
         data[index].tempo = tempoAtualizado;
+        data[index].placa_veiculo = placaAtualizadaResponse;
         setData([...data]);
+
+        Swal.fire("Atualizado!", "O movimento foi atualizado com sucesso.", "success");
       })
       .catch((error) => {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"
-        ) {
+        setLoadingButton(false);
+
+        if (["Cabeçalho inválido!", "Token inválido!", "Usuário não possui o perfil mencionado!"].includes(error?.response?.data?.msg)) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
           localStorage.removeItem("perfil");
         } else {
           console.log(error);
         }
+
+        Swal.fire("Erro!", "Ocorreu um erro ao atualizar o movimento.", "error");
       });
   };
 
+
   useEffect(() => {
     if (selectedItem) {
-      const opcoes = ["00:30:00", "01:00:00", "01:30:00", "02:00:00"].filter(opcao => opcao !== selectedItem.tempo);
-      if (opcoes.length > 0) {
-        setTempoSelecionado(opcoes[0]);
-      }
+      setTempoSelecionado(selectedItem.tempo);
+      setPlacaSelecionada(selectedItem.placa_veiculo);
+
+      const isEstrangeira = !validarPlaca(selectedItem.placa_veiculo);
+      setIsPlacaEstrangeira(isEstrangeira);
+      setPlaca(isEstrangeira ? "placa2" : "placa");
+      setLimite(isEstrangeira ? 10 : 8);
+      setInputVazio(isEstrangeira ? "inputvazio2" : "inputvazio3");
     }
   }, [selectedItem]);
 
-  const abrirModalEditarTempo = (item, index) => {
-    setModalAberto(true);
+    /**
+   * Manipula a alteração do switch de placa estrangeira.
+   * Atualiza os limites de caracteres e a identificação do input.
+   * @param {Event} e - O evento de clique no switch.
+   */
+  const handlePlacaSwitch = (e) => {
+    const ativado = e.target.checked;
+    setIsPlacaEstrangeira(ativado);
+    setPlaca(ativado ? "placa2" : "placa");
+    setLimite(ativado ? 10 : 8);
+    setInputVazio(ativado ? "inputvazio2" : "inputvazio3");
+  };
+
+  
+    /**
+   * Configura e abre o modal para edição de um movimento.
+   * Preenche os dados com base no item selecionado e determina se a placa é estrangeira.
+   * @param {Object} item - O movimento selecionado.
+   * @param {number} index - O índice do movimento na lista.
+   */
+  const abrirModalEditarMovimento = (item, index) => {
+    const isPlacaEstrangeira = !validarPlaca(item.placa_veiculo);
+    setIsPlacaEstrangeira(isPlacaEstrangeira);
+    setPlaca(isPlacaEstrangeira ? "placa2" : "placa");
+    setLimite(isPlacaEstrangeira ? 10 : 8);
+    setInputVazio(isPlacaEstrangeira ? "inputvazio2" : "inputvazio3");
     setSelectedItem(item);
-    setindex(index)
-  };  
+    setindex(index);
+    setModalAberto(true);
+  };
+
+  
+
+  const fecharModal = () => {
+    setModalAberto(false);
+  };
 
   return (
     <div className="dashboard-container mb-3">
@@ -323,34 +430,80 @@ const ListarMovimentosAdmin = () => {
           setSelectedItem(null);
         }}
         centered
-        title="Editar Tempo"
+        title="Editar Movimento"
         size="md"
         className="flex items-center justify-center"
       >
         {selectedItem && (
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center w-100">
+            <Divider my="sm" size="md" variant="dashed" />
+            <div className="row">
+              <div className="col-9 px-3">
+                <h5 id="h5Placa">Placa Estrangeira</h5>
+              </div>
+              <div className="col-3 px-3">
+                <div className="form-check3 form-switch gap-2 d-md-block">
+                <input
+                  ref={switchRef}
+                  className="form-check-input align-self-end"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  checked={isPlacaEstrangeira}
+                  onChange={handlePlacaSwitch}
+                />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
+              <input
+                type="text"
+                id={inputVazio}
+                className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
+                value={placaSelecionada}
+                onChange={(e) => setPlacaSelecionada(e.target.value)}
+                maxLength={limite}
+              />
+            </div>
+
             <select
               className="form-select form-select-lg mb-4 mt-5"
               aria-label=".form-select-lg example"
               value={tempoSelecionado}
               onChange={(e) => setTempoSelecionado(e.target.value)}
             >
-              {selectedItem.tempo !== "00:30:00" && <option value="00:30:00">30 Minutos</option>}
-              {selectedItem.tempo !== "01:00:00" && <option value="01:00:00">60 Minutos</option>}
-              {selectedItem.tempo !== "01:30:00" && <option value="01:30:00">90 Minutos</option>}
-              {selectedItem.tempo !== "02:00:00" && <option value="02:00:00">120 Minutos</option>}
+              <option value="00:30:00">30 Minutos</option>
+              <option value="01:00:00">60 Minutos</option>
+              <option value="01:30:00">90 Minutos</option>
+              <option value="02:00:00">120 Minutos</option>
             </select>
+
             <div className="mb-2 mt-3 gap-2 flex justify-center items-center w-full text-center">
               <Button
                 loading={loadingButton}
                 className="bg-blue-50 m-2"
                 size="md"
                 radius="md"
-                onClick={() => editarTempo(index, selectedItem.id_movimento, tempoSelecionado)}
+                onClick={() => {
+                  editarMovimento(
+                    index,
+                    selectedItem.id_movimento,
+                    tempoSelecionado,
+                    placaSelecionada
+                  );
+                }}
               >
                 Salvar
               </Button>
-              <VoltarComponente />
+              <Button
+                className="bg-gray-500"
+                size="md"
+                radius="md"
+                onClick={fecharModal}
+              >
+                Voltar
+              </Button>
             </div>
           </div>
         )}
@@ -360,10 +513,13 @@ const ListarMovimentosAdmin = () => {
         <div className="col-12">
           <div className="row">
             <div className="col-lg-6 col-6">
-            <Filtro nome={"ListarMovimentosAdmin"} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading} />
+              <Filtro
+                nome={"ListarMovimentosAdmin"}
+                onConsultaSelected={handleConsultaSelected}
+                onLoading={estadoLoading}
+              />
             </div>
-            <div className="col-lg-3 col-3">
-            </div>
+            <div className="col-lg-3 col-3"></div>
             <div className="col-lg-3 col-3 text-end me-0">
               <Button
                 variant="gradient"
@@ -387,10 +543,13 @@ const ListarMovimentosAdmin = () => {
             <div className="col-12 mb-4">
               {estado2 ? (
                 <div className="card border-0 shadow">
-                  <div className="table-responsive" style={{ overflowX: 'auto' }}>
+                  <div
+                    className="table-responsive"
+                    style={{ overflowX: "auto" }}
+                  >
                     <table className="table align-items-center table-flush">
                       <thead className="thead-light">
-                      <tr>
+                        <tr>
                           <th
                             className="border-bottom"
                             id="tabelaUsuarios"
@@ -468,33 +627,73 @@ const ListarMovimentosAdmin = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {data.map((item, index) => (
+                        {/* Mapeia os dados para renderizar as linhas da tabela */}
+                      {data.map((item, index) => {
+                        // Converte a hora do movimento para um objeto Date
+                        const movimentoDate = new Date(item.hora);
+                        // Obtém a data atual
+                        const today = new Date();
+                        // Verifica se o movimento é do mesmo dia
+                        const isMovimentoToday = isSameDay(movimentoDate, today);
+                        return (
                           <tr key={index}>
                             <td id="tabelaUsuarios">{item.placa_veiculo}</td>
                             <td id="tabelaUsuarios">
                               {tipoMovimentoComAcentos[item.tipo_movimento]}
                             </td>
-                            <td id="tabelaUsuarios">{new Date(item.hora).toLocaleString()}</td>
+                            <td id="tabelaUsuarios">
+                              {new Date(item.hora).toLocaleString()}
+                            </td>
                             <td id="tabelaUsuarios2">{item.nome_setor}</td>
                             <td id="tabelaUsuarios">{item.numero_vaga}</td>
-                            {item.tipo_movimento == 'notificacao' ? (
-                              <td id="tabelaUsuarios" colSpan="3" style={{ fontWeight: 'medium', marginTop: '2rem', color: item.estado_notificacao === 'Cancelada' ? 'black' : item.estado_notificacao === 'Regularizada' ? '#20E300' : item.estado_notificacao === 'Pendente' ? '#E30000' : 'black' }}>    
-                              Notificação {item.estado_notificacao}
-
+                            {item.tipo_movimento === "notificacao" ? (
+                              <td
+                                id="tabelaUsuarios"
+                                colSpan="3"
+                                style={{
+                                  fontWeight: "medium",
+                                  marginTop: "2rem",
+                                  color:
+                                    item.estado_notificacao === "Cancelada"
+                                      ? "black"
+                                      : item.estado_notificacao === "Regularizada"
+                                      ? "#20E300"
+                                      : item.estado_notificacao === "Pendente"
+                                      ? "#E30000"
+                                      : "black",
+                                }}
+                              >
+                                Notificação {item.estado_notificacao}
                               </td>
                             ) : (
                               <>
-                                <td id="tabelaUsuarios2">{item.tipo || '...'}</td>
-                                <td id="tabelaUsuarios">{item.valor ? `R$ ${parseFloat(item.valor).toFixed(2)}` : '...'}</td>
-                                <td id="tabelaUsuarios">{item.tempo || '...'}</td>
+                                <td id="tabelaUsuarios2">
+                                  {item.tipo || "..."}
+                                </td>
+                                <td id="tabelaUsuarios">
+                                  {item.valor
+                                    ? `R$ ${parseFloat(item.valor).toFixed(2)}`
+                                    : "..."}
+                                </td>
+                                <td id="tabelaUsuarios">
+                                  {item.tempo || "..."}
+                                </td>
                               </>
                             )}
                             <td id="tabelaUsuarios">{item.nome_usuario}</td>
-                            <td id="tabelaUsuarios2">{item.perfil_usuario.charAt(0).toUpperCase() + item.perfil_usuario.slice(1)}</td>
-
+                            <td id="tabelaUsuarios2">
+                              {item.perfil_usuario.charAt(0).toUpperCase() +
+                                item.perfil_usuario.slice(1)}
+                            </td>
+                            {/* Ações */}
                             <td className="fw-bolder col" id="tabelaUsuarios3">
-                            <div className="btn-group">
-                                {item.estado_notificacao === "Cancelada" || item.tipo_movimento === "cancelamento" ? (
+                              <div className="btn-group">
+                                {/* Verifica se deve esconder o botão de editar e deletar */}
+                                {item.estado_notificacao === "Cancelada" ||
+                                item.estado_notificacao === "Regularizada" ||
+                                item.tipo_movimento === "cancelamento" ||
+                                (!isMovimentoToday &&
+                                  item.tipo_movimento !== "notificacao") ? (
                                   <div></div>
                                 ) : (
                                   <button
@@ -507,33 +706,44 @@ const ListarMovimentosAdmin = () => {
                                   </button>
                                 )}
                                 <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                {item.tipo_movimento !== "notificacao" || item.estado_notificacao === "Regularizada" ? (
+                                  {item.tipo_movimento !== "notificacao" ||
+                                  item.estado_notificacao === "Regularizada" ? (
                                     <div>
-                                      <h6 className="dropdown-item d-flex justify-content-center align-items-center text-danger"
+                                      <h6
+                                        className="dropdown-item d-flex justify-content-center align-items-center text-danger"
                                         onClick={() => deletar(item, index)}
                                       >
                                         <RiDeleteBinFill />
-                                        ‎‎ Remover {item.tipo_movimento === "notificacao" ? "Regularização" : tipoMovimentoComAcentos[item.tipo_movimento]}
+                                        ‎‎ Remover{" "}
+                                        {item.tipo_movimento === "notificacao"
+                                          ? "Regularização"
+                                          : tipoMovimentoComAcentos[item.tipo_movimento]}
                                       </h6>
                                       {item.tempo && (
-                                        <h6 className="dropdown-item d-flex justify-content-center align-items-center text-info"
-                                        onClick={() => abrirModalEditarTempo(item, index)}>
+                                        <h6
+                                          className="dropdown-item d-flex justify-content-center align-items-center text-info"
+                                          onClick={() => abrirModalEditarMovimento(item, index)}
+                                        >
                                           <RiEditLine />
-                                          Editar tempo
+                                          Editar Movimento
                                         </h6>
                                       )}
                                     </div>
-                                  ) : (<h6 className="dropdown-item d-flex justify-content-center align-items-center text-primary"
-                                    onClick={() => cancelar(item, index)}
-                                  >
-                                    <FaPowerOff />
-                                    ‎‎ ‎Cancelar
-                                  </h6>)}
+                                  ) : (
+                                    <h6
+                                      className="dropdown-item d-flex justify-content-center align-items-center text-primary"
+                                      onClick={() => cancelar(item, index)}
+                                    >
+                                      <FaPowerOff />
+                                      ‎‎ ‎Cancelar
+                                    </h6>
+                                  )}
                                 </div>
                               </div>
                             </td>
                           </tr>
-                        ))}
+                        );
+                      })}
                       </tbody>
                     </table>
                   </div>
@@ -572,12 +782,13 @@ const ListarMovimentosAdmin = () => {
                 handleFiltro(filtroAtual, newPage);
                 setEstado2(false);
               }}
-            />)}
+            />
+          )}
         </Group>
       </div>
       <VoltarComponente />
     </div>
   );
-}
+};
 
 export default ListarMovimentosAdmin;
