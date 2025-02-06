@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import createAPI from "../services/createAPI";
 import { AiOutlineReload } from "react-icons/ai";
 import { FaEllipsisH, FaPowerOff } from "react-icons/fa";
@@ -32,19 +32,8 @@ const ListarMovimentosAdmin = () => {
   const [limite, setLimite] = useState(8);
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [placaSelecionada, setPlacaSelecionada] = useState("");
-
-  const handlePlaca = () => {
-    const clicado = document.getElementById("flexSwitchCheckDefault").checked;
-    if (clicado === true) {
-      setPlaca("placa2");
-      setLimite(10); 
-      setInputVazio("inputvazio2");
-    } else {
-      setPlaca("placa");
-      setLimite(8); 
-      setInputVazio("inputvazio3");
-    }
-  };  
+  const [isPlacaEstrangeira, setIsPlacaEstrangeira] = useState(false);
+  const switchRef = useRef(null);
 
   useEffect(() => {
     const listar = async () => {
@@ -294,6 +283,12 @@ const ListarMovimentosAdmin = () => {
     saida: "Saída",
   };
 
+    /**
+   * Compara duas datas e verifica se elas pertencem ao mesmo dia.
+    * @param {Date} date1 - A primeira data a ser comparada.
+    * @param {Date} date2 - A segunda data a ser comparada.
+    * @returns {boolean} Retorna true se as datas forem no mesmo dia.
+    */
   const isSameDay = (date1, date2) => {
     return (
       date1.getFullYear() === date2.getFullYear() &&
@@ -302,87 +297,68 @@ const ListarMovimentosAdmin = () => {
     );
   };
 
+
+    /**
+   * Atualiza um movimento de veículo com novos dados de tempo e placa.
+   * Realiza validações antes de enviar a atualização ao backend.
+   * @param {number} index - O índice do movimento na lista.
+   * @param {number} id - O ID do movimento.
+   * @param {string} tempo - O novo tempo selecionado.
+   * @param {string} placa - A nova placa informada.
+   */
   const editarMovimento = (index, id, tempo, placa) => {
+    const placaNormalizada = placa.trim().replace(/\s+/g, "").toUpperCase().replace(/-/g, "");
 
-    const placaNormalizada = placa
-      .trim()
-      .replace(/\s+/g, "")
-      .toUpperCase()
-      .replace(/-/g, "");
-
-    if (
-      placaNormalizada === selectedItem.placa_veiculo &&
-      tempo === selectedItem.tempo
-    ) {
-      Swal.fire(
-        "Nenhuma alteração",
-        "Nenhuma alteração foi feita no movimento.",
-        "info"
-      );
+    // Valida se houve alguma alteração significativa
+    if (placaNormalizada === selectedItem.placa_veiculo && tempo === selectedItem.tempo) {
+      Swal.fire("Nenhuma alteração", "Nenhuma alteração foi feita no movimento.", "info");
       setModalAberto(false);
       return;
     }
 
+    // Verifica se a placa está vazia
     if (placaNormalizada === "") {
       setLoadingButton(false);
       Swal.fire("Erro!", "Preencha o campo placa", "error");
       return;
     }
 
+    // Valida placa caso não seja estrangeira
     const sim = document.getElementById("flexSwitchCheckDefault").checked;
-    if (!sim) {
-      if (!validarPlaca(placaNormalizada)) {
-        setLoadingButton(false);
-        Swal.fire("Erro!", "Placa inválida", "error");
-        return;
-      }
+    if (!sim && !validarPlaca(placaNormalizada)) {
+      setLoadingButton(false);
+      Swal.fire("Erro!", "Placa inválida", "error");
+      return;
     }
 
     setLoadingButton(true);
-    const requisicao = createAPI();
 
-    const placaAtualizada =
-      placaNormalizada !== selectedItem.placa_veiculo
-        ? placaNormalizada
-        : selectedItem.placa_veiculo;
+    // Envia a atualização para o backend
+    const requisicao = createAPI();
+    const placaAtualizada = placaNormalizada !== selectedItem.placa_veiculo ? placaNormalizada : selectedItem.placa_veiculo;
 
     requisicao
-      .put(`/movimento`, {
-        id: id,
-        tempo: tempo,
-        placa: placaAtualizada,
-      })
+      .put(`/movimento`, { id, tempo, placa: placaAtualizada })
       .then((response) => {
         setLoadingButton(false);
         setModalAberto(false);
 
+        // Atualiza dados na tabela local
         const valorAtualizado = response.data.valor;
         const tempoAtualizado = response.data.tempo;
-        const placaAtualizadaResponse =
-          placaNormalizada !== selectedItem.placa_veiculo
-            ? response.data.placa
-            : selectedItem.placa_veiculo;
+        const placaAtualizadaResponse = placaNormalizada !== selectedItem.placa_veiculo ? response.data.placa : selectedItem.placa_veiculo;
 
         data[index].valor = valorAtualizado;
         data[index].tempo = tempoAtualizado;
-        data[index].placa_veiculo = placaAtualizadaResponse; 
+        data[index].placa_veiculo = placaAtualizadaResponse;
         setData([...data]);
 
-        Swal.fire(
-          "Atualizado!",
-          "O movimento foi atualizado com sucesso.",
-          "success"
-        );
+        Swal.fire("Atualizado!", "O movimento foi atualizado com sucesso.", "success");
       })
       .catch((error) => {
         setLoadingButton(false);
 
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
+        if (["Cabeçalho inválido!", "Token inválido!", "Usuário não possui o perfil mencionado!"].includes(error?.response?.data?.msg)) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
           localStorage.removeItem("perfil");
@@ -390,77 +366,59 @@ const ListarMovimentosAdmin = () => {
           console.log(error);
         }
 
-        Swal.fire(
-          "Erro!",
-          "Ocorreu um erro ao atualizar o movimento.",
-          "error"
-        );
+        Swal.fire("Erro!", "Ocorreu um erro ao atualizar o movimento.", "error");
       });
   };
+
 
   useEffect(() => {
     if (selectedItem) {
       setTempoSelecionado(selectedItem.tempo);
       setPlacaSelecionada(selectedItem.placa_veiculo);
-  
-      const isPlacaEstrangeira = !validarPlaca(selectedItem.placa_veiculo); 
-      const switchElement = document.getElementById("flexSwitchCheckDefault");
-      if (switchElement) {
-        if (isPlacaEstrangeira) {
-          switchElement.checked = true;
-          setPlaca("placa2");
-          setLimite(10);
-          setInputVazio("inputvazio2");
-        } else {
-          switchElement.checked = false;
-          setPlaca("placa");
-          setLimite(8);
-          setInputVazio("inputvazio3");
-        }
-      }
+
+      const isEstrangeira = !validarPlaca(selectedItem.placa_veiculo);
+      setIsPlacaEstrangeira(isEstrangeira);
+      setPlaca(isEstrangeira ? "placa2" : "placa");
+      setLimite(isEstrangeira ? 10 : 8);
+      setInputVazio(isEstrangeira ? "inputvazio2" : "inputvazio3");
     }
   }, [selectedItem]);
 
-  useEffect(() => {
-    const clicado = document.getElementById("flexSwitchCheckDefault")?.checked;
-    if (clicado) {
-      setPlaca("placa2");
-      setLimite(10); 
-      setInputVazio("inputvazio2");
-    } else {
-      setPlaca("placa");
-      setLimite(8); 
-      setInputVazio("inputvazio3");
-    }
-  }, [ModalAberto]);
+    /**
+   * Manipula a alteração do switch de placa estrangeira.
+   * Atualiza os limites de caracteres e a identificação do input.
+   * @param {Event} e - O evento de clique no switch.
+   */
+  const handlePlacaSwitch = (e) => {
+    const ativado = e.target.checked;
+    setIsPlacaEstrangeira(ativado);
+    setPlaca(ativado ? "placa2" : "placa");
+    setLimite(ativado ? 10 : 8);
+    setInputVazio(ativado ? "inputvazio2" : "inputvazio3");
+  };
 
+  
+    /**
+   * Configura e abre o modal para edição de um movimento.
+   * Preenche os dados com base no item selecionado e determina se a placa é estrangeira.
+   * @param {Object} item - O movimento selecionado.
+   * @param {number} index - O índice do movimento na lista.
+   */
   const abrirModalEditarMovimento = (item, index) => {
-    setModalAberto(true);
+    const isPlacaEstrangeira = !validarPlaca(item.placa_veiculo);
+    setIsPlacaEstrangeira(isPlacaEstrangeira);
+    setPlaca(isPlacaEstrangeira ? "placa2" : "placa");
+    setLimite(isPlacaEstrangeira ? 10 : 8);
+    setInputVazio(isPlacaEstrangeira ? "inputvazio2" : "inputvazio3");
     setSelectedItem(item);
     setindex(index);
+    setModalAberto(true);
   };
+
+  
 
   const fecharModal = () => {
     setModalAberto(false);
-  };
-
-  const VoltarComponenteModal = ({ onVoltar, space, arrow }) => {
-    return (
-      <>
-        {arrow ? (
-          <IconArrowLeft className="mb-1" onClick={onVoltar} />
-        ) : (
-          <Button
-            className={space ? "bg-gray-500 mx-2" : "bg-gray-500"}
-            size="md"
-            radius="md"
-            onClick={onVoltar}
-          >
-            Voltar
-          </Button>
-        )}
-      </>
-    );
   };
 
   return (
@@ -485,13 +443,15 @@ const ListarMovimentosAdmin = () => {
               </div>
               <div className="col-3 px-3">
                 <div className="form-check3 form-switch gap-2 d-md-block">
-                  <input
-                    className="form-check-input align-self-end"
-                    type="checkbox"
-                    role="switch"
-                    onClick={handlePlaca}
-                    id="flexSwitchCheckDefault"
-                  />
+                <input
+                  ref={switchRef}
+                  className="form-check-input align-self-end"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  checked={isPlacaEstrangeira}
+                  onChange={handlePlacaSwitch}
+                />
                 </div>
               </div>
             </div>
@@ -536,7 +496,14 @@ const ListarMovimentosAdmin = () => {
               >
                 Salvar
               </Button>
-              <VoltarComponenteModal onVoltar={fecharModal} />
+              <Button
+                className="bg-gray-500"
+                size="md"
+                radius="md"
+                onClick={fecharModal}
+              >
+                Voltar
+              </Button>
             </div>
           </div>
         )}
@@ -660,136 +627,123 @@ const ListarMovimentosAdmin = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {data.map((item, index) => {
-                          const movimentoDate = new Date(item.hora);
-                          const today = new Date();
-                          const isMovimentoToday = isSameDay(
-                            movimentoDate,
-                            today
-                          );
-
-                          return (
-                            <tr key={index}>
-                              <td id="tabelaUsuarios">{item.placa_veiculo}</td>
-                              <td id="tabelaUsuarios">
-                                {tipoMovimentoComAcentos[item.tipo_movimento]}
-                              </td>
-                              <td id="tabelaUsuarios">
-                                {new Date(item.hora).toLocaleString()}
-                              </td>
-                              <td id="tabelaUsuarios2">{item.nome_setor}</td>
-                              <td id="tabelaUsuarios">{item.numero_vaga}</td>
-                              {item.tipo_movimento === "notificacao" ? (
-                                <td
-                                  id="tabelaUsuarios"
-                                  colSpan="3"
-                                  style={{
-                                    fontWeight: "medium",
-                                    marginTop: "2rem",
-                                    color:
-                                      item.estado_notificacao === "Cancelada"
-                                        ? "black"
-                                        : item.estado_notificacao ===
-                                          "Regularizada"
-                                        ? "#20E300"
-                                        : item.estado_notificacao === "Pendente"
-                                        ? "#E30000"
-                                        : "black",
-                                  }}
-                                >
-                                  Notificação {item.estado_notificacao}
-                                </td>
-                              ) : (
-                                <>
-                                  <td id="tabelaUsuarios2">
-                                    {item.tipo || "..."}
-                                  </td>
-                                  <td id="tabelaUsuarios">
-                                    {item.valor
-                                      ? `R$ ${parseFloat(item.valor).toFixed(
-                                          2
-                                        )}`
-                                      : "..."}
-                                  </td>
-                                  <td id="tabelaUsuarios">
-                                    {item.tempo || "..."}
-                                  </td>
-                                </>
-                              )}
-                              <td id="tabelaUsuarios">{item.nome_usuario}</td>
-                              <td id="tabelaUsuarios2">
-                                {item.perfil_usuario.charAt(0).toUpperCase() +
-                                  item.perfil_usuario.slice(1)}
-                              </td>
-
+                        {/* Mapeia os dados para renderizar as linhas da tabela */}
+                      {data.map((item, index) => {
+                        // Converte a hora do movimento para um objeto Date
+                        const movimentoDate = new Date(item.hora);
+                        // Obtém a data atual
+                        const today = new Date();
+                        // Verifica se o movimento é do mesmo dia
+                        const isMovimentoToday = isSameDay(movimentoDate, today);
+                        return (
+                          <tr key={index}>
+                            <td id="tabelaUsuarios">{item.placa_veiculo}</td>
+                            <td id="tabelaUsuarios">
+                              {tipoMovimentoComAcentos[item.tipo_movimento]}
+                            </td>
+                            <td id="tabelaUsuarios">
+                              {new Date(item.hora).toLocaleString()}
+                            </td>
+                            <td id="tabelaUsuarios2">{item.nome_setor}</td>
+                            <td id="tabelaUsuarios">{item.numero_vaga}</td>
+                            {item.tipo_movimento === "notificacao" ? (
                               <td
-                                className="fw-bolder col"
-                                id="tabelaUsuarios3"
+                                id="tabelaUsuarios"
+                                colSpan="3"
+                                style={{
+                                  fontWeight: "medium",
+                                  marginTop: "2rem",
+                                  color:
+                                    item.estado_notificacao === "Cancelada"
+                                      ? "black"
+                                      : item.estado_notificacao === "Regularizada"
+                                      ? "#20E300"
+                                      : item.estado_notificacao === "Pendente"
+                                      ? "#E30000"
+                                      : "black",
+                                }}
                               >
-                                <div className="btn-group">
-                                  {item.estado_notificacao === "Cancelada" ||
-                                  item.estado_notificacao === "Regularizada" ||
-                                  item.tipo_movimento === "cancelamento" ||
-                                  (!isMovimentoToday &&
-                                    item.tipo_movimento !== "notificacao") ? (
-                                    <div></div>
-                                  ) : (
-                                    <button
-                                      className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
-                                      data-bs-toggle="dropdown"
-                                      aria-haspopup="true"
-                                      aria-expanded="false"
-                                    >
-                                      <FaEllipsisH />
-                                    </button>
-                                  )}
-                                  <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                    {item.tipo_movimento !== "notificacao" ||
-                                    item.estado_notificacao ===
-                                      "Regularizada" ? (
-                                      <div>
-                                        <h6
-                                          className="dropdown-item d-flex justify-content-center align-items-center text-danger"
-                                          onClick={() => deletar(item, index)}
-                                        >
-                                          <RiDeleteBinFill />
-                                          ‎‎ Remover{" "}
-                                          {item.tipo_movimento === "notificacao"
-                                            ? "Regularização"
-                                            : tipoMovimentoComAcentos[
-                                                item.tipo_movimento
-                                              ]}
-                                        </h6>
-                                        {item.tempo && (
-                                          <h6
-                                            className="dropdown-item d-flex justify-content-center align-items-center text-info"
-                                            onClick={() =>
-                                              abrirModalEditarMovimento(
-                                                item,
-                                                index
-                                              )
-                                            }
-                                          >
-                                            <RiEditLine />
-                                            Editar Movimento
-                                          </h6>
-                                        )}
-                                      </div>
-                                    ) : (
-                                      <h6
-                                        className="dropdown-item d-flex justify-content-center align-items-center text-primary"
-                                        onClick={() => cancelar(item, index)}
-                                      >
-                                        <FaPowerOff />
-                                        ‎‎ ‎Cancelar
-                                      </h6>
-                                    )}
-                                  </div>
-                                </div>
+                                Notificação {item.estado_notificacao}
                               </td>
-                            </tr>
-                          );
-                        })}
+                            ) : (
+                              <>
+                                <td id="tabelaUsuarios2">
+                                  {item.tipo || "..."}
+                                </td>
+                                <td id="tabelaUsuarios">
+                                  {item.valor
+                                    ? `R$ ${parseFloat(item.valor).toFixed(2)}`
+                                    : "..."}
+                                </td>
+                                <td id="tabelaUsuarios">
+                                  {item.tempo || "..."}
+                                </td>
+                              </>
+                            )}
+                            <td id="tabelaUsuarios">{item.nome_usuario}</td>
+                            <td id="tabelaUsuarios2">
+                              {item.perfil_usuario.charAt(0).toUpperCase() +
+                                item.perfil_usuario.slice(1)}
+                            </td>
+                            {/* Ações */}
+                            <td className="fw-bolder col" id="tabelaUsuarios3">
+                              <div className="btn-group">
+                                {/* Verifica se deve esconder o botão de editar e deletar */}
+                                {item.estado_notificacao === "Cancelada" ||
+                                item.estado_notificacao === "Regularizada" ||
+                                item.tipo_movimento === "cancelamento" ||
+                                (!isMovimentoToday &&
+                                  item.tipo_movimento !== "notificacao") ? (
+                                  <div></div>
+                                ) : (
+                                  <button
+                                    className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                  >
+                                    <FaEllipsisH />
+                                  </button>
+                                )}
+                                <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
+                                  {item.tipo_movimento !== "notificacao" ||
+                                  item.estado_notificacao === "Regularizada" ? (
+                                    <div>
+                                      <h6
+                                        className="dropdown-item d-flex justify-content-center align-items-center text-danger"
+                                        onClick={() => deletar(item, index)}
+                                      >
+                                        <RiDeleteBinFill />
+                                        ‎‎ Remover{" "}
+                                        {item.tipo_movimento === "notificacao"
+                                          ? "Regularização"
+                                          : tipoMovimentoComAcentos[item.tipo_movimento]}
+                                      </h6>
+                                      {item.tempo && (
+                                        <h6
+                                          className="dropdown-item d-flex justify-content-center align-items-center text-info"
+                                          onClick={() => abrirModalEditarMovimento(item, index)}
+                                        >
+                                          <RiEditLine />
+                                          Editar Movimento
+                                        </h6>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <h6
+                                      className="dropdown-item d-flex justify-content-center align-items-center text-primary"
+                                      onClick={() => cancelar(item, index)}
+                                    >
+                                      <FaPowerOff />
+                                      ‎‎ ‎Cancelar
+                                    </h6>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                       </tbody>
                     </table>
                   </div>
