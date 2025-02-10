@@ -175,7 +175,8 @@ const Sidebar = () => {
       );
   } else if (teste.perfil[0] === "admin") {
       const adminLinks = [
-          { icon: <AiOutlineBarChart />, name: "‎ Dashboard", componente: "Dashboard" },
+          { icon: <AiOutlineBarChart />, name: "‎ Dashboard", componente: "Dashboard" }, 
+          {icon: <FaRegMap />, name: "‎ Mapa", componente: "MapaAdmin" , className: commonStyles},
           { icon: <FaParking />, name: "‎ Registrar Estacionamento", componente: "RegistrarEstacionamentoParceiro" },
           { icon: <FaHistory />, name: "‎ Históricos",
           subitem: [
@@ -214,6 +215,7 @@ const Sidebar = () => {
             { icon: <FcMoneyTransfer />, name: "‎ Depósito Parceiro", componente: "TransferenciaParceiro", className: commonStyles },
             ]
           },
+         
           { icon: <AiFillEdit />, name: "‎ Editar Parâmetro", componente: "EditarParametroAdmin" },
           { icon: <FaWhatsapp />, name: "‎ Whatsapp", componente: "linkWhatsapp" }
       ];
