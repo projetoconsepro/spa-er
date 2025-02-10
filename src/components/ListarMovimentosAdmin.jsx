@@ -8,7 +8,6 @@ import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import { RiDeleteBinFill, RiEditLine } from "react-icons/ri";
 import { Divider } from "@mantine/core";
-import { IconArrowLeft } from "@tabler/icons-react";
 import validarPlaca from "../util/validarPlaca";
 
 const ListarMovimentosAdmin = () => {
@@ -628,122 +627,126 @@ const ListarMovimentosAdmin = () => {
                       </thead>
                       <tbody>
                         {/* Mapeia os dados para renderizar as linhas da tabela */}
-                      {data.map((item, index) => {
-                        // Converte a hora do movimento para um objeto Date
-                        const movimentoDate = new Date(item.hora);
-                        // Obtém a data atual
-                        const today = new Date();
-                        // Verifica se o movimento é do mesmo dia
-                        const isMovimentoToday = isSameDay(movimentoDate, today);
-                        return (
-                          <tr key={index}>
-                            <td id="tabelaUsuarios">{item.placa_veiculo}</td>
-                            <td id="tabelaUsuarios">
-                              {tipoMovimentoComAcentos[item.tipo_movimento]}
-                            </td>
-                            <td id="tabelaUsuarios">
-                              {new Date(item.hora).toLocaleString()}
-                            </td>
-                            <td id="tabelaUsuarios2">{item.nome_setor}</td>
-                            <td id="tabelaUsuarios">{item.numero_vaga}</td>
-                            {item.tipo_movimento === "notificacao" ? (
-                              <td
-                                id="tabelaUsuarios"
-                                colSpan="3"
-                                style={{
-                                  fontWeight: "medium",
-                                  marginTop: "2rem",
-                                  color:
-                                    item.estado_notificacao === "Cancelada"
-                                      ? "black"
-                                      : item.estado_notificacao === "Regularizada"
-                                      ? "#20E300"
-                                      : item.estado_notificacao === "Pendente"
-                                      ? "#E30000"
-                                      : "black",
-                                }}
-                              >
-                                Notificação {item.estado_notificacao}
+                        {data.map((item, index) => {
+                          // Converte a hora do movimento para um objeto Date
+                          const movimentoDate = new Date(item.hora);
+                          // Obtém a data atual
+                          const today = new Date();
+                          // Verifica se o movimento é do mesmo dia
+                          const isMovimentoToday = isSameDay(movimentoDate, today);
+                          return (
+                            <tr key={index}>
+                              <td id="tabelaUsuarios">{item.placa_veiculo}</td>
+                              <td id="tabelaUsuarios">
+                                {tipoMovimentoComAcentos[item.tipo_movimento]}
                               </td>
-                            ) : (
-                              <>
-                                <td id="tabelaUsuarios2">
-                                  {item.tipo || "..."}
+                              <td id="tabelaUsuarios">
+                                {new Date(item.hora).toLocaleString()}
+                              </td>
+                              <td id="tabelaUsuarios2">{item.nome_setor}</td>
+                              <td id="tabelaUsuarios">{item.numero_vaga}</td>
+                              {item.tipo_movimento === "notificacao" ? (
+                                <td
+                                  id="tabelaUsuarios"
+                                  colSpan="3"
+                                  style={{
+                                    fontWeight: "medium",
+                                    marginTop: "2rem",
+                                    color:
+                                      item.estado_notificacao === "Cancelada"
+                                        ? "black"
+                                        : item.estado_notificacao === "Regularizada"
+                                        ? "#20E300"
+                                        : item.estado_notificacao === "Pendente"
+                                        ? "#E30000"
+                                        : "black",
+                                  }}
+                                >
+                                  Notificação {item.estado_notificacao}
                                 </td>
-                                <td id="tabelaUsuarios">
-                                  {item.valor
-                                    ? `R$ ${parseFloat(item.valor).toFixed(2)}`
-                                    : "..."}
-                                </td>
-                                <td id="tabelaUsuarios">
-                                  {item.tempo || "..."}
-                                </td>
-                              </>
-                            )}
-                            <td id="tabelaUsuarios">{item.nome_usuario}</td>
-                            <td id="tabelaUsuarios2">
-                              {item.perfil_usuario.charAt(0).toUpperCase() +
-                                item.perfil_usuario.slice(1)}
-                            </td>
-                            {/* Ações */}
-                            <td className="fw-bolder col" id="tabelaUsuarios3">
-                              <div className="btn-group">
-                                {/* Verifica se deve esconder o botão de editar e deletar */}
-                                {item.estado_notificacao === "Cancelada" ||
-                                item.estado_notificacao === "Regularizada" ||
-                                item.tipo_movimento === "cancelamento" ||
-                                (!isMovimentoToday &&
-                                  item.tipo_movimento !== "notificacao") ? (
-                                  <div></div>
-                                ) : (
-                                  <button
-                                    className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
-                                    data-bs-toggle="dropdown"
-                                    aria-haspopup="true"
-                                    aria-expanded="false"
-                                  >
-                                    <FaEllipsisH />
-                                  </button>
-                                )}
-                                <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
-                                  {item.tipo_movimento !== "notificacao" ||
-                                  item.estado_notificacao === "Regularizada" ? (
-                                    <div>
-                                      <h6
-                                        className="dropdown-item d-flex justify-content-center align-items-center text-danger"
-                                        onClick={() => deletar(item, index)}
-                                      >
-                                        <RiDeleteBinFill />
-                                        ‎‎ Remover{" "}
-                                        {item.tipo_movimento === "notificacao"
-                                          ? "Regularização"
-                                          : tipoMovimentoComAcentos[item.tipo_movimento]}
-                                      </h6>
-                                      {item.tempo && (
-                                        <h6
-                                          className="dropdown-item d-flex justify-content-center align-items-center text-info"
-                                          onClick={() => abrirModalEditarMovimento(item, index)}
-                                        >
-                                          <RiEditLine />
-                                          Editar Movimento
-                                        </h6>
-                                      )}
-                                    </div>
+                              ) : (
+                                <>
+                                  <td id="tabelaUsuarios2">
+                                    {item.tipo || "..."}
+                                  </td>
+                                  <td id="tabelaUsuarios">
+                                    {item.valor
+                                      ? `R$ ${parseFloat(item.valor).toFixed(2)}`
+                                      : "..."}
+                                  </td>
+                                  <td id="tabelaUsuarios">
+                                    {item.tempo || "..."}
+                                  </td>
+                                </>
+                              )}
+                              <td id="tabelaUsuarios">{item.nome_usuario}</td>
+                              <td id="tabelaUsuarios2">
+                                {item.perfil_usuario.charAt(0).toUpperCase() +
+                                  item.perfil_usuario.slice(1)}
+                              </td>
+                              {/* Ações */}
+                              <td className="fw-bolder col" id="tabelaUsuarios3">
+                                <div className="btn-group">
+                                  {/* Verifica se deve esconder o botão de editar e deletar */}
+                                  {item.estado_notificacao === "Cancelada" ||
+                                  item.estado_notificacao === "Regularizada" ||
+                                  item.tipo_movimento === "cancelamento" ||
+                                  (!isMovimentoToday &&
+                                    item.tipo_movimento !== "notificacao") ? (
+                                    <div></div>
                                   ) : (
-                                    <h6
-                                      className="dropdown-item d-flex justify-content-center align-items-center text-primary"
-                                      onClick={() => cancelar(item, index)}
+                                    <button
+                                      className="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0"
+                                      data-bs-toggle="dropdown"
+                                      aria-haspopup="true"
+                                      aria-expanded="false"
                                     >
-                                      <FaPowerOff />
-                                      ‎‎ ‎Cancelar
-                                    </h6>
+                                      <FaEllipsisH />
+                                    </button>
                                   )}
+                                  <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
+                                    {item.tipo_movimento !== "notificacao" ||
+                                    item.estado_notificacao === "Regularizada" ? (
+                                      <div>
+                                        <h6
+                                          className="dropdown-item d-flex justify-content-center align-items-center text-danger"
+                                          onClick={() => deletar(item, index)}
+                                        >
+                                          <RiDeleteBinFill />
+                                          ‎‎ Remover{" "}
+                                          {item.tipo_movimento === "notificacao"
+                                            ? "Regularização"
+                                            : tipoMovimentoComAcentos[item.tipo_movimento]}
+                                        </h6>
+                                        {item.tempo && (
+                                          <h6
+                                            className="dropdown-item d-flex justify-content-center align-items-center text-info"
+                                            onClick={() => abrirModalEditarMovimento(item, index)}
+                                          >
+                                            <RiEditLine />
+                                            Editar Movimento
+                                          </h6>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <h6
+                                        className="dropdown-item d-flex justify-content-center align-items-center text-primary"
+                                        onClick={() => cancelar(item, index)}
+                                      >
+                                        <FaPowerOff />
+                                        ‎‎ ‎Cancelar
+                                      </h6>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {/* Adiciona uma linha em branco ao final da tabela */}
+                        <tr>
+                          <td colSpan="12" style={{ height: "100px" }}></td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
