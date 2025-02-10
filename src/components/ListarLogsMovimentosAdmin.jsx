@@ -175,197 +175,76 @@ const ListarMovimentosAdmin = () => {
                     className="table-responsive"
                     style={{ overflowX: "auto" }}
                   >
-                    <table className="table align-items-center table-flush">
+                                        <table className="table align-items-center table-flush">
                       <thead className="thead-light">
                         <tr>
-                          <th
-                            className="border"
-                            colSpan="3"
-                            id="tabelaUsuarios2"
-                          ></th>
-                          <th
-                            className="border"
-                            colSpan="3"
-                            id="tabelaUsuarios"
-                          >
-                            Original
-                          </th>
-                          <th
-                            className="border"
-                            colSpan="3"
-                            id="tabelaUsuarios"
-                          >
-                            Alterado
-                          </th>
+                          <th className="border" colSpan="4" id="tabelaUsuarios2"></th>
+                          <th className="border" colSpan="3" id="tabelaUsuarios">Original</th>
+                          <th className="border" colSpan="3" id="tabelaUsuarios">Alterado</th>
                         </tr>
                         <tr>
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios2"
-                            scope="col"
-                          >
-                            Ação
-                          </th>
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios2"
-                            scope="col"
-                          >
-                            Data
-                          </th>
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios2"
-                            scope="col"
-                          >
-                            Nome
-                          </th>
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios"
-                            scope="col"
-                          >
-                            Tipo
-                          </th>
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios"
-                            scope="col"
-                          >
-                            Tempo
-                          </th>
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios"
-                            scope="col"
-                          >
-                            Valor
-                          </th>
-
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios"
-                            scope="col"
-                          >
-                            Tipo
-                          </th>
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios"
-                            scope="col"
-                          >
-                            Tempo
-                          </th>
-                          <th
-                            className="border-bottom"
-                            id="tabelaUsuarios"
-                            scope="col"
-                          >
-                            Valor
-                          </th>
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col" style={{ width: '8%' }}>Ação</th>
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col" style={{ width: '16%' }}>Data</th>
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col" style={{ width: '10%' }}>Nome</th>
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col" style={{ width: '8%' }}>Tipo</th>
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col" style={{ width: '10%' }}>Placa</th>
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col" style={{ width: '10%' }}>Tempo</th>
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col" style={{ width: '10%' }}>Valor</th>
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col" style={{ width: '10%' }}>Placa</th>
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col" style={{ width: '10%' }}>Tempo</th>
+                          <th className="border-bottom" id="tabelaUsuarios" scope="col" style={{ width: '10%' }}>Valor</th>
                         </tr>
                       </thead>
                       <tbody>
                         {data.map((item, index) => (
                           <tr key={index}>
-                            <td id="tabelaUsuarios2">
-                              {tipoComAcentos[item.tipo]}
-                            </td>
-                            <td id="tabelaUsuarios2">
-                              {new Date(item.hora).toLocaleString()}
-                            </td>
-                            <td id="tabelaUsuarios2">{item.nome_usuario}</td>
-                            {item.tipo === "edicao" &&
-                            item.movimento_original &&
-                            item.movimento_original.creditoMovimentoOriginal ? (
-                              <>
-                                {item.movimento_original.creditoMovimentoOriginal.map(
-                                  (mov, idx) => (
+                            <td id="tabelaUsuarios2">{tipoComAcentos[item.tipo]}</td>
+                            <td id="tabelaUsuarios2">{new Date(item.hora).toLocaleString()}</td>                            
+                            <td id="tabelaUsuarios" className="text-truncate" style={{ maxWidth: '100px' }}>{item.nome_usuario}</td>
+
+                            {item.movimento_original &&
+                              (Array.isArray(item.movimento_original.movimentoOriginal) || Array.isArray(item.movimento_original.movimento)) ?
+                              (item.movimento_original.movimentoOriginal || item.movimento_original.movimento).map((mov, movIndex) => (
+                                <td id="tabelaUsuarios2" key={movIndex}>{tipoMovimentoComAcentos[mov.tipo]}</td>
+                              )) : (
+                                <td id="tabelaUsuarios2">Crédito</td>
+                              )
+                            }
+                            {item.movimento_original.movimentoOriginal ? (item.movimento_original.movimentoOriginal.map((mov, idx) => (
+                              <React.Fragment key={idx}>
+                                <td id="tabelaUsuarios" className="border-start">{mov.placa}</td>
+                              </React.Fragment>
+                            ))) : (<td id="tabelaUsuarios" className="border-start">...</td>)}
+                            {
+                              (item.movimento_original.creditoMovimentoOriginal && item.movimento_original.creditoMovimentoOriginal.length > 0) || (item.movimento_original.creditoMovimento && item.movimento_original.creditoMovimento.length > 0) ?
+                                (item.movimento_original.creditoMovimentoOriginal || item.movimento_original.creditoMovimento).map((mov, idx) => (
+                                  <React.Fragment key={idx}>
+                                    <td id="tabelaUsuarios">{mov.tempo || '...'}</td>
+                                    <td id="tabelaUsuarios">R$ {parseFloat(mov.valor).toFixed(2)}</td>
+                                  </React.Fragment>
+                                )) : (
+                                  <React.Fragment>
+                                    <td id="tabelaUsuarios">...</td>
+                                    <td id="tabelaUsuarios">...</td>
+                                  </React.Fragment>
+                                )
+                            }
+                            {item.tipo === "edicao" && item.movimento_alterado &&
+                              item.movimento_alterado.creditoMovimentoAlterado &&
+                              item.movimento_alterado.creditoMovimentoAlterado.length > 0 ? (
+                              item.movimento_alterado.creditoMovimentoAlterado.map((mov, idx) => (
+                                <React.Fragment key={idx}>
+                                  {item.movimento_alterado.movimentoAlterado ? (item.movimento_alterado.movimentoAlterado.map((mov, idx) => (
                                     <React.Fragment key={idx}>
-                                      <td
-                                        id="tabelaUsuarios"
-                                        className="border-start"
-                                      >
-                                        {tipoMovimentoComAcentos[mov.tipo]}
-                                      </td>
-                                      <td id="tabelaUsuarios">{mov.tempo}</td>
-                                      <td id="tabelaUsuarios">
-                                        R$ {parseFloat(mov.valor).toFixed(2)}
-                                      </td>
+                                      <td id="tabelaUsuarios" className="border-start">{mov.placa}</td>
                                     </React.Fragment>
-                                  )
-                                )}
-                                {item.movimento_alterado &&
-                                  item.movimento_alterado
-                                    .creditoMovimentoAlterado &&
-                                  item.movimento_alterado.creditoMovimentoAlterado.map(
-                                    (mov, idx) => (
-                                      <React.Fragment key={idx}>
-                                        <td
-                                          id="tabelaUsuarios"
-                                          className="border-start"
-                                        >
-                                          {mov.tipo}
-                                        </td>
-                                        <td id="tabelaUsuarios">{mov.tempo}</td>
-                                        <td id="tabelaUsuarios">
-                                          R$ {parseFloat(mov.valor).toFixed(2)}
-                                        </td>
-                                      </React.Fragment>
-                                    )
-                                  )}
-                              </>
+                                  ))) : (<td id="tabelaUsuarios" className="border-start">...</td>)}
+                                  <td id="tabelaUsuarios">{mov.tempo}</td>
+                                  <td id="tabelaUsuarios">R$ {parseFloat(mov.valor).toFixed(2)}</td>
+                                </React.Fragment>
+                              ))
                             ) : (
-                              <>
-                                {" "}
-                                {item.movimento_original.movimento.map(
-                                  (mov, idx) => (
-                                    <React.Fragment key={idx}>
-                                      <td
-                                        id="tabelaUsuarios"
-                                        className="border-start"
-                                      >
-                                        {tipoMovimentoComAcentos[mov.tipo]}
-                                      </td>
-                                    </React.Fragment>
-                                  )
-                                )}
-                                {item.movimento_original.creditoMovimento &&
-                                item.movimento_original.creditoMovimento
-                                  .length > 0
-                                  ? item.movimento_original.creditoMovimento.map(
-                                      (mov, idx) => (
-                                        <React.Fragment key={idx}>
-                                          <td id="tabelaUsuarios">
-                                            {mov.tempo}
-                                          </td>
-                                          <td id="tabelaUsuarios">
-                                            R${" "}
-                                            {parseFloat(mov.valor).toFixed(2)}
-                                          </td>
-                                        </React.Fragment>
-                                      )
-                                    )
-                                  : item.movimento_original.movimento.map(
-                                      (mov, idx) => (
-                                        <React.Fragment key={idx}>
-                                          <td id="tabelaUsuarios" colSpan="1">
-                                            {new Date(
-                                              mov.hora
-                                            ).toLocaleString()}
-                                          </td>
-                                          <td> </td>
-                                        </React.Fragment>
-                                      )
-                                    )}
-                                <td
-                                  id="tabelaUsuarios"
-                                  className="border-start"
-                                  colSpan="3"
-                                >
-                                  REMOVIDO
-                                </td>
-                              </>
+                              <td id="tabelaUsuarios" className="border-start" colSpan="3">REMOVIDO</td>
                             )}
                           </tr>
                         ))}
