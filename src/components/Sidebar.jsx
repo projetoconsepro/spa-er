@@ -41,7 +41,7 @@ import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
 import { IconPlugConnected } from "@tabler/icons-react";
 import ConfigImpressora from "../util/ConfigImpressora";
-
+import { TbReportMoney } from "react-icons/tb";
 const Sidebar = () => {
   const nome = localStorage.getItem("user");
   const teste = JSON.parse(nome);
@@ -209,6 +209,7 @@ const Sidebar = () => {
           { icon: <BsCashCoin />, name: "‎ Financeiro",
           subitem: [
             { icon: <AiFillPrinter />, name: "‎ Prestação de Contas", componente: "PrestacaoContas", className: commonStyles },
+            { icon: <TbReportMoney />, name: "‎ Extrato Financeiro", componente: "ListarMovimentosFinanceiros", className: commonStyles },
             { icon: <TbClipboardList />, name: "‎ Relatório Monitor", componente: "RelatorioMonitorAdmin", className: commonStyles },
             { icon: <FaUsers  />, name: "‎ Relatório Parceiro", componente: "RelatorioParceiroAdmin", className: commonStyles },
             { icon: <FaHistory />, name: "‎ Caixa Monitor", componente: "HistoricoCaixa", className: commonStyles },
