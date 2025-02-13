@@ -19,6 +19,7 @@ const ListarMovimentosFinanceiros = () => {
   const itemsPerPage = 50;
   const [totalValor, setTotalValor] = useState(0);
   const [dataFiltrada, setDataFiltrada] = useState('');
+  const [nomeFiltrado, setNomeFiltrado] = useState('');
 
    const handlePageChange = (pageNumber) => {
      setCurrentPage(pageNumber);
@@ -31,6 +32,8 @@ const ListarMovimentosFinanceiros = () => {
   useEffect(() => {
     const listar = async () => {
       setEstado(false);
+      setDataFiltrada('');
+      setNomeFiltrado('');
       setMensagem("");
       const requisicao = createAPI();
       try {
@@ -78,6 +81,8 @@ const ListarMovimentosFinanceiros = () => {
   };
 
   const handleFiltro = async (where) => {
+    setDataFiltrada('');
+    setNomeFiltrado('');
     setEstadoLoading(true);
     setEstado(false);
     setMensagem("");
@@ -87,11 +92,18 @@ const ListarMovimentosFinanceiros = () => {
 
     if (queryObject) {
       const periodoCondition = queryObject.where.find(condition => condition.field === 'periodo');
+      const nomeCondition = queryObject.where.find(condition => condition.field === 'nome');
       const dataCondition = queryObject.where.find(condition => condition.field === 'data');
       if (periodoCondition && periodoCondition.value) {
         const periodoValue = periodoCondition.value;
         const formattedPeriodoValue = `Período: De ${new Date(periodoValue[0] + 'T00:00:00').toLocaleDateString('pt-BR')} até ${new Date(periodoValue[1]+'T00:00:00').toLocaleDateString('pt-BR')}`;
         setDataFiltrada(formattedPeriodoValue);
+      }else if (nomeCondition && nomeCondition.value[1]) {
+        const nomeValue = nomeCondition.value;
+        const formattedNomeValue = `Período: De ${new Date(nomeValue[1] + 'T00:00:00').toLocaleDateString('pt-BR')} até ${new Date(nomeValue[2]+'T00:00:00').toLocaleDateString('pt-BR')}`;
+        const nome = `Nome: ${nomeValue[0].replace(/^%|%$/g, '').charAt(0).toUpperCase() + nomeValue[0].replace(/^%|%$/g, '').slice(1)}`;
+        setDataFiltrada(formattedNomeValue);
+        setNomeFiltrado(nome);
       } else if (dataCondition && dataCondition.value) {
         let dataValue = dataCondition.value;
         dataValue = dataValue.replace(/%/g, '');
@@ -157,10 +169,12 @@ const ListarMovimentosFinanceiros = () => {
       doc.setFontSize(16);
       doc.setTextColor(40);
       doc.text(`Relatório Financeiro ${dataFiltrada}`, 13, 10);
+      
       doc.setFontSize(10);
       doc.setTextColor(100);
-      doc.text(`Gerado por: ${user2.nome}`, 13, 17);
-      doc.text(`Data: ${dataAtual}`, 13, 22);
+      doc.text(`${nomeFiltrado}`, 13, 15);
+      doc.text(`Gerado por: ${user2.nome}`, 13, 20);
+      doc.text(`Data: ${dataAtual}`, 13, 25);
     };
 
     const tableBody = [];
