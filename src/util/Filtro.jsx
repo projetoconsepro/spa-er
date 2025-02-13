@@ -73,7 +73,18 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       return nextDay.format("YYYY-MM-DD");
     }
   }
-
+   function calculateFinalDate2(initialDate) {
+      const parsedDate = moment(initialDate);
+  
+      const lastDayOfMonth = parsedDate.clone().endOf("month");
+  
+      if (parsedDate.isSame(lastDayOfMonth, "day")) {
+        const newDate = parsedDate.clone().add(1, "month").startOf("month");
+        return newDate.format("YYYY-MM-DD");
+      } else {
+        return parsedDate.format("YYYY-MM-DD");
+      }
+  }
   useEffect(() => {
     setEstadoLoading(onLoading);
     if (onLoading === false) {
@@ -289,6 +300,12 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Nome", label: "Nome" }, 
         { value: "Data", label: "Data" },
       ]);
+    }else if (nome === "ListarMovimentosFinanceiros") {                 
+      setOptions([
+        { value: "Data", label: "Data" },
+        { value: "Periodo", label: "Período" },
+        { value: "Nome", label: "Nome" },
+      ]);       
     }
     
     else {
@@ -334,6 +351,10 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
             consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "data", "operator": "LIKE", "value": "%${FormatDate(
               value
             )}%" }]}`;
+          } else if (nome === "ListarMovimentosFinanceiros"){
+            consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${FormatDate(
+              value
+            )}%", "field2": "tipo", "operator2": "=", "value2": "${radioTipo}" }]}`
           } else {
             consulta = `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${FormatDate(
               value
@@ -368,6 +389,11 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
               });
             }
            consulta = JSON.stringify({ where: whereClauses });
+          } else if(nome === "ListarMovimentosFinanceiros"){
+            const data = FormatDate(valuePeriodo[1]);
+            const data2 = await calculateFinalDate2(data);
+            consulta = `{"where": [{ "field": "nome", "operator":["LIKE","BETWEEN","="] , "value": ["%${inputNome}%","${FormatDate(valuePeriodo[0])}", "${data2}","${radioTipo}"]}]}`;
+
           } else {
           consulta = `{"where": [{ "field": "nome", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
         }
@@ -375,10 +401,15 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         case "Periodo":
           const data = FormatDate(valuePeriodo[1]);
           const data2 = await calculateFinalDate(data);
+          const dataFormatada = await calculateFinalDate2(data);
           if (nome === "HistoricoVeiculoAdmin") {
             consulta = `{"where": [{ "field": "placa", "operator": "=", "value": "${placaCarro}" },{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(
               valuePeriodo[0]
             )}", "${data2}"] }]}`;
+          } else if (nome === "ListarMovimentosFinanceiros"){
+            consulta = `{"where": [{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(
+              valuePeriodo[0]
+            )}", "${dataFormatada}"], "field2": "tipo", "operator2": "=", "value2": "${radioTipo}"}]}`;
           } else {
             consulta = `{"where": [{ "field": "periodo", "operator": "BETWEEN", "value": ["${FormatDate(
               valuePeriodo[0]
@@ -521,7 +552,32 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                       </div>
                     ) : null
                   ) : null}
-
+                  {nome === "ListarMovimentosFinanceiros" ? (
+                    <div>
+                      <div className="mt-4 mb-3">
+                        Selecione o tipo:
+                      </div>
+                      <Radio.Group
+                        name="Escolha algum opção"
+                        onChange={(e) => setRadioTipo(e)}
+                      >
+                        <Grid>
+                          <Grid.Col span={12}>
+                            <Radio value="" label="Todos" />
+                          </Grid.Col>
+                          <Grid.Col span={12}>
+                            <Radio value="dinheiro" label="Dinheiro" />
+                          </Grid.Col>
+                          <Grid.Col span={12}>
+                            <Radio value="pix" label="Pix" />
+                          </Grid.Col>
+                          <Grid.Col span={12}>
+                            <Radio value="cartao" label="Cartão" />
+                          </Grid.Col>
+                        </Grid>
+                      </Radio.Group>
+                    </div>
+                  ) : null}
                   <div>
                     <div className="mt-4 mb-1">Selecione a data:</div>
                     <DatePickerInput
@@ -546,8 +602,34 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                         </Badge>
                       </div>
                     ) : null
-                  ) : null}
-                  <div>
+                    ) : null}
+                    {nome === "ListarMovimentosFinanceiros" ? (
+                      <div>
+                        <div className="mt-4 mb-3">
+                          Selecione o tipo:
+                        </div>
+                        <Radio.Group
+                          name="Escolha algum opção"
+                          onChange={(e) => setRadioTipo(e)}
+                        >
+                          <Grid>
+                            <Grid.Col span={12}>
+                              <Radio value="" label="Todos" />
+                            </Grid.Col>
+                            <Grid.Col span={12}>
+                              <Radio value="dinheiro" label="Dinheiro" />
+                            </Grid.Col>
+                            <Grid.Col span={12}>
+                              <Radio value="pix" label="Pix" />
+                            </Grid.Col>
+                            <Grid.Col span={12}>
+                              <Radio value="cartao" label="Cartão" />
+                            </Grid.Col>
+                          </Grid>
+                        </Radio.Group>
+                      </div>
+                    ) : null}
+                    <div>
                     <div className="mt-4 mb-1">
                       Selecione a data de inicio e fim:
                     </div>
@@ -635,7 +717,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                   </div>
                 </div>
                     ) : selectedOption.value === "Nome" ? (
-                      
+
                       nome === "ListarNotificacoesAdmin" ? (
                         <div>
                           <div className="mt-3 mb-1">Digite o nome:</div>
@@ -644,9 +726,46 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                             placeholder="Digite o nome"
                             onChange={(e) => setInputNome(e.target.value)}
                           />
+
+
+                        </div>
+                      ) : (<div>
+                        {nome === "ListarMovimentosFinanceiros" ? (
+                          <div> <div >
+                                  <div className="mt-3 mb-2">Selecione o tipo:</div>
+                                  <Radio.Group
+                                    name="Escolha algum opção"
+                                    onChange={(e) => setRadioTipo(e)}
+                                  >
+                                    <Grid>
+                                      <Grid.Col span={12}>
+                                        <Radio value="" label="Todos" />
+                                      </Grid.Col>
+                                      <Grid.Col span={12}>
+                                        <Radio value="dinheiro" label="Dinheiro" />
+                                      </Grid.Col>
+                                      <Grid.Col span={12}>
+                                        <Radio value="pix" label="Pix" />
+                                      </Grid.Col>
+                                      <Grid.Col span={12}>
+                                        <Radio value="cartao" label="Cartão" />
+                                      </Grid.Col>
+                                    </Grid>
+                                  </Radio.Group>
+                            </div>
+                            
+                           </div>
+                        ) : null}
+                          <div className="mt-4 mb-2">Digite o nome:</div>
+                          <Input
+                            icon={<IconUser size={16} />}
+                            placeholder="Digite o nome"
+                            onChange={(e) => setInputNome(e.target.value)}
+                          />
+                        {nome === "ListarMovimentosFinanceiros" ? (
                           <div className="mb-3">
-                              <div className="mt-4 mb-1">
-                              Selecione a data de início e fim (opcional):
+                              <div className="mt-3 mb-1">
+                                Selecione a data de início e fim:
                               </div>
                               <DatePickerInput
                                 type="range"
@@ -656,38 +775,10 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                                 value={valuePeriodo}
                                 onChange={setValuePeriodo}
                               />
-                            </div>
-                          <div className="mb-5">
-                            <div className="mt-4 mb-3">Selecione o tipo:</div>
-                            <Radio.Group
-                              name="Escolha algum opção"
-                              onChange={(e) => setRadioTipo(e)}
-                            >
-                                <Grid>
-                                  <Grid.Col span={12}>
-                                    <Radio value="" label="Todos" />
-                                  </Grid.Col>
-                                  <Grid.Col span={12}>
-                                    <Radio value="'PAGO'" label="Pago" />
-                                  </Grid.Col>
-                                  <Grid.Col span={12}>
-                                    <Radio value="'PENDENTE'" label="Pendente" />
-                                  </Grid.Col>
-                                </Grid>
-                            </Radio.Group>
-                          </div>     
-                        </div>
-                      ) : (
-                                                    <div>
-                            <div className="mt-4 mb-1">Digite o nome:</div>
-                            <Input
-                              icon={<IconUser size={16} />}
-                              placeholder="Digite o nome"
-                              onChange={(e) => setInputNome(e.target.value)}
-                            />
-                          </div>
-                        )
-              ) : selectedOption.value === "Placa" ? (
+                            </div>) : null}
+                      </div>
+                      )
+                    ) : selectedOption.value === "Placa" ? (
                 <div>
                   <div className="mt-4 mb-1">Digite a placa:</div>
                   <Input
