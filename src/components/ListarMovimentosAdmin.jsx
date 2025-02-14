@@ -35,7 +35,6 @@ const ListarMovimentosAdmin = () => {
   const switchRef = useRef(null);
   const [motivoEdicao, setMotivoEdicao] = useState("");
 
-
   useEffect(() => {
     const listar = async () => {
       setEstado(false);
@@ -284,12 +283,12 @@ const ListarMovimentosAdmin = () => {
     saida: "Saída",
   };
 
-    /**
+  /**
    * Compara duas datas e verifica se elas pertencem ao mesmo dia.
-    * @param {Date} date1 - A primeira data a ser comparada.
-    * @param {Date} date2 - A segunda data a ser comparada.
-    * @returns {boolean} Retorna true se as datas forem no mesmo dia.
-    */
+   * @param {Date} date1 - A primeira data a ser comparada.
+   * @param {Date} date2 - A segunda data a ser comparada.
+   * @returns {boolean} Retorna true se as datas forem no mesmo dia.
+   */
   const isSameDay = (date1, date2) => {
     return (
       date1.getFullYear() === date2.getFullYear() &&
@@ -298,8 +297,7 @@ const ListarMovimentosAdmin = () => {
     );
   };
 
-
-    /**
+  /**
    * Atualiza um movimento de veículo com novos dados de tempo e placa.
    * Realiza validações antes de enviar a atualização ao backend.
    * @param {number} index - O índice do movimento na lista.
@@ -307,80 +305,106 @@ const ListarMovimentosAdmin = () => {
    * @param {string} tempo - O novo tempo selecionado.
    * @param {string} placa - A nova placa informada.
    */
-    const editarMovimento = (index, id, tempo, placa, motivo) => {
-      const placaNormalizada = placa.trim().replace(/\s+/g, "").toUpperCase().replace(/-/g, "");
-    
-      // Verifica se houve alguma alteração significativa
-      const placaAlterada = placaNormalizada !== selectedItem.placa_veiculo;
-      const tempoAlterado = tempo !== selectedItem.tempo;
-    
-      // Se não houve alteração na placa nem no tempo, fecha o modal sem exigir motivo
-      if (!placaAlterada && !tempoAlterado) {
-        Swal.fire("Nenhuma alteração", "Nenhuma alteração foi feita no movimento.", "info");
+  const editarMovimento = (index, id, tempo, placa, motivo) => {
+    const placaNormalizada = placa
+      .trim()
+      .replace(/\s+/g, "")
+      .toUpperCase()
+      .replace(/-/g, "");
+
+    // Verifica se houve alguma alteração significativa
+    const placaAlterada = placaNormalizada !== selectedItem.placa_veiculo;
+    const tempoAlterado = tempo !== selectedItem.tempo;
+
+    // Se não houve alteração na placa nem no tempo, fecha o modal sem exigir motivo
+    if (!placaAlterada && !tempoAlterado) {
+      Swal.fire(
+        "Nenhuma alteração",
+        "Nenhuma alteração foi feita no movimento.",
+        "info"
+      );
+      setModalAberto(false);
+      return;
+    }
+
+    // Verifica se a placa está vazia
+    if (placaNormalizada === "") {
+      setLoadingButton(false);
+      Swal.fire("Erro!", "Preencha o campo placa", "error");
+      return;
+    }
+
+    // Verifica se o motivo está vazio (apenas se houver alteração)
+    if ((placaAlterada || tempoAlterado) && motivo.trim() === "") {
+      setLoadingButton(false);
+      Swal.fire("Erro!", "Preencha o campo motivo", "error");
+      return;
+    }
+
+    // Valida placa caso não seja estrangeira
+    const sim = document.getElementById("flexSwitchCheckDefault").checked;
+    if (!sim && !validarPlaca(placaNormalizada)) {
+      setLoadingButton(false);
+      Swal.fire("Erro!", "Placa inválida", "error");
+      return;
+    }
+
+    setLoadingButton(true);
+
+    // Envia a atualização para o backend
+    const requisicao = createAPI();
+    const placaAtualizada = placaAlterada
+      ? placaNormalizada
+      : selectedItem.placa_veiculo;
+
+    requisicao
+      .put(`/movimento`, { id, tempo, placa: placaAtualizada, motivo })
+      .then((response) => {
+        setLoadingButton(false);
         setModalAberto(false);
-        return;
-      }
-    
-      // Verifica se a placa está vazia
-      if (placaNormalizada === "") {
+
+        // Atualiza dados na tabela local
+        const valorAtualizado = response.data.valor;
+        const tempoAtualizado = response.data.tempo;
+        const placaAtualizadaResponse = placaAlterada
+          ? response.data.placa
+          : selectedItem.placa_veiculo;
+
+        data[index].valor = valorAtualizado;
+        data[index].tempo = tempoAtualizado;
+        data[index].placa_veiculo = placaAtualizadaResponse;
+        setData([...data]);
+
+        Swal.fire(
+          "Atualizado!",
+          "O movimento foi atualizado com sucesso.",
+          "success"
+        );
+      })
+      .catch((error) => {
         setLoadingButton(false);
-        Swal.fire("Erro!", "Preencha o campo placa", "error");
-        return;
-      }
-    
-      // Verifica se o motivo está vazio (apenas se houver alteração)
-      if ((placaAlterada || tempoAlterado) && motivo.trim() === "") {
-        setLoadingButton(false);
-        Swal.fire("Erro!", "Preencha o campo motivo", "error");
-        return;
-      }
-    
-      // Valida placa caso não seja estrangeira
-      const sim = document.getElementById("flexSwitchCheckDefault").checked;
-      if (!sim && !validarPlaca(placaNormalizada)) {
-        setLoadingButton(false);
-        Swal.fire("Erro!", "Placa inválida", "error");
-        return;
-      }
-    
-      setLoadingButton(true);
-    
-      // Envia a atualização para o backend
-      const requisicao = createAPI();
-      const placaAtualizada = placaAlterada ? placaNormalizada : selectedItem.placa_veiculo;
-    
-      requisicao
-        .put(`/movimento`, { id, tempo, placa: placaAtualizada, motivo })
-        .then((response) => {
-          setLoadingButton(false);
-          setModalAberto(false);
-    
-          // Atualiza dados na tabela local
-          const valorAtualizado = response.data.valor;
-          const tempoAtualizado = response.data.tempo;
-          const placaAtualizadaResponse = placaAlterada ? response.data.placa : selectedItem.placa_veiculo;
-    
-          data[index].valor = valorAtualizado;
-          data[index].tempo = tempoAtualizado;
-          data[index].placa_veiculo = placaAtualizadaResponse;
-          setData([...data]);
-    
-          Swal.fire("Atualizado!", "O movimento foi atualizado com sucesso.", "success");
-        })
-        .catch((error) => {
-          setLoadingButton(false);
-    
-          if (["Cabeçalho inválido!", "Token inválido!", "Usuário não possui o perfil mencionado!"].includes(error?.response?.data?.msg)) {
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            localStorage.removeItem("perfil");
-          } else {
-            console.log(error);
-          }
-    
-          Swal.fire("Erro!", "Ocorreu um erro ao atualizar o movimento.", "error");
-        });
-    };
+
+        if (
+          [
+            "Cabeçalho inválido!",
+            "Token inválido!",
+            "Usuário não possui o perfil mencionado!",
+          ].includes(error?.response?.data?.msg)
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
+        } else {
+          console.log(error);
+        }
+
+        Swal.fire(
+          "Erro!",
+          "Ocorreu um erro ao atualizar o movimento.",
+          "error"
+        );
+      });
+  };
 
   useEffect(() => {
     if (selectedItem) {
@@ -395,7 +419,7 @@ const ListarMovimentosAdmin = () => {
     }
   }, [selectedItem]);
 
-    /**
+  /**
    * Manipula a alteração do switch de placa estrangeira.
    * Atualiza os limites de caracteres e a identificação do input.
    * @param {Event} e - O evento de clique no switch.
@@ -408,8 +432,7 @@ const ListarMovimentosAdmin = () => {
     setInputVazio(ativado ? "inputvazio2" : "inputvazio3");
   };
 
-  
-    /**
+  /**
    * Configura e abre o modal para edição de um movimento.
    * Preenche os dados com base no item selecionado e determina se a placa é estrangeira.
    * @param {Object} item - O movimento selecionado.
@@ -427,8 +450,6 @@ const ListarMovimentosAdmin = () => {
     setModalAberto(true);
   };
 
-  
-
   const fecharModal = () => {
     setModalAberto(false);
     setSelectedItem(null);
@@ -438,108 +459,109 @@ const ListarMovimentosAdmin = () => {
   return (
     <div className="dashboard-container mb-3">
       <Modal
-  opened={ModalAberto}
-  onClose={() => {
-    setModalAberto(false);
-    setSelectedItem(null);
-  }}
-  centered
-  title="Editar Movimento"
-  size="md"
-  className="flex items-center justify-center"
->
-  {selectedItem && (
-    <div className="flex flex-col items-center justify-center w-100">
-      <Divider my="sm" size="md" variant="dashed" />
-      <div className="row">
-        <div className="col-9 px-3">
-          <h5 id="h5Placa">Placa Estrangeira</h5>
-        </div>
-        <div className="col-3 px-3">
-          <div className="form-check3 form-switch gap-2 d-md-block">
-            <input
-              ref={switchRef}
-              className="form-check-input align-self-end"
-              type="checkbox"
-              role="switch"
-              id="flexSwitchCheckDefault"
-              checked={isPlacaEstrangeira}
-              onChange={handlePlacaSwitch}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
-        <input
-          type="text"
-          id={inputVazio}
-          className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
-          value={placaSelecionada}
-          onChange={(e) => setPlacaSelecionada(e.target.value)}
-          maxLength={limite}
-        />
-      </div>
-
-      <select
-        className="form-select form-select-lg mb-4 mt-5"
-        aria-label=".form-select-lg example"
-        value={tempoSelecionado}
-        onChange={(e) => setTempoSelecionado(e.target.value)}
+        opened={ModalAberto}
+        onClose={() => {
+          setModalAberto(false);
+          setSelectedItem(null);
+        }}
+        centered
+        title="Editar Movimento"
+        size="md"
+        className="flex items-center justify-center"
       >
-        <option value="00:30:00">30 Minutos</option>
-        <option value="01:00:00">60 Minutos</option>
-        <option value="01:30:00">90 Minutos</option>
-        <option value="02:00:00">120 Minutos</option>
-      </select>
+        {selectedItem && (
+          <div className="flex flex-col items-center justify-center w-100">
+            <Divider my="sm" size="md" variant="dashed" />
+            <div className="row">
+              <div className="col-9 px-3">
+                <h5 id="h5Placa">Placa Estrangeira</h5>
+              </div>
+              <div className="col-3 px-3">
+                <div className="form-check3 form-switch gap-2 d-md-block">
+                  <input
+                    ref={switchRef}
+                    className="form-check-input align-self-end"
+                    type="checkbox"
+                    role="switch"
+                    id="flexSwitchCheckDefault"
+                    checked={isPlacaEstrangeira}
+                    onChange={handlePlacaSwitch}
+                  />
+                </div>
+              </div>
+            </div>
 
-      {/* Exibe o campo de motivo apenas se houver alteração na placa ou no tempo */}
-      {(placaSelecionada !== selectedItem.placa_veiculo || tempoSelecionado !== selectedItem.tempo) && (
-        <div className="w-100 p-3">
-          <label htmlFor="motivoEdicao" className="form-label">
-            Motivo da Edição
-          </label>
-          <input
-            type="text"
-            id="motivoEdicao"
-            className="form-control"
-            placeholder="Informe o motivo da edição"
-            value={motivoEdicao}
-            onChange={(e) => setMotivoEdicao(e.target.value)}
-          />
-        </div>
-      )}
+            <div className="pt-1 mt-md-0 w-100 p-3" id={placa}>
+              <input
+                type="text"
+                id={inputVazio}
+                className="mt-5 fs-1 justify-content-center align-items-center text-align-center"
+                value={placaSelecionada}
+                onChange={(e) => setPlacaSelecionada(e.target.value)}
+                maxLength={limite}
+              />
+            </div>
 
-      <div className="mb-2 mt-3 gap-2 flex justify-center items-center w-full text-center">
-        <Button
-          loading={loadingButton}
-          className="bg-blue-50 m-2"
-          size="md"
-          radius="md"
-          onClick={() => {
-            editarMovimento(
-              index,
-              selectedItem.id_movimento,
-              tempoSelecionado,
-              placaSelecionada,
-              motivoEdicao
-            );
-          }}
-        >
-          Salvar
-        </Button>
-        <Button
-          className="bg-gray-500"
-          size="md"
-          radius="md"
-          onClick={fecharModal}
-        >
-          Voltar
-        </Button>
-      </div>
-    </div>
-  )}
-</Modal>
+            <select
+              className="form-select form-select-lg mb-4 mt-5"
+              aria-label=".form-select-lg example"
+              value={tempoSelecionado}
+              onChange={(e) => setTempoSelecionado(e.target.value)}
+            >
+              <option value="00:30:00">30 Minutos</option>
+              <option value="01:00:00">60 Minutos</option>
+              <option value="01:30:00">90 Minutos</option>
+              <option value="02:00:00">120 Minutos</option>
+            </select>
+
+            {/* Exibe o campo de motivo apenas se houver alteração na placa ou no tempo */}
+            {(placaSelecionada !== selectedItem.placa_veiculo ||
+              tempoSelecionado !== selectedItem.tempo) && (
+              <div className="w-100 p-3">
+                <label htmlFor="motivoEdicao" className="form-label">
+                  Motivo da Edição
+                </label>
+                <input
+                  type="text"
+                  id="motivoEdicao"
+                  className="form-control"
+                  placeholder="Informe o motivo da edição"
+                  value={motivoEdicao}
+                  onChange={(e) => setMotivoEdicao(e.target.value)}
+                />
+              </div>
+            )}
+
+            <div className="mb-2 mt-3 gap-2 flex justify-center items-center w-full text-center">
+              <Button
+                loading={loadingButton}
+                className="bg-blue-50 m-2"
+                size="md"
+                radius="md"
+                onClick={() => {
+                  editarMovimento(
+                    index,
+                    selectedItem.id_movimento,
+                    tempoSelecionado,
+                    placaSelecionada,
+                    motivoEdicao
+                  );
+                }}
+              >
+                Salvar
+              </Button>
+              <Button
+                className="bg-gray-500"
+                size="md"
+                radius="md"
+                onClick={fecharModal}
+              >
+                Voltar
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
       <p className="mx-3 text-start fs-4 fw-bold">Listar Movimentos</p>
       <div className="row mb-3">
         <div className="col-12">
@@ -666,7 +688,10 @@ const ListarMovimentosAdmin = () => {
                           // Obtém a data atual
                           const today = new Date();
                           // Verifica se o movimento é do mesmo dia
-                          const isMovimentoToday = isSameDay(movimentoDate, today);
+                          const isMovimentoToday = isSameDay(
+                            movimentoDate,
+                            today
+                          );
                           return (
                             <tr key={index}>
                               <td id="tabelaUsuarios">{item.placa_veiculo}</td>
@@ -688,7 +713,8 @@ const ListarMovimentosAdmin = () => {
                                     color:
                                       item.estado_notificacao === "Cancelada"
                                         ? "black"
-                                        : item.estado_notificacao === "Regularizada"
+                                        : item.estado_notificacao ===
+                                          "Regularizada"
                                         ? "#20E300"
                                         : item.estado_notificacao === "Pendente"
                                         ? "#E30000"
@@ -704,7 +730,9 @@ const ListarMovimentosAdmin = () => {
                                   </td>
                                   <td id="tabelaUsuarios">
                                     {item.valor
-                                      ? `R$ ${parseFloat(item.valor).toFixed(2)}`
+                                      ? `R$ ${parseFloat(item.valor).toFixed(
+                                          2
+                                        )}`
                                       : "..."}
                                   </td>
                                   <td id="tabelaUsuarios">
@@ -718,7 +746,10 @@ const ListarMovimentosAdmin = () => {
                                   item.perfil_usuario.slice(1)}
                               </td>
                               {/* Ações */}
-                              <td className="fw-bolder col" id="tabelaUsuarios3">
+                              <td
+                                className="fw-bolder col"
+                                id="tabelaUsuarios3"
+                              >
                                 <div className="btn-group">
                                   {/* Verifica se deve esconder o botão de editar e deletar */}
                                   {item.estado_notificacao === "Cancelada" ||
@@ -739,7 +770,8 @@ const ListarMovimentosAdmin = () => {
                                   )}
                                   <div className="dropdown-menu dashboard-dropdown dropdown-menu-start mt-3 py-1">
                                     {item.tipo_movimento !== "notificacao" ||
-                                    item.estado_notificacao === "Regularizada" ? (
+                                    item.estado_notificacao ===
+                                      "Regularizada" ? (
                                       <div>
                                         <h6
                                           className="dropdown-item d-flex justify-content-center align-items-center text-danger"
@@ -749,12 +781,19 @@ const ListarMovimentosAdmin = () => {
                                           ‎‎ Remover{" "}
                                           {item.tipo_movimento === "notificacao"
                                             ? "Regularização"
-                                            : tipoMovimentoComAcentos[item.tipo_movimento]}
+                                            : tipoMovimentoComAcentos[
+                                                item.tipo_movimento
+                                              ]}
                                         </h6>
                                         {item.tempo && (
                                           <h6
                                             className="dropdown-item d-flex justify-content-center align-items-center text-info"
-                                            onClick={() => abrirModalEditarMovimento(item, index)}
+                                            onClick={() =>
+                                              abrirModalEditarMovimento(
+                                                item,
+                                                index
+                                              )
+                                            }
                                           >
                                             <RiEditLine />
                                             Editar Movimento
