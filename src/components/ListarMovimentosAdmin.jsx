@@ -304,6 +304,8 @@ const ListarMovimentosAdmin = () => {
    * @param {number} id - O ID do movimento.
    * @param {string} tempo - O novo tempo selecionado.
    * @param {string} placa - A nova placa informada.
+   * @param {string} motivo - Motivo da edição de movimento.
+   * 
    */
   const editarMovimento = (index, id, tempo, placa, motivo) => {
     const placaNormalizada = placa
