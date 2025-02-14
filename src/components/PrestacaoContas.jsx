@@ -17,6 +17,7 @@ const PrestacaoContas = () => {
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
   const [estadoLoading, setEstadoLoading] = useState(false);
+  const [dataFiltrada, setDataFiltrada] = useState('');
   const [estadoLoadingPix, setEstadoLoadingPix] = useState(false);
   const [mensagem, setMensagem] = useState('');
 
@@ -68,47 +69,47 @@ const PrestacaoContas = () => {
       const hour = dateNow.getHours().toString().padStart(2, '0');
       const minute = dateNow.getMinutes().toString().padStart(2, '0');
       const formattedDate = `${day}/${month}/${year} ${hour}:${minute}`;
-      doc.text(`Gerado por: ${user2.nome}`, 3.5, 18);
-      doc.text(`Data: ${formattedDate}`, 3.5, 23);
+      doc.text(`Relatório ${dataFiltrada}`, 3.5, 16);
+      doc.text(`Gerado por: ${user2.nome}`, 3.5, 21);
+      doc.text(`Data: ${formattedDate}`, 3.5, 26);
     };
+header()
 
-    header()
+const regularizacaoData = [
+  ['', { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 5 }, { content: 'Total arrecadado', colSpan: 4 },],
+  ['', 'Quant' ,'Din', 'Pix', 'Total', 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix','Cartão', 'Total' , 'Din', 'Pix', 'Cartão', 'Total'],
+];
 
-    const regularizacaoData = [
-      ['', { content: 'Regularização', colSpan: 4 },{ content: 'Estacionamento', colSpan: 4 }, { content: 'Recarga', colSpan: 5 }, { content: 'Total arrecadado', colSpan: 4 },],
-      ['', 'Quant' ,'Din', 'Pix', 'Total', 'Quant' , 'Din', 'Pix', 'Total' , 'Quant' , 'Din', 'Pix','Cartão', 'Total' , 'Din', 'Pix', 'Cartão', 'Total'],
-    ];
+regularizacaoData.push([{ content: 'MONITOR', colSpan: 22 }]);
 
-    regularizacaoData.push([{ content: 'MONITOR', colSpan: 22 }]);
-
-    regularizacaoData.push(...data[0].monitor.map(item => {
-      const isRegularizacaoPresente = item.Regularizacao !== undefined;
-      
-      const rowData = [
-          isRegularizacaoPresente ? 
-              (item.nome.length > 13 ? `${item.nome.substring(0, item.nome.indexOf(' '))} ${item.nome.split(' ')[1].charAt(0)}.` : (item.nome.length <= 13 ? item.nome.substring(0, 8) : item.nome.substring(0, 13))) 
-              : 'Total',
-          isRegularizacaoPresente ? item.Regularizacao.quantidade : item.total.Regularizacao.quantidade,
-          isRegularizacaoPresente ? formatNumero(item.Regularizacao.dinheiro) : formatNumero(item.total.Regularizacao.dinheiro),
-          isRegularizacaoPresente ? formatNumero(item.Regularizacao.pix) : formatNumero(item.total.Regularizacao.pix),
-          isRegularizacaoPresente ? formatNumero(item.Regularizacao.TotalValor) : formatNumero(item.total.Regularizacao.TotalValor),
-          isRegularizacaoPresente ? item.estacionamento.quantidade : item.total.estacionamento.quantidade,
-          isRegularizacaoPresente ? formatNumero(item.estacionamento.dinheiro) : formatNumero(item.total.estacionamento.dinheiro),
-          isRegularizacaoPresente ? formatNumero(item.estacionamento.pix) : formatNumero(item.total.estacionamento.pix),
-          isRegularizacaoPresente ? formatNumero(item.estacionamento.TotalValor) : formatNumero(item.total.estacionamento.TotalValor),
-          isRegularizacaoPresente ? item.creditosInseridos.quantidade : item.total.creditosInseridos.quantidade,
-          isRegularizacaoPresente ? formatNumero(item.creditosInseridos.dinheiro) : formatNumero(item.total.creditosInseridos.dinheiro),
-          isRegularizacaoPresente ? formatNumero(item.creditosInseridos.pix) : formatNumero(item.total.creditosInseridos.pix),
-          formatNumero(0), // Valor fixo (0)
-          isRegularizacaoPresente ? formatNumero(item.creditosInseridos.TotalValor) : formatNumero(item.total.creditosInseridos.TotalValor),
-          formatNumero(isRegularizacaoPresente ? item.finalTotal.dinheiro : item.total.finalTotal.dinheiro),
-          formatNumero(isRegularizacaoPresente ? item.finalTotal.pix : item.total.finalTotal.pix),
-          formatNumero(0), // Valor fixo (0)
-          isRegularizacaoPresente ? formatNumero(item.finalTotal.TotalValor) : formatNumero(item.total.finalTotal.TotalValor),
-      ];
+regularizacaoData.push(...data[0].monitor.map(item => {
+  const isRegularizacaoPresente = item.Regularizacao !== undefined;
   
-      return rowData;
-  }));
+  const rowData = [
+      isRegularizacaoPresente ? 
+          (item.nome.length > 13 ? `${item.nome.substring(0, item.nome.indexOf(' '))} ${item.nome.split(' ')[1] ? item.nome.split(' ')[1].charAt(0) : ''}.` : (item.nome.length <= 13 ? item.nome.substring(0, 8) : item.nome.substring(0, 13))) 
+          : 'Total',
+      isRegularizacaoPresente ? item.Regularizacao.quantidade : item.total.Regularizacao.quantidade,
+      isRegularizacaoPresente ? formatNumero(item.Regularizacao.dinheiro) : formatNumero(item.total.Regularizacao.dinheiro),
+      isRegularizacaoPresente ? formatNumero(item.Regularizacao.pix) : formatNumero(item.total.Regularizacao.pix),
+      isRegularizacaoPresente ? formatNumero(item.Regularizacao.TotalValor) : formatNumero(item.total.Regularizacao.TotalValor),
+      isRegularizacaoPresente ? item.estacionamento.quantidade : item.total.estacionamento.quantidade,
+      isRegularizacaoPresente ? formatNumero(item.estacionamento.dinheiro) : formatNumero(item.total.estacionamento.dinheiro),
+      isRegularizacaoPresente ? formatNumero(item.estacionamento.pix) : formatNumero(item.total.estacionamento.pix),
+      isRegularizacaoPresente ? formatNumero(item.estacionamento.TotalValor) : formatNumero(item.total.estacionamento.TotalValor),
+      isRegularizacaoPresente ? item.creditosInseridos.quantidade : item.total.creditosInseridos.quantidade,
+      isRegularizacaoPresente ? formatNumero(item.creditosInseridos.dinheiro) : formatNumero(item.total.creditosInseridos.dinheiro),
+      isRegularizacaoPresente ? formatNumero(item.creditosInseridos.pix) : formatNumero(item.total.creditosInseridos.pix),
+      formatNumero(0), // Valor fixo (0)
+      isRegularizacaoPresente ? formatNumero(item.creditosInseridos.TotalValor) : formatNumero(item.total.creditosInseridos.TotalValor),
+      formatNumero(isRegularizacaoPresente ? item.finalTotal.dinheiro : item.total.finalTotal.dinheiro),
+      formatNumero(isRegularizacaoPresente ? item.finalTotal.pix : item.total.finalTotal.pix),
+      formatNumero(0), // Valor fixo (0)
+      isRegularizacaoPresente ? formatNumero(item.finalTotal.TotalValor) : formatNumero(item.total.finalTotal.TotalValor),
+  ];
+
+  return rowData;
+}));
 
     const BoldCol = regularizacaoData.length -2;
 
@@ -408,7 +409,7 @@ doc.autoTable({
       doc.text(text, textX, textY);
     }
 
-    doc.save('Relatório de Prestação de Contas.pdf');
+    doc.save(`Relatório de Prestação de Contas ${dataFiltrada}.pdf`);
   };
 
   useEffect(() => {
@@ -423,8 +424,27 @@ doc.autoTable({
   }, []);
 
   const handleConsulta = (consulta) => {
+    setDataFiltrada('');
     setEstado2(false);
     setEstadoLoading(true);
+    const queryObject = JSON.parse(consulta);
+
+    if (queryObject) {
+      const periodoCondition = queryObject.where.find(condition => condition.field === 'periodo');
+      const dataCondition = queryObject.where.find(condition => condition.field === 'data');
+      if (periodoCondition && periodoCondition.value) {
+        const periodoValue = periodoCondition.value;
+        const formattedPeriodoValue = `Período: De ${new Date(periodoValue[0] + 'T00:00:00').toLocaleDateString('pt-BR')} até ${new Date(periodoValue[1]).toLocaleDateString('pt-BR')}`;
+        setDataFiltrada(formattedPeriodoValue);
+      } else if (dataCondition && dataCondition.value) {
+        let dataValue = dataCondition.value;
+        dataValue = dataValue.replace(/%/g, '');
+        const date = new Date(dataValue);
+        const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+        const formattedDataValue = `Data: ${localDate.toLocaleDateString('pt-BR')}`;
+        setDataFiltrada(formattedDataValue);
+      }
+    }
     const requisicao = createAPI();
     const base64 = btoa(consulta)
     requisicao.get(`/financeiro/admin?query=${base64}`).then((res) => {
@@ -688,6 +708,8 @@ doc.autoTable({
                           }
                        
                       </div>
+              </div>    <div className="text-start ms-4">
+              <p><strong>{dataFiltrada}</strong></p>
               </div>
                   <div className="card border-0 shadow">
                       <div className="table-responsive">
