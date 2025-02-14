@@ -424,6 +424,7 @@ doc.autoTable({
   }, []);
 
   const handleConsulta = (consulta) => {
+    setDataFiltrada('');
     setEstado2(false);
     setEstadoLoading(true);
     const queryObject = JSON.parse(consulta);
@@ -431,16 +432,16 @@ doc.autoTable({
     if (queryObject) {
       const periodoCondition = queryObject.where.find(condition => condition.field === 'periodo');
       const dataCondition = queryObject.where.find(condition => condition.field === 'data');
-
       if (periodoCondition && periodoCondition.value) {
         const periodoValue = periodoCondition.value;
-        const formattedPeriodoValue = `do Período: De ${periodoValue[0]} até ${periodoValue[1]}`;
+        const formattedPeriodoValue = `Período: De ${new Date(periodoValue[0] + 'T00:00:00').toLocaleDateString('pt-BR')} até ${new Date(periodoValue[1]).toLocaleDateString('pt-BR')}`;
         setDataFiltrada(formattedPeriodoValue);
-
       } else if (dataCondition && dataCondition.value) {
         let dataValue = dataCondition.value;
         dataValue = dataValue.replace(/%/g, '');
-        const formattedDataValue = `da Data: ${dataValue}`;
+        const date = new Date(dataValue);
+        const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+        const formattedDataValue = `Data: ${localDate.toLocaleDateString('pt-BR')}`;
         setDataFiltrada(formattedDataValue);
       }
     }
@@ -707,6 +708,8 @@ doc.autoTable({
                           }
                        
                       </div>
+              </div>    <div className="text-start ms-4">
+              <p><strong>{dataFiltrada}</strong></p>
               </div>
                   <div className="card border-0 shadow">
                       <div className="table-responsive">
