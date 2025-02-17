@@ -393,7 +393,7 @@ const ListarVeiculos = () => {
       vaga[0] = 0;
     }
 
-    let numeroCorrigido = saldoCredito.replace(".", "");
+    let numeroCorrigido = saldoCredito.toString().replace(".", "");
     numeroCorrigido = parseFloat(numeroCorrigido.replace(",", "."));
     if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
       setBotaoOff(false);
