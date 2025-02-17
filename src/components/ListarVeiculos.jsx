@@ -877,10 +877,12 @@ const ListarVeiculos = () => {
                         id="estacionadocarro"
                         style={{ opacity: 0.8 }}
                       >
-                        <h6
-                          className={link.data < horaAgora ? "text-danger" : ""}
-                        >
-                          Válido até: <span>{link.temporestante}</span>{" "}
+                        <h6 className={link.data < horaAgora ? "text-danger" : ""}>
+                          {link.data < horaAgora ? (
+                            <span>Atenção: Tempo excedido!</span>
+                          ) : (
+                            <span>Válido até: {link.temporestante}</span>
+                          )}
                         </h6>
                       </div>
                     )}
