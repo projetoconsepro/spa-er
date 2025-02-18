@@ -8,14 +8,16 @@ import jsPDF from "jspdf";
 import { Button, Divider } from "@mantine/core";
 import Swal from "sweetalert2";
 import formatNumero from '../util/formatNumero';
-
+import VoltarComponente from "../util/VoltarComponente";
 const RelatorioMonitorAdmin = () => {
   const [monitor, setMonitor] = useState([]);
-  const [step, setStep] = useState(0);
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [Relatorio, setRelatorio] = useState([]);
+  const [selectedUserName, setselectedUserName] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showResultados, setShowResultados] = useState(false);
 
-  const HandleGetMonitor = async () => {
+    const HandleGetMonitor = async () => {
     const requisicao = await createAPI();
 
     let query = `{"where": [{ "field": "perfil", "operator": "=", "value": "admin" },{ "field": "perfil", "operator": "=", "value": "monitor" }]}`;
@@ -54,33 +56,15 @@ const RelatorioMonitorAdmin = () => {
   const HandleGetMovByMonitor = async (query) => {
     setEstadoLoading(true);
 
-    const Array = monitor.filter((item) => {
-      return item.checked === true;
-    });
-
-    if (Array.length === 0) {
-      setEstadoLoading(false);
-      Swal.fire({
-        title: "Atenção!",
-        text: "Selecione pelo menos um monitor para gerar o relatório!",
-        icon: "warning",
-        confirmButtonText: "Ok",
-      });
-      return;
-    };
-
 
     const requisicao = await createAPI();
 
-    const NewArray = Array.map((item) => {
-      return item.id;
-    });
 
     query = query.split("]}");
 
     query = query[0].replace(/%/g, '');
 
-    query = query + `, { "field": "id_usuario", "operator": "IN", "value": "[${NewArray}]" }]}`;
+    query = query + `, { "field": "id_usuario", "operator": "IN", "value": "[${selectedUser}]" }]}`;
     
     query = btoa(query);
 
@@ -89,10 +73,10 @@ const RelatorioMonitorAdmin = () => {
       .then((res) => {
         setEstadoLoading(false);
         if (res.data.msg.resultado) {
-          setStep(1);
-
-          console.log(res.data.data);
           setRelatorio(res.data.data);
+          setShowResultados(true);
+          const userName = monitor.find(user => user.id === selectedUser)?.nome || 'Monitor';
+          setselectedUserName(userName);
         } else {
           console.log("Erro ao buscar movimento");
         }
@@ -264,139 +248,116 @@ const RelatorioMonitorAdmin = () => {
     doc.save(`Relatorio Monitor - ${RelatorioNew.nome}.pdf`);
   }
 
-  return (
-    <div className="row" style={{ backgroundColor: "#fff", padding: 20, borderRadius: 15 }}>
+  const handleCheckboxChange = (userId) => {
+    setSelectedUser(userId);
+  };
 
-      <div className="row">
-        <div className="col-12">
-          <h4 className="text-center mb-5">Relatório Monitores</h4>
-        </div>
-      </div>
-      {step === 0 ? (
-        <>
-          <div className="row">
-            <div className="col-12">
-              <h5 className="text-start text-muted">Selecione a Monitora:</h5>
-            </div>
-          </div>
-          <table className="table table-striped table-hover table-bordered table-responsive">
-            <thead>
-              <tr className="text-center">
-                <th>
-                  <AiFillCheckCircle size={20} />
-                </th>
-                <th>Nome</th>
-                <th>Perfil</th>
-              </tr>
-            </thead>
-            <tbody>
-              {monitor.map(
-                (link, index) =>
-                  link.pago !== "S" &&
-                  (monitor.length === 0 ? (
+  return (
+    <div>
+      <div className="container ">
+        {!showResultados ? (<div className="row px-5">
+          <div className="col-12">
+            <p className="text-start fs-3 fw-bold m-0">
+              <VoltarComponente arrow={true} /> Relatório Monitor
+            </p>
+          </div></div>) : null}
+        {!showResultados ? (
+          <>
+
+            {monitor.length > 0 ? (
+              <div className="table-responsive">
+                <table className="table table-sm user-list-table">
+                  <thead className="thead-light">
                     <tr>
-                      <td colSpan="4" className="text-center">
-                        Carregando...
-                      </td>
+                      <th scope="col" className='text-center'>Selecionar</th>
+                      <th scope="col" className='ps-4'>Nome</th>
+                      <th scope="col" className='ps-4'>Perfil</th>
                     </tr>
-                  ) : (
-                    <tr key={index}>
-                      <td
-                        className="px-1"
-                        style={{ width: "40px", textAlign: "center" }}
+                  </thead>
+                  <tbody>
+                    {monitor.map((usuario) => (
+                      <tr
+                        key={usuario.id}
+                        className={selectedUser === usuario.id ? 'selected-row' : ''}
+                        onClick={() => handleCheckboxChange(usuario.id)}
                       >
-                        <input
-                          type="checkbox"
-                          checked={link.checked}
-                          onChange={() => {
-                            link.checked = !link.checked;
-                            setMonitor([...monitor]);
-                          }}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                      </td>
-                      <td>{link.nome}</td>
-                      <td>
-                        {link.perfil.toUpperCase().charAt(0) +
-                          link.perfil.slice(1).toLowerCase()}
-                      </td>
-                    </tr>
-                  ))
-              )}
-            </tbody>
-          </table>
-          <div className="row">
-            <div className="col-12 mb-5">
+                        <td className="text-center user-list-checkbox">
+                          <input
+                            type="checkbox"
+                            className="styled-checkbox"
+                            checked={selectedUser === usuario.id}
+                            onChange={() => handleCheckboxChange(usuario.id)}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </td>
+                        <td className="user-list-name ps-4">{usuario.nome}</td>
+                        <td className="user-list-name ps-4 ">{usuario.perfil}</td>
+
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div
+              className="alert alert-danger mt-4 mx-3"
+              role="alert"
+            >
+              Nenhum usuário encontrado
+            </div>
+            )} <div style={{ width: '90%', margin: '20px auto' }}>
               <Filtro
                 nome="RelatorioMonitorAdmin"
                 onConsultaSelected={HandleGetMovByMonitor}
                 onLoading={estadoLoading}
-              />
-            </div>
-          </div>
-        </>
-      ) : step === 1 ? (
-        <>
-        {Relatorio.length === 0 ? (
-          <div className="row">
-            <div className="col-12">
-              <h5 className="text-center">Nenhum registro encontrado</h5>
-            </div>
-          </div>
+              /></div>
+          </>
         ) : (
-          <div className="row">
-            <div className="col-12">
-            {Relatorio.map((item, index) => (
-              <div className="mt-5 mb-5" key={index}>
-                <div className="row mb-2">
-                  <div className="col-10">
-                    <h5 className="card-title text-start">Monitor: {item.nome}</h5>
+          <div>
+            {Relatorio.length > 0 ? Relatorio.map((item, index) => (
+              <div key={index}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3>Relatório {selectedUserName}</h3>
+                  <div>
+                    <button onClick={() => setShowResultados(false)} style={{ width: '100px', marginRight: '10px' }} className="btn btn-white">Voltar</button>
+                    <button onClick={() => { gerarPdf(index); }} style={{ width: '180px' }} className="btn btn-white"><AiFillPrinter className='me-1' size={21} />Imprimir</button>
                   </div>
-                  <div className="col-2">
-                    <button className="btn3 botao p-0 m-0 w-100 h-100" type="button" onClick={()=>{gerarPdf(index);}}><AiFillPrinter  size={21}/></button>
-                  </div>
-                  </div>
-                      <div className="table-responsive">
-                          <table className="table align-items-center table-flush">
-                              <thead className="thead-light">
-                                  <tr>
-                                      <th className="border-bottom" id="tabelaUsuarios" scope="col">Data</th>
-                                      <th className="border-bottom" id="tabelaUsuarios2" scope="col">Regularização</th>
-                                      <th className="border-bottom" id="tabelaUsuarios2" scope="col">Estacionamento</th>
-                                      <th className="border-bottom" id="tabelaUsuarios2" scope="col">Recarga</th>
-                                      <th className="border-bottom" id="tabelaUsuarios" scope="col">Total arrecadado</th>
-                                  </tr>
-                              </thead>
-                              <tbody> 
-                              {Object.keys(item.data).map((date, index) => (
-                                      <tr className="card-list" key={index}>
-                                          <th className='fw-bolder col' id="tabelaUsuarios"> {item.data[date].data} </th>
-                                          <td className='fw-bolder col' id="tabelaUsuarios2"> {formatNumero(item.data[date].Regularizacao.TotalValor)} </td>
-                                          <td className='fw-bolder col' id="tabelaUsuarios2"> {formatNumero(item.data[date].estacionamento.TotalValor)} </td>
-                                          <td className='fw-bolder col' id="tabelaUsuarios2"> {formatNumero(item.data[date].creditosInseridos.TotalValor)} </td>
-                                          <td className='fw-bolder col' id="tabelaUsuarios"> {formatNumero(item.data[date].finalTotal.TotalValor)} </td>
-                                      </tr> 
-                                ))}
-                              </tbody>
-                          </table>
-                      </div>
-                      <Divider my="sm" size="md" mt={5} variant="dashed" />
-                  </div>
-              ))}
+                </div>
+            
+                <div className="table-responsive">
+                  <table className="table table-sm user-list-table" id='table-f'>
+                    <thead className="thead-light">
+                      <tr>
+                        <th scope="col" id="tabelaUsuarios">Data</th>
+                        <th scope="col" id="tabelaUsuarios2">Regularização</th>
+                        <th scope="col" id="tabelaUsuarios2">Estacionamento</th>
+                        <th scope="col" id="tabelaUsuarios2">Recarga</th>
+                        <th scope="col" id="tabelaUsuarios">Total arrecadado</th>
+                      </tr>
+                    </thead>
+            
+                    <tbody>
+                      {Object.keys(item.data).map((date, index) => (
+                        <tr key={index}>
+                          <td id="tabelaUsuarios" className="user-list-name">{item.data[date].data} </td>
+                          <td id="tabelaUsuarios2" className="user-list-name"> {formatNumero(item.data[date].Regularizacao.TotalValor)} </td>
+                          <td id="tabelaUsuarios2" className="user-list-name">{formatNumero(item.data[date].estacionamento.TotalValor)} </td>
+                          <td id="tabelaUsuarios2" className="user-list-name"> {formatNumero(item.data[date].creditosInseridos.TotalValor)} </td>
+                          <td id="tabelaUsuarios" className="user-list-name"> {formatNumero(item.data[date].finalTotal.TotalValor)} </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )) : (
+              <div className="alert alert-danger mt-4 mx-3" role="alert">
+                Nenhuma informação encontrada
+              </div>
+            )}
           </div>
-          <Button className="btn3" style={{
-            backgroundColor: "#F2F4F6",
-            color: "#000",
-            borderColor: "#000",
-            marginTop: 20,
-          }} size="lg" onClick={() => setStep(0)}>Voltar</Button>
-           
-          
-        </div>
         )}
-        </>
-      ) : null}
-    </div>
+      </div></div>
   );
 };
 
