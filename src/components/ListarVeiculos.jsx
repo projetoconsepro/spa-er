@@ -263,7 +263,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -283,7 +283,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -306,7 +306,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -447,7 +447,7 @@ const ListarVeiculos = () => {
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
             error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+              "Usuário não possui o perfil mencionado!"
           ) {
             localStorage.removeItem("user");
             localStorage.removeItem("token");
@@ -537,7 +537,7 @@ const ListarVeiculos = () => {
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
             error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+              "Usuário não possui o perfil mencionado!"
           ) {
             localStorage.removeItem("user");
             localStorage.removeItem("token");
@@ -855,7 +855,7 @@ const ListarVeiculos = () => {
         {resposta.map((link, index) =>
           link.placa ? (
             <div className="card border-0 shadow mt-4" key={index}>
-              <div id="" className={link.div}>
+              <div id="" className={link.div} style={{ padding: "16px" }}>
                 <div className="row d-flex align-items-center justify-content-between pb-3">
                   <div className="col-9">
                     <div
@@ -877,16 +877,31 @@ const ListarVeiculos = () => {
                         id="estacionadocarro"
                         style={{ opacity: 0.8 }}
                       >
-                        <h6 className={link.data < horaAgora ? "text-danger" : ""}>
+                        <h6
+                          className={link.data < horaAgora ? "text-danger" : ""}
+                        >
                           {link.data < horaAgora ? (
-                            <span>Atenção: Tempo excedido!</span>
+                            // Mensagem de alerta com o horário de expiração em linhas separadas
+                            <div style={{ textAlign: "left" }}>
+                              <div>Tempo excedido!</div>
+                              <div
+                                style={{
+                                  fontSize: "0.9em",
+                                  color: "#666",
+                                  marginTop: "4px",
+                                }}
+                              >
+                                Expirou em: {link.temporestante}
+                              </div>
+                            </div>
                           ) : (
+                            // Exibir o tempo restante enquanto estiver dentro do período permitido
                             <span>Válido até: {link.temporestante}</span>
                           )}
                         </h6>
                       </div>
                     )}
-
+                    {/* Informação da vaga */}
                     <div
                       className={`h6 d-flex align-items-center ms-1 fs-6 ${
                         link.estacionado === "Não estacionado" ? "mt-2" : ""
@@ -933,10 +948,9 @@ const ListarVeiculos = () => {
                   )}
                   <div
                     className={`h6 d-flex align-items-center fs-6 text-start ms-1 ${
-                      notificacao[index].estado ? "mt-4" : "mt-2"
+                      notificacao[index].estado ? "mt-2" : "mt-1"
                     }`}
                   >
-                    {" "}
                     <Button
                       style={{
                         borderRadius: "5px",
