@@ -883,16 +883,7 @@ const ListarVeiculos = () => {
                           {link.data < horaAgora ? (
                             // Mensagem de alerta com o horário de expiração em linhas separadas
                             <div style={{ textAlign: "left" }}>
-                              <div>Tempo excedido!</div>
-                              <div
-                                style={{
-                                  fontSize: "0.9em",
-                                  color: "#666",
-                                  marginTop: "4px",
-                                }}
-                              >
-                                Expirou em: {link.temporestante}
-                              </div>
+                              <div>Tempo excedido! Expirou em: {link.temporestante}</div>
                             </div>
                           ) : (
                             // Exibir o tempo restante enquanto estiver dentro do período permitido
@@ -948,7 +939,7 @@ const ListarVeiculos = () => {
                   )}
                   <div
                     className={`h6 d-flex align-items-center fs-6 text-start ms-1 ${
-                      notificacao[index].estado ? "mt-2" : "mt-1"
+                      notificacao[index].estado ? "mt-4" : "mt-2"
                     }`}
                   >
                     <Button
