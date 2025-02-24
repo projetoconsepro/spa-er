@@ -897,7 +897,9 @@ const ListarVeiculos = () => {
                             <div>Tempo excedido em: {link.temporestante}</div>
                           </div>
                         ) : (
-                          <span>Tempo válido até: {link.temporestante}</span>
+                          <div style={{ textAlign: "left" }}>
+                            <div>Tempo válido até: {link.temporestante}</div>
+                          </div>
                         )}
                       </h6>
                     </div>
