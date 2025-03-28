@@ -451,8 +451,8 @@ const EditarParametroAdmin = () => {
           document.getElementById("fechamento").value;
 
         const formatHora = (hora) =>
-          hora < 10 ? `0${hora}:00:00` : `${hora}:00:00`;
-
+          hora < 10 ? `0${hora}:00` : `${hora}:00`;
+        
         const requisicao = createAPI();
         requisicao
           .post("/turno/turnoFuncionamento", {
