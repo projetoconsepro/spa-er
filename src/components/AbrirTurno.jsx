@@ -501,13 +501,20 @@ function AbrirTurno() {
                         )}
                       </div>
                       <div className="col-12">
-                        <button
-                          type="button"
-                          className="btn5 botao mt-3"
-                          onClick={() => {
-                            abrirTurno();
-                          }}
-                        >
+                      <button
+                              type="button"
+                              className="btn5 botao mt-3"
+                              onClick={() => {
+                                if (valor.trim() !== '') {
+                                  abrirTurno();
+                                } else {
+                                  setEstado2(true);
+                                  setMensagem('Por favor, insira um valor para abrir o caixa!');                                  setTimeout(() => {
+                                  setEstado2(false);
+                                  }, 5000);
+                                }
+                              }}
+                            >
                           Confirmar abertura
                         </button>
                       </div>
