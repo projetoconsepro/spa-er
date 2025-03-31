@@ -333,9 +333,9 @@ const InserirCreditos = () => {
                   </Text>
                 </Group>
 
-                <Group position="apart" className="d-block disabled">
+                <Group position="apart" className="d-block">
                   <div
-                    className="col-3 d-flex align-items-center justify-content-center border border-danger rounded disabled"
+                    className="col-3 d-flex align-items-center justify-content-center rounded border border-success"
                     style={{
                       height: "75px",
                       width: "80px",
@@ -344,6 +344,7 @@ const InserirCreditos = () => {
                           ? "linear-gradient(to right, #0CA678,  #1098AD)"
                           : "transparent",
                     }}
+                    onClick={() => setMetodo("cartaoDeb")}
                   >
                     <BsCreditCard2Back
                       className="mx-1"
@@ -353,13 +354,13 @@ const InserirCreditos = () => {
                       }}
                     />
                   </div>
-                  <Text weight={500} color="red">
+                  <Text weight={500} color="green">
                     Débito
                   </Text>
                 </Group>
-                <Group position="apart" className="d-block disabled">
+                <Group position="apart" className="d-block">
                   <div
-                    className="col-3 d-flex align-items-center justify-content-center border border-danger rounded disabled"
+                    className="col-3 d-flex align-items-center justify-content-center rounded border border-success"
                     style={{
                       height: "75px",
                       width: "80px",
@@ -368,17 +369,20 @@ const InserirCreditos = () => {
                           ? "linear-gradient(to right, #0CA678,  #1098AD)"
                           : "transparent",
                     }}
+                    onClick={() => setMetodo("cartaoCred")}
                   >
-                    <BsCreditCard2Front className="mx-1" size={35} />
+                    <BsCreditCard2Front
+                      className="mx-1"
+                      style={{
+                        color: metodo === "cartaoCred" ? "white" : "black",
+                      }}
+                      size={35}
+                    />
                   </div>
-                  <Text weight={500} color="red">
+                  <Text weight={500} color="green">
                     Crédito
                   </Text>
                 </Group>
-                <div className="text-start" style={{ color: "red" }}>
-                  {" "}
-                  Operações com cartão estão temporariamente indisponíveis.
-                </div>
               </Group>
 
               {metodo !== "pix" ? (
