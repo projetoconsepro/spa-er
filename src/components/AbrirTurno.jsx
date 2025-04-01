@@ -15,6 +15,8 @@ function AbrirTurno() {
   const [setorSelecionado, setSetorSelecionado] = useState(1);
   const [setorSelecionado2, setSetorSelecionado2] = useState(setorTurno);
   const [nome, setNome] = useState('');
+  const [primeiroCaixa, setPrimeiroCaixa] = useState(localStorage.getItem('primeiroCaixa') === 'true');
+  const [valorCaixa, setvalorCaixa] = useState(localStorage.getItem('valorCaixa'));
   const [tempoAtual, setTempoAtual] = useState('');
   const [resposta2, setResposta2] = useState([]);
   const [alerta, setAlerta] = useState(false);
@@ -46,6 +48,15 @@ function AbrirTurno() {
 }
 
   useEffect(() => {
+    const dataPrimeiroCaixa = localStorage.getItem('horaTurno') || '0000-00-00'; 
+    const dataAtual = new Date().toISOString().split('T')[0];
+  
+    if (dataPrimeiroCaixa !== dataAtual) {
+      localStorage.removeItem('primeiroCaixa'); 
+      localStorage.removeItem('dataPrimeiroCaixa'); 
+      setPrimeiroCaixa(false); 
+    }
+
     const requisicao = createAPI();
     requisicao.get('/setores').then((response) => {
       const setoresData = response?.data?.data?.setores || [];
@@ -131,8 +142,13 @@ function AbrirTurno() {
         if (response.data.msg.resultado) {          
           localStorage.setItem('turno', true);
           localStorage.setItem('caixa', true);
-          localStorage.setItem('horaTurno', tempoAtual);
+          localStorage.setItem('valorCaixa', valorFinal);
           localStorage.setItem('setorTurno', setorSelecionado2);
+          if (!localStorage.getItem('primeiroCaixa')) {
+            localStorage.setItem('primeiroCaixa', 'true');          
+            localStorage.setItem('horaTurno', new Date().toISOString().split('T')[0]);
+            setPrimeiroCaixa(true);
+          }
           FuncTrocaComp('ListarVagasMonitor');
         } else {
           setEstado2(true);
@@ -271,8 +287,13 @@ function AbrirTurno() {
             ) : (
               <div>
                 <div className="row mt-4">
-                      <div className="col-12">
+                      <div className="col-12">                        <h6 className="text-start">
+    {primeiroCaixa
+      ? `Valor de abertura do caixa: R$ ${valorCaixa}`
+      : ' '}
+  </h6>
                         <h6 className="text-start">Escolha seu setor:</h6>
+
                       </div>
                       <div className="col-6">
                         <select
@@ -295,60 +316,62 @@ function AbrirTurno() {
                       </div>
                     </div>
                     <div className="align-items-center justify-content-between pb-3 mt-2">
-                        <div className="row justify-content-center align-items-center">
-                          <div className="col-12">
-                            <h6 className="text-start">Defina o valor do caixa:</h6>
-                          </div>
-                          <div className="row align-items-center pt-2 pb-3">
-                            <div className="col-3">
-                              <button
-                                type="button"
-                                className="btn btn-info w-100"
-                                onClick={() => FuncArrumaInput('1000')}
-                              >
-                                10
-                              </button>
+                        {!primeiroCaixa && (
+                          <div className="row justify-content-center align-items-center">
+                            <div className="col-12">
+                              <h6 className="text-start">Defina o valor do caixa:</h6>
                             </div>
-                            <div className="col-3">
-                              <button
-                                type="button"
-                                className="btn btn-info w-100"
-                                onClick={() => FuncArrumaInput('2000')}
-                              >
-                                20
-                              </button>
+                            <div className="row align-items-center pt-2 pb-3">
+                              <div className="col-3">
+                                <button
+                                  type="button"
+                                  className="btn btn-info w-100"
+                                  onClick={() => FuncArrumaInput('1000')}
+                                >
+                                  10
+                                </button>
+                              </div>
+                              <div className="col-3">
+                                <button
+                                  type="button"
+                                  className="btn btn-info w-100"
+                                  onClick={() => FuncArrumaInput('2000')}
+                                >
+                                  20
+                                </button>
+                              </div>
+                              <div className="col-3">
+                                <button
+                                  type="button"
+                                  className="btn btn-info w-100"
+                                  onClick={() => FuncArrumaInput('3000')}
+                                >
+                                  30
+                                </button>
+                              </div>
+                              <div className="col-3">
+                                <button
+                                  type="button"
+                                  className="btn btn-info w-100"
+                                  onClick={() => FuncArrumaInput('5000')}
+                                >
+                                  50
+                                </button>
+                              </div>
                             </div>
-                            <div className="col-3">
-                              <button
-                                type="button"
-                                className="btn btn-info w-100"
-                                onClick={() => FuncArrumaInput('3000')}
-                              >
-                                30
-                              </button>
-                            </div>
-                            <div className="col-3">
-                              <button
-                                type="button"
-                                className="btn btn-info w-100"
-                                onClick={() => FuncArrumaInput('5000')}
-                              >
-                                50
-                              </button>
-                            </div>
-                          </div>
-                          <div className="col-">
-                            <div className="input-group">
-                              <Input
-                                icon={<IconCash />}
-                                placeholder="R$ 0,00"
-                                value={valor}
-                                onChange={(e) => FuncArrumaInput(e.target.value)}
+                            <div className="col-">
+                              <div className="input-group">
+                                <Input
+                                  icon={<IconCash />}
+                                  placeholder="R$ 0,00"
+                                  value={valor}
+                                  onChange={(e) => FuncArrumaInput(e.target.value)}
                                 />
+                              </div>
                             </div>
+                            <div className="col-8" />
                           </div>
-                          <div className="col-8" />
-                        </div>
+                        )}
 
                         <div className="row justify-content-center align-items-center">
                           <div className="col-12">
@@ -366,7 +389,7 @@ function AbrirTurno() {
                               type="button"
                               className="btn5 botao mt-3"
                               onClick={() => {
-                                if (valor.trim() !== '') {
+                                if (valor.trim() !== '' || primeiroCaixa) {
                                   abrirTurno();
                                   setAlerta(false);
                                 } else {
