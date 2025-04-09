@@ -73,17 +73,9 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       return nextDay.format("YYYY-MM-DD");
     }
   }
-   function calculateFinalDate2(initialDate) {
-      const parsedDate = moment(initialDate);
-  
-      const lastDayOfMonth = parsedDate.clone().endOf("month");
-  
-      if (parsedDate.isSame(lastDayOfMonth, "day")) {
-        const newDate = parsedDate.clone().add(1, "month").startOf("month");
-        return newDate.format("YYYY-MM-DD");
-      } else {
-        return parsedDate.format("YYYY-MM-DD");
-      }
+    function calculateFinalDate2(initialDate) {
+    const parsedDate = moment(initialDate);
+    return parsedDate.format("YYYY-MM-DD");
   }
   useEffect(() => {
     setEstadoLoading(onLoading);
