@@ -15,22 +15,21 @@ function AbrirTurno() {
   const [setorSelecionado, setSetorSelecionado] = useState(1);
   const [setorSelecionado2, setSetorSelecionado2] = useState(setorTurno);
   const [nome, setNome] = useState('');
-  const [primeiroCaixa, setPrimeiroCaixa] = useState(localStorage.getItem('primeiroCaixa') === 'true');
-  const [valorCaixa, setvalorCaixa] = useState(localStorage.getItem('valorCaixa'));
+  const [valorCaixa, setvalorCaixa] = useState(false);
   const [tempoAtual, setTempoAtual] = useState('');
   const [resposta2, setResposta2] = useState([]);
-  const [alerta, setAlerta] = useState(false);
   const user = localStorage.getItem('user');
   const user2 = JSON.parse(user);
 
   const verificarTurno = () => {
     const requisicao = createAPI();
-    requisicao.get('/turno/verificar').then((response) => {
-      if (response.data.msg.resultado) {        
+    requisicao.get('/turno/verificar').then((response) => {        
+      setvalorCaixa(response.data.msg.valor_abertura ?? false);       
+      if (response.data.msg.resultado) {
         localStorage.setItem('turno', true);
         localStorage.setItem('caixa', true);
         setAbTurno(true);
-      } else {
+      } else {        
         localStorage.setItem('turno', false);
         setAbTurno(false);
       }
@@ -48,15 +47,6 @@ function AbrirTurno() {
 }
 
   useEffect(() => {
-    const dataPrimeiroCaixa = localStorage.getItem('horaTurno') || '0000-00-00'; 
-    const dataAtual = new Date().toISOString().split('T')[0];
-  
-    if (dataPrimeiroCaixa !== dataAtual) {
-      localStorage.removeItem('primeiroCaixa'); 
-      localStorage.removeItem('dataPrimeiroCaixa'); 
-      setPrimeiroCaixa(false); 
-    }
-
     const requisicao = createAPI();
     requisicao.get('/setores').then((response) => {
       const setoresData = response?.data?.data?.setores || [];
@@ -144,11 +134,6 @@ function AbrirTurno() {
           localStorage.setItem('caixa', true);
           localStorage.setItem('valorCaixa', valorFinal);
           localStorage.setItem('setorTurno', setorSelecionado2);
-          if (!localStorage.getItem('primeiroCaixa')) {
-            localStorage.setItem('primeiroCaixa', 'true');          
-            localStorage.setItem('horaTurno', new Date().toISOString().split('T')[0]);
-            setPrimeiroCaixa(true);
-          }
           FuncTrocaComp('ListarVagasMonitor');
         } else {
           setEstado2(true);
@@ -288,7 +273,7 @@ function AbrirTurno() {
               <div>
                 <div className="row mt-4">
                       <div className="col-12">                        <h6 className="text-start">
-    {primeiroCaixa
+    {valorCaixa !== false
       ? `Valor de abertura do caixa: R$ ${valorCaixa}`
       : ' '}
   </h6>
@@ -316,7 +301,7 @@ function AbrirTurno() {
                       </div>
                     </div>
                     <div className="align-items-center justify-content-between pb-3 mt-2">
-                        {!primeiroCaixa && (
+                    {valorCaixa === false && (
                           <div className="row justify-content-center align-items-center">
                             <div className="col-12">
                               <h6 className="text-start">Defina o valor do caixa:</h6>
@@ -389,25 +374,20 @@ function AbrirTurno() {
                               type="button"
                               className="btn5 botao mt-3"
                               onClick={() => {
-                                if (valor.trim() !== '' || primeiroCaixa) {
+                                if (valor.trim() !== '' || valorCaixa !== false) {
                                   abrirTurno();
-                                  setAlerta(false);
                                 } else {
-                                  setAlerta(true); 
+                                  setEstado2(true);
+                                  setMensagem('Por favor, insira um valor para abrir o caixa!');                                  
                                   setTimeout(() => {
-                                  setAlerta(false);
+                                  setEstado2(false);
                                   }, 5000);
                                 }
                               }}
                             >
                               Confirmar abertura
-                            </button>  {alerta && (
-                            <div className="alert alert-danger mt-3 mx-1" role="alert">
-                              Preencha o valor
-                            </div>
-                          )}
+                            </button>
                           </div>
-                        
                         </div>
                       </div>
               </div>
