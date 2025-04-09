@@ -450,8 +450,10 @@ const EditarParametroAdmin = () => {
         const fechamentoSelecionado =
           document.getElementById("fechamento").value;
 
-        const formatHora = (hora) =>
-          hora < 10 ? `0${hora}:00:00` : `${hora}:00:00`;
+        const formatHora = (hora) => {
+          const [hours, minutes] = hora.split(":").map(Number);
+          return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+        };
 
         const requisicao = createAPI();
         requisicao
