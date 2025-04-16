@@ -76,7 +76,7 @@ const ListarNotificacoesAdmin = () => {
                    <p><b>Débito Ativo:</b> ${item.debito_automatico}</p>
        ${
          item.debito_automatico === "Sim"
-           ? `<p><b>Saldo no Momento:</b> R$${item.saldo_no_momento}</p>`
+           ? `<p><b>Saldo no Momento da Notificação:</b> R$${item.saldo_no_momento}</p>`
            : ""
        }`,
         showCancelButton: true,
@@ -141,7 +141,7 @@ const ListarNotificacoesAdmin = () => {
                     <p><b>Débito Ativo:</b> ${item.debito_automatico}</p>
        ${
          item.debito_automatico === "Sim"
-           ? `<p><b>Saldo no Momento:</b> R$${item.saldo_no_momento}</p>`
+           ? `<p><b>Saldo no Momento da Notificação:</b> R$${item.saldo_no_momento}</p>`
            : ""
        }`,
         showCancelButton: true,
