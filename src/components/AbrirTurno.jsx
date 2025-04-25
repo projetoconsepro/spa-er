@@ -10,12 +10,11 @@ function AbrirTurno() {
   const [valor, setValor] = useState('');
   const [estado2, setEstado2] = useState(false);
   const [mensagem, setMensagem] = useState('');
-  const [abTurno, setAbTurno] = useState(false);  
-  const setorTurno = localStorage.getItem('setorTurno') || 'A';
+  const [abTurno, setAbTurno] = useState(false);
   const [setorSelecionado, setSetorSelecionado] = useState(1);
-  const [setorSelecionado2, setSetorSelecionado2] = useState(setorTurno);
+  const [setorSelecionado2, setSetorSelecionado2] = useState('A');
   const [nome, setNome] = useState('');
-  const [valorCaixa, setvalorCaixa] = useState(false);
+  const [caixa, setCaixa] = useState([]);
   const [tempoAtual, setTempoAtual] = useState('');
   const [resposta2, setResposta2] = useState([]);
   const user = localStorage.getItem('user');
@@ -23,18 +22,22 @@ function AbrirTurno() {
 
   const verificarTurno = () => {
     const requisicao = createAPI();
-    requisicao.get('/turno/verificar').then((response) => {        
-      setvalorCaixa(response.data.msg.valor_abertura ?? false);       
+    requisicao.get('/turno/verificar').then((response) => {
       if (response.data.msg.resultado) {
         localStorage.setItem('turno', true);
         localStorage.setItem('caixa', true);
         setAbTurno(true);
-      } else {        
+      } else {
         localStorage.setItem('turno', false);
         setAbTurno(false);
       }
     });
 
+    if (localStorage.getItem('caixa') == 'true') {
+      setCaixa(false);
+    } else {
+      setCaixa(true);
+    }
   };
 
   const testarImpressora = () => {
@@ -126,13 +129,17 @@ function AbrirTurno() {
     const requisicao = createAPI();
     const valorFinal = parseFloat(valor.replace(',', '.')).toFixed(2);
     requisicao.post('/turno/abrir', {
-      valor_abertura: valorFinal,
-    }).then(
-      (response) => {
-        if (response.data.msg.resultado) {          
+      hora: tempoAtual,
+      idSetor: setorSelecionado,
+      caixa: {
+        valor_abertura: `${valorFinal}`,
+      },
+    })
+      .then((response) => {
+        if (response.data.msg.resultado) {
           localStorage.setItem('turno', true);
           localStorage.setItem('caixa', true);
-          localStorage.setItem('valorCaixa', valorFinal);
+          localStorage.setItem('horaTurno', tempoAtual);
           localStorage.setItem('setorTurno', setorSelecionado2);
           FuncTrocaComp('ListarVagasMonitor');
         } else {
@@ -160,6 +167,105 @@ function AbrirTurno() {
       });
   };
 
+  const abrirTurno2 = () => {
+    const requisicao = createAPI();
+
+    requisicao.post('/turno/abrir', {
+      hora: tempoAtual,
+      idSetor: setorSelecionado,
+    }).then(
+      (response) => {
+        if (response.data.msg.resultado === true) {
+          localStorage.setItem('turno', true);
+          localStorage.setItem('setorTurno', setorSelecionado2);
+          const data = new Date();
+          let hora = data.getHours();
+          if (hora < 10) {
+            hora = `0${hora}`;
+          }
+          let minuto = data.getMinutes();
+          if (minuto < 10) {
+            minuto = `0${minuto}`;
+          }
+          let segundos = data.getSeconds();
+          if (segundos < 10) {
+            segundos = `0${segundos}`;
+          }
+          const horaAtual = `${hora}:${minuto}:${segundos}`;
+          localStorage.setItem('horaTurno', horaAtual);
+          FuncTrocaComp('ListarVagasMonitor');
+        } else {
+          localStorage.setItem('turno', true);
+          setMensagem(response.data.msg.msg);
+          setEstado2(true);
+          setTimeout(() => {
+            setEstado2(false);
+            setMensagem('');
+          }, 4000);
+        }
+      },
+    ).catch((error) => {
+      if (error?.response?.data?.msg === 'Cabeçalho inválido!'
+        || error?.response?.data?.msg === 'Token inválido!'
+        || error?.response?.data?.msg === 'Usuário não possui o perfil mencionado!') {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('perfil');
+      } else {
+        console.log(error);
+      }
+    });
+
+    const data = new Date();
+    let hora = data.getHours();
+    if (hora < 10) {
+      hora = `0${hora}`;
+    }
+    let minuto = data.getMinutes();
+    if (minuto < 10) {
+      minuto = `0${minuto}`;
+    }
+    let segundos = data.getSeconds();
+    if (segundos < 10) {
+      segundos = `0${segundos}`;
+    }
+    const horaAtual = `${hora}:${minuto}:${segundos}`;
+    setTempoAtual(horaAtual);
+  };
+
+  const fecharTurno = () => {
+    // remove as vagas do localstorage para evitar erro de sincronização
+    localStorage.removeItem('listaVagas');
+
+    const requisicao = createAPI();
+    requisicao.post('/turno/fechar', {
+      hora: tempoAtual,
+    }).then(
+      (response) => {
+        if (response.data.msg.resultado) {
+          verificarTurno();
+          setAbTurno(false);
+        } else {
+          setEstado2(true);
+          setMensagem(response.data.msg.msg);
+          setTimeout(() => {
+            setEstado2(false);
+            setMensagem('');
+          }, 4000);
+        }
+      },
+    ).catch((error) => {
+      if (error?.response?.data?.msg === 'Cabeçalho inválido!'
+        || error?.response?.data?.msg === 'Token inválido!'
+        || error?.response?.data?.msg === 'Usuário não possui o perfil mencionado!') {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('perfil');
+      } else {
+        console.log(error);
+      }
+    });
+  };
 
   const fecharCaixa = () => {
     // remove as vagas do localstorage para evitar erro de sincronização
@@ -202,25 +308,55 @@ function AbrirTurno() {
             },
           }).then((result) => {
             if (result.isConfirmed) {
-                  if (response2.data.msg.resultado === true && result.value === 1) {
-                    setAbTurno(false);
+              requisicao.post('/turno/fechar', {
+                hora: tempoAtual,
+                caixa: {
+                  valor_movimentacao: sim,
+                },
+              }).then(
+                (response) => {
+                  if (response.data.msg.resultado === true && result.value === 1) {
                     localStorage.setItem('turno', false);
                     localStorage.setItem('caixa', false);
                     Swal.fire('Caixa fechado com sucesso', '', 'success');
                     verificarTurno();
-                    ImpressaoFecharCaixa(response2.data.caixa, sim, response2.config.headers.id_usuario);
-                  } else if (response2.data.msg.resultado === true && result.value === 0) {                    
+                    ImpressaoFecharCaixa(response2.data.caixa, sim, response.config.headers.id_usuario);
+                  } else if (response.data.msg.resultado === true && result.value === 0) {
                     localStorage.setItem('turno', false);
                     localStorage.setItem('caixa', false);
-                    setAbTurno(false);
                     Swal.fire('Caixa fechado com sucesso', '', 'success');
                     verificarTurno();
                   } else {
-                    Swal.fire('Erro ao fechar caixa', `${response2.data.msg.msg}`, 'error');
+                    Swal.fire('Erro ao fechar caixa', `${response.data.msg.msg}`, 'error');
                   }
-               
-              }
+                },
+              ).catch((error) => {
+                if (error?.response?.data?.msg === 'Cabeçalho inválido!'
+        || error?.response?.data?.msg === 'Token inválido!'
+        || error?.response?.data?.msg === 'Usuário não possui o perfil mencionado!') {
+                  localStorage.removeItem('user');
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('perfil');
+                } else {
+                  console.log(error);
+                }
+              });
+            } else if (result.isDenied) {
+
+            }
           });
+        } else if (response2.data.msg.resultado === false) {
+          const requisicao = createAPI();
+          requisicao.post('/turno/fechar', {
+            hora: tempoAtual,
+          }).then(
+            (response) => {
+              if (response.data.msg.resultado) {
+                setAbTurno(false);
+                setCaixa(true);
+              }
+            },
+          );
         }
       },
     ).catch((error) => {
@@ -263,6 +399,7 @@ function AbrirTurno() {
             </div>
             {abTurno === true ? (
               <div>
+                <button type="button" className="btn5 botao mt-3" onClick={() => { fecharTurno(); }}>Fechar turno</button>
                 <button type="button" className="btn7 botao mt-3" onClick={() => { fecharCaixa(); }}>Fechar caixa</button>
                 <Button variant="gradient" gradient={{ from: 'orange', to: 'red' }} fullWidth mt="md" radius="md"
                     onClick={() => testarImpressora()}>
@@ -272,124 +409,115 @@ function AbrirTurno() {
             ) : (
               <div>
                 <div className="row mt-4">
-                      <div className="col-12">                        <h6 className="text-start">
-    {valorCaixa !== false
-      ? `Valor de abertura do caixa: R$ ${valorCaixa}`
-      : ' '}
-  </h6>
-                        <h6 className="text-start">Escolha seu setor:</h6>
+                  <div className="col-12">
+                    <h6 className="text-start">Escolha seu setor:</h6>
+                  </div>
+                  <div className="col-6">
+                    <select
+                      className="form-select form-select-sm mb-3 mt-2"
+                      aria-label=".form-select-lg example"
+                      id="setoresSelect2"
+                      onChange={() => {
+                        setarSetor();
+                      }}
+                    >
+                      {resposta2.map((link, index) => (
+                        <option value={link.setores} key={index}>
+                          Setor:
+                          {' '}
+                          {link.setores}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
+                {caixa === true ? (
+                  <div className="align-items-center justify-content-between pb-3 mt-2">
+                    <div className="row justify-content-center align-items-center">
+                      <div className="col-12">
+                        <h6 className="text-start">Defina o valor do caixa:</h6>
                       </div>
-                      <div className="col-6">
-                        <select
-                          className="form-select form-select-sm mb-3 mt-2"
-                          aria-label=".form-select-lg example"
-                          id="setoresSelect2"
-                          value={setorSelecionado2}
-                          onChange={() => {
-                            setarSetor();
-                          }}
-                        >
-                          {resposta2.map((link, index) => (
-                            <option value={link.setores} key={index}>
-                              Setor:
-                              {' '}
-                              {link.setores}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="align-items-center justify-content-between pb-3 mt-2">
-                    {valorCaixa === false && (
-                          <div className="row justify-content-center align-items-center">
-                            <div className="col-12">
-                              <h6 className="text-start">Defina o valor do caixa:</h6>
-                            </div>
-                            <div className="row align-items-center pt-2 pb-3">
-                              <div className="col-3">
-                                <button
-                                  type="button"
-                                  className="btn btn-info w-100"
-                                  onClick={() => FuncArrumaInput('1000')}
-                                >
-                                  10
-                                </button>
-                              </div>
-                              <div className="col-3">
-                                <button
-                                  type="button"
-                                  className="btn btn-info w-100"
-                                  onClick={() => FuncArrumaInput('2000')}
-                                >
-                                  20
-                                </button>
-                              </div>
-                              <div className="col-3">
-                                <button
-                                  type="button"
-                                  className="btn btn-info w-100"
-                                  onClick={() => FuncArrumaInput('3000')}
-                                >
-                                  30
-                                </button>
-                              </div>
-                              <div className="col-3">
-                                <button
-                                  type="button"
-                                  className="btn btn-info w-100"
-                                  onClick={() => FuncArrumaInput('5000')}
-                                >
-                                  50
-                                </button>
-                              </div>
-                            </div>
-                            <div className="col-">
-                              <div className="input-group">
-                                <Input
-                                  icon={<IconCash />}
-                                  placeholder="R$ 0,00"
-                                  value={valor}
-                                  onChange={(e) => FuncArrumaInput(e.target.value)}
-                                />
-                              </div>
-                            </div>
-                            <div className="col-8" />
-                          </div>
-                        )}
-
-                        <div className="row justify-content-center align-items-center">
-                          <div className="col-12">
-                            { valor !== '' ? (
-                              <h6 className="mt-4 text-start">
-                                Valor definido em: R$
-                                {valor === 0 ? '00' : valor}
-                              </h6>
-                            ) : (
-                              null
-                            )}
-                          </div>
-                          <div className="col-12">
-                            <button
-                              type="button"
-                              className="btn5 botao mt-3"
-                              onClick={() => {
-                                if (valor.trim() !== '' || valorCaixa !== false) {
-                                  abrirTurno();
-                                } else {
-                                  setEstado2(true);
-                                  setMensagem('Por favor, insira um valor para abrir o caixa!');                                  
-                                  setTimeout(() => {
-                                  setEstado2(false);
-                                  }, 5000);
-                                }
-                              }}
-                            >
-                              Confirmar abertura
-                            </button>
-                          </div>
+                      <div className="row align-items-center pt-2 pb-3">
+                        <div className="col-3">
+                          <button
+                            type="button"
+                            className="btn btn-info w-100"
+                            onClick={() => FuncArrumaInput('1000')}
+                          >
+                            10
+                          </button>
+                        </div>
+                        <div className="col-3">
+                          <button
+                            type="button"
+                            className="btn btn-info w-100"
+                            onClick={() => FuncArrumaInput('2000')}
+                          >
+                            20
+                          </button>
+                        </div>
+                        <div className="col-3">
+                          <button
+                            type="button"
+                            className="btn btn-info w-100"
+                            onClick={() => FuncArrumaInput('3000')}
+                          >
+                            30
+                          </button>
+                        </div>
+                        <div className="col-3">
+                          <button
+                            type="button"
+                            className="btn btn-info w-100"
+                            onClick={() => FuncArrumaInput('5000')}
+                          >
+                            50
+                          </button>
                         </div>
                       </div>
+                      <div className="col-">
+                        <div className="input-group">
+                          <Input
+                            icon={<IconCash />}
+                            placeholder="R$ 0,00"
+                            value={valor}
+                            onChange={(e) => FuncArrumaInput(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-8" />
+                    </div>
+
+                    <div className="row justify-content-center align-items-center">
+                      <div className="col-12">
+                        { valor !== '' ? (
+                          <h6 className="mt-4 text-start">
+                            Valor definido em: R$
+                            {valor === 0 ? '00' : valor}
+                          </h6>
+                        ) : (
+                          null
+                        )}
+                      </div>
+                      <div className="col-12">
+                        <button
+                          type="button"
+                          className="btn5 botao mt-3"
+                          onClick={() => {
+                            abrirTurno();
+                          }}
+                        >
+                          Confirmar abertura
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <button type="button" className="btn5 botao mt-3" onClick={() => { abrirTurno2(); }}>Abrir turno</button>
+                  </div>
+                )}
               </div>
             )}
           </div>
