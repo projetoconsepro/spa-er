@@ -81,6 +81,8 @@ const ListaAutoInfracao = () => {
             cor: item.cor,
             vaga: item.numero,
             hora: ArrumaHora2(item.hora),
+            codigo_ai: item.codigo_ai,
+            cancelada: item.cancelada === 1 ? "Sim" : "Não",  
           }));
           setData(newData);
         } else {
@@ -147,6 +149,8 @@ const ListaAutoInfracao = () => {
             cor: item.cor,
             vaga: item.numero,
             hora: ArrumaHora2(item.hora),
+            codigo_ai: item.codigo_ai,
+            cancelada: item.cancelada === 1 ? "Sim" : "Não",
           }));
           setData(newData);
         } else {
@@ -251,6 +255,20 @@ const ListaAutoInfracao = () => {
                         >
                           Hora
                         </th>
+                        <th
+                          className="border-bottom"
+                          id="tabelaUsuarios"
+                          scope="col"
+                        >
+                          Código AI
+                        </th>
+                        <th
+                          className="border-bottom"
+                          id="tabelaUsuarios"
+                          scope="col"
+                        >
+                          Cancelada
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -266,6 +284,8 @@ const ListaAutoInfracao = () => {
                           <td> {item.vaga}</td>
                           <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td id="tabelaUsuarios2">{item.hora}</td>
+                          <td id="tabelaUsuarios">{item.codigo_ai}</td>
+                          <td id="tabelaUsuarios">{item.cancelada}</td>
                         </tr>
                       ))}
                     </tbody>
