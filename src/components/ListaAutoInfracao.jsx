@@ -250,7 +250,7 @@ const ListaAutoInfracao = () => {
                         </th>
                         <th
                           className="border-bottom"
-                          id="tabelaUsuarios"
+                          id="tabelaUsuarios2"
                           scope="col"
                         >
                           Hora
@@ -264,7 +264,7 @@ const ListaAutoInfracao = () => {
                         </th>
                         <th
                           className="border-bottom"
-                          id="tabelaUsuarios2"
+                          id="tabelaUsuarios"
                           scope="col"
                         >
                           Cancelada
