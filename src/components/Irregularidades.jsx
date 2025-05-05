@@ -195,6 +195,8 @@ const Irregularidades = () => {
             placa: item.veiculo.placa,
             estado: false,
             pago: item.pago,
+            data_infracao: item.data_infracao,
+            infracao: item.infracao
           }));
           setData(newData);
         } else {
@@ -242,6 +244,8 @@ const Irregularidades = () => {
             placa: item.veiculo.placa,
             estado: false,
             pago: item.pago,
+            data_infracao: item.data_infracao,
+            infracao: item.infracao
           }));
           setData(newData);
         } else {
@@ -339,6 +343,8 @@ const Irregularidades = () => {
             placa: item.veiculo.placa,
             estado: false,
             pago: item.pago,
+            data_infracao: item.data_infracao,
+            infracao: item.infracao
           }));
           setData(newData);
         } else {
@@ -497,25 +503,27 @@ const Irregularidades = () => {
             {link.pago === "N" ? (
               <div className="row">
                 <div className="col-12">
-                  <Button
-                    variant="outline"
-                    color="red"
-                    radius="md"
-                    fullWidth
-                    className="mt-2"
-                    leftIcon={
-                      link.estado ? (
-                        <IconX size={20} />
-                      ) : (
-                        <BsConeStriped size={20} />
-                      )
-                    }
-                    onClick={() => {
-                      atualiza(index);
-                    }}
-                  >
-                    {link.estado ? "Fechar" : "Regularize aqui"}
-                  </Button>
+                    {(link.infracao === 'S' && new Date() - new Date(link.data_infracao)) / (1000 * 60 * 60) < 48 && (
+                      <Button
+                        variant="outline"
+                        color="red"
+                        radius="md"
+                        fullWidth
+                        className="mt-2"
+                        leftIcon={
+                          link.estado ? (
+                            <IconX size={20} />
+                          ) : (
+                            <BsConeStriped size={20} />
+                          )
+                        }
+                        onClick={() => {
+                          atualiza(index);
+                        }}
+                      >
+                        {link.estado ? "Fechar" : "Regularize aqui"}
+                      </Button>
+                  )}
                 </div>
               </div>
             ) : null}

@@ -250,6 +250,8 @@ const ListarNotificacoes = () => {
             pago: item.pago,
             checked: false,
             data_regularizacao: item.data_regularizacao ? ArrumaHora(item.data_regularizacao) : "",
+            data_infracao: item.data_infracao,
+            infracao: item.infracao
           }));
           setData(newData);
         } else {
@@ -666,6 +668,7 @@ const ListarNotificacoes = () => {
             {link.pago === "N" ? (
               <div className="row">
                 <div className="col-12">
+                {(link.infracao === 'S' && new Date() - new Date(link.data_infracao)) / (1000 * 60 * 60) < 48 && (
                   <Button
                     variant="outline"
                     color="red"
@@ -685,6 +688,7 @@ const ListarNotificacoes = () => {
                   >
                     {link.estado ? "Fechar" : "Regularize aqui"}
                   </Button>
+                   )}
                 </div>
               </div>
             ) : null}
