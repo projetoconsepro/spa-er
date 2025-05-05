@@ -248,7 +248,8 @@ const Sidebar = () => {
       const agenteLinks = [
           { icon: <BsConeStriped />, name: "‎ Listar Notificações", componente: "ListarNotificacoesAgente" },
           { icon: <FaParking />, name: "‎ Veículos Estacionados", componente: "VeiculosAgente" },
-          { icon: <FaClipboardList />, name: "‎ Autos de Infração", componente: "ListaAutoInfracao" }
+          { icon: <FaClipboardList />, name: "‎ Autos de Infração", componente: "ListaAutoInfracao" },
+          { icon: <FaClipboardList />, name: "‎ Infrações para Remover", componente: "ListaInfracoesPendentesRemocao" }
       ];
 
       agenteLinks.forEach(link => {
@@ -419,7 +420,7 @@ const Sidebar = () => {
                           data-bs-target={`#submenu-app-${key}`}
                         >
                           <span>
-                            <span>
+                            <span className="d-flex align-items-center">
                               {link.icon}
                               {link.name}
                             </span>
@@ -450,7 +451,7 @@ const Sidebar = () => {
                           <ul className="flex-column nav">
                             {link.subitem &&
                               link.subitem.map((subitem, key) => (
-                                <li className="nav-item" key={key}>
+                                <li className="nav-item align-items-center" key={key}>
                                   <a
                                     className={subitem.className}
                                     id="textoSm"

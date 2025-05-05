@@ -60,6 +60,7 @@ import RelatorioParceiroAdmin from '../../components/RelatorioParceiroAdmin';
 import MapaCliente from '../../components/MapaCliente';
 import MapaAdmin from '../../components/MapaAdmin';
 import ListarMovimentosFinanceiros from '../../components/ListarMovimentosFinanceiros';
+import ListaInfracoesPendentesRemocao from '../../components/ListaInfracoesPendentesRemocao.jsx';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -122,6 +123,7 @@ const componentesMap = {
     MapaCliente: <MapaCliente />,
     MapaAdmin: <MapaAdmin />,
     ListarMovimentosFinanceiros: <ListarMovimentosFinanceiros />,
+    ListaInfracoesPendentesRemocao: <ListaInfracoesPendentesRemocao />,
     Error: <Error />,
 };
 
