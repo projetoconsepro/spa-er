@@ -414,7 +414,7 @@ const ListarNotificacoes = () => {
               <h6>Selecione as notificações para regularizar:</h6>
               <div className="text-start d-flex">
               <h6>Selecionar todas:  </h6> <input type="checkbox"  style={{ width: "15px", height: "15px", marginLeft: "8px", marginTop: "4px" }} onChange={(e) => {
-                data.filter(item => item.pago === "N").map(item => item.checked = e.target.checked)
+                data.filter(item => item.pago === "N" && !(item.infracao === 'S' && (new Date() - new Date(item.data_infracao)) / (1000 * 60 * 60) > 48)).map(item => item.checked = e.target.checked)
                 setData([...data])
               }} />
               </div>
@@ -433,7 +433,7 @@ const ListarNotificacoes = () => {
               </thead>
               <tbody>
                 {data.map(
-                  (link, index) => link.pago !== "S" && (
+                  (link, index) => link.pago !== "S" && !(link.infracao === 'S' && (new Date() - new Date(link.data_infracao)) / (1000 * 60 * 60) > 48) && (
                     <tr key={index}>
                       <td
                         className="px-1"
