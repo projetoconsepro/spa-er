@@ -8145,6 +8145,16 @@ textarea.form-control-lg {
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
 }
+.card-body12 {
+    height: 29rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+.card-body13 {
+    height: 27rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
 .card-body10 {
     height: 10rem;
     flex: 1 1 auto;
