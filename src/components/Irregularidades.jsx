@@ -39,7 +39,19 @@ const Irregularidades = () => {
     setData([...data]);
   };
 
-  const regularizar = (index) => {
+  const regularizar = async (index) => {
+    const isValido = data[index].infracao === 'S' 
+    ? await verificaValidadeInfracao(data[index].data_infracao) 
+    : null;
+
+    setValidacoes((prev) => ({
+      ...prev,
+      [data[index].id_notificacao]: isValido,
+    }));
+
+    if (isValido=== false) {
+      return;
+    }
     setLoadingButton(true);
     const select = document.getElementById("pagamentos").value;
     if (select === "credito") {
@@ -370,7 +382,7 @@ const Irregularidades = () => {
         }
       });
   };
-
+  
   useEffect(() => {
     const verificarInfracoes = async () => {
       const resultados = {};
