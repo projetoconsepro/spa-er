@@ -17,11 +17,11 @@ const VoltarComponente = ({ space, arrow, fallback }) => {
     if (componenteProximo && componenteProximo !== "EscolherPerfil") {
       localStorage.setItem("componenteAnterior", componenteAnterior);
       localStorage.setItem("componente", componenteProximo);
-      window.location.reload(); // garante que a troca ocorra
+      window.location.reload();
     } else if (fallback) {
       localStorage.setItem("componenteAnterior", componenteAnterior);
       localStorage.setItem("componente", fallback);
-      window.location.reload(); // força a tela de fallback
+      window.location.reload();
     } else {
       console.warn("Nenhum componente válido para voltar.");
     }

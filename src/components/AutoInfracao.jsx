@@ -31,7 +31,23 @@ const AutoInfracao = () => {
   const [imagemLocal, setImagemLocal] = useState("");
 
   useEffect(() => {
-    let infos = JSON.parse(localStorage.getItem("autoInfracao"));
+    // Proteção contra dados inválidos no localStorage para evitar erro em tempo de execução
+    // Redireciona de volta para a tela de notificações se o dado estiver ausente ou malformado
+    let infos = null;
+
+    try {
+      const raw = localStorage.getItem("autoInfracao");
+      infos = raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      console.warn("Erro ao interpretar localStorage.autoInfracao:", e);
+    }
+
+    if (!infos || !infos.placa) {
+      console.warn("Fallback automático: autoInfracao ausente ou inválido.");
+      FuncTrocaComp("ListaAutoInfracao");
+      return;
+    }
+
     setData([infos]);
 
     const requisicao = createAPI();
@@ -103,9 +119,12 @@ const AutoInfracao = () => {
   };
 
   const confirmarInfracao = () => {
-
     if (codigo === "") {
-      Swal.fire("Aviso!", "Necessário informar o código ( Auto de Infração - DETRAN )!", "warning");
+      Swal.fire(
+        "Aviso!",
+        "Necessário informar o código ( Auto de Infração - DETRAN )!",
+        "warning"
+      );
       return;
     }
     const requisicao = createAPI();
@@ -251,12 +270,12 @@ const AutoInfracao = () => {
                 </Text>
               </Group>
             )}
-              <Group position="apart">
-                <Text size={20}>
-                  {" "}
-                  <FaParking className="mb-1" />  Local: {data[0].local}{" "}
-                </Text>
-              </Group>
+            <Group position="apart">
+              <Text size={20}>
+                {" "}
+                <FaParking className="mb-1" /> Local: {data[0].local}{" "}
+              </Text>
+            </Group>
             {item.fabricante === undefined ||
             item.modelo === undefined ? null : (
               <Group position="apart">
