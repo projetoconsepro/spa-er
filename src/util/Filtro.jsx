@@ -265,6 +265,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Data", label: "Data" },
         { value: "Placa", label: "Placa" },
         { value: "Periodo", label: "Período" },
+        { value: "Canceladas", label: "Canceladas" },
       ]);
     } else if (nome === "PlacaIsenta") {
       setOptions([
@@ -480,6 +481,9 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
           break;
         case "Notificacoes pendentes":
           consulta = `{"where": [{ "field": "notificacao", "operator": "=", "value": "${radioNotificacaoPendente}" }]}`;
+          break;
+        case "Canceladas":
+          consulta = `{"where": [{ "field": "removida", "operator": "=", "value": "${radioTipo}" }]}`;
           break;
         default:
           break;
@@ -1042,7 +1046,24 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                     </Grid>
                   </Radio.Group>
                 </div>
-              ) : null}
+              ) : selectedOption.value === "Canceladas" ? (   
+               <div className="mb-4">
+                        <div className="mt-3 mb-4">Selecione:</div>
+                        <Radio.Group
+                          name="Escolha algum opção"
+                          onChange={(e) => setRadioTipo(e)}
+                        >
+                             <Grid>
+                            <Grid.Col span={12}>
+                              <Radio value="1" label="Infrações canceladas" />
+                            </Grid.Col>
+                            <Grid.Col span={12}>
+                              <Radio value="0" label="Infrações não canceladas" />
+                            </Grid.Col>
+                          </Grid>
+                        </Radio.Group>
+                  </div>   
+            ): null}
             </div>
           ) : null}
           <div className="mt-auto pb-3">

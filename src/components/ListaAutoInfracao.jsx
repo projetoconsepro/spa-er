@@ -177,7 +177,7 @@ const ListaAutoInfracao = () => {
 
   return (
     <div className="dashboard-container">
-      <p className="mx-3 text-start fs-4 fw-bold">Autos de Infração</p>
+      <p className="mx-3 text-start fs-4 fw-bold">Autos de Infração Emitidos</p>
       <div className="row mb-3">
         <div className="col-12">
           <div className="row">
@@ -226,6 +226,13 @@ const ListaAutoInfracao = () => {
                           ) : (
                             <AiOutlineArrowDown className="mb-1" size={15} />
                           )}
+                        </th>                        
+                        <th
+                          className="border-bottom"
+                          id="tabelaUsuarios2"
+                          scope="col"
+                        >
+                          Hora
                         </th>
                         <th
                           className="border-bottom"
@@ -233,14 +240,7 @@ const ListaAutoInfracao = () => {
                           scope="col"
                         >
                           Placa
-                        </th>
-                        <th
-                          className="border-bottom"
-                          id="tabelaUsuarios"
-                          scope="col"
-                        >
-                          Vaga
-                        </th>
+                        </th>                        
                         <th
                           className="border-bottom"
                           id="tabelaUsuarios2"
@@ -250,10 +250,10 @@ const ListaAutoInfracao = () => {
                         </th>
                         <th
                           className="border-bottom"
-                          id="tabelaUsuarios2"
+                          id="tabelaUsuarios"
                           scope="col"
                         >
-                          Hora
+                          Vaga
                         </th>
                         <th
                           className="border-bottom"
@@ -280,10 +280,10 @@ const ListaAutoInfracao = () => {
                           }}
                         >
                           <td>{item.data}</td>
-                          <td>{item.placa}</td>
-                          <td> {item.vaga}</td>
-                          <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td id="tabelaUsuarios2">{item.hora}</td>
+                          <td>{item.placa}</td>
+                          <td id="tabelaUsuarios2">{item.modelo}</td>
+                          <td> {item.vaga}</td>
                           <td id="tabelaUsuarios">{item.codigo_ai}</td>
                           <td id="tabelaUsuarios">{item.cancelada}</td>
                         </tr>
