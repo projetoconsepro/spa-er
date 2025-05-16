@@ -26,6 +26,9 @@ const ListarNotificacoesAgente = () => {
     const [mostrarColunasCompletas, setMostrarColunasCompletas] = useState(true);
     const [opened, { open, close }] = useDisclosure(false);
     const [enderecoMapa, setEnderecoMapa] = useState('');
+
+
+
       
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
@@ -44,13 +47,16 @@ const ListarNotificacoesAgente = () => {
         for (let i = 0; i < 8; i++) {
           localStorage.removeItem(`fotoInfracao`);
         }
-        reload()
+
+              reload()
     }, [])
 
     const abrirMapa = (item) => {
       setEnderecoMapa(item.endereco || item.local || '');
       open();
     };
+
+
 
     const mostrar = async (item) => {
         const width = window.innerWidth
@@ -92,21 +98,21 @@ const ListarNotificacoesAgente = () => {
       setMostrarColunasCompletas(false);
       const requisicao = createAPI();
       requisicao.get('/notificacao').then((response) => {
-        console.log('reload: ',response.data)
+        console.log('Resposta da API (/notificacao):', response.data);
         if (response.data.msg.resultado){
           setEstado(false)
           const newData = response.data.data.map((item) => ({
-            placa: item.placa, // Agora vem direto do item
+            placa: item.placa, 
             vaga: item.vaga,
             notificacoesPendentes: item.notificacoes_pendentes,
             endereco: item.endereco,
             data: ArrumaHora3(item.data),
             cancelada: item.cancelada,
             cancelada_motivo: item.cancelada_motivo,
-            pendente: item.pendente === 'S' ? 'Quitado' : 'Pendente', // Atualizado para usar item.pendente
-            fabricante: item.fabricante, // Agora vem direto do item
-            modelo: item.modelo, // Agora vem direto do item
-            tipo: item.tipo?.nome || item.tipo, // Adaptado para ambos os formatos
+            pendente: item.pendente === 'S' ? 'Quitado' : 'Pendente',
+            fabricante: item.fabricante,
+            modelo: item.modelo, 
+            tipo: item.tipo?.nome || item.tipo,
             valor: item.valor,
             cor: item.cor,
             id_vaga_veiculo: item.id_vaga_veiculo,
@@ -243,22 +249,22 @@ const ListarNotificacoesAgente = () => {
                             <th className="border-bottom" scope="col" onClick={() => handleSort()}>
                               Data {sortAsc ? <AiOutlineArrowUp className="mb-1" size={15} /> : <AiOutlineArrowDown className="mb-1" size={15} />}
                             </th>
-                            <th className="border-bottom" scope="col">Hora</th>
+                            <th className="border-bottom coluna-mobile-hide" scope="col">Hora</th>
                             <th className="border-bottom" scope="col">Placa</th>
                             <th className="border-bottom" scope="col">Vaga</th>
-                            <th className="border-bottom" scope="col">Estado</th>
-                            <th className="border-bottom" scope="col">Fabricante</th>
-                            <th className="border-bottom" scope="col">Modelo</th>
-                            <th className="border-bottom" scope="col">Tipo</th>
-                            <th className="border-bottom" scope="col">Valor</th>
+                            <th className="border-bottom coluna-mobile-hide" scope="col">Estado</th>
+                            <th className="border-bottom coluna-mobile-hide" scope="col">Fabricante</th>
+                            <th className="border-bottom coluna-mobile-hide" scope="col">Modelo</th>
+                            <th className="border-bottom coluna-mobile-hide" scope="col">Tipo</th>
+                            <th className="border-bottom coluna-mobile-hide" scope="col">Valor</th>
                             <th className="border-bottom" scope="col">Ação</th>
                           </>
                         ) : (
                           <>
                             <th className="border-bottom" scope="col">Placa</th>
                             <th className="border-bottom" scope="col">Vaga</th>
-                            <th className="border-bottom" scope="col">Notificações Pendentes</th>
-                            <th className="border-bottom" scope="col">Endereço</th>
+                            <th className="border-bottom" scope="col">Notificações</th>
+                            <th className="border-bottom coluna-mobile-hide">Endereço</th>
                             <th className="border-bottom" scope="col">Ação</th>
                           </>
                         )}
@@ -273,25 +279,48 @@ const ListarNotificacoesAgente = () => {
                             {mostrarColunasCompletas ? (
                               <>
                                 <td>{item.data}</td>
+                                <td className="coluna-mobile-hide">{item.hora}</td>
                                 <td>{item.placa}</td>
                                 <td>{item.vaga}</td>
-                                <td style={item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}}>
-                                  {item.pendente}
+                                <td className="coluna-mobile-hide" style={item.pendente === 'Quitado' ? { color: 'green' } : { color: 'red' }}>{item.pendente}</td>
+                                <td className="coluna-mobile-hide">{item.fabricante}</td>
+                                <td className="coluna-mobile-hide">{item.modelo}</td>
+                                <td className="coluna-mobile-hide">{item.tipo}</td>
+                                <td className="coluna-mobile-hide">{item.valor}</td>
+                                <td className="text-center">
+                                  <div className="d-flex justify-content-center gap-3">
+                                    {window.innerWidth < 768 ? (
+                                      <AiOutlineInfoCircle
+                                        className="cursor-pointer hover:text-blue-500"
+                                        style={{ fontSize: '1.2rem' }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          mostrar(item);
+                                        }}
+                                      />
+                                    ) : (
+                                      <TfiWrite
+                                        className="cursor-pointer hover:text-blue-500"
+                                        style={{ fontSize: '1.2rem' }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          localStorage.setItem('autoInfracao', JSON.stringify(item));
+                                          FuncTrocaComp('AutoInfracao');
+                                        }}
+                                      />
+                                    )}
+                                  </div>
                                 </td>
-                                <td>{item.fabricante}</td>
-                                <td>{item.modelo}</td>
-                                <td>{item.tipo}</td>
-                                <td>{item.valor}</td>
-                                <td>{item.hora}</td>
                               </>
+
                             ) : (
                               <>
                                 <td>{item.placa}</td>
                                 <td>{item.vaga}</td>
                                 <td style={{ color: 'red' }}>{item.notificacoesPendentes}</td>
-                                <td>{item.endereco}</td>
-                                <td>
-                                  <div style={{ display: 'flex', gap: '10px' }}>
+                                <td className="coluna-mobile-hide">{item.endereco}</td> {/* Esconde no mobile */}
+                                <td className="text-center">
+                                  <div className="d-flex justify-content-center gap-3">
                                     {window.innerWidth < 768 ? (
                                       <AiOutlineInfoCircle 
                                         className="cursor-pointer hover:text-blue-500" 
@@ -323,6 +352,7 @@ const ListarNotificacoesAgente = () => {
                                   </div>
                                 </td>
                               </>
+
                             )}
                             </tr>
                         );
@@ -350,7 +380,7 @@ const ListarNotificacoesAgente = () => {
             <Group position="center" mb="md">
                 <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
             </Group>
-            <VoltarComponente />
+            <VoltarComponente fallback="ListaAutoInfracao" />
           </div>
         </div>
       </div>

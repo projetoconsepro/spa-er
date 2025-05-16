@@ -2,47 +2,42 @@ import { Button } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 
-const VoltarComponente = ({ space, arrow }) => {
+const VoltarComponente = ({ space, arrow, fallback }) => {
   const [componenteAnterior, setComponenteAnterior] = useState("");
   const [componenteProximo, setComponenteProximo] = useState("");
 
   useEffect(() => {
-    const componenteAnterior = localStorage.getItem("componente");
-    const componenteProximo = localStorage.getItem("componenteAnterior");
-    setComponenteAnterior(componenteAnterior);
-    setComponenteProximo(componenteProximo);
+    const compAnterior = localStorage.getItem("componente");
+    const compProximo = localStorage.getItem("componenteAnterior");
+    setComponenteAnterior(compAnterior);
+    setComponenteProximo(compProximo);
   }, []);
 
   const voltar = () => {
-    if (componenteProximo === "EscolherPerfil") {
-      return;
+    if (componenteProximo && componenteProximo !== "EscolherPerfil") {
+      localStorage.setItem("componenteAnterior", componenteAnterior);
+      localStorage.setItem("componente", componenteProximo);
+      window.location.reload(); // garante que a troca ocorra
+    } else if (fallback) {
+      localStorage.setItem("componenteAnterior", componenteAnterior);
+      localStorage.setItem("componente", fallback);
+      window.location.reload(); // força a tela de fallback
+    } else {
+      console.warn("Nenhum componente válido para voltar.");
     }
-    localStorage.setItem("componenteAnterior", componenteAnterior);
-    localStorage.setItem("componente", componenteProximo);
   };
 
-  return (
-    <>
-      {arrow ? (
-        <IconArrowLeft
-          className="mb-1"
-          onClick={() => {
-            voltar();
-          }}
-        />
-      ) : (
-        <Button
-          className={space ? "bg-gray-500 mx-2" : "bg-gray-500"}
-          size="md"
-          radius="md"
-          onClick={() => {
-            voltar();
-          }}
-        >
-          Voltar
-        </Button>
-      )}
-    </>
+  return arrow ? (
+    <IconArrowLeft className="mb-1" onClick={voltar} />
+  ) : (
+    <Button
+      className={space ? "bg-gray-500 mx-2" : "bg-gray-500"}
+      size="md"
+      radius="md"
+      onClick={voltar}
+    >
+      Voltar
+    </Button>
   );
 };
 
