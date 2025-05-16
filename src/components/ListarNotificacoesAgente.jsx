@@ -10,6 +10,12 @@ import { Button, Group, Pagination } from '@mantine/core'
 import CarroLoading from './Carregamento'
 import { IconReload } from '@tabler/icons-react';
 import {ArrumaHora2, ArrumaHora3} from "../util/ArrumaHora";
+import { TfiWrite } from 'react-icons/tfi';
+import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { useDisclosure } from "@mantine/hooks";
+import { Modal } from '@mantine/core';
+import { IconMapSearch } from "@tabler/icons-react";
+import Mapa from "../util/Mapa";
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
@@ -17,6 +23,9 @@ const ListarNotificacoesAgente = () => {
     const [mensagem, setMensagem] = useState('')
     const [sortAsc, setSortAsc] = useState(true);
     const [estadoLoading, setEstadoLoading] = useState(false)
+    const [mostrarColunasCompletas, setMostrarColunasCompletas] = useState(true);
+    const [opened, { open, close }] = useDisclosure(false);
+    const [enderecoMapa, setEnderecoMapa] = useState('');
       
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
@@ -37,6 +46,11 @@ const ListarNotificacoesAgente = () => {
         }
         reload()
     }, [])
+
+    const abrirMapa = (item) => {
+      setEnderecoMapa(item.endereco || item.local || '');
+      open();
+    };
 
     const mostrar = async (item) => {
         const width = window.innerWidth
@@ -75,26 +89,30 @@ const ListarNotificacoesAgente = () => {
     const reload = () => {
       setEstado(false)
       setMensagem("")
+      setMostrarColunasCompletas(false);
       const requisicao = createAPI();
       requisicao.get('/notificacao').then((response) => {
+        console.log('reload: ',response.data)
         if (response.data.msg.resultado){
           setEstado(false)
           const newData = response.data.data.map((item) => ({
+            placa: item.placa, // Agora vem direto do item
+            vaga: item.vaga,
+            notificacoesPendentes: item.notificacoes_pendentes,
+            endereco: item.endereco,
             data: ArrumaHora3(item.data),
-            placa: item.veiculo.placa,
             cancelada: item.cancelada,
             cancelada_motivo: item.cancelada_motivo,
-            vaga: item.vaga,
-            pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
-            fabricante: item.veiculo.modelo.fabricante.nome,
-            modelo: item.veiculo.modelo.nome,
-            tipo: item.tipo_notificacao.nome,
+            pendente: item.pendente === 'S' ? 'Quitado' : 'Pendente', // Atualizado para usar item.pendente
+            fabricante: item.fabricante, // Agora vem direto do item
+            modelo: item.modelo, // Agora vem direto do item
+            tipo: item.tipo?.nome || item.tipo, // Adaptado para ambos os formatos
             valor: item.valor,
-            cor : item.veiculo.cor,
+            cor: item.cor,
             id_vaga_veiculo: item.id_vaga_veiculo,
             id_notificacao: item.id_notificacao,
-            monitor: item.monitor.nome,
-            hora: ArrumaHora2(item.data),
+            monitor: item.monitor,
+            hora: ArrumaHora2(item.hora),
           }));
           setEstadoLoading(false)
           setData(newData)
@@ -105,7 +123,7 @@ const ListarNotificacoesAgente = () => {
           setEstado(true)
           setMensagem("Não há notificações para exibir")
         }
-    }).catch((error) => {
+      }).catch((error) => {
       if(error?.response?.data?.msg === "Cabeçalho inválido!" 
       || error?.response?.data?.msg === "Token inválido!" 
       || error?.response?.data?.msg === "Usuário não possui o perfil mencionado!"){
@@ -134,40 +152,43 @@ const ListarNotificacoesAgente = () => {
   }
 
   const handleFiltro = (where) => {
-    setEstado(false)
-    setEstadoLoading(true)
-    setMensagem("")
-    const requisicao = createAPI();
-    const base64 = btoa(where)
-    requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
-      if (response.data.data.length !== 0){
-      setEstadoLoading(false)
-      setEstado(false)
+  setEstado(false);
+  setEstadoLoading(true);
+  setMensagem("");
+  setMostrarColunasCompletas(true);
+  const requisicao = createAPI();
+  const base64 = btoa(where);
+  
+  requisicao.get(`/notificacao/?query=${base64}`).then((response) => {
+    console.log('reload: ',response.data);
+    if (response.data.data?.length > 0) {
       const newData = response.data.data.map((item) => ({
-        data: ArrumaHora3(item.data),
-        placa: item.veiculo.placa,
-        cancelada: item.cancelada,
-        cancelada_motivo: item.cancelada_motivo,
-        vaga: item.vaga,
-        pendente: item.pago === 'S' ? 'Quitado' : 'Pendente',
-        fabricante: item.veiculo.modelo.fabricante.nome,
-        modelo: item.veiculo.modelo.nome,
-        tipo: item.tipo_notificacao.nome,
-        valor: item.valor,
-        cor : item.veiculo.cor,
-        id_vaga_veiculo: item.id_vaga_veiculo,
-        id_notificacao: item.id_notificacao,
-        monitor: item.monitor.nome,
-        hora: ArrumaHora2(item.data),
+        // Mapeamento para o formato do FILTRO
+        placa: item.veiculo?.placa || 'N/A',
+        vaga: item.vaga || 'N/A',
+        endereco: item.local || 'N/A', // campo "local" no filtro
+        data: item.data ? ArrumaHora3(item.data) : 'N/A',
+        cancelada: item.cancelada || 'N',
+        pendente: item.pago === 'S' ? 'Quitado' : 'Pendente', // usa "pago" no filtro
+        fabricante: item.veiculo?.modelo?.fabricante?.nome || 'N/A',
+        modelo: item.veiculo?.modelo?.nome || 'N/A',
+        tipo: item.tipo_notificacao?.nome || 'N/A', // campo "tipo_notificacao" no filtro
+        valor: item.valor || 0,
+        cor: item.veiculo?.cor || 'N/A',
+        id_vaga_veiculo: item.id_vaga_veiculo || null,
+        id_notificacao: item.id_notificacao || null,
+        monitor: item.monitor?.nome || 'N/A', // objeto "monitor" no filtro
+        hora: item.data ? ArrumaHora2(item.data) : 'N/A',
+        notificacoesPendentes: 0 // não existe no filtro, coloquei 0 como padrão
       }));
-      setData(newData)
+      
+      setData(newData);
+    } else {
+      setData([]);
+      setEstado(true);
+      setMensagem("Não há notificações para exibir");
     }
-    else {
-      setEstadoLoading(false)
-      setData([])
-      setEstado(true)
-      setMensagem("Não há notificações para exibir")
-    }
+    setEstadoLoading(false);
   }).catch((error) => {
     if(error?.response?.data?.msg === "Cabeçalho inválido!" 
     || error?.response?.data?.msg === "Token inválido!" 
@@ -215,56 +236,99 @@ const ListarNotificacoesAgente = () => {
                 <div className="card border-0 shadow">
                   <div className="table-responsive">
                     <table className="table align-items-center table-flush">
-                      <thead className="thead-light">
-                        <tr>
-                        <th className="border-bottom" id="tabelaUsuarios" scope="col" onClick={()=>{handleSort()}}>
-                            Data {sortAsc ? <AiOutlineArrowUp className="mb-1" size={15} /> : <AiOutlineArrowDown className="mb-1" size={15} />}
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios" scope="col">
-                            Placa
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios" scope="col">
-                            Vaga
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Estado
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Fabricante
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Modelo
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Tipo
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Valor
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Hora
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-
-                    {currentItems.map((item, index) => (
-                        <tr key={index} onClick={()=>{mostrar(item)}}>
-                          <td>{item.data}</td>
-                          <td>{item.placa}</td>
-                          <td> {item.vaga}</td>
-                          <td id="tabelaUsuarios2" style={
-                            item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}
-                          }> {item.pendente}</td>
-                          <td id="tabelaUsuarios2">{item.fabricante}</td>
-                          <td id="tabelaUsuarios2">{item.modelo}</td>
-                          <td id="tabelaUsuarios2">{item.tipo}</td>
-                          <td id="tabelaUsuarios2">{item.valor}</td>
-                          <td id="tabelaUsuarios2">{item.hora}</td>
-                        </tr>
-                    ))}
-                      </tbody>
-                    </table>
+                    <thead className="thead-light">
+                      <tr>
+                        {mostrarColunasCompletas ? (
+                          <>
+                            <th className="border-bottom" scope="col" onClick={() => handleSort()}>
+                              Data {sortAsc ? <AiOutlineArrowUp className="mb-1" size={15} /> : <AiOutlineArrowDown className="mb-1" size={15} />}
+                            </th>
+                            <th className="border-bottom" scope="col">Hora</th>
+                            <th className="border-bottom" scope="col">Placa</th>
+                            <th className="border-bottom" scope="col">Vaga</th>
+                            <th className="border-bottom" scope="col">Estado</th>
+                            <th className="border-bottom" scope="col">Fabricante</th>
+                            <th className="border-bottom" scope="col">Modelo</th>
+                            <th className="border-bottom" scope="col">Tipo</th>
+                            <th className="border-bottom" scope="col">Valor</th>
+                            <th className="border-bottom" scope="col">Ação</th>
+                          </>
+                        ) : (
+                          <>
+                            <th className="border-bottom" scope="col">Placa</th>
+                            <th className="border-bottom" scope="col">Vaga</th>
+                            <th className="border-bottom" scope="col">Notificações Pendentes</th>
+                            <th className="border-bottom" scope="col">Endereço</th>
+                            <th className="border-bottom" scope="col">Ação</th>
+                          </>
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentItems.map((item, index) => {
+                        if (!item) return null; // Ignora itens nulos
+                        
+                        return (
+                          <tr key={index}>
+                            {mostrarColunasCompletas ? (
+                              <>
+                                <td>{item.data}</td>
+                                <td>{item.placa}</td>
+                                <td>{item.vaga}</td>
+                                <td style={item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}}>
+                                  {item.pendente}
+                                </td>
+                                <td>{item.fabricante}</td>
+                                <td>{item.modelo}</td>
+                                <td>{item.tipo}</td>
+                                <td>{item.valor}</td>
+                                <td>{item.hora}</td>
+                              </>
+                            ) : (
+                              <>
+                                <td>{item.placa}</td>
+                                <td>{item.vaga}</td>
+                                <td style={{ color: 'red' }}>{item.notificacoesPendentes}</td>
+                                <td>{item.endereco}</td>
+                                <td>
+                                  <div style={{ display: 'flex', gap: '10px' }}>
+                                    {window.innerWidth < 768 ? (
+                                      <AiOutlineInfoCircle 
+                                        className="cursor-pointer hover:text-blue-500" 
+                                        style={{ fontSize: '1.2rem' }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          mostrar(item);
+                                        }} 
+                                      />
+                                    ) : (
+                                      <TfiWrite 
+                                        className="cursor-pointer hover:text-blue-500" 
+                                        style={{ fontSize: '1.2rem' }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          localStorage.setItem('autoInfracao', JSON.stringify(item));
+                                          FuncTrocaComp('AutoInfracao');
+                                        }}
+                                      />
+                                    )}
+                                    <IconMapSearch 
+                                      className="cursor-pointer hover:text-blue-500" 
+                                      style={{ fontSize: '1.2rem' }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        abrirMapa(item);
+                                      }}
+                                    />
+                                  </div>
+                                </td>
+                              </>
+                            )}
+                            </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                   </div>
                   <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                         {mensagem}
@@ -279,6 +343,10 @@ const ListarNotificacoesAgente = () => {
               </div>
 
             </div>
+            {/* Modal do Mapa - NOVO CÓDIGO */}
+            <Modal size="xl" opened={opened} onClose={close} title="Endereço no mapa" centered>
+                <Mapa address={`${enderecoMapa}, Centro, Taquara, RS, 95600000`} />
+            </Modal>
             <Group position="center" mb="md">
                 <Pagination value={currentPage} size="sm" onChange={handlePageChange} total={Math.floor(data.length / 50) === data.length / 50 ? data.length / 50 : Math.floor(data.length / 50) + 1} limit={itemsPerPage} />
             </Group>
