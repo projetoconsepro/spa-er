@@ -31,23 +31,7 @@ const AutoInfracao = () => {
   const [imagemLocal, setImagemLocal] = useState("");
 
   useEffect(() => {
-    // Proteção contra dados inválidos no localStorage para evitar erro em tempo de execução
-    // Redireciona de volta para a tela de notificações se o dado estiver ausente ou malformado
-    let infos = null;
-
-    try {
-      const raw = localStorage.getItem("autoInfracao");
-      infos = raw ? JSON.parse(raw) : null;
-    } catch (e) {
-      console.warn("Erro ao interpretar localStorage.autoInfracao:", e);
-    }
-
-    if (!infos || !infos.placa) {
-      console.warn("Fallback automático: autoInfracao ausente ou inválido.");
-      FuncTrocaComp("ListaAutoInfracao");
-      return;
-    }
-
+    let infos = JSON.parse(localStorage.getItem("autoInfracao"));
     setData([infos]);
 
     const requisicao = createAPI();

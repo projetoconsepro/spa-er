@@ -2,7 +2,6 @@ import { React, useState, useEffect } from "react";
 import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
 import Swal from "sweetalert2";
 import moment from "moment";
-import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
@@ -91,21 +90,23 @@ const ListarNotificacoesAgente = () => {
     setEstado(false);
     setMensagem("");
     setMostrarColunasCompletas(false);
+    setEstadoLoading(true);
     const requisicao = createAPI();
+
     requisicao
       .get("/notificacao")
       .then((response) => {
-        if (response.data.msg.resultado) {
-          const rawData = response.data.data;
-          // Diagnóstico de valores nulos ou inesperados
-          rawData.forEach((item, i) => {
-            if (!item) {
-              console.warn(`Item nulo no índice ${i}`);
-            } else if (!item.placa) {
-              console.warn(`Item sem placa no índice ${i}:`, item);
-            }
-          });
+        const rawData = response.data.data;
 
+        rawData.forEach((item, i) => {
+          if (!item) {
+            console.warn(`Item nulo no índice ${i}`);
+          } else if (!item.placa) {
+            console.warn(`Item sem placa no índice ${i}:`, item);
+          }
+        });
+
+        if (response.data.msg.resultado && rawData.length > 0) {
           const newData = rawData
             .filter((item) => item && item.placa)
             .map((item) => ({
@@ -127,14 +128,15 @@ const ListarNotificacoesAgente = () => {
               monitor: item.monitor,
               hora: ArrumaHora2(item.hora),
             }));
-          setEstadoLoading(false);
           setData(newData);
+          setEstado(false);
         } else {
           setData([]);
-          setEstadoLoading(false);
           setEstado(true);
           setMensagem("Não há notificações para exibir");
         }
+
+        setEstadoLoading(false);
       })
       .catch((error) => {
         if (
@@ -186,10 +188,10 @@ const ListarNotificacoesAgente = () => {
     requisicao
       .get(`/notificacao/?query=${base64}`)
       .then((response) => {
-        console.log("reload: ", response.data);
-        if (response.data.data?.length > 0) {
-          const newData = response.data.data.map((item) => ({
-            // Mapeamento para o formato do FILTRO
+        const rawData = response.data.data;
+
+        if (response.data.msg.resultado && rawData.length > 0) {
+          const newData = rawData.map((item) => ({
             placa: item.veiculo?.placa || "N/A",
             vaga: item.vaga || "N/A",
             endereco: item.local || "N/A",
@@ -208,11 +210,13 @@ const ListarNotificacoesAgente = () => {
             notificacoesPendentes: 0,
           }));
           setData(newData);
+          setEstado(false);
         } else {
           setData([]);
           setEstado(true);
           setMensagem("Não há notificações para exibir");
         }
+
         setEstadoLoading(false);
       })
       .catch((error) => {
@@ -230,6 +234,7 @@ const ListarNotificacoesAgente = () => {
         }
       });
   };
+
   return (
     <div className="dashboard-container">
       <p className="mx-3 text-start fs-4 fw-bold">Notificações</p>
@@ -479,7 +484,7 @@ const ListarNotificacoesAgente = () => {
                 >
                   {mensagem}
                 </div>
-                {data.length === 0 ? (
+                {estadoLoading ? (
                   <div>
                     <CarroLoading />
                   </div>
@@ -494,7 +499,6 @@ const ListarNotificacoesAgente = () => {
             title="Endereço no mapa"
             centered
           >
-            {console.log("Endereço passado para o mapa:", enderecoMapa)}
             <Mapa address={`${enderecoMapa}, Centro, Taquara, RS, 95600000`} />
           </Modal>
           <Group position="center" mb="md">
@@ -510,7 +514,21 @@ const ListarNotificacoesAgente = () => {
               limit={itemsPerPage}
             />
           </Group>
-          <VoltarComponente fallback="ListaAutoInfracao" />
+          <Button
+            className="bg-gray-500"
+            size="md"
+            radius="md"
+            onClick={() => {
+              localStorage.setItem(
+                "componenteAnterior",
+                localStorage.getItem("componente")
+              );
+              localStorage.setItem("componente", "ListaAutoInfracao");
+              window.location.reload();
+            }}
+          >
+            Voltar
+          </Button>
         </div>
       </div>
     </div>
