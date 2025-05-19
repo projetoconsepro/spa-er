@@ -1,6 +1,6 @@
+import { Button } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
-import BotaoPadrao from "./BotaoPadrao"; // ajuste o caminho conforme a estrutura do seu projeto
 
 const VoltarComponente = ({ space, arrow }) => {
   const [componenteAnterior, setComponenteAnterior] = useState("");
@@ -31,9 +31,16 @@ const VoltarComponente = ({ space, arrow }) => {
           }}
         />
       ) : (
-        <BotaoPadrao space={space} onClick={voltar}>
+        <Button
+          className={space ? "bg-gray-500 mx-2" : "bg-gray-500"}
+          size="md"
+          radius="md"
+          onClick={() => {
+            voltar();
+          }}
+        >
           Voltar
-        </BotaoPadrao>
+        </Button>
       )}
     </>
   );
