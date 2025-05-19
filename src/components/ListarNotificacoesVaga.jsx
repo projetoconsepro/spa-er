@@ -183,7 +183,7 @@ const ListarNotificacoesVaga = () => {
         <div className="col-12">
           <div className="row g-0">
             <div className="col-7 mx-2">
-             <p className="text-start fs-4 fw-bold mb-0">Notificações Emitidas Recentemente</p>
+             <p className="text-start fs-4 fw-bold mb-0">Veículos Sujeitos a Infrações</p>
             </div>
             <div className="col-2 text-end"></div>
             <div className="col-2 text-end">
