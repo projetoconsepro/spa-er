@@ -15,6 +15,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { Modal } from "@mantine/core";
 import { IconMapSearch } from "@tabler/icons-react";
 import Mapa from "../util/Mapa";
+import BotaoPadrao from "../util/BotaoPadrao"; // ajuste o caminho se necessário
+
 
 const ListarNotificacoesAgente = () => {
   const [data, setData] = useState([]);
@@ -431,7 +433,7 @@ const ListarNotificacoesAgente = () => {
                                 </td>
                                 <td className="coluna-mobile-hide">
                                   {item.endereco}
-                                </td>{" "}
+                                </td>
                                 {/* Esconde no mobile */}
                                 <td className="text-center">
                                   <div className="d-flex justify-content-center gap-3">
@@ -459,7 +461,7 @@ const ListarNotificacoesAgente = () => {
                                       />
                                     )}
                                     <IconMapSearch
-                                      strokeWidth={1.5}
+                                      strokeWidth={1.3}
                                       className="cursor-pointer hover:text-blue-500"
                                       style={{ fontSize: "1.2rem" }}
                                       onClick={(e) => {
@@ -514,10 +516,7 @@ const ListarNotificacoesAgente = () => {
               limit={itemsPerPage}
             />
           </Group>
-          <Button
-            className="bg-gray-500"
-            size="md"
-            radius="md"
+          <BotaoPadrao
             onClick={() => {
               localStorage.setItem(
                 "componenteAnterior",
@@ -528,7 +527,7 @@ const ListarNotificacoesAgente = () => {
             }}
           >
             Voltar
-          </Button>
+          </BotaoPadrao>
         </div>
       </div>
     </div>
