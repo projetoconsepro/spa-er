@@ -36,7 +36,6 @@ import VeiculosAdmin from '../../components/VeiculosAdmin';
 import ClientesAdmin from '../../components/ClientesAdmin';
 import OcupacaoVagasAdmin from '../../components/OcupacaoVagasAdmin';
 import TransferirCreditoCliente from '../../components/TransferirCreditoCliente';
-import VeiculosAgente from '../../components/VeiculosAgente';
 import PrestacaoContas from '../../components/PrestacaoContas';
 import ConfigurarPerfil from '../../components/ConfigurarPerfil';
 import EditarParametroAdmin from '../../components/EditarParametroAdmin';
@@ -61,6 +60,7 @@ import MapaCliente from '../../components/MapaCliente';
 import MapaAdmin from '../../components/MapaAdmin';
 import ListarMovimentosFinanceiros from '../../components/ListarMovimentosFinanceiros';
 import ListaInfracoesPendentesRemocao from '../../components/ListaInfracoesPendentesRemocao.jsx';
+import ListarNotificacoesVaga from '../../components/ListarNotificacoesVaga.jsx';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -100,7 +100,6 @@ const componentesMap = {
     ClientesAdmin: <ClientesAdmin />,
     OcupacaoVagasAdmin: <OcupacaoVagasAdmin />,
     TransferirCreditoCliente: <TransferirCreditoCliente />,
-    VeiculosAgente: <VeiculosAgente />,
     PrestacaoContas: <PrestacaoContas />,
     ConfigurarPerfil: <ConfigurarPerfil />,
     EditarParametroAdmin: <EditarParametroAdmin />,
@@ -124,6 +123,7 @@ const componentesMap = {
     MapaAdmin: <MapaAdmin />,
     ListarMovimentosFinanceiros: <ListarMovimentosFinanceiros />,
     ListaInfracoesPendentesRemocao: <ListaInfracoesPendentesRemocao />,
+    ListarNotificacoesVaga: <ListarNotificacoesVaga />,
     Error: <Error />,
 };
 
