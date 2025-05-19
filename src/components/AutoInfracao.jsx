@@ -103,9 +103,12 @@ const AutoInfracao = () => {
   };
 
   const confirmarInfracao = () => {
-
     if (codigo === "") {
-      Swal.fire("Aviso!", "Necessário informar o código ( Auto de Infração - DETRAN )!", "warning");
+      Swal.fire(
+        "Aviso!",
+        "Necessário informar o código ( Auto de Infração - DETRAN )!",
+        "warning"
+      );
       return;
     }
     const requisicao = createAPI();
@@ -251,12 +254,12 @@ const AutoInfracao = () => {
                 </Text>
               </Group>
             )}
-              <Group position="apart">
-                <Text size={20}>
-                  {" "}
-                  <FaParking className="mb-1" />  Local: {data[0].local}{" "}
-                </Text>
-              </Group>
+            <Group position="apart">
+              <Text size={20}>
+                {" "}
+                <FaParking className="mb-1" /> Local: {data[0].local}{" "}
+              </Text>
+            </Group>
             {item.fabricante === undefined ||
             item.modelo === undefined ? null : (
               <div className="text-start">
