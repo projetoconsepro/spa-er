@@ -43,7 +43,10 @@ import { IconPlugConnected } from "@tabler/icons-react";
 import ConfigImpressora from "../util/ConfigImpressora";
 import { TbReportMoney } from "react-icons/tb";
 import { PiListChecksFill } from "react-icons/pi";
-import { AiFillWarning } from "react-icons/ai";const Sidebar = () => {
+import { AiFillWarning } from "react-icons/ai";
+
+const Sidebar = () => {
+
   const nome = localStorage.getItem("user");
   const teste = JSON.parse(nome);
   const [mostrarSidebar, setMostrarSidebar] = useState(true);
