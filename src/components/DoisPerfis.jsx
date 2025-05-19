@@ -38,7 +38,7 @@ const DoisPerfis = () => {
     } else if (analiseFeita.perfil[0] === "admin") {
       FuncTrocaComp("Dashboard");
     } else if (analiseFeita.perfil[0] === "agente") {
-      FuncTrocaComp("ListarNotificacoesAgente");
+      FuncTrocaComp("ListarNotificacoesVaga");
     }
   }
 
@@ -54,7 +54,7 @@ const DoisPerfis = () => {
     } else if (analiseFeita.perfil[0] === "admin") {
       FuncTrocaComp("Dashboard");
     } else if (analiseFeita.perfil[0] === "agente") {
-      FuncTrocaComp("ListarNotificacoesAgente");
+      FuncTrocaComp("ListarNotificacoesVaga");
     }
   };
   return (
