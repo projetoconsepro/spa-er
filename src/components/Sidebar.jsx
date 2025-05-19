@@ -42,7 +42,8 @@ import { FcIdea } from "react-icons/fc";
 import { IconPlugConnected } from "@tabler/icons-react";
 import ConfigImpressora from "../util/ConfigImpressora";
 import { TbReportMoney } from "react-icons/tb";
-const Sidebar = () => {
+import { PiListChecksFill } from "react-icons/pi";
+import { AiFillWarning } from "react-icons/ai";const Sidebar = () => {
   const nome = localStorage.getItem("user");
   const teste = JSON.parse(nome);
   const [mostrarSidebar, setMostrarSidebar] = useState(true);
@@ -245,12 +246,12 @@ const Sidebar = () => {
       });
   } else if (teste.perfil[0] === "agente") {
 
-      const agenteLinks = [
-          { icon: <BsConeStriped />, name: "‎ Listar Notificações", componente: "ListarNotificacoesAgente" },
-          { icon: <FaParking />, name: "‎ Veículos Estacionados", componente: "VeiculosAgente" },
-          { icon: <FaClipboardList />, name: "‎ Autos de Infração", componente: "ListaAutoInfracao" },
-          { icon: <FaClipboardList />, name: "‎ Infrações para Remover", componente: "ListaInfracoesPendentesRemocao" }
-      ];
+    const agenteLinks = [
+      { icon: <BsConeStriped />, name: "‎ Todas as Notificações", componente: "ListarNotificacoesAgente" },      
+      { icon: <AiFillWarning />, name: "‎ Veículos para Autuação", componente: "ListarNotificacoesVaga" },
+      { icon: <PiListChecksFill />, name: "‎ Infrações Emitidas", componente: "ListaAutoInfracao" },
+      { icon: <FaClipboardList />, name: "‎ Infrações para Remover", componente: "ListaInfracoesPendentesRemocao" }
+  ];
 
       agenteLinks.forEach(link => {
           commonLinks.push({ className: commonStyles, ...link });
