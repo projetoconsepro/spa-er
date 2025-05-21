@@ -15,6 +15,7 @@ import { Button } from "@mantine/core";
 import ModalErroBanco from "./ModalErroBanco";
 import { ArrumaHora } from "../util/ArrumaHora";
 import { verificaValidadeInfracao } from "../util/verificaValidadeInfracao";
+import { Modal } from "@mantine/core";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -33,99 +34,119 @@ const Irregularidades = () => {
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
   const [validacoes, setValidacoes] = useState({});
+  const [infoPendencias, setInfoPendencias] = useState({ placa: '', total: '', quantidade: 0 });
+  const [modalPendencias, setModalPendencias] = useState(false);
+  const [indexInfo, setindexInfo] = useState("");
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
+const handlePagar = (index) => {
+  const placa = data[index].placa;
+  const pendentes = data.filter(
+    (item) =>
+      item.placa === placa &&
+      item.pago === "N" &&
+      !(item.infracao === 'S' && validacoes[item.id_notificacao] === false)
+  );
 
-  const regularizar = async (index) => {
-    const isValido = data[index].infracao === 'S' 
-    ? await verificaValidadeInfracao(data[index].data_infracao) 
-    : null;
+  if (pendentes.length > 1) {
+     const total = pendentes.reduce(
+      (acc, item) => acc + parseFloat(item.valor.toString().replace(",", ".")),
+      0
+    );
+    setInfoPendencias({
+      placa,
+      total: total.toFixed(2).replace(".", ","),
+      quantidade: pendentes.length,
+      ids: pendentes.map(item => item.id_vaga_veiculo)
+    });
+    data[index].total = total;
+    setModalPendencias(true);
+  }else{
+    data[index].total = data[index].valor;
+    regularizar(index);
+  }
+  
 
-    setValidacoes((prev) => ({
-      ...prev,
-      [data[index].id_notificacao]: isValido,
-    }));
+  
+  setindexInfo(index);
+};
 
-    if (isValido=== false) {
-      return;
+const regularizar = async (index) => {
+  setLoadingButton(true);
+  const select = document.getElementById("pagamentos").value;
+  
+  const idsParaRegularizar = infoPendencias.ids || [data[index].id_vaga_veiculo];
+  
+  const validacoesResult = {};
+  for (const id of idsParaRegularizar) {
+    const item = data.find(d => d.id_vaga_veiculo === id);
+    if (item.infracao === 'S') {
+      validacoesResult[id] = await verificaValidadeInfracao(item.data_infracao);
+      if (validacoesResult[id] === false) {
+        setLoadingButton(false);
+        return;
+      }
     }
-    setLoadingButton(true);
-    const select = document.getElementById("pagamentos").value;
-    if (select === "credito") {
+  }
+
+  if (select === "credito") {
       let numeroCorrigido = saldoCredito.replace(".", "");
       numeroCorrigido = parseFloat(numeroCorrigido.replace(",", "."));
-      if (parseFloat(numeroCorrigido) < parseFloat(data[index].valor)) {
-        setLoadingButton(false);
-        Swal.fire({
-          icon: "error",
-          title: "Saldo insuficiente",
-          footer: '<a href="">Clique aqui para adicionar crédito.</a>',
-        });
-      } else {
-        FuncRegularizao(data[index].id_vaga_veiculo, index, select);
-      }
-    } else {
-      const valor = data[index].valor.toString();
-      const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
-      const requisicao = createAPI();
+      if (parseFloat(numeroCorrigido) < parseFloat(data[index].total)) {
 
-      const campo = {
-        id_vaga_veiculo: data[index].id_vaga_veiculo,
-        tipoPagamento: "pix",
-      };
-
-      requisicao
-        .post("/gerarcobranca", {
-          valor: valor2,
-          campo: JSON.stringify(campo),
-        })
-        .then((resposta) => {
-          if (resposta.data.msg.resultado) {
-            setData2(resposta.data.data);
-            getInfoPix(resposta.data.data.txid, index);
-            open();
-            setOnOpen(true);
-          } else {
-          }
-        })
-        .catch((err) => {
-          setLoadingButton(false);
-          setOnOpenError(true);
-        });
+      setLoadingButton(false);
+      Swal.fire({
+        icon: "error",
+        title: "Saldo insuficiente",
+        footer: '<a href="">Clique aqui para adicionar crédito.</a>',
+      });
+      return;
     }
-  };
-
-  async function getInfoPix(TxId, index) {
+    
+    for (const id of idsParaRegularizar) {
+      await FuncRegularizao(id, null, select); 
+    }
+    
+    const newData = data.map(item => {
+      if (idsParaRegularizar.includes(item.id_vaga_veiculo)) {
+        return {...item, pago: "S"};
+      }
+      return item;
+    });
+    setData(newData);
+    
+    setLoadingButton(false);
+    setModalPendencias(false);
+    Swal.fire({
+      title: "Regularizado!",
+      text: `Todas as ${idsParaRegularizar.length} notificações foram regularizadas.`,
+      icon: "success",
+      timer: 2000,
+    });
+    setModalPendencias(false);
+  } else {
+    const valor = infoPendencias.total 
+      ? infoPendencias.total.replace(",", ".")
+      : data[index].total.toString().replace(",", ".");
+    
+    const valor2 = parseFloat(valor).toFixed(2);
     const requisicao = createAPI();
-    await requisicao
-      .put(`/notificacao/pix`, {
-        txid: TxId,
+
+
+    requisicao
+      .post("/gerarcobranca", {
+        valor: valor2,
+        campo: JSON.stringify(idsParaRegularizar),
       })
-      .then((response) => {
-        if (response.data.msg.resultado) {
-          setLoadingButton(false);
-          setOnOpen(false);
-          Swal.fire({
-            title: "Regularizado!",
-            text: "A notificação foi regularizada.",
-            icon: "success",
-            timer: 2000,
-          });
-          if (index !== undefined) {
-            FuncTrocaComp("MeusVeiculos");
-            data[index].pago = "S";
-            setData([...data]);
-          } else {
-            FuncTrocaComp("MeusVeiculos");
-            startNotificao();
-          }
-        } else {
-          setLoadingButton(false);
-          setNotification(false);
-          setPixExpirado("Pix expirado");
+      .then((resposta) => {
+        if (resposta.data.msg.resultado) {
+          setData2(resposta.data.data);
+          getInfoPix(resposta.data.data.txid, idsParaRegularizar);
+          open();
+          setOnOpen(true);
         }
       })
       .catch((err) => {
@@ -133,46 +154,78 @@ const Irregularidades = () => {
         setOnOpenError(true);
       });
   }
+};
+
+async function getInfoPix(TxId, idsParaRegularizar) {
+  const requisicao = createAPI();
+  await requisicao
+    .post(`/notificacao/verificar/pix`, {
+        txid: TxId ? TxId : "",
+        notificacoes: idsParaRegularizar,
+        formaPagamento: "pix"
+    })
+    .then((response) => {
+      if (response.data.msg.resultado) {
+        setLoadingButton(false);
+        setOnOpen(false);
+        setModalPendencias(false);
+        Swal.fire({
+          title: "Regularizado!",
+          text: `Todas as ${idsParaRegularizar.length} notificações foram regularizadas.`,
+          icon: "success",
+          timer: 2000,
+        });
+        
+        const newData = data.map(item => {
+          if (idsParaRegularizar.includes(item.id_vaga_veiculo)) {
+            return {...item, pago: "S"};
+          }
+          return item;
+        });
+        setData(newData);
+      } else {
+        setLoadingButton(false);
+        setNotification(false);
+        setPixExpirado("Pix expirado");
+      }
+    })
+    .catch((err) => {
+      setLoadingButton(false);
+      setOnOpenError(true);
+    });
+}
 
 
   const onClose = () => {
     setLoadingButton(false);
   };
 
-  const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
-    const requisicao = createAPI();
+ const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
+  const requisicao = createAPI();
 
-    requisicao
-      .put("/notificacao/", {
-        id_vaga_veiculo: idVagaVeiculo,
-        tipoPagamento: pagamento,
-      })
-      .then((response) => {
-        if (response.data.msg.resultado) {
-          SaldoCredito();
+  requisicao
+    .put("/notificacao/", {
+      id_vaga_veiculo: idVagaVeiculo,
+      tipoPagamento: pagamento,
+    })
+    .then((response) => {
+      if (response.data.msg.resultado) {
+        SaldoCredito();
+        if (index !== null) {
           setLoadingButton(false);
-          Swal.fire({
-            title: "Regularizado!",
-            text: "A notificação foi regularizada.",
-            icon: "success",
-            timer: 2000,
-          });
-          if (index !== undefined) {
-            data[index].pago = "S";
-            setData([...data]);
-          } else {
-            startNotificao();
-          }
-        } else {
-          setLoadingButton(false);
-          setEstado(true);
-          setMensagem(response.data.msg.msg);
-          setTimeout(() => {
-            setEstado(false);
-            setMensagem("");
-          }, 5000);
+          data[index].pago = "S";
+          setData([...data]);
         }
-      })
+      } else {
+        setLoadingButton(false);
+        setEstado(true);
+        setMensagem(response.data.msg.msg);
+        setTimeout(() => {
+          setEstado(false);
+          setMensagem("");
+        }, 5000);
+      }
+    })
       .catch((error) => {
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
@@ -401,6 +454,26 @@ const Irregularidades = () => {
 
   return (
     <div className="col-12 px-3 mb-4">
+      <Modal
+        opened={modalPendencias}
+        onClose={() => setModalPendencias(false)}
+        title="Pendências na Placa"
+        centered
+      >
+       <div>
+  <p>
+    A placa <b>{infoPendencias.placa}</b> possui <b>{infoPendencias.quantidade}</b> notificações de estacionamento pendentes.<br />
+    Para realizar a regularização, é necessário quitar todas as pendências desta placa de forma conjunta.
+  </p>
+  <p>
+    <b>Valor total:</b> R$ {infoPendencias.total}
+  </p>
+  <Button fullWidth onClick={() => regularizar(indexInfo)} mt={10}>
+    Regularizar
+  </Button>
+</div>
+
+      </Modal>
       <p className="text-start fs-2 fw-bold mt-3">
         <VoltarComponente arrow={true} /> Notificações:
       </p>
@@ -431,130 +504,90 @@ const Irregularidades = () => {
       </div>
 
       {data.map((link, index) => (
-        <div className="card border-0 shadow mt-2 mb-3" key={index}>
+        <div className="card border-0 shadow mt-2 mb-0" key={index}>
           <div
             className={
-              link.pago === "S"
-                ? "card-body10 mb-4 pb-0"
-                : link.estado && link.infracao === 'S' && !validacoes[link.id_notificacao] === true
-                  ? "card-body13 mb-3"
-                  : "card-body9 mb-3"
+              link.pago === "S" && link.estado === false
+                ? "card-body10 pb-0 mb-4"
+                : link.pago === "S" && link.estado === true
+                  ? "card-body10 pb-0 mb-3"
+                  : link.estado && link.infracao === 'S' && !validacoes[link.id_notificacao] === true
+                    ? "card-body13 mb-3"
+                    : "card-body9 mb-3"
             }
             onClick={() => (link.pago === "S" ? atualiza(index) : null)}
           >
             <div className="d-flex align-items-center justify-content-between">
               <div>
-                <div className="h2 mb-3 d-flex align-items-center">
-                  {link.placa}
-                </div>
-                <div
-                  className="h6 mt-2 d-flex align-items-center fs-6"
-                  id="estacionadocarro"
-                >
-                  <h6>
-                    {" "}
-                    <div className="d-flex align-items-center mb-2">
-                      <BsCalendarDate />‎ ‎ <span>{link.data}</span></div>
-                  </h6>
-                </div>
-                {link.estado ? (
-                  <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" ||
-                      link.tipo_notificacao === "Ocupando vaga de idoso" ? (
-                      <h6 className="text-start m-0">
-                        {" "}
 
-                        <FaClipboardList />‎ ‎ " "}
-                        <small className="ms-1 flex-wrap">Motivo: {link.tipo_notificacao}</small>
+                <div className="d-flex flex-column gap-2">
 
-                      </h6>
-                    ) : (
-                      <h6 className="text-start m-0">
-                        {" "}
-
-                        <FaClipboardList />‎ ‎
-                        {window.innerWidth <= 360 ? (
-                          <small className="ms-1 flex-wrap">Motivo: {link.tipo_notificacao}</small>
-                        ) : (
-                          `Motivo: ${link.tipo_notificacao}`
-                        )}
-
-                      </h6>
-                    )}
+                  <div className="h2 d-flex align-items-center">
+                    {link.placa}
                   </div>
-                ) : (
-                  <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" ||
-                      link.tipo_notificacao === "Ocupando vaga de idoso" ? (
-                      <h6>
-                        {" "}
-                        <div className="d-flex align-items-center">
-                          <FaClipboardList />‎ ‎ {" "}
-                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '200px' }}>Motivo: {link.tipo_notificacao}</small>
-                        </div>
-                      </h6>
-                    ) : (
-                      <h6>
-                        {" "}
-                        <div className="d-flex align-items-center">
-                          <FaClipboardList />‎ ‎
-                          {window.innerWidth <= 360 ? (
-                            <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '160px' }}>Motivo: {link.tipo_notificacao}</small>
-                          ) : (
-                            `Motivo: ${link.tipo_notificacao}`
-                          )}</div>
-                      </h6>
-                    )}
+
+                  <div className="h6 d-flex align-items-center">
+                    <BsCalendarDate className="me-2" />
+                    {link.data}
                   </div>
-                )}
-                <div className="h6 d-flex align-items-center fs-6">
-                  <div className={
-                    link.estado
-                      ? "d-flex align-items-center mt-2"
-                      : "d-flex align-items-center mt-1"
-                  }>
-                    <FaClipboardList />‎ ‎  <span>Status:</span> {" "}
-                    <h6
-                      className={
-                        link.pago === "S"
-                          ? "text-success mt-3 mx-1 "
-                          : "text-danger mt-2 mx-1"
-                      }
+
+                  <div className="h6 d-flex align-items-center fs-6">
+                    <FaClipboardList className="me-2 flex-shrink-0" />
+                    <span
+                      className={`
+        ${!link.estado ? "text-truncate d-block" : ""} 
+        ${window.innerWidth <= 360 ? "w-auto" : ""}
+      `}
+                      style={{
+                        maxWidth: '220px',
+                        fontSize:
+                          link.tipo_notificacao.includes("deficiente") || link.tipo_notificacao.includes("idoso") || link.tipo_notificacao.includes("excedido")
+                            ? (link.estado ? '0.85rem' : '1rem')
+                            : '1rem'
+                      }}
                     >
-                      {" "}
-                      {link.pago === "S"
-                        ? "Quitado"
-                        : link.infracao === 'S' && validacoes[link.id_notificacao] === false
-                          ? "Autuado"
-                          : "Pendente"
-                      }
-                    </h6>   </div>
-
-                </div>{link.estado && link.infracao === 'S' && validacoes[link.id_notificacao] === false ? (
-                  <div>
-                    <div className="d-flex align-items-center mb-2">
-                      <h6><FaParking />‎ ‎ Vaga: {link.vaga}</h6>
+                      Motivo: {link.tipo_notificacao}
+                    </span>
+                  </div>
+                  <div className="h6 d-flex align-items-center">
+                    <FaClipboardList className="me-2 align-self-start" style={{ marginTop: "2px" }} />
+                    <span>
+                      Status:{" "}
+                      <span className={link.pago === "S" ? "text-success mx-1" : "text-danger mx-1"}>
+                        {link.pago === "S" ? "Quitado" : "Pendente"}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                {link.estado && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
+                  <>
+                    <div className="d-flex flex-column gap-2 mt-2 mb-3">
+                      <div className="h6 d-flex align-items-center">
+                        <FaParking className="me-2" />
+                        <span>Vaga: {link.vaga}</span>
+                      </div>
+                      <div className="h6 d-flex align-items-center">
+                        <FaCarAlt className="me-2" />
+                        <span>Modelo: {link.modelo}</span>
+                      </div>
+                      <div className="h6 d-flex align-items-center">
+                        <BsCashCoin className="me-2" />
+                        <span>Valor: R${link.valor}</span>
+                      </div>
                     </div>
-                    <div className="d-flex align-items-center mb-2">
-                      <h6><FaCarAlt />‎ ‎  Modelo: {link.modelo}</h6>
-                    </div>
-                    <div className="d-flex align-items-center mb-3">
-                      <h6><BsCashCoin />‎ ‎  Valor: R${link.valor}</h6>
-                    </div>
-                  </div>) : null}
+                  </>
+                )}
               </div>
+
               <div>
                 {link.pago === "N" ? (
-                  <div className="d-flex align-items-center fw-bold mb-6">
-                    <BiErrorCircle size={30} color="red" />
-                  </div>
+                  <BiErrorCircle size={30} color="red" />
                 ) : (
-                  <div className="d-flex align-items-center fw-bold mb-6">
-                    <AiFillCheckCircle size={30} color="green" />
-                  </div>
+                  <AiFillCheckCircle size={30} color="green" />
                 )}
               </div>
             </div>
+
             {link.estado && link.pago !== "S" && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
               <div className="alert alert-warning mb-2" style={{ width: 'calc(100%)' }}>
                 <div className="text-start">
@@ -563,15 +596,15 @@ const Irregularidades = () => {
                 </div>
               </div>
             )}
-            {link.pago === "N" ? (
-              <div className="row">
+
+            {link.pago === "N" && (
+              <div className="row mt-3">
                 <div className="col-12">
                   <Button
                     variant="outline"
                     color="red"
                     radius="md"
                     fullWidth
-                    className="mt-2"
                     leftIcon={
                       link.estado ? (
                         <IconX size={20} />
@@ -579,9 +612,7 @@ const Irregularidades = () => {
                         <BsConeStriped size={20} />
                       )
                     }
-                    onClick={() => {
-                      atualiza(index);
-                    }}
+                    onClick={() => atualiza(index)}
                   >
                     {link.estado
                       ? "Fechar"
@@ -589,40 +620,26 @@ const Irregularidades = () => {
                         ? "Abrir"
                         : "Regularize aqui"}
                   </Button>
-
                 </div>
               </div>
-            ) : null}
+            )}
           </div>
-          {link.estado && !(link.infracao === 'S' && validacoes[link.id_notificacao] === false) ? (
 
-            <div className="justify-content-between pb-3 mb-1">
-              <div
-                className="h6 align-items-start text-start px-4 mt-2"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <FaParking />‎ Vaga: {link.vaga}
-                </h6>
-              </div>
-              <div
-                className="h6 align-items-start text-start px-4"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <FaCarAlt />‎ Modelo: {link.modelo}
-                </h6>
-              </div>
-              <div
-                className="h6 align-items-start text-start px-4"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <BsCashCoin />‎ Valor: R${link.valor}
-                </h6>
+          {link.estado && !(link.infracao === 'S' && validacoes[link.id_notificacao] === false) && (
+            <div className="pb-3 mb-1">
+              <div className="d-flex flex-column gap-2 px-4">
+                <div className="h6 d-flex align-items-center">
+                  <FaParking className="me-2" />
+                  <span>Vaga: {link.vaga}</span>
+                </div>
+                <div className="h6 d-flex align-items-center">
+                  <FaCarAlt className="me-2" />
+                  <span>Modelo: {link.modelo}</span>
+                </div>
+                <div className="h6 d-flex align-items-center">
+                  <BsCashCoin className="me-2" />
+                  <span>Valor: R${link.valor}</span>
+                </div>
               </div>
 
               {link.pago === "S" ? null : (
@@ -647,7 +664,7 @@ const Irregularidades = () => {
                             gradient={{ from: "blue", to: "cyan" }}
                             fullWidth
                             onClick={() => {
-                              regularizar(index);
+                              handlePagar(index);
                             }}
                           >
                             Pagar
@@ -659,9 +676,10 @@ const Irregularidades = () => {
                 )
               )}
             </div>
-          ) : null}
+          )}
         </div>
       ))}
+
       <div
         className="alert alert-danger mt-4"
         role="alert"
