@@ -187,8 +187,8 @@ const Sidebar = () => {
               { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "ListarNotificacoesAdmin", className: commonStyles },
               { icon: <FaParking />, name: "‎ Estacionamentos", componente: "OcupacaoVagasAdmin", className: commonStyles }, 
               { icon: <FaRegChartBar />, name: "‎ Movimentos", componente: "ListarMovimentosAdmin", className: commonStyles },
+              { icon: <MdCarCrash />, name: "‎ Registro Débito", componente: "ListarLogsDebitoAuto", className: commonStyles },
               { icon: <FaChalkboardTeacher />, name: "‎ Ações Movimentos", componente: "ListarLogsMovimentosAdmin", className: commonStyles },
-
               { icon: <FaCar />, name: "‎ Veículos", componente: "ListagemMovimentoVeiculo", className: commonStyles },
               { icon: <FcIdea />, name: "‎ Sugestões", componente: "SugestoesAdmin", className: commonStyles },
             ]

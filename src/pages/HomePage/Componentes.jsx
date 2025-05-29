@@ -61,6 +61,7 @@ import MapaAdmin from '../../components/MapaAdmin';
 import ListarMovimentosFinanceiros from '../../components/ListarMovimentosFinanceiros';
 import ListaInfracoesPendentesRemocao from '../../components/ListaInfracoesPendentesRemocao.jsx';
 import ListarNotificacoesVaga from '../../components/ListarNotificacoesVaga.jsx';
+import ListarLogsDebitoAuto from '../../components/ListarLogsDebitoAuto.jsx';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -124,6 +125,7 @@ const componentesMap = {
     ListarMovimentosFinanceiros: <ListarMovimentosFinanceiros />,
     ListaInfracoesPendentesRemocao: <ListaInfracoesPendentesRemocao />,
     ListarNotificacoesVaga: <ListarNotificacoesVaga />,
+    ListarLogsDebitoAuto: <ListarLogsDebitoAuto />,
     Error: <Error />,
 };
 
