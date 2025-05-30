@@ -274,19 +274,19 @@ const ListarNotificacoesVaga = () => {
                           </>
                         ) : (
                           <>
-                            <th className="border-bottom" scope="col">
+                            <th className="border-bottom" scope="col" style={{ width: '8%' }}>
                               Placa
                             </th>
-                            <th className="border-bottom" scope="col">
+                            <th className="border-bottom" scope="col" style={{ width: '8%' }}>
                               Vaga
                             </th>
-                            <th className="border-bottom" scope="col">
-                              Notificações
+                            <th className="border-bottom" scope="col" style={{ width: '8%' }}>
+                              {window.innerWidth < 768 ? "Nº" : "Notificações"}
                             </th>
-                            <th className="border-bottom coluna-mobile-hide">
+                            <th className="border-bottom" scope="col" style={{ width: '20%' }}>
                               Endereço
                             </th>
-                            <th className="border-bottom" scope="col">
+                            <th className="border-bottom" scope="col" style={{ width: '10%' }}>
                               Ação
                             </th>
                           </>
@@ -366,8 +366,10 @@ const ListarNotificacoesVaga = () => {
                                 <td style={{ color: "red" }}>
                                   {item.notificacoesPendentes}
                                 </td>
-                                <td className="coluna-mobile-hide">
-                                  {item.endereco}
+                                <td className="" style={{ fontSize: "0.85em" }}>
+                                  <div style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
+                                    {item.endereco}
+                                  </div>
                                 </td>
                                 {/* Esconde no mobile */}
                                 <td className="text-center">
@@ -382,28 +384,26 @@ const ListarNotificacoesVaga = () => {
                                         }}
                                       />
                                     ) : (
-                                      <TfiWrite
-                                        className="cursor-pointer hover:text-blue-500"
-                                        style={{ fontSize: "1.2rem" }}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          localStorage.setItem(
-                                            "autoInfracao",
-                                            JSON.stringify(item)
-                                          );
-                                          FuncTrocaComp("AutoInfracao");
-                                        }}
-                                      />
+                                      <><TfiWrite
+                                            className="cursor-pointer hover:text-blue-500"
+                                            style={{ fontSize: "1.2rem" }}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              localStorage.setItem(
+                                                "autoInfracao",
+                                                JSON.stringify(item)
+                                              );
+                                              FuncTrocaComp("AutoInfracao");
+                                            } } /><IconMapSearch
+                                              strokeWidth={1.3}
+                                              className="cursor-pointer hover:text-blue-500"
+                                              style={{ fontSize: "1.2rem" }}
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                abrirMapa(item);
+                                              } } /></>
                                     )}
-                                    <IconMapSearch
-                                      strokeWidth={1.3}
-                                      className="cursor-pointer hover:text-blue-500"
-                                      style={{ fontSize: "1.2rem" }}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        abrirMapa(item);
-                                      }}
-                                    />
+                                  
                                   </div>
                                 </td>
                               </>
