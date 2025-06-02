@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Grafico from "./Grafico";
 import { Card, Grid, Group, Text } from "@mantine/core";
 import GraficoBola from "./GraficoBola";
+import GraficoDebito from "./GraficoDebito";
 import { Carousel } from "@mantine/carousel";
 import axios from "axios";
 import { AiOutlineInfoCircle } from "react-icons/ai";
@@ -150,7 +151,7 @@ const Dashboard = () => {
           <div className="col-12 mb-4 mt-4">
             <div className="row">
               <Group position="center">
-                <div className="card bg-white border-0 shadow divPers mx-2">
+                <div className="card bg-white border-0 shadow divPers ms-1">
                   <div
                     className={
                       window.innerWidth > 1474
@@ -166,7 +167,7 @@ const Dashboard = () => {
                   </div>
 
                 </div>
-                <div className="card bg-white border-0 shadow divPers mx-3">
+                <div className="card bg-white border-0 shadow divPers mx-1">
                   <div
                     className={
                       window.innerWidth > 1474
@@ -178,9 +179,28 @@ const Dashboard = () => {
                       Movimentos dos setores:
                     </h4>
                     <div className="row d-flex justify-content-center">
-                      <div className="col-12 w-50">
+                      <div className="col-12 " style={{ width: "23rem", height: "23rem" }} >
                         <div className="ct-chart-sales-value ct-double-octave ct-series-g">
                           <GraficoBola setores={setores} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                  <div className="card bg-white border-0 shadow divPers2 me-1">
+                  <div
+                    className={
+                      window.innerWidth > 1474
+                        ? "card-body8 p-4"
+                        : "card-body4 p-3"
+                    }
+                  >
+                    <h4 style={{ textAlign: "start", margin: "1rem" }}>
+                    </h4>
+                    <div className="row d-flex justify-content-center">
+                      <div className="col-12">
+                        <div >
+                          <GraficoDebito/>
                         </div>
                       </div>
                     </div>
@@ -215,6 +235,17 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+            </div>
+                        <div className="row mt-3">
+                    <div className="card bg-white border-0 shadow w-100">
+                        <div className="card-body8 px-4 py-5">
+                            <div className="row">
+                                <div className="ct-chart-sales-value ct-double-octave ct-series-g">
+                                    <GraficoDebito />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </div>
           </div>
         )}

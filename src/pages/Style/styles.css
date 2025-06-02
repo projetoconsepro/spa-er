@@ -118,7 +118,11 @@
   }
 
 .divPers{
-    width: 46% !important;
+    width: 37% !important;
+}
+
+.divPers2{
+    width: 22% !important;
 }
 
 .form-check-label{
