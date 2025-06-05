@@ -41,12 +41,12 @@ const GraficoDebito = () => {
     labels: dados.map(item => item.mes),
     datasets: [
       {
-        label: "Ativos",
+        label: "Ativações",
         data: dados.map(item => Number(item.debitos_ativados)),
         backgroundColor: "#4594E5",
       },
       {
-        label: "Inativos",
+        label: "Desativações",
         data: dados.map(item => Number(item.debitos_desativados)),
         backgroundColor: "#FA5F5F",
       },
@@ -56,7 +56,7 @@ const GraficoDebito = () => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    indexAxis: 'y',
+    indexAxis: 'x',
     plugins: { 
       legend: { 
         position: "top",
@@ -83,10 +83,10 @@ const GraficoDebito = () => {
 
   return (
     <div >
-      <h4 style={{ fontSize: 14, marginBottom: 8 }}>
-        Débitos Ativos: <span style={{ color: "#4594E5" }}>{totalAtivos}</span>
+      <h4 style={{ fontSize: 15, marginBottom: 9 }}>
+        Débitos Ativos <span style={{ color: "#4594E5" }}>{totalAtivos}</span>
       </h4>
-      <div style={{ width: "100%", height: "380px" }}>
+      <div style={{ width: "100%", height: "340px" }}>
         <Bar 
           data={chartData} 
           options={options}
