@@ -78,7 +78,7 @@ const Dashboard = () => {
       <div className="row">
         <Carousel
           slideGap="md"
-          height={200}
+          height={150}
           slideSize={window.innerWidth < 768 ? "90%" : "32.333333%"}
           dragFree
           align="center"
