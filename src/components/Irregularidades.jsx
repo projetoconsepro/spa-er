@@ -15,6 +15,7 @@ import { Button } from "@mantine/core";
 import ModalErroBanco from "./ModalErroBanco";
 import { ArrumaHora } from "../util/ArrumaHora";
 import { verificaValidadeInfracao } from "../util/verificaValidadeInfracao";
+import { MensagemCompra } from "../util/MensagemCompra";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -39,9 +40,14 @@ const Irregularidades = () => {
     setData([...data]);
   };
 
+  const buscarMensagem = async () => {
+    const texto = await MensagemCompra();
+    return texto;
+  };
+
   const regularizar = async (index) => {
-    const isValido = data[index].infracao === 'S' 
-    ? await verificaValidadeInfracao(data[index].data_infracao) 
+    const isValido = data[index].infracao === 'S'
+      ? await verificaValidadeInfracao(data[index].data_infracao) 
     : null;
 
     setValidacoes((prev) => ({
@@ -108,12 +114,21 @@ const Irregularidades = () => {
         if (response.data.msg.resultado) {
           setLoadingButton(false);
           setOnOpen(false);
-          Swal.fire({
-            title: "Regularizado!",
-            text: "A notificação foi regularizada.",
-            icon: "success",
-            timer: 2000,
+          buscarMensagem().then((texto) => {
+            Swal.fire({
+              title: "Regularizado!",
+              icon: "success",
+              timer: 5000,
+              html: `
+                        A notificação foi regularizada.<br>
+                        ${texto
+                  ? `<small style="display:block;margin-top:10px;color:#555;">${texto}</small>`
+                  : ""
+                }
+                      `,
+            })
           });
+
           if (index !== undefined) {
             FuncTrocaComp("MeusVeiculos");
             data[index].pago = "S";
@@ -151,12 +166,19 @@ const Irregularidades = () => {
         if (response.data.msg.resultado) {
           SaldoCredito();
           setLoadingButton(false);
-          Swal.fire({
+           buscarMensagem().then((texto) => {
+            Swal.fire({
             title: "Regularizado!",
-            text: "A notificação foi regularizada.",
+             html: `
+                        A notificação foi regularizada.<br>
+                        ${texto
+                  ? `<small style="display:block;margin-top:10px;color:#555;">${texto}</small>`
+                  : ""
+                }
+                      `,
             icon: "success",
-            timer: 2000,
-          });
+            timer: 5000,
+          }); });
           if (index !== undefined) {
             data[index].pago = "S";
             setData([...data]);
