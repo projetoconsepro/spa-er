@@ -103,9 +103,12 @@ const AutoInfracao = () => {
   };
 
   const confirmarInfracao = () => {
-
     if (codigo === "") {
-      Swal.fire("Aviso!", "Necessário informar o código ( Auto de Infração - DETRAN )!", "warning");
+      Swal.fire(
+        "Aviso!",
+        "Necessário informar o código ( Auto de Infração - DETRAN )!",
+        "warning"
+      );
       return;
     }
     const requisicao = createAPI();
@@ -219,7 +222,7 @@ const AutoInfracao = () => {
               </Text>
             </Group>
             {item.tipo !== undefined ? (
-              <Group position="apart">
+              <div className="text-start">
                 {item.tipo !== "Ocupando vaga de deficiente" &&
                 item.tipo !== "Ocupando vaga de idoso" ? (
                   <Text size={20}>
@@ -233,7 +236,7 @@ const AutoInfracao = () => {
                     <small> Motivo: {item.tipo} </small>{" "}
                   </Text>
                 )}
-              </Group>
+              </div>
             ) : null}
             <Divider my="sm" size="md" variant="dashed" />
             <Group position="apart">
@@ -251,21 +254,21 @@ const AutoInfracao = () => {
                 </Text>
               </Group>
             )}
-              <Group position="apart">
-                <Text size={20}>
-                  {" "}
-                  <FaParking className="mb-1" />  Local: {data[0].local}{" "}
-                </Text>
-              </Group>
+            <Group position="apart">
+              <Text size={20}>
+                {" "}
+                <FaParking className="mb-1" /> Local: {data[0].local}{" "}
+              </Text>
+            </Group>
             {item.fabricante === undefined ||
             item.modelo === undefined ? null : (
-              <Group position="apart">
+              <div className="text-start">
                 <Text size={20}>
                   {" "}
                   <FaCarAlt className="mb-1" /> Modelo: {item.fabricante} (
                   {item.modelo}){" "}
                 </Text>
-              </Group>
+              </div>
             )}
             <Group position="apart">
               <Text size={20}>
@@ -304,7 +307,8 @@ const AutoInfracao = () => {
         <Group position="left">
           <Input
             icon={<FaClipboard />}
-            placeholder="Código do DETRAN:"
+            className="w-100"
+            placeholder="Código gerado pelo DETRAN (AI)"
             value={codigo}
             onChange={(e) => setCodigo(e.target.value)}
           />

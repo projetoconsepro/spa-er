@@ -42,7 +42,11 @@ import { FcIdea } from "react-icons/fc";
 import { IconPlugConnected } from "@tabler/icons-react";
 import ConfigImpressora from "../util/ConfigImpressora";
 import { TbReportMoney } from "react-icons/tb";
+import { PiListChecksFill } from "react-icons/pi";
+import { AiFillWarning } from "react-icons/ai";
+
 const Sidebar = () => {
+
   const nome = localStorage.getItem("user");
   const teste = JSON.parse(nome);
   const [mostrarSidebar, setMostrarSidebar] = useState(true);
@@ -183,8 +187,8 @@ const Sidebar = () => {
               { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "ListarNotificacoesAdmin", className: commonStyles },
               { icon: <FaParking />, name: "‎ Estacionamentos", componente: "OcupacaoVagasAdmin", className: commonStyles }, 
               { icon: <FaRegChartBar />, name: "‎ Movimentos", componente: "ListarMovimentosAdmin", className: commonStyles },
+              { icon: <MdCarCrash />, name: "‎ Registro Débito", componente: "ListarLogsDebitoAuto", className: commonStyles },
               { icon: <FaChalkboardTeacher />, name: "‎ Ações Movimentos", componente: "ListarLogsMovimentosAdmin", className: commonStyles },
-
               { icon: <FaCar />, name: "‎ Veículos", componente: "ListagemMovimentoVeiculo", className: commonStyles },
               { icon: <FcIdea />, name: "‎ Sugestões", componente: "SugestoesAdmin", className: commonStyles },
             ]
@@ -245,11 +249,12 @@ const Sidebar = () => {
       });
   } else if (teste.perfil[0] === "agente") {
 
-      const agenteLinks = [
-          { icon: <BsConeStriped />, name: "‎ Listar Notificações", componente: "ListarNotificacoesAgente" },
-          { icon: <FaParking />, name: "‎ Veículos Estacionados", componente: "VeiculosAgente" },
-          { icon: <FaClipboardList />, name: "‎ Autos de Infração", componente: "ListaAutoInfracao" }
-      ];
+    const agenteLinks = [
+      { icon: <BsConeStriped />, name: "‎ Todas as Notificações", componente: "ListarNotificacoesAgente" },      
+      { icon: <AiFillWarning />, name: "‎ Veículos para Autuação", componente: "ListarNotificacoesVaga" },
+      { icon: <PiListChecksFill />, name: "‎ Infrações Emitidas", componente: "ListaAutoInfracao" },
+      { icon: <FaClipboardList />, name: "‎ Infrações para Remover", componente: "ListaInfracoesPendentesRemocao" }
+  ];
 
       agenteLinks.forEach(link => {
           commonLinks.push({ className: commonStyles, ...link });
@@ -419,7 +424,7 @@ const Sidebar = () => {
                           data-bs-target={`#submenu-app-${key}`}
                         >
                           <span>
-                            <span>
+                            <span className="d-flex align-items-center">
                               {link.icon}
                               {link.name}
                             </span>
@@ -450,7 +455,7 @@ const Sidebar = () => {
                           <ul className="flex-column nav">
                             {link.subitem &&
                               link.subitem.map((subitem, key) => (
-                                <li className="nav-item" key={key}>
+                                <li className="nav-item align-items-center" key={key}>
                                   <a
                                     className={subitem.className}
                                     id="textoSm"

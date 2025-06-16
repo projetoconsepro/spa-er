@@ -10,7 +10,7 @@ import { Carousel } from "@mantine/carousel";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
-import {ArrumaHora3, ArrumaHora2} from "../util/ArrumaHora";
+import { ArrumaHora3, ArrumaHora2 } from "../util/ArrumaHora";
 
 const ListarNotificacoesAdmin = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -31,7 +31,6 @@ const ListarNotificacoesAdmin = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
 
   const createPDF = () => {
     const nomeArquivo = "Relatório de irregularidades";
@@ -57,7 +56,8 @@ const ListarNotificacoesAdmin = () => {
       "Tipo",
       "Valor",
     ];
-    RelatoriosPDF(nomeArquivo, cabecalho, dataD, quantidade);  };
+    RelatoriosPDF(nomeArquivo, cabecalho, dataD, quantidade);
+  };
 
   const mostrar = async (item, index) => {
     const requisicao = createAPI();
@@ -72,7 +72,13 @@ const ListarNotificacoesAdmin = () => {
                    <p><b>Tipo:</b> ${item.tipo}</p>
                    <p><b>Valor:</b> R$${item.valor}</p>
                    <p><b>Monitor:</b> ${item.monitor}</p>
-                   <p><b>Hora:</b> ${item.hora}</p>`,
+                   <p><b>Hora:</b> ${item.hora}</p>
+                   <p><b>Débito Ativo:</b> ${item.debito_automatico}</p>
+       ${
+         item.debito_automatico === "Sim"
+           ? `<p><b>Saldo no Momento da Notificação:</b> R$${item.saldo_no_momento}</p>`
+           : ""
+       }`,
         showCancelButton: true,
         showConfirmButton: true,
         confirmButtonText: "Regularizar",
@@ -131,7 +137,13 @@ const ListarNotificacoesAdmin = () => {
                      <p><b>Tipo:</b> ${item.tipo}</p>
                      <p><b>Valor:</b> R$${item.valor}</p>
                      <p><b>Monitor:</b> ${item.monitor}</p>
-                     <p><b>Hora:</b> ${item.hora}</p>`,
+                     <p><b>Hora:</b> ${item.hora}</p>
+                    <p><b>Débito Ativo:</b> ${item.debito_automatico}</p>
+       ${
+         item.debito_automatico === "Sim"
+           ? `<p><b>Saldo no Momento da Notificação:</b> R$${item.saldo_no_momento}</p>`
+           : ""
+       }`,
         showCancelButton: true,
         showConfirmButton: false,
         cancelButtonText: "Fechar",
@@ -158,6 +170,7 @@ const ListarNotificacoesAdmin = () => {
         setEstado2(true);
         if (response.data.msg.resultado) {
           setEstado(false);
+          //console.log("Dados recebidos da API:", response.data.data);
           const newData = response.data.data.map((item) => ({
             data: ArrumaHora3(item.data),
             placa: item.veiculo.placa,
@@ -180,6 +193,8 @@ const ListarNotificacoesAdmin = () => {
             id_notificacao: item.id_notificacao,
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
+            saldo_no_momento: item.saldoNoMomento ?? undefined,
+            debito_automatico: item.debitoAtivo ? "Sim" : "Não",
           }));
           setData(newData);
         } else {
@@ -204,11 +219,13 @@ const ListarNotificacoesAdmin = () => {
       });
   };
 
-    const imagens = async (item) => {
+  const imagens = async (item) => {
     const requisicao = createAPI();
-  
+
     try {
-      let response = await requisicao.get(`/notificacao/imagens/${item.id_notificacao}`);
+      let response = await requisicao.get(
+        `/notificacao/imagens/${item.id_notificacao}`
+      );
       let newData =
         response.data.data && response.data.data.length > 0
           ? response.data.data.map((item) => ({
@@ -216,7 +233,9 @@ const ListarNotificacoesAdmin = () => {
             }))
           : undefined;
       if (!newData || newData.every((item) => item.imagem === undefined)) {
-        response = await requisicao.get(`/trigger/imagens/${item.id_notificacao}`);
+        response = await requisicao.get(
+          `/trigger/imagens/${item.id_notificacao}`
+        );
         newData =
           response.data.data && response.data.data.length > 0
             ? response.data.data.map((item) => ({
@@ -224,7 +243,7 @@ const ListarNotificacoesAdmin = () => {
               }))
             : undefined;
       }
-  
+
       setDataImagem(newData);
     } catch (error) {
       if (
@@ -239,7 +258,7 @@ const ListarNotificacoesAdmin = () => {
         console.log(error);
       }
     }
-  
+
     open();
   };
 
@@ -344,6 +363,8 @@ const ListarNotificacoesAdmin = () => {
             id_notificacao: item.id_notificacao,
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
+            saldo_no_momento: item.saldoNoMomento ?? undefined,
+            debito_automatico: item.debitoAtivo ? "Sim" : "Não",
           }));
           setQuantidade(response.data.quantidade);
           setData(newData);
@@ -442,18 +463,22 @@ const ListarNotificacoesAdmin = () => {
                 <AiOutlineReload color="white" size={20} />
               </Button>
             </div>
-            
-
-        </div>
-      </div>          </div>           
+          </div>
+        </div>{" "}
+      </div>
       {quantidade ? (
         <div className="text-start py-2 flex-wrap bg-white mb-2 rounded-1 thead-light">
-        <h6 className="text-start mx-3  my-2">
-          REGULARIZADAS:&nbsp;&nbsp; {quantidade.pagas}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          CANCELADAS:&nbsp;&nbsp; {quantidade.canceladas}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          PENDENTES:&nbsp;&nbsp; {quantidade.pendentes}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          TOTAL:&nbsp;&nbsp; {quantidade.total}
-        </h6></div>) : null}
+          <h6 className="text-start mx-3  my-2">
+            REGULARIZADAS:&nbsp;&nbsp; {quantidade.pagas}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            CANCELADAS:&nbsp;&nbsp; {quantidade.canceladas}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            PENDENTES:&nbsp;&nbsp; {quantidade.pendentes}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            TOTAL:&nbsp;&nbsp; {quantidade.total}
+          </h6>
+        </div>
+      ) : null}
       <div className="row">
         <div className="col-12">
           <div className="row">

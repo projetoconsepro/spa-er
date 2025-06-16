@@ -17,6 +17,7 @@ import ImpressaoTicketRegularizacao from "../util/ImpressaoTicketRegularizacao";
 import ModalErroBanco from "./ModalErroBanco";
 import { IconX } from "@tabler/icons-react";
 import {ArrumaHora} from "../util/ArrumaHora";
+import {verificaValidadeInfracao} from "../util/verificaValidadeInfracao";
 
 const ListarNotificacoes = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -36,6 +37,7 @@ const ListarNotificacoes = () => {
   const [selectedButton, setSelectedButton] = useState("pix");
   const [estadoModal, setEstadoModal] = useState("select");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [validacoes, setValidacoes] = useState({});
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -250,6 +252,8 @@ const ListarNotificacoes = () => {
             pago: item.pago,
             checked: false,
             data_regularizacao: item.data_regularizacao ? ArrumaHora(item.data_regularizacao) : "",
+            data_infracao: item.data_infracao,
+            infracao: item.infracao
           }));
           setData(newData);
         } else {
@@ -396,6 +400,21 @@ const ListarNotificacoes = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const verificarInfracoes = async () => {
+      const resultados = {};
+      for (const item of data) {
+        resultados[item.id_notificacao] = item.infracao === 'S' 
+          ? await verificaValidadeInfracao(item.data_infracao)
+          : null;
+      }
+      setValidacoes(resultados);
+    };
+  
+    if (data.length > 0) {
+      verificarInfracoes();
+    }
+  }, [data]);
   return (
     <>
       <Modal
@@ -407,16 +426,28 @@ const ListarNotificacoes = () => {
       >
       {estadoModal === "select" ? (
         <>
-        <div className="row">
-            <div className="col-12">
-              <h6>Selecione as notificações para regularizar:</h6>
-              <div className="text-start d-flex">
-              <h6>Selecionar todas:  </h6> <input type="checkbox"  style={{ width: "15px", height: "15px", marginLeft: "8px", marginTop: "4px" }} onChange={(e) => {
-                data.filter(item => item.pago === "N").map(item => item.checked = e.target.checked)
-                setData([...data])
-              }} />
+            <div className="row">
+              <div className="col-12">
+                <h6>Selecione as notificações para regularizar:</h6>
+                <div className="text-start d-flex">
+                  <h6>Selecionar todas:  </h6> <input
+                    type="checkbox"
+                    style={{ width: "15px", height: "15px", marginLeft: "8px", marginTop: "4px" }}
+                    onChange={async (e) => {
+                      const newData = [...data];
+                      newData.filter(item => item.pago === "N" && item.infracao !== 'S')
+                        .forEach(item => item.checked = e.target.checked);
+                      for (const item of newData.filter(item => item.pago === "N" && item.infracao === 'S')) {
+                        const valido = await verificaValidadeInfracao(item.data_infracao);
+                        if (valido) {
+                          item.checked = e.target.checked;
+                        }
+                      }
+                      setData(newData);
+                    }}
+                  />
+                </div>
               </div>
-            </div>
           </div>
           <table className="table table-striped table-hover table-bordered table-responsive">
               <thead>
@@ -430,13 +461,14 @@ const ListarNotificacoes = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.map(
-                  (link, index) => link.pago !== "S" && (
+                {data.map((link, index) => {
+                  const mostrarItem = link.pago !== "S" &&
+                    (link.infracao !== 'S' ||
+                      (link.infracao === 'S' && validacoes[link.id_notificacao] === true));
+
+                  return mostrarItem && (
                     <tr key={index}>
-                      <td
-                        className="px-1"
-                        style={{ width: "40px", textAlign: "center" }}
-                      >
+                      <td className="px-1" style={{ width: "40px", textAlign: "center" }}>
                         <input
                           type="checkbox"
                           checked={link.checked}
@@ -444,18 +476,19 @@ const ListarNotificacoes = () => {
                             link.checked = !link.checked;
                             setData([...data]);
                           }}
-                          style={{ width: "20px", height: "20px" }} />
+                          style={{ width: "20px", height: "20px" }}
+                        />
                       </td>
                       <td>{link.placa}</td>
                       <td><small>{link.data}</small></td>
                       <td> R$ {link.valor.toFixed(2)}</td>
                     </tr>
-                  )
-                )}
+                  );
+                })}
               </tbody>
             </table>
-            </>
-          ) : (
+          </>
+        ) : (
           <>
             <div className="col-12 text-center mt-4 mb-4">
               <h6>Valor total <h3 className="mt-2">R$ {data.filter((item) => item.checked).reduce((acc, item) => acc + item.valor, 0).toFixed(2)} </h3></h6>
@@ -523,9 +556,9 @@ const ListarNotificacoes = () => {
         </Button>
       </Modal>
 
-      <div className="col-12 px-3 mb-3">
+      <div className="col-12 px-3 mb-4">
         {perfil === "monitor" ? (
-          <p className="text-start fs-2 fw-bold">Notificações emitidas:</p>
+          <p className="text-start fs-2 fw-bold mt=3">Notificações emitidas:</p>
         ) : (
           <p className="text-start fs-2 fw-bold">Notificações:</p>
         )}
@@ -572,106 +605,109 @@ const ListarNotificacoes = () => {
         </div>
         {estado2 ? (
           <div>
-       {data.map((link, index) => (
-        <div className="card border-0 shadow mt-2 mb-3" key={index}>
+            {data.map((link, index) => (
+        <div className="card border-0 shadow mt-3 mb-0" key={index}>
           <div
             className={
-              link.pago === "S" ? "card-body10 mb-4 pb-0" : "card-body9 mb-3"
+              link.pago === "S" && link.estado === false
+                ? "card-body10 pb-0 mb-4"
+                : link.pago === "S" && link.estado === true
+                  ? "card-body10 pb-0 mb-3"
+                  : link.estado && link.infracao === 'S' && !validacoes[link.id_notificacao] === true
+                    ? "card-body13 mb-3"
+                    : "card-body9 mb-3"
             }
             onClick={() => (link.pago === "S" ? atualiza(index) : null)}
           >
-            <div className="d-flex align-items-center justify-content-between">
-              <div>
-                <div className="h2 mb-3 d-flex align-items-center">
-                  {link.placa}
-                </div>
-                <div
-                  className="h6 d-flex align-items-center "
-                  id="estacionadocarro"
-                >
-                  <h6>
-                    {" "}
-                    <div className="d-flex align-items-center mb-2">
-      <BsCalendarDate />
-      <span className="ms-1">{link.data}</span>
-    </div>
-                  </h6>
-                </div>
-                {link.estado ? (
-              <div className="h6 d-flex align-items-center m-0">
-             
-                
-                <h6 className="text-start">
-                  {" "}
-                  <FaClipboardList />‎
-                  {window.innerWidth <= 360 ? (
-                    <small>Motivo: {link.tipo_notificacao}</small>
-                  ) : (
-                    `Motivo: ${link.tipo_notificacao}`
-                  )}
-                </h6>
-             
-            </div>
-                ) : (
-                  <div className="">
-                    
-                      <h6>
-                        {" "}
-                        <div className="d-flex align-items-center">
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div>
+                <div className="d-flex flex-column gap-2">
 
-                        <FaClipboardList />‎
-                        
-                        {window.innerWidth <= 310 ? (
-                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '160px' }}>
-                            Motivo: {link.tipo_notificacao}
-                          </small>
-                        ) : window.innerWidth <= 400 ? (
-                          <small className="ms-1 d-inline-block text-truncate" style={{ maxWidth: '200px' }}>
-                            Motivo: {link.tipo_notificacao}
-                          </small>
-                        ) : (
-                          `Motivo: ${link.tipo_notificacao}`
-                        )}</div>
-                      </h6>
-                    
+                  <div className="h2 d-flex align-items-center">
+                    {link.placa}
                   </div>
-                )}
-                <div className="h6 d-flex align-items-center">
-                <div className="d-flex align-items-center">
-                <FaClipboardList /> <small className="ms-1">Status:</small>{" "} 
-                  <h6
-                    className={
-                      link.pago === "S"
-                        ? "text-success mt-2 mx-1"
-                        : "text-danger mt-2 mx-1"
-                    }
-                  >
-                    {" "}
-                    {link.pago === "S" ? "Quitado" : "Pendente"}
-                  </h6></div>
+
+                  <div className="h6 d-flex align-items-center">
+                    <BsCalendarDate className="me-2" />
+                    {link.data}
+                  </div>
+
+                  <div className="h6 d-flex align-items-center fs-6">
+                    <FaClipboardList className="me-2 flex-shrink-0" />
+                    <span
+                      className={`
+        ${!link.estado ? "text-truncate d-block" : ""} 
+        ${window.innerWidth <= 360 ? "w-auto" : ""}
+      `}
+                      style={{
+                        maxWidth: '220px',
+                        fontSize:
+                          link.tipo_notificacao.includes("deficiente") || link.tipo_notificacao.includes("idoso") || link.tipo_notificacao.includes("excedido")
+                            ? (link.estado ? '0.85rem' : '1rem')
+                            : '1rem'
+                      }}
+                    >
+                      Motivo: {link.tipo_notificacao}
+                    </span>
+                  </div>
+                  <div className="h6 d-flex align-items-center">
+                    <FaClipboardList className="me-2 align-self-start" style={{ marginTop: "2px" }} />
+                    <span>
+                      Status:{" "}
+                      <span className={link.pago === "S" ? "text-success mx-1" : "text-danger mx-1"}>
+                        {link.pago === "S" ? "Quitado" : "Pendente"}
+                      </span>
+                    </span>
+                  </div>
                 </div>
+                {link.estado && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
+                  <>
+                          <div className="d-flex flex-column gap-2 mt-2 mb-3">
+                            <div className="h6 d-flex align-items-center">
+                              <FaParking className="me-2" />
+                              <span>Vaga: {link.vaga}</span>
+                            </div>
+                            <div className="h6 d-flex align-items-center">
+                              <BsCashCoin className="me-2" />
+                              <span>Monitor: {link.monitor}</span>
+                            </div>
+                            <div className="h6 d-flex align-items-center">
+                              <FaCarAlt className="me-2" />
+                              <span>Modelo: {link.modelo}</span>
+                            </div>
+                            <div className="h6 d-flex align-items-center">
+                              <BsCashCoin className="me-2" />
+                              <span>Valor: R${link.valor}</span>
+                            </div>
+                    </div>
+                  </>
+                )}
               </div>
+
               <div>
                 {link.pago === "N" ? (
-                  <div className="d-flex align-items-center fw-bold mb-6">
-                    <BiErrorCircle size={30} color="red" />
-                  </div>
+                  <BiErrorCircle size={30} color="red" />
                 ) : (
-                  <div className="d-flex align-items-center fw-bold mb-6">
-                    <AiFillCheckCircle size={30} color="green" />
-                  </div>
+                  <AiFillCheckCircle size={30} color="green" />
                 )}
               </div>
             </div>
-            {link.pago === "N" ? (
-              <div className="row">
+                  {link.estado && link.pago !== "S" && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
+                    <div className="alert alert-warning mb-2" style={{ width: 'calc(100%)' }}>
+                      <div className="text-start">
+                        <i className="fas fa-exclamation-triangle me-2"></i>
+                        <span>Esta notificação gerou infração e excedeu o prazo de regularização</span>
+                      </div>
+                    </div>
+                  )}
+            {link.pago === "N" && (
+              <div className="row mt-3">
                 <div className="col-12">
                   <Button
                     variant="outline"
                     color="red"
                     radius="md"
                     fullWidth
-                    className="mt-1"
                     leftIcon={
                       link.estado ? (
                         <IconX size={20} />
@@ -679,115 +715,99 @@ const ListarNotificacoes = () => {
                         <BsConeStriped size={20} />
                       )
                     }
-                    onClick={() => {
-                      atualiza(index);
-                    }}
+                    onClick={() => atualiza(index)}
                   >
-                    {link.estado ? "Fechar" : "Regularize aqui"}
+                    {link.estado
+                      ? "Fechar"
+                      : !link.estado && link.infracao === 'S' && validacoes[link.id_notificacao] === false
+                        ? "Abrir"
+                        : "Regularize aqui"}
                   </Button>
                 </div>
               </div>
-            ) : null}
+            )}
           </div>
-          {link.estado ? (
-            <div className="justify-content-between pb-3 mb-1">
-              <div
-                className="h6 align-items-start text-start mt-4 px-4"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <FaParking />‎ Vaga: {link.vaga}
-                </h6>
-              </div>
-              <div
-                      className="h6 align-items-start text-start px-4"
-                      id="estacionadocarroo"
-                    >
-                      <h6>
-                        {" "}
-                        <BsFillPersonFill />‎ Monitor: {link.monitor}
-                      </h6>
-                    </div>              
-                    <div
-                className="h6 align-items-start text-start px-4"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <FaCarAlt />‎ Modelo: {link.modelo}
-                </h6>
-              </div>
-              <div
-                className="h6 align-items-start text-start px-4"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <BsCashCoin />‎ Valor: R${link.valor}
-                </h6>
+          {link.estado && !(link.infracao === 'S' && validacoes[link.id_notificacao] === false) ? (
+   <div className="pb-3 mb-1">
+              <div className="d-flex flex-column gap-2 px-4">
+                <div className="h6 d-flex align-items-center">
+                  <FaParking className="me-2" />
+                  <span>Vaga: {link.vaga}</span>
+                </div>
+                <div className="h6 d-flex align-items-center">
+                  <BsCashCoin className="me-2" />
+                  <span>Monitor: {link.monitor}</span>
+                </div>
+                <div className="h6 d-flex align-items-center">
+                  <FaCarAlt className="me-2" />
+                  <span>Modelo: {link.modelo}</span>
+                </div>
+                <div className="h6 d-flex align-items-center">
+                  <BsCashCoin className="me-2" />
+                  <span>Valor: R${link.valor}</span>
+                </div>
               </div>
 
-              {link.pago === "S" ? (
-                      <div className="px-3">
-                        {perfil === "monitor" ? (
-                          <Button
-                            variant="gradient"
-                            gradient={{ from: "indigo", to: "cyan" }}
-                            fullWidth
-                            mt="md"
-                            radius="md"
-                            onClick={() => regularizacaoSegundaVia(link)}
-                          >
-                            IMPRIMIR SEGUNDA VIA ‎ <IconReceipt size={18} />
-                          </Button>
-                        ) : null}
-                      </div>
-                    ) : (                            
-                    <div className="h6 mt-4 mx-4">
-                      <select
-                        className="form-select form-select-lg mb-1"
-                        aria-label=".form-select-lg example"
-                        id="pagamentos"
-                        defaultValue="01:00:00"
-                      >
-                        <option value="pix">PIX</option>
-                        <option value="dinheiro">Dinheiro</option>
-                      </select>
-                      <div className="pt-3 gap-6 d-md-block">
-                        <div className="row">
-                          <div className="col-10 m-0">
-                            <Button
-                              className="btn5 botao align-itens-center fs-6"
-                              variant="gradient"
-                              gradient={{ from: "blue", to: "cyan" }}
-                              onClick={() => {
-                                pagamento(index);
-                              }}
-                              loading={buttonLoading}
-                            >
-                              Regularizar
-                            </Button>
-                          </div>
-                          {perfil === "monitor" ? (
-                            <div className="col-2 ps-0">
-                              <ActionIcon
-                                variant="outline"
-                                color="indigo"
-                                size="lg"
-                              >
-                                <IconPrinter
-                                  onClick={() => imprimirSegundaVia(link)}
-                                />
-                              </ActionIcon>
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-                    </div>
-              )}
+    {link.pago === "S" ? (
+      <div className="px-3">
+        {perfil === "monitor" && (
+          <Button
+            variant="gradient"
+            gradient={{ from: "indigo", to: "cyan" }}
+            fullWidth
+            mt="md"
+            radius="md"
+            onClick={() => regularizacaoSegundaVia(link)}
+          >
+            IMPRIMIR SEGUNDA VIA ‎ <IconReceipt size={18} />
+          </Button>
+        )}
+      </div>
+    ) : (link.infracao !== 'S' || validacoes[link.id_notificacao] !== false) ? (
+      <div className="h6 mt-4 mx-4">
+        <select
+          className="form-select form-select-lg mb-1"
+          aria-label=".form-select-lg example"
+          id="pagamentos"
+          defaultValue="01:00:00"
+        >
+          <option value="pix">PIX</option>
+          <option value="dinheiro">Dinheiro</option>
+        </select>
+        <div className="pt-3 gap-6 d-md-block">
+          <div className="row">
+            <div className="col-10 m-0">
+              <Button
+                className="btn5 botao align-itens-center fs-6"
+                variant="gradient"
+                gradient={{ from: "blue", to: "cyan" }}
+                onClick={() => {
+                  pagamento(index);
+                }}
+                loading={buttonLoading}
+              >
+                Regularizar
+              </Button>
             </div>
-          ) : null}
+            {perfil === "monitor" && (
+              <div className="col-2 ps-0">
+                <ActionIcon
+                  variant="outline"
+                  color="indigo"
+                  size="lg"
+                >
+                  <IconPrinter
+                    onClick={() => imprimirSegundaVia(link)}
+                  />
+                </ActionIcon>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    ) : null}
+  </div>
+) : null}
         </div>
       ))}
           </div>

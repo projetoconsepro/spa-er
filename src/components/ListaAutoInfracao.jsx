@@ -81,6 +81,8 @@ const ListaAutoInfracao = () => {
             cor: item.cor,
             vaga: item.numero,
             hora: ArrumaHora2(item.hora),
+            codigo_ai: item.codigo_ai,
+            cancelada: item.cancelada === 1 ? "Sim" : "Não",  
           }));
           setData(newData);
         } else {
@@ -147,6 +149,8 @@ const ListaAutoInfracao = () => {
             cor: item.cor,
             vaga: item.numero,
             hora: ArrumaHora2(item.hora),
+            codigo_ai: item.codigo_ai,
+            cancelada: item.cancelada === 1 ? "Sim" : "Não",
           }));
           setData(newData);
         } else {
@@ -173,7 +177,7 @@ const ListaAutoInfracao = () => {
 
   return (
     <div className="dashboard-container">
-      <p className="mx-3 text-start fs-4 fw-bold">Autos de Infração</p>
+      <p className="mx-3 text-start fs-4 fw-bold">Autos de Infração Emitidos</p>
       <div className="row mb-3">
         <div className="col-12">
           <div className="row">
@@ -222,6 +226,13 @@ const ListaAutoInfracao = () => {
                           ) : (
                             <AiOutlineArrowDown className="mb-1" size={15} />
                           )}
+                        </th>                        
+                        <th
+                          className="border-bottom"
+                          id="tabelaUsuarios2"
+                          scope="col"
+                        >
+                          Hora
                         </th>
                         <th
                           className="border-bottom"
@@ -229,6 +240,13 @@ const ListaAutoInfracao = () => {
                           scope="col"
                         >
                           Placa
+                        </th>                        
+                        <th
+                          className="border-bottom"
+                          id="tabelaUsuarios2"
+                          scope="col"
+                        >
+                          Modelo
                         </th>
                         <th
                           className="border-bottom"
@@ -239,17 +257,17 @@ const ListaAutoInfracao = () => {
                         </th>
                         <th
                           className="border-bottom"
-                          id="tabelaUsuarios2"
+                          id="tabelaUsuarios"
                           scope="col"
                         >
-                          Modelo
+                          Código AI
                         </th>
                         <th
                           className="border-bottom"
-                          id="tabelaUsuarios2"
+                          id="tabelaUsuarios"
                           scope="col"
                         >
-                          Hora
+                          Cancelada
                         </th>
                       </tr>
                     </thead>
@@ -262,10 +280,12 @@ const ListaAutoInfracao = () => {
                           }}
                         >
                           <td>{item.data}</td>
-                          <td>{item.placa}</td>
-                          <td> {item.vaga}</td>
-                          <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td id="tabelaUsuarios2">{item.hora}</td>
+                          <td>{item.placa}</td>
+                          <td id="tabelaUsuarios2">{item.modelo}</td>
+                          <td> {item.vaga}</td>
+                          <td id="tabelaUsuarios">{item.codigo_ai}</td>
+                          <td id="tabelaUsuarios">{item.cancelada}</td>
                         </tr>
                       ))}
                     </tbody>

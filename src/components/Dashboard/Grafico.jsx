@@ -67,48 +67,56 @@ const Grafico = () => {
     datasets: Object.values(nome),
   };
 
-  const options = {
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 5,
-        },
-        grid: {
-          display: false,
-          borderDash: [2],
-          borderDashOffset: [3],
-          color: "#ddd",
-          drawBorder: false,
-          drawTicks: false,
-        },
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 5,
       },
-      x: {
-        grid: {
-          display: false,
-          drawBorder: false,
-          drawTicks: false,
+      grid: {
+        display: false,
+        borderDash: [2],
+        borderDashOffset: [3],
+        color: "#ddd",
+        drawBorder: false,
+        drawTicks: false,
+      },
+    },
+    x: {
+      grid: {
+        display: false,
+        drawBorder: false,
+        drawTicks: false,
+      },
+    },
+  },
+  plugins: {
+    
+    legend: {
+      display: true,
+      position: 'top',
+      align: 'start', 
+      labels: {
+        boxWidth: 20,
+        padding: 10,
+        font: {
+          size: 12,
         },
       },
     },
-    grid: {
-      borderDash: [2],
-      borderDashOffset: [3],
-      color: "rgba(221, 221, 221, 0.3)", // cor com opacidade 0.3
-      drawBorder: false,
-      drawTicks: false,
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: "top",
-        labels: {
-          boxWidth: 20,
-          padding: 15,
-        },
-      },
-    },
-  };
+  },
+  layout: {
+    padding: {
+      top: 0,
+      bottom: 0,
+      left: 20,
+      right: 20,
+    }
+  }
+};
   const requisicaoSetores = async () => {
     const requisicao = createAPI();
 
@@ -170,10 +178,12 @@ const Grafico = () => {
 
   return (
     <>
-      <h4 style={{ textAlign: "start", margin: "1rem" }}>
-        Ocupação classificado por hora:
-      </h4>
+      <h5 style={{ textAlign: "start", margin: "1.5rem", fontWeight: "normal" }}>
+        Ocupação classificado por hora
+      </h5>
+    <div style={{ height: '300px', width: '100%' }}>
       <Line data={data} options={options} />
+    </div>
     </>
   );
 };

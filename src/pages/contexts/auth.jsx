@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
             } else if (loggedUser.perfil[0] === "admin") {
               FuncTrocaComp("Dashboard");
             } else if (loggedUser.perfil[0] === "agente") {
-              FuncTrocaComp("ListarNotificacoesAgente");
+              FuncTrocaComp("ListarNotificacoesVaga");
             }
 
             localStorage.setItem("user", JSON.stringify(loggedUser));

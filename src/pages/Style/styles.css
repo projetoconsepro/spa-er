@@ -121,6 +121,10 @@
     width: 46% !important;
 }
 
+.divPers2{
+    width: 94% !important;
+}
+
 .form-check-label{
     float: left;
 }
@@ -8142,6 +8146,16 @@ textarea.form-control-lg {
 
 .card-body9 {
     height: 14rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+.card-body12 {
+    height: 29rem;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.5rem;
+}
+.card-body13 {
+    height: 27rem;
     flex: 1 1 auto;
     padding: 1.25rem 1.5rem;
 }
@@ -29963,4 +29977,13 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
         top: 90px;
         
     }
+
+@media (max-width: 768px) {
+  .coluna-mobile-hide {
+    display: none !important;
   }
+  .coluna-mobile-show {
+    display: table-cell !important;
+  }
+}
+}

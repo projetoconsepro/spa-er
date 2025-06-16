@@ -185,7 +185,7 @@ const ListarNotificacoesAgente = () => {
 
   return (
     <div className="dashboard-container">
-        <p className="mx-3 text-start fs-4 fw-bold">Notificações</p>
+        <p className="mx-3 text-start fs-4 fw-bold">Histórico Completo de Notificações</p>
         <div className="row mb-3">
         <div className="col-12">
         <div className="row">
@@ -219,9 +219,18 @@ const ListarNotificacoesAgente = () => {
                         <tr>
                         <th className="border-bottom" id="tabelaUsuarios" scope="col" onClick={()=>{handleSort()}}>
                             Data {sortAsc ? <AiOutlineArrowUp className="mb-1" size={15} /> : <AiOutlineArrowDown className="mb-1" size={15} />}
+                          </th>                          
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
+                            Hora
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Placa
+                          </th>                          
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
+                            Fabricante
+                          </th>
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
+                            Modelo
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Vaga
@@ -230,19 +239,7 @@ const ListarNotificacoesAgente = () => {
                             Estado
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Fabricante
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Modelo
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
                             Tipo
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Valor
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Hora
                           </th>
                         </tr>
                       </thead>
@@ -251,16 +248,15 @@ const ListarNotificacoesAgente = () => {
                     {currentItems.map((item, index) => (
                         <tr key={index} onClick={()=>{mostrar(item)}}>
                           <td>{item.data}</td>
-                          <td>{item.placa}</td>
+                          <td id="tabelaUsuarios2">{item.hora}</td>
+                          <td>{item.placa}</td>                          
+                          <td id="tabelaUsuarios2">{item.fabricante}</td>
+                          <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td> {item.vaga}</td>
                           <td id="tabelaUsuarios2" style={
                             item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}
                           }> {item.pendente}</td>
-                          <td id="tabelaUsuarios2">{item.fabricante}</td>
-                          <td id="tabelaUsuarios2">{item.modelo}</td>
-                          <td id="tabelaUsuarios2">{item.tipo}</td>
-                          <td id="tabelaUsuarios2">{item.valor}</td>
-                          <td id="tabelaUsuarios2">{item.hora}</td>
+                          <td id="tabelaUsuarios2">{item.tipo}</td>                          
                         </tr>
                     ))}
                       </tbody>

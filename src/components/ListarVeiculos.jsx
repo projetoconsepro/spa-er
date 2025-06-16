@@ -263,7 +263,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -283,7 +283,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -306,7 +306,7 @@ const ListarVeiculos = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-          "Usuário não possui o perfil mencionado!"
+            "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -393,7 +393,7 @@ const ListarVeiculos = () => {
       vaga[0] = 0;
     }
 
-    let numeroCorrigido = saldoCredito.replace(".", "");
+    let numeroCorrigido = saldoCredito.toString().replace(".", "");
     numeroCorrigido = parseFloat(numeroCorrigido.replace(",", "."));
     if (parseFloat(numeroCorrigido) < parseFloat(resposta)) {
       setBotaoOff(false);
@@ -447,7 +447,7 @@ const ListarVeiculos = () => {
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
             error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+              "Usuário não possui o perfil mencionado!"
           ) {
             localStorage.removeItem("user");
             localStorage.removeItem("token");
@@ -537,7 +537,7 @@ const ListarVeiculos = () => {
             error?.response?.data?.msg === "Cabeçalho inválido!" ||
             error?.response?.data?.msg === "Token inválido!" ||
             error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+              "Usuário não possui o perfil mencionado!"
           ) {
             localStorage.removeItem("user");
             localStorage.removeItem("token");
@@ -854,128 +854,144 @@ const ListarVeiculos = () => {
 
         {resposta.map((link, index) =>
           link.placa ? (
-            <div className="card border-0 shadow mt-4" key={index}>
-              <div id="" className={link.div}>
-                <div className="row d-flex align-items-center justify-content-between pb-3">
-                  <div className="col-9">
+            <div
+              className="card border-0 shadow mt-4"
+              key={index}
+              style={{
+                minHeight: window.innerWidth <= 768 ? "150px" : "auto",
+                padding: window.innerWidth <= 768 ? "10px" : "16px",
+              }}
+            >
+              <div
+                className="row d-flex align-items-center justify-content-between pb-3"
+                style={{
+                  marginBottom: window.innerWidth <= 768 ? "10px" : "0",
+                  padding: window.innerWidth <= 768 ? "10px" : "0",
+                }}
+              >
+                <div className="col-9">
+                  <div
+                    className="h2 mb-2 ms-1 d-flex align-items-center"
+                    style={{
+                      color: "5B5B5B",
+                      fontFamily: "Inter",
+                      fontSize: "24px",
+                      fontStyle: "normal",
+                      fontWeight: 700,
+                      lineHeight: "normal",
+                    }}
+                  >
+                    {link.placa}
+                  </div>
+                  {mostrardiv[index].estado ? null : (
                     <div
-                      className="h2 mb-2 ms-1 d-flex align-items-center"
-                      style={{
-                        color: "5B5B5B",
-                        fontFamily: "Inter",
-                        fontSize: "24px",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "normal",
-                      }}
-                    >
-                      {link.placa}
-                    </div>
-                    {mostrardiv[index].estado ? null : (
-                      <div
-                        className="h6 d-flex align-items-center ms-1 fs-6"
-                        id="estacionadocarro"
-                        style={{ opacity: 0.8 }}
-                      >
-                        <h6
-                          className={link.data < horaAgora ? "text-danger" : ""}
-                        >
-                          Válido até: <span>{link.temporestante}</span>{" "}
-                        </h6>
-                      </div>
-                    )}
-
-                    <div
-                      className={`h6 d-flex align-items-center ms-1 fs-6 ${
-                        link.estacionado === "Não estacionado" ? "mt-2" : ""
-                      }`}
+                      className="h6 d-flex align-items-center ms-1 fs-6"
                       id="estacionadocarro"
                       style={{ opacity: 0.8 }}
                     >
-                      <h6>
-                        {link.estacionado !== "Não estacionado"
-                          ? `Estacionado: Vaga ${link.estacionado.match(/\d+/)}`
-                          : link.estacionado}
-                      </h6>
-                    </div>
-                  </div>
-                  <div className="col-3">
-                    <div className="d-flex align-items-center fw-bold">
-                      {link.estacionado !== "Não estacionado" ? (
-                        <div>
-                          <img
-                            src="../../assets/img/estacionamento.png"
-                            alt="Rich Logo"
-                            className={
-                              window.innerWidth > 1500
-                                ? "w-25"
-                                : window.innerWidth > 760
-                                ? "w-50"
-                                : ""
-                            }
-                          />
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                  {notificacao[index].estado ? null : (
-                    <div
-                      className="h6 d-flex align-items-center fs-6 ms-1"
-                      id="estacionadocarro"
-                    >
-                      <h6 className="text-danger">
-                        <AiOutlineInfoCircle />‎{" "}
-                        {link.numero_notificacoes_pendentes}
+                      <h6
+                        className={link.data < horaAgora ? "text-danger" : ""}
+                      >
+                        {link.data < horaAgora ? (
+                          <div style={{ textAlign: "left" }}>
+                            <div>Tempo excedido em: {link.temporestante}</div>
+                          </div>
+                        ) : (
+                          <div style={{ textAlign: "left" }}>
+                            <div>Tempo válido até: {link.temporestante}</div>
+                          </div>
+                        )}
                       </h6>
                     </div>
                   )}
                   <div
-                    className={`h6 d-flex align-items-center fs-6 text-start ms-1 ${
-                      notificacao[index].estado ? "mt-4" : "mt-2"
+                    className={`h6 d-flex align-items-center ms-1 fs-6 ${
+                      link.estacionado === "Não estacionado" ? "mt-2" : ""
                     }`}
+                    id="estacionadocarro"
+                    style={{ opacity: 0.8 }}
                   >
-                    {" "}
-                    <Button
-                      style={{
-                        borderRadius: "5px",
-                        border: "2px solid #3381D4",
-                        backgroundColor: "#ffff",
-                        color: "#3381D4",
-                        fontSize: "18px",
-                        fontWeight: 600,
-                        height: "40px",
-                      }}
-                      fullWidth
-                      onClick={() => {
-                        handleClick(index);
-                      }}
-                    >
-                      {mostrar2[index].estado
-                        ? "Fechar"
-                        : link.textoestacionado}
-                    </Button>
-                    {mostrar2[index].estado ? null : (
-                      <div className="ms-2 me-2">
-                        <Button
-                          style={{
-                            borderRadius: "5px",
-                            border: "2px solid #3381D4",
-                            backgroundColor: "#ffff",
-                            color: "#3381D4",
-                            fontSize: "15px",
-                            fontWeight: 600,
-                            height: "40px",
-                          }}
-                          fullWidth
-                          onClick={() => {
-                            removerVeiculo(link.id_veiculo);
-                          }}
-                        >
-                          <FaRegTrashAlt color="#3381D4" size={22} />
-                        </Button>
-                      </div>
-                    )}
+                    <h6>
+                      {link.estacionado !== "Não estacionado"
+                        ? `Estacionado: Vaga ${link.estacionado.match(/\d+/)}`
+                        : link.estacionado}
+                    </h6>
                   </div>
+                </div>
+                <div className="col-3">
+                  <div className="d-flex align-items-center fw-bold">
+                    {link.estacionado !== "Não estacionado" ? (
+                      <div>
+                        <img
+                          src="../../assets/img/estacionamento.png"
+                          alt="Rich Logo"
+                          className={
+                            window.innerWidth > 1500
+                              ? "w-25"
+                              : window.innerWidth > 760
+                              ? "w-50"
+                              : ""
+                          }
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+                {notificacao[index].estado ? null : (
+                  <div
+                    className="h6 d-flex align-items-center fs-6 ms-1"
+                    id="estacionadocarro"
+                  >
+                    <h6 className="text-danger">
+                      <AiOutlineInfoCircle />‎{" "}
+                      {link.numero_notificacoes_pendentes}
+                    </h6>
+                  </div>
+                )}
+                <div
+                  className={`h6 d-flex align-items-center fs-6 text-start ms-1 ${
+                    notificacao[index].estado ? "mt-4" : "mt-2"
+                  }`}
+                  style={{ marginBottom: "2px" }}
+                >
+                  <Button
+                    style={{
+                      borderRadius: "5px",
+                      border: "2px solid #3381D4",
+                      backgroundColor: "#ffff",
+                      color: "#3381D4",
+                      fontSize: "18px",
+                      fontWeight: 600,
+                      height: "40px",
+                    }}
+                    fullWidth
+                    onClick={() => {
+                      handleClick(index);
+                    }}
+                  >
+                    {mostrar2[index].estado ? "Fechar" : link.textoestacionado}
+                  </Button>
+                  {mostrar2[index].estado ? null : (
+                    <div className="ms-2 me-2">
+                      <Button
+                        style={{
+                          borderRadius: "5px",
+                          border: "2px solid #3381D4",
+                          backgroundColor: "#ffff",
+                          color: "#3381D4",
+                          fontSize: "15px",
+                          fontWeight: 600,
+                          height: "40px",
+                        }}
+                        fullWidth
+                        onClick={() => {
+                          removerVeiculo(link.id_veiculo);
+                        }}
+                      >
+                        <FaRegTrashAlt color="#3381D4" size={22} />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
               {mostrar2[index].estado ? (
