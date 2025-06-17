@@ -208,8 +208,6 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
       setOptions([
         { value: "Data", label: "Data" },
         { value: "Periodo", label: "Período" },
-        { value: "DataHora", label: "Data e hora" },
-        { value: "PeriodoHora", label: "Período e hora" },
       ]);
     } else if (nome === "ClientesAdmin") {
       setOptions([
