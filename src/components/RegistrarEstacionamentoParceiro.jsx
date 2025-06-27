@@ -10,6 +10,7 @@ import { Button, Divider, Grid, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import createAPI from "../services/createAPI";
 import ModalErroBanco from "./ModalErroBanco";
+import calcularValorEstacionamento from "../util/valorEstacionamento";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -41,8 +42,8 @@ const RegistrarEstacionamentoParceiro = () => {
     await requisicao
       .get("/parametros")
       .then((response) => {
-        setValorCobranca(response.data.data.param.estacionamento.valorHora);
-        setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
+        setValorCobranca(response.data.data.param.estacionamento.valor60);
+        setValorCobranca2(response.data.data.param.estacionamento.valor30);
       })
       .catch(function (error) {
         localStorage.removeItem("user");
@@ -50,7 +51,7 @@ const RegistrarEstacionamentoParceiro = () => {
         localStorage.removeItem("perfil");
       });
   };
-
+  
   const ValidaFormato = () => {
     setLoadingButton(true);
     
@@ -457,17 +458,13 @@ const RegistrarEstacionamentoParceiro = () => {
       }
     }
 
-  const atualiza = () => {
+  const atualiza = async () => {
     const tempoo = document.getElementById("tempos").value;
     setTempo(tempoo);
-    if (tempoo === "02:00:00") {
-      setValorCobranca2(valorCobranca * 2);
-    } else if (tempoo === "01:00:00") {
+    const valorCobranca = await calcularValorEstacionamento(tempoo);
+    if(valorCobranca !== 0) {
       setValorCobranca2(valorCobranca);
-    } else if (tempoo === "01:30:00") {
-      setValorCobranca2(valorCobranca * 1.5);
-    } else if (tempoo === "00:30:00") {
-      setValorCobranca2(valorCobranca / 2);
+
     } else if (tempoo === "00:10:00") {
       setValorCobranca2(valorCobranca * 0);
     } else {
@@ -622,7 +619,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 onChange={(e) => setTextoPlaca(e.target.value)}
                 maxLength={limite} />
             </div>
-            <div className="text-start mt-3 mb-1 px-2" onChange={() => { atualiza(); } }>
+            <div className="text-start mt-3 mb-1 px-2" onChange={() => atualiza()}>
               <h6>Selecione o tempo:</h6>
               <select
                 className="form-select form-select-lg mb-2"

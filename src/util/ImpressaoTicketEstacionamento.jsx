@@ -1,5 +1,7 @@
 import axios from "axios";
 import calcularValidade from "../util/CalcularValidade";
+import calcularValorEstacionamento from "../util/valorEstacionamento";
+
 const ImpressaoTicketEstacionamento = async (
   via,
   tempoChegada,
@@ -41,16 +43,10 @@ const ImpressaoTicketEstacionamento = async (
       });
       const response = await requisicao.get("/parametros");
       let valorCobrar;
-      let valorCobranca =
-        await response.data.data.param.estacionamento.valorHora;
-      if (tempoValor === "02:00:00") {
-        valorCobrar = valorCobranca * 2;
-      } else if (tempoValor === "01:00:00") {
-        valorCobrar = valorCobranca;
-      } else if (tempoValor === "01:30:00") {
-        valorCobrar = valorCobranca * 1.5;
-      } else if (tempoValor === "00:30:00") {
-        valorCobrar = valorCobranca / 2;
+      let valorCobranca = await calcularValorEstacionamento(tempoValor);
+
+      if (valorCobranca !== 0) {
+        valorCobrar = valorCobranca ;
       } else if (tempoValor === "00:10:00") {
         valorCobrar = valorCobranca * 0;
       } else {

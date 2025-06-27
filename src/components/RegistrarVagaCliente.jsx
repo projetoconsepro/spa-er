@@ -13,6 +13,7 @@ import jsPDF from "jspdf";
 import { useDisclosure } from "@mantine/hooks";
 import {FormatDateBr} from "../util/formatDate";
 import calcularValidade from "../util/CalcularValidade";
+import calcularValorEstacionamento from "../util/valorEstacionamento";
 
 const RegistrarVagaCliente = () => {
   const [mensagem, setMensagem] = useState("");
@@ -32,20 +33,13 @@ const RegistrarVagaCliente = () => {
   const [openedModal, { open: openModal, close: closeModal }] =
   useDisclosure(false);
 
-  const handleButtonClick = (buttonIndex) => {
+  const handleButtonClick = async (buttonIndex) => {
     setSelectedButton(buttonIndex);
     const tempo1 = buttonIndex;
-    if (tempo1 === "02:00:00") {
-      setValorCobranca2(valorcobranca * 2);
-    } else if (tempo1 === "01:00:00") {
-      setValorCobranca2(valorcobranca);
-    } else if (tempo1 === "01:30:00") {
-      setValorCobranca2(valorcobranca * 1.5);
-    } else if (tempo1 === "00:30:00") {
-      setValorCobranca2(valorcobranca / 2);
-    }
-  };
 
+    const valor = await calcularValorEstacionamento(tempo1);
+    setValorCobranca2(valor);
+  };
 
   async function gerarPDF() {
     const pdfWidth = 80;
@@ -142,12 +136,12 @@ const RegistrarVagaCliente = () => {
       });
       
     saldo()
-
+    
     parametros
       .get("/parametros")
       .then((response) => {
-        setValorCobranca(response.data.data.param.estacionamento.valorHora);
-        setValorCobranca2(response.data.data.param.estacionamento.valorHora);
+        setValorCobranca(response.data.data.param.estacionamento.valor60);
+        setValorCobranca2(response.data.data.param.estacionamento.valor60);
       })
       .catch(function (error) {
         if (
@@ -165,18 +159,9 @@ const RegistrarVagaCliente = () => {
       });
   }, []);
 
-  function mexerValores() {
+  async function mexerValores() {
     const tempo1 = selectedButton;
-
-    if (tempo1 === "02:00:00") {
-      return valorcobranca * 2;
-    } else if (tempo1 === "01:00:00") {
-      return valorcobranca;
-    } else if (tempo1 === "01:30:00") {
-      return valorcobranca * 1.5;
-    } else if (tempo1 === "00:30:00") {
-      return valorcobranca / 2;
-    }
+    return await calcularValorEstacionamento(tempo1);
   }
 
   const handleSubmit = async () => {
