@@ -14,6 +14,7 @@ import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
 import CalcularValidade from "../util/CalcularValidade";
 import ModalErroBanco from "./ModalErroBanco";
+import calcularValorEstacionamento from "../util/valorEstacionamento";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -501,9 +502,9 @@ const RegistrarVagaMonitor = () => {
     await parametros
       .get("/parametros")
       .then((response) => {
-        setValorCobranca(response.data.data.param.estacionamento.valorHora);
+        setValorCobranca(response.data.data.param.estacionamento.valor60);
         if (localStorage.getItem("popup") == "true") {
-          setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
+          setValorCobranca2(response.data.data.param.estacionamento.valor30);
         }
       })
       .catch(function (error) {
@@ -524,7 +525,7 @@ const RegistrarVagaMonitor = () => {
     setVaga(localStorage.getItem("vaga"));
   };
 
-  const atualizafunc = () => {
+  const atualizafunc = async () => {
     const tempoo = document.getElementById("tempos").value;
     setTempo(tempoo);
     if (tempoo === "00:10:00") {
@@ -535,15 +536,9 @@ const RegistrarVagaMonitor = () => {
     else {
       SetMostrapag(true);
     }
-
-    if (tempoo === "02:00:00") {
-      setValorCobranca2(valorCobranca * 2);
-    } else if (tempoo === "01:00:00") {
-      setValorCobranca2(valorCobranca);
-    } else if (tempoo === "00:30:00") {
-      setValorCobranca2(valorCobranca / 2);
-    } else if (tempoo === "01:30:00") {
-      setValorCobranca2(valorCobranca * 1.5);
+    const valorTempo = await calcularValorEstacionamento(tempoo);
+    if (valorTempo !== 0) {
+      setValorCobranca2(valorTempo);
     } else if (tempoo === "00:10:00") {
       setValorCobranca2(valorCobranca * 0);
     } else {
@@ -679,7 +674,7 @@ const RegistrarVagaMonitor = () => {
                 <Divider my="sm" size="md" variant="dashed" />
               </div>
 
-              <div className="h6 mt-3 " onChange={atualizafunc}>
+              <div className="h6 mt-3 " onChange={() => atualizafunc()}>
                 <p className="text-start">Determine um tempo:</p>
                 {visible ? (
                   <select
