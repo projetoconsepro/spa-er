@@ -36,13 +36,17 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
 
   const [opened, { open, close }] = useDisclosure(false);
   const [mensagemExtra, setMensagemExtra] = useState("");
+  const user = localStorage.getItem("user");
+  const perfil = user ? JSON.parse(user).perfil : null;
 
   useEffect(() => {
-    const buscarMensagem = async () => {
+    if (perfil[0] === 'cliente'){
+      const buscarMensagem = async () => {
       const texto = await MensagemCompra();
       setMensagemExtra(texto);
     };
     buscarMensagem();
+  }
   }, []);
 
   useEffect(() => {
