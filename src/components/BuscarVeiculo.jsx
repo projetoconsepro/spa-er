@@ -146,6 +146,7 @@ const BuscarVeiculo = () => {
             debito: item.debitar_automatico === "S" ? "Ativo" : "Inativo",
             saldo: item.saldo,
             cpf: item.cpf,
+            nome: item.nome,
             estacionado: item.estacionado[0].estacionado,
             tempo: item.estacionado[0].tempo,
             chegada: item.estacionado[0].chegada,
@@ -416,6 +417,14 @@ const BuscarVeiculo = () => {
                             >
                               <h6>
                                 <BsCashCoin  />‎ Saldo: {link.saldo}
+                              </h6>                            
+                            
+                            </div>  
+                             <div
+                              className="h6 d-flex align-items-center fs-6"
+                              id="estacionadocarroo"
+                            ><h6>
+                              <BsCardList />‎ Nome: {link.nome}
                               </h6>
                             </div>
                             {user2 ? user2.perfil[0] === "admin" ? (
