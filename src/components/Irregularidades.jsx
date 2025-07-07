@@ -177,7 +177,7 @@ const Irregularidades = () => {
                 }
                       `,
             icon: "success",
-            timer: 5000,
+            timer: 8000,
           }); });
           if (index !== undefined) {
             data[index].pago = "S";
