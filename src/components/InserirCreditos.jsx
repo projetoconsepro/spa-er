@@ -28,6 +28,7 @@ import ModalErroBanco from "./ModalErroBanco";
 import { MdPix } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { MensagemCompra } from "../util/MensagemCompra";
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -47,6 +48,11 @@ const InserirCreditos = () => {
   const [CreditCardSelected, setCreditCardSelected] = useState(null);
   const [creditCard, setCreditCard] = useState([]);
   const [valorPadrao, setValorPadrao] = useState("3");
+
+    const buscarMensagem = async () => {
+      const texto = await MensagemCompra();
+      return texto;
+    };
 
   useEffect(() => {
     if (metodo === "pix") {
@@ -105,7 +111,9 @@ const InserirCreditos = () => {
       })
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
-          FuncTrocaComp("MeusVeiculos");
+          setTimeout(() => {
+            FuncTrocaComp("MeusVeiculos");
+          }, 3000);
         } else {
           setNotification(false);
           setPixExpirado("Pix expirado");
@@ -246,15 +254,40 @@ const InserirCreditos = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setButtonDisabled(false);
+        buscarMensagem().then((texto) => {
           Swal.fire({
             icon: "success",
             title: "Sucesso!",
-            text: "Crédito inserido com sucesso!",
-            showConfirmButton: true,
+            html: `
+              Crédito inserido com sucesso!<br>
+              ${
+                texto
+                  ? `<small style="display:block;margin-top:10px;color:#555;">${texto}</small>`
+                  : ""
+              }
+            `,
+            showConfirmButton: false,
+            timerProgressBar: false,
+            didOpen: () => {
+              setTimeout(() => {
+                Swal.update({
+                  showConfirmButton: true,
+                });
+                const btn = document.querySelector('.swal2-confirm');
+                if (btn) {
+                  btn.style.opacity = "0";
+                  btn.style.transition = "opacity 1.5s";
+                  setTimeout(() => {
+                    btn.style.opacity = "1";
+                  }, 30); 
+                }
+              }, 2000);
+            },
             confirmButtonText: "Ok",
           }).then(() => {
             FuncTrocaComp("MeusVeiculos");
           });
+        });
         } else {
           setButtonDisabled(false);
           Swal.fire({

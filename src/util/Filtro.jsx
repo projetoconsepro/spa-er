@@ -306,9 +306,12 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Periodo", label: "Período" },
         { value: "Nome", label: "Nome" },
       ]);       
-    }
-    
-    else {
+    }else if (nome === "AdicionarMensagem") {
+      setOptions([
+        { value: "Data", label: "Data" },
+        { value: "Texto", label: "Texto" },
+      ]);
+    }else {
       setOptions([]);
     }
   }, [nome]);
@@ -491,6 +494,9 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
           break;
         case "Canceladas":
           consulta = `{"where": [{ "field": "removida", "operator": "=", "value": "${radioTipo}" }]}`;
+          break;
+        case "Texto":
+          consulta = `{"where": [{ "field": "texto", "operator": "LIKE", "value": "%${inputNome}%" }]}`;
           break;
         default:
           break;
@@ -1070,6 +1076,17 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                           </Grid>
                         </Radio.Group>
                   </div>   
+            ): selectedOption.value === "Texto" ? (   
+                                     <div>
+                          <div className="mt-3 mb-1">Digite o texto:</div>
+                          <Input
+                            icon={<IconUser size={16} />}
+                            placeholder="Digite o texto"
+                            onChange={(e) => setInputNome(e.target.value)}
+                          />
+
+
+                        </div> 
             ): null}
             </div>
           ) : null}

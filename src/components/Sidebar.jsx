@@ -41,7 +41,7 @@ import { FcMoneyTransfer } from "react-icons/fc";
 import { FcIdea } from "react-icons/fc";
 import { IconPlugConnected } from "@tabler/icons-react";
 import ConfigImpressora from "../util/ConfigImpressora";
-import { TbReportMoney } from "react-icons/tb";
+import { TbReportMoney, TbTextPlus } from "react-icons/tb";
 import { PiListChecksFill } from "react-icons/pi";
 import { AiFillWarning } from "react-icons/ai";
 
@@ -195,6 +195,7 @@ const Sidebar = () => {
           },
           { icon: <RiFileAddFill />, name: "‎ Cadastros",
           subitem: [
+              { icon: <TbTextPlus />, name: "‎ Mensagem", componente: "AdicionarMensagem", className: commonStyles },
               { icon: <FaUserPlus />, name: "‎ Usuários", componente: "UsuariosAdmin", className: commonStyles },
               { icon: <FaCar />, name: "‎ Placas isentas", componente: "PlacaIsenta", className: commonStyles },
               { icon: <FaCar />, name: "‎ Modelos/Fabricante", componente: "AdicionarModelo", className: commonStyles },
