@@ -410,7 +410,13 @@ const BuscarVeiculo = () => {
                           </div>
 
                           {link.debito === "Ativo" ? (
-                            <>
+                            <>                             <div
+                              className="h6 d-flex align-items-center fs-6"
+                              id="estacionadocarroo"
+                            ><h6>
+                              <BsCardList />‎ Debitando de: {link.nome}
+                              </h6>
+                            </div>
                             <div
                               className="h6 d-flex align-items-center fs-6"
                               id="estacionadocarroo"
@@ -420,13 +426,7 @@ const BuscarVeiculo = () => {
                               </h6>                            
                             
                             </div>  
-                             <div
-                              className="h6 d-flex align-items-center fs-6"
-                              id="estacionadocarroo"
-                            ><h6>
-                              <BsCardList />‎ Nome: {link.nome}
-                              </h6>
-                            </div>
+
                             {user2 ? user2.perfil[0] === "admin" ? (
                             <div
                             className="h6 d-flex align-items-center fs-6"
