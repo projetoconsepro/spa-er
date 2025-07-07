@@ -31,11 +31,11 @@ const HistoricoCaixa = () => {
         item.nome,
         item.abertura,
         item.fechamento,
-        `R$${item.valor_abertura}`,
+        `R$${parseFloat(item.valor_abertura).toFixed(2)}`,
         `${
           item.valor_fechamento === null
             ? "Caixa em aberto"
-            : `R$${item.valor_fechamento}`
+            : `R$${parseFloat(item.valor_fechamento).toFixed(2)}`
         }`,
       ])
     );
@@ -58,12 +58,12 @@ const HistoricoCaixa = () => {
                      item.fechamento
                    }</p>
                    <p class="text-start mx-5"><b>Valor abertura:</b> R$${
-                     item.valor_abertura
+                     parseFloat(item.valor_abertura).toFixed(2)
                    }</p>
                    <p class="text-start mx-5"><b>Valor fechamento:</b> ${
                      item.valor_fechamento === null
                        ? "Caixa em aberto"
-                       : `R$${item.valor_fechamento}`
+                       : `R$${parseFloat(item.valor_fechamento).toFixed(2)}`
                    }</p>`,
       showCancelButton: true,
       cancelButtonText: "Fechar",
@@ -262,11 +262,11 @@ const HistoricoCaixa = () => {
                           </td>
                           <td id="tabelaUsuarios2">{item.abertura}</td>
                           <td id="tabelaUsuarios2">{item.fechamento}</td>
-                          <td id="tabelaUsuarios2">R${item.valor_abertura}</td>
+                          <td id="tabelaUsuarios2">R${parseFloat(item.valor_abertura).toFixed(2)  }</td>
                           <td>
                             {item.valor_fechamento === null
                               ? "Caixa em aberto"
-                              : `R$${item.valor_fechamento}`}
+                              : `R$${parseFloat(item.valor_fechamento).toFixed(2)}`}
                           </td>
                         </tr>
                       ))}
