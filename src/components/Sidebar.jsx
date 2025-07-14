@@ -100,6 +100,8 @@ const Sidebar = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("perfil");
+    localStorage.removeItem("turno");
+    localStorage.removeItem("caixa");
   };
 
   const displayOff = () => {
