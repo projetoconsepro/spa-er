@@ -86,6 +86,15 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
   }, [onLoading]);
 
   useEffect(() => {
+    if (nome === "PrestacaoContas") {
+      const timer = setTimeout(() => {
+        open();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [nome, open]);
+
+  useEffect(() => {
     if (nome === "HistoricoCaixa") {
       setOptions([
         { value: "Data", label: "Data" },
