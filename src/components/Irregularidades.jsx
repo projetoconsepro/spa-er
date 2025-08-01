@@ -503,7 +503,12 @@ const Irregularidades = () => {
                     <span>
                       Status:{" "}
                       <span className={link.pago === "S" ? "text-success mx-1" : "text-danger mx-1"}>
-                        {link.pago === "S" ? "Quitado" : "Pendente"}
+                          {link.pago === "S"
+                        ? "Quitado"
+                        : link.infracao === 'S' && validacoes[link.id_notificacao] === false
+                          ? "Autuado"
+                          : "Pendente"
+                      }
                       </span>
                     </span>
                   </div>
