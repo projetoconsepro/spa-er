@@ -111,11 +111,9 @@ const PrestacaoContas = () => {
         "Total",
       ],
     ];
-    const monitoresFiltrados = data[0].monitor.filter(item => Number(item.finalTotal?.TotalValor || item.total?.finalTotal?.TotalValor || 0) > 0);
-    if (monitoresFiltrados.length > 0) {
 
     regularizacaoData.push([{ content: "MONITOR", colSpan: 22 }]);
-    
+
     regularizacaoData.push(
       ...data[0].monitor.map((item) => {
         const isRegularizacaoPresente = item.Regularizacao !== undefined;
@@ -188,11 +186,9 @@ const PrestacaoContas = () => {
         return rowData;
       })
     );
-  }
-  const BoldCol = regularizacaoData.length - 2;
-  const parceirosFiltrados = data[0].parceiro.filter(item => Number(item.finalTotal?.TotalValor || item.total?.finalTotal?.TotalValor || 0) > 0);
 
-  if (parceirosFiltrados.length > 0) {
+    const BoldCol = regularizacaoData.length - 2;
+
     regularizacaoData.push([{ content: "PARCEIRO", colSpan: 22 }]);
 
     regularizacaoData.push(
@@ -263,10 +259,8 @@ const PrestacaoContas = () => {
         return rowData;
       })
     );
-  }
+
     const BoldLine = regularizacaoData.length - 2;
-    const appFiltrados = data[0].aplicativo.filter(item => Number(item.finalTotal?.TotalValor || item.total?.finalTotal?.TotalValor || 0) > 0);
-    if (appFiltrados.length > 0) {
 
     regularizacaoData.push([{ content: "Clientes APP  ", colSpan: 22 }]);
     data[0].aplicativo.forEach((item) => {
@@ -293,10 +287,7 @@ const PrestacaoContas = () => {
         ]);
       }
     });
-  }
-  const avulsoFiltrados = data[0].avulso.filter(item => Number(item.finalTotal?.TotalValor || item.total?.finalTotal?.TotalValor || 0) > 0);
-  
-  if (avulsoFiltrados.length > 0) {
+
     regularizacaoData.push([{ content: "AVULSO", colSpan: 22 }]);
     data[0].avulso.map((item) => {
       if (item.Regularizacao !== undefined) {
@@ -323,9 +314,7 @@ const PrestacaoContas = () => {
         ]);
       }
     });
-  }
-  const chatbotFiltrados = data[0].chatbot.filter(item => Number(item.finalTotal?.TotalValor || item.total?.finalTotal?.TotalValor || 0) > 0);
-  if (chatbotFiltrados.length > 0) {
+
     regularizacaoData.push([{ content: "CHATBOT", colSpan: 22 }]);
 
     data[0].avulso.forEach((item) => {
@@ -352,7 +341,7 @@ const PrestacaoContas = () => {
         ]);
       }
     });
-  }
+
     regularizacaoData.push([{ content: "TOTAL GERAL", colSpan: 22 }]);
 
     const iParceiro = data[0].parceiro.length - 1;
@@ -1047,9 +1036,7 @@ const PrestacaoContas = () => {
                         </tr>
                       </thead>
                       <tbody>
-                      {data2
-                        .filter(item => item.finalTotal !== 0)
-                        .map((item, index) =>
+                        {data2.map((item, index) =>
                           item.totalRegularizacao !== null ? (
                             <tr className="card-list" key={index}>
                               <th
