@@ -29987,3 +29987,30 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
   }
 }
 }
+
+#gerar-relatorio-btn {
+  position: fixed;
+  top: 14px;
+  right: 35px;
+  left: auto;
+  width: auto;
+  z-index: 9999;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+@media (max-width: 992px) {
+  #gerar-relatorio-btn {
+    position: absolute;
+    top: 90px;
+    left: 5%;
+    right: auto;
+    width: 90%;
+  }
+}
