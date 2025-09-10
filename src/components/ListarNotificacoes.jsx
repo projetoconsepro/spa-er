@@ -199,12 +199,6 @@ const ListarNotificacoes = () => {
 
     setPerfil(user2.perfil[0]);
 
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
     const placa = localStorage.getItem("placaCarro");
     if (
