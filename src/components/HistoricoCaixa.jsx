@@ -51,12 +51,10 @@ const HistoricoCaixa = ( ) => {
 
   const mostrarInformacoes = (item) => {
     Swal.fire({
-      title: "Histórico do caixa",
+      title: "Detalhes do Caixa",
       html: `
-      <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; margin:16px auto; max-width:420px; box-shadow:0 4px 10px rgba(0,0,0,0.06); color:#2d3748; font-size:15px;">
-        <div style="margin-bottom:18px; text-align:center;">
-          <h3 style="margin:0; font-size:18px; color:#2d3748; font-weight:700;">Detalhes do Caixa</h3>
-        </div>
+      <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:21px; margin:16px auto; max-width:420px; box-shadow:0 4px 10px rgba(0,0,0,0.06); color:#2d3748; font-size:15px;">
+      
 
         <div style="margin-bottom:14px;">
           <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #edf2f7;">

@@ -271,7 +271,7 @@ const GerenciarCaixa = () => {
                 return false;
               }
               return {
-                valorReal: parseFloat(valorReal).toFixed(2),
+                valorReal: parseFloat(valorReal.replace(',', '.')).toFixed(2),
                 descricao: descricaoInput.value,
                 imprimir: imprimirCheckbox.checked ? 1 : 0,
               };
