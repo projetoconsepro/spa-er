@@ -343,7 +343,7 @@ const GerenciarCaixa = () => {
             }
           });
         } else {
-          Swal.fire("Erro ao tentar fechar caixa", "error");
+          Swal.fire("Não foi possível fechar o caixa", "Recarregue a página e tente novamente");
         }
       })
       .catch((error) => {
