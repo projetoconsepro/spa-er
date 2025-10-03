@@ -117,7 +117,10 @@ const HistoricoCaixa = ( ) => {
           <div style="display:flex; justify-content:space-between; padding:4px 0;">
             <span>Valor Real:</span>
             <span id="valorRealSpan" style="color:#dd6b20; font-weight:600;">
-              ${item.valor_real? `R$${parseFloat(item.valor_real).toFixed(2)}`: 'Não informado'}
+              ${item.valor_real === null || item.valor_real === undefined
+                ? 'Não informado'
+                : `R$${parseFloat(item.valor_real).toFixed(2)}`
+              }
             </span>
           </div>
         </div>
