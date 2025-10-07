@@ -334,12 +334,6 @@ const Irregularidades = () => {
           console.log(error);
         }
       });
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     const placa = localStorage.getItem("placaCarro");
     if (placa !== null && placa !== undefined && placa !== "") {
       startPlaca(placa);

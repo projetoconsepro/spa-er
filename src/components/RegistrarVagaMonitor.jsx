@@ -594,13 +594,6 @@ const RegistrarVagaMonitor = () => {
       FuncTrocaComp("ListarVagasMonitor");
       return;
     }
-
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     setTipoVaga(localStorage.getItem("tipoVaga"));
     param();
     

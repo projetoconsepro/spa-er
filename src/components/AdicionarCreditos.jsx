@@ -220,14 +220,6 @@ const AdicionarCreditos = () => {
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     setValor("");
     if (localStorage.getItem("usuario") !== null) {
       const user = localStorage.getItem("usuario");

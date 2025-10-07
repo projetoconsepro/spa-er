@@ -100,7 +100,7 @@ const Sidebar = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("perfil");
-    localStorage.removeItem("turno");
+    localStorage.removeItem("setorCaixa");
     localStorage.removeItem("caixa");
   };
 
@@ -182,6 +182,7 @@ const Sidebar = () => {
   } else if (teste.perfil[0] === "admin") {
       const adminLinks = [
           { icon: <AiOutlineBarChart />, name: "‎ Dashboard", componente: "Dashboard" }, 
+           { icon:  <BsCashCoin />, name: "‎ Gerenciar Caixa", componente: "GerenciarCaixa" }, 
           {icon: <FaRegMap />, name: "‎ Mapa", componente: "MapaAdmin" , className: commonStyles},
           { icon: <FaParking />, name: "‎ Registrar Estacionamento", componente: "RegistrarEstacionamentoParceiro" },
           { icon: <FaHistory />, name: "‎ Históricos",
@@ -238,7 +239,6 @@ const Sidebar = () => {
           { icon: <FaCarAlt />, name: "‎ Listar Vagas", componente: "ListarVagasMonitor" },
           { icon: <BsConeStriped />, name: "‎ Listar Notificações", componente: "ListarNotificacoes" },
           { icon: <BiSearchAlt />, name: "‎ Buscar Veículo", componente: "BuscarVeiculo" },
-          { icon: <BsCashCoin />, name: "‎ Abrir/fechar turno", componente: "AbrirTurno" },
           { icon: <AiFillPrinter />, name: "‎ Impressora",
             subitem: [
               { icon: <FaPrint />, name: "‎ Configurar", componente: "ConfigurarImpressora", className: commonStyles },

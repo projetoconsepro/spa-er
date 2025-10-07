@@ -48,13 +48,6 @@ const BuscarVeiculo = () => {
 
     localStorage.removeItem("usuario");
 
-
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
     if (clicado === false) {
       if (
