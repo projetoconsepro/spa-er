@@ -19,7 +19,7 @@ import {
   FaUsers,
   FaRegMap
 } from "react-icons/fa";
-import { BsConeStriped, BsCashCoin } from "react-icons/bs";
+import { BsConeStriped, BsCashCoin, BsFileEarmarkArrowDown } from "react-icons/bs";
 import {
   MdAddLocationAlt,
   MdCarCrash,
@@ -245,6 +245,8 @@ const Sidebar = () => {
               { icon: <IconPlugConnected />, name: "‎ Conectar", componente: "ConectarImpressora", className: commonStyles },
             ]
           },
+          { icon: <BsFileEarmarkArrowDown />, name: "‎ Impressão de Caixa", componente: "ImprimirCaixa" },
+
       ];
 
       monitorLinks.forEach(link => {
