@@ -6,7 +6,6 @@ import createAPI from "../services/createAPI";
 import {ArrumaHora3} from "../util/ArrumaHora";
 import { IconCash } from '@tabler/icons-react';
 import { Button, Input, Modal, Loader,  } from '@mantine/core';
-import ImpressaoFecharCaixa from '../util/ImpressaoFecharCaixa';
 import { BsXLg } from "react-icons/bs";
 import { IconUserCircle,  IconSearch } from "@tabler/icons-react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -249,10 +248,6 @@ const GerenciarCaixa = () => {
                       onblur="this.style.border='1px solid #cbd5e0'; this.style.boxShadow='none'"></textarea>
                   </div>
 
-                  <div style="display: flex; align-items: center; gap: 8px;"> 
-                    <input type="checkbox" checked id="imprimirCheckbox" name="imprimirCheckbox" style="transform: scale(1);"> 
-                    <label style="font-size: 15px; margin: 0;">Imprimir comprovante</label> 
-                  </div>
                 </div>
               </div>`,
             confirmButtonText: "Confirmar",
@@ -262,7 +257,6 @@ const GerenciarCaixa = () => {
               const valorRealInput = document.getElementById("valorReal");
               const valorReal = valorRealInput.value;
               const descricaoInput = document.getElementById("descricao");
-              const imprimirCheckbox = document.getElementById("imprimirCheckbox");
               if (!valorReal || valorReal.trim() === "") {
                 Swal.showValidationMessage("O campo Valor Real é obrigatório!");
                 setTimeout(() => {
@@ -273,7 +267,6 @@ const GerenciarCaixa = () => {
               return {
                 valorReal: parseFloat(valorReal.replace(',', '.')).toFixed(2),
                 descricao: descricaoInput.value,
-                imprimir: imprimirCheckbox.checked ? 1 : 0,
               };
             },
           }).then((result) => {
@@ -315,9 +308,6 @@ const GerenciarCaixa = () => {
                         FuncTrocaComp("HistoricoCaixa");
                       }
                     });
-                    if (result.value.imprimir === 1) {
-                      ImpressaoFecharCaixa(response2.data.data, sim, item.nome);
-                    }
                   } else {
                     Swal.fire(
                       "Erro ao fechar caixa",
