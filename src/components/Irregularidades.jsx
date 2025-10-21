@@ -639,7 +639,7 @@ const Irregularidades = () => {
 
       <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
       <ModalPix
-        qrCode={data2.brcode}
+        qrCode={data2.pixCopiaECola}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}

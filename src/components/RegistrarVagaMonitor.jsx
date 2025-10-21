@@ -776,7 +776,7 @@ const RegistrarVagaMonitor = () => {
           setOnOpen={setOnOpenError}
         />
         <ModalPix
-          qrCode={data.brcode}
+          qrCode={data.pixCopiaECola}
           status={notification}
           mensagemPix={pixExpirado}
           onOpen={onOpen}

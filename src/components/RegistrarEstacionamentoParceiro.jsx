@@ -721,7 +721,7 @@ const RegistrarEstacionamentoParceiro = () => {
           onClose={onCloseError}
         />
     <ModalPix
-        qrCode={data.brcode}
+        qrCode={data.pixCopiaECola}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
