@@ -9,6 +9,7 @@ import Filtro from '../util/Filtro';
 import createAPI from '../services/createAPI';
 import { Group, Pagination } from '@mantine/core';
 
+
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
