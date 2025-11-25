@@ -1,55 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Line } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import "chartjs-plugin-annotation";
-import createAPI from "../../services/createAPI";
-import randomColor from "randomcolor";
 
-const Grafico = () => {
-  const [nome, setNome] = useState([]);
-
-  function gerarCorBonita() {
-    return randomColor({ hue: "blue", luminosity: "bright", format: "hex" });
-  }
-
-  function lightenAndFadeColor(hexColor, lightenAmount, fadeAmount) {
-    // Remover o caractere '#' do código hexadecimal (caso esteja presente)
-    hexColor = hexColor.replace("#", "");
-
-    // Separar o código hexadecimal em componentes R, G, B e A (se existir)
-    let red, green, blue, alpha;
-    if (hexColor.length === 8) {
-      red = parseInt(hexColor.slice(0, 2), 16);
-      green = parseInt(hexColor.slice(2, 4), 16);
-      blue = parseInt(hexColor.slice(4, 6), 16);
-      alpha = parseInt(hexColor.slice(6, 8), 16);
-    } else {
-      red = parseInt(hexColor.slice(0, 2), 16);
-      green = parseInt(hexColor.slice(2, 4), 16);
-      blue = parseInt(hexColor.slice(4, 6), 16);
-      alpha = 255; // Se não houver valor de alpha, consideramos 255 (totalmente opaco)
-    }
-
-    // Aumentar o valor de cada componente RGB (tornar a cor mais clara)
-    red = Math.min(255, red + lightenAmount);
-    green = Math.min(255, green + lightenAmount);
-    blue = Math.min(255, blue + lightenAmount);
-
-    // Reduzir o valor do canal alfa (tornar a cor mais opaca)
-    alpha = Math.max(0, alpha - fadeAmount);
-
-    // Converter os componentes em valores hexadecimais
-    const newRed = red.toString(16).padStart(2, "0");
-    const newGreen = green.toString(16).padStart(2, "0");
-    const newBlue = blue.toString(16).padStart(2, "0");
-    const newAlpha = alpha.toString(16).padStart(2, "0");
-
-    // Criar o código hexadecimal da nova cor
-    const newHexColor = `#${newRed}${newGreen}${newBlue}${newAlpha}`;
-
-    return newHexColor;
-  }
-
+const Grafico = ({ dados = {} }) => {
   const labels = [
     "09:00",
     "10:00",
@@ -62,14 +16,20 @@ const Grafico = () => {
     "17:00",
   ];
 
+  const hasData = dados && Object.keys(dados).length > 0;
+  
   const data = {
     labels: labels,
-    datasets: Object.values(nome),
+    datasets: hasData ? Object.values(dados) : [],
   };
 
 const options = {
   responsive: true,
   maintainAspectRatio: false,
+  interaction: {
+    mode: 'index',
+    intersect: false,
+  },
   scales: {
     y: {
       beginAtZero: true,
@@ -117,64 +77,6 @@ const options = {
     }
   }
 };
-  const requisicaoSetores = async () => {
-    const requisicao = createAPI();
-
-    requisicao
-      .get("/setores/dashboard/admin")
-      .then((response) => {
-        const NewData = response?.data?.data?.map((item) => {
-          const corBonita = gerarCorBonita();
-          const backgroundColor = lightenAndFadeColor(corBonita, 30, 200);
-          return {
-            nome: item.nome,
-            quantidade: item.numero_movimento,
-            hora: item.intervalo_horario,
-            cor: corBonita,
-            backgroundColor: backgroundColor,
-          };
-        });
-
-        const novoObjeto = {};
-        
-        for (const item of NewData) {
-          const { cor, nome, quantidade, backgroundColor, hora } = item;
-
-          if (!novoObjeto[nome]) {
-            novoObjeto[nome] = {
-              label: ` ${nome} `,
-              data: [],
-              backgroundColor: backgroundColor,
-              borderColor: cor,
-              borderWidth: 4,
-              fill: true,
-              pointRadius: 2,
-              lineTension: 0.5,
-              cubicInterpolationMode: "monotone",
-            };
-          }
-          novoObjeto[nome].data[labels.indexOf(hora)] = quantidade;
-        }
-        setNome(novoObjeto);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  useEffect(() => {
-    requisicaoSetores();
-
-    const interval = setInterval(() => {
-        requisicaoSetores();
-    }, 120000);
-
-    return () => clearInterval(interval);
-}, []);
-
-
-
-
 
   return (
     <>
@@ -182,7 +84,13 @@ const options = {
         Ocupação classificado por hora
       </h5>
     <div style={{ height: '300px', width: '100%' }}>
-      <Line data={data} options={options} />
+      {hasData ? (
+        <Line data={data} options={options} />
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#888' }}>
+          Carregando dados...
+        </div>
+      )}
     </div>
     </>
   );

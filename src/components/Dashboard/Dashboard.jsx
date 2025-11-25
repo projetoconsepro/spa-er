@@ -21,7 +21,21 @@ const Dashboard = () => {
   const [setores, setSetores] = useState([]);
   const [informacoesSetores, setInformacoesSetores] = useState([]);
   const [informacoesMonitoras, setInformacoesMonitoras] = useState([]);
+  const [dadosDebito, setDadosDebito] = useState([]);
+  const [totalAtivos, setTotalAtivos] = useState(0);
+  const [dadosGraficoOcupacao, setDadosGraficoOcupacao] = useState({});
   const [ultimaAtualizacao, setUltimaAtualizacao] = useState(new Date());
+  
+  const [loadingSetores, setLoadingSetores] = useState(true);
+  const [loadingVagas, setLoadingVagas] = useState(true);
+  const [loadingMonitoras, setLoadingMonitoras] = useState(true);
+  const [loadingDebito, setLoadingDebito] = useState(true);
+  const [loadingGraficoOcupacao, setLoadingGraficoOcupacao] = useState(true);
+
+  const DELAY_VAGAS = 1500;
+  const DELAY_MONITORAS = 3000;
+  const DELAY_DEBITO = 2000; 
+  const DELAY_GRAFICO_OCUPACAO = 1000;
 
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
@@ -40,22 +54,27 @@ const Dashboard = () => {
   }
 
   const requisicaoSetores = async () => {
-
+    setLoadingSetores(true);
 
     requisicao
       .get("/setores/admin")
       .then((response) => {
-        const newData = response?.data?.data?.setores.map((item) => ({
-          id_setor: item.id_setor,
-          nome: item.nome,
-          ocupacao: item.ocupacao,
-          notificacoes: item.notificacoes,
-          tolerancia: item.tolerancia,
-          ultimoMovimento: item.ultimoMovimento,
-          valor_total: item.valor_total,
-          cor: gerarCorBonita(),
-        }));
-        setSetores(newData);
+        const setoresData = response?.data?.data?.setores;
+        if (setoresData && Array.isArray(setoresData)) {
+          const newData = setoresData.map((item) => ({
+            id_setor: item.id_setor,
+            nome: item.nome,
+            ocupacao: item.ocupacao,
+            notificacoes: item.notificacoes,
+            tolerancia: item.tolerancia,
+            ultimoMovimento: item.ultimoMovimento,
+            valor_total: item.valor_total,
+            cor: gerarCorBonita(),
+          }));
+          setSetores(newData);
+        } else {
+          setSetores([]);
+        }
       })
       .catch(function (error) {
         if (
@@ -70,23 +89,32 @@ const Dashboard = () => {
         } else {
           console.log(error);
         }
+      })
+      .finally(() => {
+        setLoadingSetores(false);
       });
   };
 
   const requisicaoVagaSetor = async () => {
+    setLoadingVagas(true);
     requisicao
       .get("/setores/admin/vagas")
       .then((response) => {
-        const newData = response?.data?.data?.resultados.map((item) => ({
-          id_setor: item.id_setor,
-          nome: item.nome,
-          vagas_ocupadas: item.vagas_ocupadas,
-          vagas_livres: item.vagas_livres,
-          total: item.total_vagas,
-          ocupacao_percentual: item.vagas_ocupadas > 0 ? ((item.vagas_ocupadas / item.total_vagas) * 100).toFixed(1) + "%" : "0%",
-          cor: gerarCorBonita(),
-        }));
-        setInformacoesSetores(newData);
+        const resultadosData = response?.data?.data?.resultados;
+        if (resultadosData && Array.isArray(resultadosData)) {
+          const newData = resultadosData.map((item) => ({
+            id_setor: item.id_setor,
+            nome: item.nome,
+            vagas_ocupadas: item.vagas_ocupadas,
+            vagas_livres: item.vagas_livres,
+            total: item.total_vagas,
+            ocupacao_percentual: item.vagas_ocupadas > 0 ? ((item.vagas_ocupadas / item.total_vagas) * 100).toFixed(1) + "%" : "0%",
+            cor: gerarCorBonita(),
+          }));
+          setInformacoesSetores(newData);
+        } else {
+          setInformacoesSetores([]);
+        }
       })
       .catch(function (error) {
         if (
@@ -101,22 +129,31 @@ const Dashboard = () => {
         } else {
           console.log(error);
         }
+      })
+      .finally(() => {
+        setLoadingVagas(false);
       });
   };
 
   const requisicaoMonitoras = async () => {
+    setLoadingMonitoras(true);
     requisicao
       .get("/usuario/total/monitoras")
       .then((response) => {
-        const newData = response?.data?.data?.resultados.map((item) => ({
-          nome: item.nome,
-          total_geral: item.total_geral,
-          total_pix: item.total_pix,
-          total_dinheiro: item.total_dinheiro,
-          movimentos: item.movimentos,
-          notificacoes: item.notificacoes,
-        }));
-        setInformacoesMonitoras(newData);
+        const resultadosData = response?.data?.data?.resultados;
+        if (resultadosData && Array.isArray(resultadosData)) {
+          const newData = resultadosData.map((item) => ({
+            nome: item.nome,
+            total_geral: item.total_geral,
+            total_pix: item.total_pix,
+            total_dinheiro: item.total_dinheiro,
+            movimentos: item.movimentos,
+            notificacoes: item.notificacoes,
+          }));
+          setInformacoesMonitoras(newData);
+        } else {
+          setInformacoesMonitoras([]);
+        }
       })
       .catch(function (error) {
         if (
@@ -131,18 +168,177 @@ const Dashboard = () => {
         } else {
           console.log(error);
         }
+      })
+      .finally(() => {
+        setLoadingMonitoras(false);
+      });
+  };
+
+  const requisicaoDebito = async () => {
+    setLoadingDebito(true);
+    requisicao
+      .get("/veiculo/debito/cont")
+      .then((response) => {
+        if (response.status === 200 && response.data.msg.resultado) {
+          const newData = response.data.data;
+          setDadosDebito(newData);
+          if (newData && newData.length > 0) {
+            setTotalAtivos(newData[newData.length - 1].total_debitos_ativos);
+          } else {
+            setTotalAtivos(0);
+          }
+        } else {
+          setDadosDebito([]);
+          setTotalAtivos(0);
+        }
+      })
+      .catch(function (error) {
+        if (
+          error?.response?.data?.msg === "Cabeçalho inválido!" ||
+          error?.response?.data?.msg === "Token inválido!" ||
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
+        } else {
+          console.log(error);
+        }
+        setDadosDebito([]);
+        setTotalAtivos(0);
+      })
+      .finally(() => {
+        setLoadingDebito(false);
+      });
+  };
+
+  const requisicaoGraficoOcupacao = async () => {
+    setLoadingGraficoOcupacao(true);
+    
+    const labels = [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+    ];
+
+    function gerarCorBonita() {
+      return randomcolor({ hue: "blue", luminosity: "bright", format: "hex" });
+    }
+
+    function lightenAndFadeColor(hexColor, lightenAmount, fadeAmount) {
+      if (!hexColor || typeof hexColor !== 'string') {
+        return '#4594E580'; // Cor padrão com transparência
+      }
+      
+      hexColor = hexColor.replace("#", "");
+      let red, green, blue, alpha;
+      
+      if (hexColor.length === 8) {
+        red = parseInt(hexColor.slice(0, 2), 16);
+        green = parseInt(hexColor.slice(2, 4), 16);
+        blue = parseInt(hexColor.slice(4, 6), 16);
+        alpha = parseInt(hexColor.slice(6, 8), 16);
+      } else {
+        red = parseInt(hexColor.slice(0, 2), 16);
+        green = parseInt(hexColor.slice(2, 4), 16);
+        blue = parseInt(hexColor.slice(4, 6), 16);
+        alpha = 255;
+      }
+
+      red = Math.min(255, red + lightenAmount);
+      green = Math.min(255, green + lightenAmount);
+      blue = Math.min(255, blue + lightenAmount);
+      alpha = Math.max(0, alpha - fadeAmount);
+
+      const newRed = red.toString(16).padStart(2, "0");
+      const newGreen = green.toString(16).padStart(2, "0");
+      const newBlue = blue.toString(16).padStart(2, "0");
+      const newAlpha = alpha.toString(16).padStart(2, "0");
+
+      return `#${newRed}${newGreen}${newBlue}${newAlpha}`;
+    }
+
+    requisicao
+      .get("/setores/dashboard/admin")
+      .then((response) => {
+        const dados = response?.data?.data;
+        
+        if (!dados || !Array.isArray(dados)) {
+          setDadosGraficoOcupacao({});
+          return;
+        }
+        
+        const NewData = dados.map((item) => {
+          const corBonita = gerarCorBonita();
+          const backgroundColor = lightenAndFadeColor(corBonita, 30, 200);
+          return {
+            nome: item.nome,
+            quantidade: item.numero_movimento,
+            hora: item.intervalo_horario,
+            cor: corBonita,
+            backgroundColor: backgroundColor,
+          };
+        });
+
+        const novoObjeto = {};
+        
+        for (const item of NewData) {
+          const { cor, nome, quantidade, backgroundColor, hora } = item;
+
+          if (!novoObjeto[nome]) {
+            novoObjeto[nome] = {
+              label: ` ${nome} `,
+              data: [],
+              backgroundColor: backgroundColor,
+              borderColor: cor,
+              borderWidth: 4,
+              fill: true,
+              pointRadius: 2,
+              lineTension: 0.5,
+              cubicInterpolationMode: "monotone",
+            };
+          }
+          novoObjeto[nome].data[labels.indexOf(hora)] = quantidade;
+        }
+        setDadosGraficoOcupacao(novoObjeto);
+      })
+      .catch((error) => {
+        console.log(error);
+        setDadosGraficoOcupacao({});
+      })
+      .finally(() => {
+        setLoadingGraficoOcupacao(false);
       });
   };
 
   useEffect(() => {
-    const atualizarDados = () => {
-      Promise.all([
-        requisicaoSetores(),
-        requisicaoVagaSetor(),
-        requisicaoMonitoras()
-      ]).finally(() => {
-        setUltimaAtualizacao(new Date());
-      });
+    const atualizarDados = async () => {
+      await requisicaoSetores();
+      
+      setTimeout(() => {
+        requisicaoDebito();
+      }, DELAY_DEBITO);
+      
+      setTimeout(() => {
+        requisicaoGraficoOcupacao();
+      }, DELAY_GRAFICO_OCUPACAO);
+      
+      setTimeout(() => {
+        requisicaoVagaSetor();
+      }, DELAY_VAGAS);
+      
+      setTimeout(() => {
+        requisicaoMonitoras();
+      }, DELAY_MONITORAS);
+      
+      setUltimaAtualizacao(new Date());
     };
   
     atualizarDados(); 
@@ -227,7 +423,7 @@ const AtualizacaoInfo = ({ data }) => {
     autoTable(doc, {
       startY: finalY,
       head: [["Setor", "N° Ocupações", "N° Notificações", "N° Tolerâncias", "Valor total"]],
-      body: setores.map(item => [
+      body: (setores || []).map(item => [
         item.nome,
         item.ocupacao,
         item.notificacoes,
@@ -245,7 +441,7 @@ const AtualizacaoInfo = ({ data }) => {
     autoTable(doc, {
       startY: finalY,
       head: [["Monitor", "N° Movimentos", "N° Notificações", "Dinheiro", "Pix", "Valor total"]],
-      body: informacoesMonitoras.map(item => [
+      body: (informacoesMonitoras || []).map(item => [
         item.nome,
         item.movimentos,
         item.notificacoes,
@@ -264,7 +460,7 @@ const AtualizacaoInfo = ({ data }) => {
     autoTable(doc, {
       startY: finalY,
       head: [["Setor", "Ocupadas", "Livres", "Total", "Ocupação (%)"]],
-      body: informacoesSetores.map(item => [
+      body: (informacoesSetores || []).map(item => [
         item.nome,
         item.vagas_ocupadas ?? 0,
         item.vagas_livres ?? 0,
@@ -314,29 +510,30 @@ const AtualizacaoInfo = ({ data }) => {
           dragFree
           align="center"
           slidesToScroll={window.innerWidth < 768 ? 1 : 3}
+          
         >
           {setores.length === 0 && (
             <Carousel.Slide>
-              <Card
+              <Card 
                 padding="lg"
                 radius="md"
                 withBorder
                 className="text-center bg-blue-100"
               >
-                <Grid>
-                  <Grid.Col span={4} className="mx-auto">
-                    <Group position="center" align="center" mt="md">
-                      <Text fz="lg" weight={700}>
-                        <CarroLoading />
-                      </Text>
-                    </Group>
-                  </Grid.Col>
-                </Grid>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ flex: '0 0 33.33%', margin: 'auto' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1rem' }}>
+                      <div style={{ fontSize: '1.125rem', fontWeight: 700 }}>
+                        {loadingSetores ? <CarroLoading /> : "Nenhum setor encontrado"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </Card>
             </Carousel.Slide>
           )}
-        {setores.map((item, index) => {
-          const setorInfo = informacoesSetores.find(s => s.nome === item.nome);
+        {(setores || []).map((item, index) => {
+          const setorInfo = (informacoesSetores || []).find(s => s.nome === item.nome);
 
           return (
             <Carousel.Slide key={index}>
@@ -346,7 +543,7 @@ const AtualizacaoInfo = ({ data }) => {
                 withBorder
                 className="text-start bg-blue-100 px-0 py-3"
               >
-                <Grid className="pe-0 ps-1">
+                 <Grid className="pe-0 ps-1">
                   <Grid.Col span={3} className="px-0">
                     <Group position="center" mt="md">
                       <div className="icon-shape icon-shape bg-blue-200 rounded me-3 me-sm-0">
@@ -401,7 +598,7 @@ const AtualizacaoInfo = ({ data }) => {
                   >
                     <div className="row">
                       <div className="ct-chart-sales-value ct-double-octave ct-series-g">
-                        <Grafico />
+                        <Grafico dados={dadosGraficoOcupacao} />
                       </div>
                     </div>
                   </div>
@@ -440,7 +637,7 @@ const AtualizacaoInfo = ({ data }) => {
                     <div className="row d-flex justify-content-center">
                       <div className="col-12">
                         <div >
-                          <GraficoDebito />
+                          <GraficoDebito dados={dadosDebito} totalAtivos={totalAtivos} />
                         </div>
                       </div>
                     </div>
@@ -454,8 +651,8 @@ const AtualizacaoInfo = ({ data }) => {
                         : "card-body4 p-3"
                     }
                   >
-                    <h5 style={{ textAlign: "start", margin: "1.0rem 0.4rem", fontWeight: "normal" }}>
-                      Ocupação dos setores
+                    <h5 style={{ textAlign: "start", margin: "0.7rem 0.4rem", fontWeight: "normal" }}>
+                      Ocupação dos setores {loadingVagas && <span style={{ fontSize: "0.8rem", color: "#888" }}>(carregando...)</span>}
                     </h5>
                     <div className="row d-flex justify-content-center">
                       <div className="col-12">
@@ -497,7 +694,7 @@ const AtualizacaoInfo = ({ data }) => {
                     }
                   >
                     <h5 style={{ textAlign: "start", margin: "0.7rem 0.4rem", fontWeight: "normal" }}>
-                      Total Monitoras
+                      Total Monitoras {loadingMonitoras && <span style={{ fontSize: "0.8rem", color: "#888" }}>(carregando...)</span>}
                     </h5>
                     <div className="row d-flex justify-content-center">
                       <div className="col-12">
@@ -520,7 +717,7 @@ const AtualizacaoInfo = ({ data }) => {
                 <div className="card-body13 p-2">
                   <div className="row">
                     <div className="ct-chart-sales-value ct-double-octave ct-series-g">
-                      <Grafico />
+                      <Grafico dados={dadosGraficoOcupacao} />
                     </div>
                   </div>
                 </div>
@@ -545,7 +742,7 @@ const AtualizacaoInfo = ({ data }) => {
                         <div className="card-body13 px-4 py-4">
                             <div className="row">
                                 <div className="ct-chart-sales-value ct-double-octave ct-series-g">
-                                    <GraficoDebito />
+                                    <GraficoDebito dados={dadosDebito} totalAtivos={totalAtivos} />
                                 </div>
                             </div>
                         </div>
@@ -554,7 +751,7 @@ const AtualizacaoInfo = ({ data }) => {
               <div className="row mt-3">
                 <div className="card bg-white border-0 shadow w-100">
                   <h4 style={{ textAlign: "start", margin: "1.5rem" }}>
-                      Ocupação dos setores
+                      Ocupação dos setores {loadingVagas && <span style={{ fontSize: "0.9rem", color: "#888" }}>(carregando...)</span>}
                   </h4>
                   <div className="card-body13 px-4 py-4">
                     <div className="row">
@@ -584,7 +781,7 @@ const AtualizacaoInfo = ({ data }) => {
                             <div className="row mt-3">
                 <div className="card bg-white border-0 shadow w-100">
                   <h4 style={{ textAlign: "start", margin: "1.5rem" }}>
-                      Total Monitoras
+                      Total Monitoras {loadingMonitoras && <span style={{ fontSize: "0.9rem", color: "#888" }}>(carregando...)</span>}
                   </h4>
                   <div className="card-body13 px-4 py-4">
                     <div className="row">
@@ -615,20 +812,20 @@ const AtualizacaoInfo = ({ data }) => {
                     withBorder
                     className="text-center bg-blue-100"
                   >
-                    <Grid>
-                      <Grid.Col span={4} className="mx-auto">
-                        <Group position="center" align="center" mt="md">
-                          <Text fz="lg" weight={700}>
-                            <CarroLoading />
-                          </Text>
-                        </Group>
-                      </Grid.Col>
-                    </Grid>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <div style={{ flex: '0 0 33.33%', margin: 'auto' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1rem' }}>
+                          <div style={{ fontSize: '1.125rem', fontWeight: 700 }}>
+                            {loadingMonitoras ? <CarroLoading /> : "Nenhuma monitora encontrada"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </Card>
                 </Carousel.Slide>
               )}
 
-              {informacoesMonitoras.map((item, index) => (
+              {(informacoesMonitoras || []).map((item, index) => (
                 <Carousel.Slide key={index}>
                   <Card
                     padding="lg"
@@ -636,7 +833,7 @@ const AtualizacaoInfo = ({ data }) => {
                     withBorder
                     className="text-start bg-blue-100 px-0 py-3"
                   >
-                    <Grid className="pe-0 ps-4">
+ <Grid className="pe-0 ps-4">
 
                       <Grid.Col span={9} className="px-0 pt-0">
                         <Text size="sm" className="py-1" weight={500} style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
