@@ -3,7 +3,13 @@ import createAPI from '../services/createAPI';
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io(`${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`);
+const socket = io(`${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`, {
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 500,
+  reconnectionDelayMax: 2000,
+  timeout: 10000
+});
 
 function CaixaVerificacao(Componente) {
   return function Verificado(props) {
@@ -18,13 +24,19 @@ function CaixaVerificacao(Componente) {
       return usuario ? JSON.parse(usuario) : null;
     };
   
-    useEffect(() => {
-      if (userDados && userDados.id_usuario) {
+  useEffect(() => {
+    if (userDados && userDados.id_usuario) {
+      socket.emit('registroCaixa', userDados.id_usuario);
+      
+      socket.on('connect', () => {
         socket.emit('registroCaixa', userDados.id_usuario);
-      }
-    }, [userDados]);
-  
-    const verificarCaixa = () => {
+      });
+    }
+
+    return () => {
+      socket.off('connect');
+    };
+  }, [userDados]);    const verificarCaixa = () => {
       const usuario = getUser();
       setUserDados(usuario);
       if (usuario && usuario.id_usuario) {
@@ -44,24 +56,24 @@ function CaixaVerificacao(Componente) {
       }
     };
 
-    useEffect(() => {
-      verificarCaixa();
-      window.addEventListener("caixaChange", verificarCaixa);
+  useEffect(() => {
+    verificarCaixa();
+    window.addEventListener("caixaChange", verificarCaixa);
 
-      socket.on('caixaStatusChange', (data) => {
-        const usuario = getUser();
-        if (usuario && usuario.id_usuario === data.idUsuario) {
-          verificarCaixa();
-        }
-      });
+    socket.on('caixaStatusChange', (data) => {
+      const usuario = getUser();
+      if (usuario && usuario.id_usuario === data.idUsuario) {
+        verificarCaixa();
+      }
+    });
 
-      return () => {
-        window.removeEventListener("caixaChange", verificarCaixa);
-        socket.off('caixaStatusChange');
-      };
-    }, []);
-
-    if (
+    return () => {
+      window.removeEventListener("caixaChange", verificarCaixa);
+      socket.off('caixaStatusChange');
+    };
+  }, []);    
+  
+  if (
       userDados &&
       userDados.perfil &&
       userDados.perfil[0] === "monitor" &&
