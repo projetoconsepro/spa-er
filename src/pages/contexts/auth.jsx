@@ -82,6 +82,7 @@ export const AuthProvider = ({ children }) => {
             if (loggedUser.perfil[0] === "cliente") {
               FuncTrocaComp("MeusVeiculos");
             } else if (loggedUser.perfil[0] === "monitor") {
+              window.dispatchEvent(new Event("caixaChange"));
               FuncTrocaComp("ListarVagasMonitor");
             } else if (loggedUser.perfil[0] === "parceiro") {
               FuncTrocaComp("RegistrarEstacionamentoParceiro");

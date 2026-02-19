@@ -199,12 +199,6 @@ const ListarNotificacoes = () => {
 
     setPerfil(user2.perfil[0]);
 
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     const localVagaVeiculo = localStorage.getItem("VagaVeiculoId");
     const placa = localStorage.getItem("placaCarro");
     if (
@@ -831,7 +825,7 @@ const ListarNotificacoes = () => {
         <VoltarComponente />
         <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
         <ModalPix
-          qrCode={data2.brcode}
+          qrCode={data2.pixCopiaECola}
           status={notification}
           mensagemPix={pixExpirado}
           onOpen={onOpen}

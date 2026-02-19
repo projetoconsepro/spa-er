@@ -3,17 +3,24 @@ import Sidebar from "../../components/Sidebar";
 import Componentes from "./Componentes";
 import "bootstrap/dist/css/bootstrap.min.css";
 import io from "socket.io-client";
+import CaixaVerificacao from "../../util/CaixaVerificacao";
 
-const socket = io(`${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`);
+const socket = io(`${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`, {
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 500,
+  reconnectionDelayMax: 2000,
+  timeout: 10000
+});
  
-const HomePage = () => {
+const HomePageComponente = () => {
     const [data, setData] = useState("");
     const user = localStorage.getItem("user");
     const userDados = JSON.parse(user);
     const [cont, setCont] = useState(0);  
     const [lastPosition, setLastPosition] = useState(null);
   
-    if (user === null || user === undefined) {
+if (user === null || user === undefined) {
     const allowedComponents = [
       "RegisterPage",
       "LoginPage",
@@ -107,5 +114,5 @@ const HomePage = () => {
     </>
   );
 };
-
+const HomePage = CaixaVerificacao(HomePageComponente);
 export default HomePage;

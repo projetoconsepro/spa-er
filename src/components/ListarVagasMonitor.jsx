@@ -23,6 +23,28 @@ const ListarVagasMonitor = () => {
   const [localVagas, setLocalVagas] = useState(true);
   
   let variavelAuxiliarVagas = [];
+  useEffect(() => {
+    const requisicao = createAPI();
+    localStorage.removeItem("id_vagaveiculo");
+
+    const buscarSetor = async () => {
+      let setorCaixa = localStorage.getItem("setorCaixa");
+      if (!setorCaixa) {
+        const usuario = JSON.parse(localStorage.getItem("user"));
+        if (usuario && usuario.id_usuario) {
+          const response = await requisicao.get(`/caixa/setor/${usuario.id_usuario}`);
+          if (response.data && response.data.data && response.data.data.nome) {
+            setorCaixa = response.data.data.nome;
+            localStorage.setItem("setorCaixa", setorCaixa);
+            setSalvaSetor(setorCaixa);
+            await getVagas(setorCaixa, 'reset');
+            return;
+          }
+        }
+      }
+    };
+    buscarSetor();
+  }, []);
 
   const funcCalcVgas = (array) => {
     array = array.filter(item => item !== null);
@@ -80,7 +102,7 @@ const ListarVagasMonitor = () => {
       }
     }
 
-    localStorage.setItem("setorTurno", setor);
+    localStorage.setItem("setorCaixa", setor);
     setSalvaSetor(setor);
     setEstado(true);
     setMensagem("Carregando vagas...");
@@ -190,7 +212,7 @@ useEffect(() => {
 
   useEffect(() => {
       (async () => {
-        const setor = localStorage.getItem("setorTurno");
+        const setor = localStorage.getItem("setorCaixa");
         setSalvaSetor(setor);
         await getVagas(setor);
       })();
@@ -204,10 +226,6 @@ useEffect(() => {
     } else {
       setLocalVagas(false)
     }
-
-    if (localStorage.getItem("turno") != "true") {
-      FuncTrocaComp("AbrirTurno");
-    };
 
     const requisicao = createAPI();
     localStorage.removeItem("idVagaVeiculo");

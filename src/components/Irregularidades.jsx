@@ -334,12 +334,6 @@ const Irregularidades = () => {
           console.log(error);
         }
       });
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     const placa = localStorage.getItem("placaCarro");
     if (placa !== null && placa !== undefined && placa !== "") {
       startPlaca(placa);
@@ -645,7 +639,7 @@ const Irregularidades = () => {
 
       <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
       <ModalPix
-        qrCode={data2.brcode}
+        qrCode={data2.pixCopiaECola}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}

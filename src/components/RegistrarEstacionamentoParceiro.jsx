@@ -557,12 +557,7 @@ const RegistrarEstacionamentoParceiro = () => {
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     setUser2(user2.perfil[0]);
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
+
     localStorage.removeItem("placaCarro");
     param();
     setTempo("00:30:00");
@@ -726,7 +721,7 @@ const RegistrarEstacionamentoParceiro = () => {
           onClose={onCloseError}
         />
     <ModalPix
-        qrCode={data.brcode}
+        qrCode={data.pixCopiaECola}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}

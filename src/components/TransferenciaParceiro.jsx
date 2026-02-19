@@ -366,7 +366,7 @@ const TransferenciaParceiro = () => {
       )}
       <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
       <ModalPix
-        qrCode={data.brcode}
+        qrCode={data.pixCopiaECola}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}

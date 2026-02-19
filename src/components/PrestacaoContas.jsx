@@ -612,16 +612,115 @@ const PrestacaoContas = () => {
           setEstadoLoading(false);
           setEstado(true);
           setData(res.data.data);
-          let newData = res.data.data[0].monitor.map((item) => {
-            if (item) {
-              if (item.total) {
-                const perfil = "Total";
-                const nome = "";
-                const totalRegularizacao = item.total.Regularizacao.TotalValor;
-                const totalEstacionamento =
-                  item.total.estacionamento.TotalValor;
-                const totalRecarga = item.total.creditosInseridos.TotalValor;
-                const finalTotal = item.total.finalTotal.TotalValor;
+          let newData = [];
+          const monitoresArray = res.data.data[0].monitor;
+          if (monitoresArray.length === 1 && monitoresArray[0].total) {
+            newData.push({
+              perfil: "Monitor",
+              nome: "",
+              totalRegularizacao: 0,
+              totalEstacionamento: 0,
+              totalRecarga: 0,
+              finalTotal: 0,
+            });
+          }
+          newData = newData.concat(
+            monitoresArray
+              .map((item) => {
+                if (item) {
+                  if (item.total) {
+                    const perfil = "Total";
+                    const nome = "";
+                    const totalRegularizacao =
+                      item.total.Regularizacao.TotalValor;
+                    const totalEstacionamento =
+                      item.total.estacionamento.TotalValor;
+                    const totalRecarga =
+                      item.total.creditosInseridos.TotalValor;
+                    const finalTotal = item.total.finalTotal.TotalValor;
+                    return {
+                      perfil,
+                      nome,
+                      totalRegularizacao,
+                      totalEstacionamento,
+                      totalRecarga,
+                      finalTotal,
+                    };
+                  }
+                  const perfil = "Monitor";
+                  const nome = item.nome || "";
+                  const totalRegularizacao = item.Regularizacao
+                    ? item.Regularizacao.TotalValor
+                    : null;
+                  const totalEstacionamento = item.estacionamento
+                    ? item.estacionamento.TotalValor
+                    : null;
+                  const totalRecarga = item.creditosInseridos
+                    ? item.creditosInseridos.TotalValor
+                    : null;
+                  const finalTotal = item.finalTotal
+                    ? item.finalTotal.TotalValor
+                    : null;
+                  return {
+                    perfil,
+                    nome,
+                    totalRegularizacao,
+                    totalEstacionamento,
+                    totalRecarga,
+                    finalTotal,
+                  };
+                }
+              })
+              .filter(Boolean)
+          );
+
+          let newData2 = [];
+          const parceirosArray = res.data.data[0].parceiro;
+          if (parceirosArray.length === 1 && parceirosArray[0].total) {
+            newData2.push({
+              perfil: "Parceiro",
+              nome: "",
+              totalRegularizacao: 0,
+              totalEstacionamento: 0,
+              totalRecarga: 0,
+              finalTotal: 0,
+            });
+          }
+          newData2 = newData2.concat(
+            parceirosArray.map((item) => {
+              if (item) {
+                if (item.total) {
+                  const perfil = "Total";
+                  const nome = "";
+                  const totalRegularizacao =
+                    item.total.Regularizacao.TotalValor;
+                  const totalEstacionamento =
+                    item.total.estacionamento.TotalValor;
+                  const totalRecarga = item.total.creditosInseridos.TotalValor;
+                  const finalTotal = item.total.finalTotal.TotalValor;
+                  return {
+                    perfil,
+                    nome,
+                    totalRegularizacao,
+                    totalEstacionamento,
+                    totalRecarga,
+                    finalTotal,
+                  };
+                }
+                const perfil = "Parceiro";
+                const nome = item.nome || "";
+                const totalRegularizacao = item.Regularizacao
+                  ? item.Regularizacao.TotalValor
+                  : null;
+                const totalEstacionamento = item.estacionamento
+                  ? item.estacionamento.TotalValor
+                  : null;
+                const totalRecarga = item.creditosInseridos
+                  ? item.creditosInseridos.TotalValor
+                  : null;
+                const finalTotal = item.finalTotal
+                  ? item.finalTotal.TotalValor
+                  : null;
                 return {
                   perfil,
                   nome,
@@ -631,73 +730,9 @@ const PrestacaoContas = () => {
                   finalTotal,
                 };
               }
-              const perfil = "Monitor";
-              const nome = item.nome || "";
-              const totalRegularizacao = item.Regularizacao
-                ? item.Regularizacao.TotalValor
-                : null;
-              const totalEstacionamento = item.estacionamento
-                ? item.estacionamento.TotalValor
-                : null;
-              const totalRecarga = item.creditosInseridos
-                ? item.creditosInseridos.TotalValor
-                : null;
-              const finalTotal = item.finalTotal
-                ? item.finalTotal.TotalValor
-                : null;
-              return {
-                perfil,
-                nome,
-                totalRegularizacao,
-                totalEstacionamento,
-                totalRecarga,
-                finalTotal,
-              };
-            }
-          });
-          const newData2 = res.data.data[0].parceiro.map((item) => {
-            if (item) {
-              if (item.total) {
-                const perfil = "Total";
-                const nome = "";
-                const totalRegularizacao = item.total.Regularizacao.TotalValor;
-                const totalEstacionamento =
-                  item.total.estacionamento.TotalValor;
-                const totalRecarga = item.total.creditosInseridos.TotalValor;
-                const finalTotal = item.total.finalTotal.TotalValor;
-                return {
-                  perfil,
-                  nome,
-                  totalRegularizacao,
-                  totalEstacionamento,
-                  totalRecarga,
-                  finalTotal,
-                };
-              }
-              const perfil = "Parceiro";
-              const nome = item.nome || "";
-              const totalRegularizacao = item.Regularizacao
-                ? item.Regularizacao.TotalValor
-                : null;
-              const totalEstacionamento = item.estacionamento
-                ? item.estacionamento.TotalValor
-                : null;
-              const totalRecarga = item.creditosInseridos
-                ? item.creditosInseridos.TotalValor
-                : null;
-              const finalTotal = item.finalTotal
-                ? item.finalTotal.TotalValor
-                : null;
-              return {
-                perfil,
-                nome,
-                totalRegularizacao,
-                totalEstacionamento,
-                totalRecarga,
-                finalTotal,
-              };
-            }
-          });
+            })
+            .filter(Boolean)
+          );
 
           const newData3 = res.data.data[0].aplicativo.map((item) => {
             if (item) {
