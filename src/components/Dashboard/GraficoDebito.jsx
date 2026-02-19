@@ -1,53 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Bar } from "react-chartjs-2";
-import createAPI from "../../services/createAPI";
 
-const GraficoDebito = () => {
-  const [dados, setDados] = useState([]);
-  const [totalAtivos, setTotalAtivos] = useState(0);
-
-   useEffect(() => {
-    const debito = async () => {
-      const requisicao = createAPI();
-      try {
-        const response = await requisicao.get("/veiculo/debito/cont");
-        if (response.status === 200 && response.data.msg.resultado) {
-          const newData = response.data.data;
-          setDados(newData);
-          setTotalAtivos(newData[newData.length - 1].total_debitos_ativos);
-
-        } else {
-          setDados([]);
-          setTotalAtivos(0);}
-      } catch (error) {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("perfil");
-        } else {
-          console.log(error);
-        }
-      }
-    };
-    debito();
-  }, []);
-
+const GraficoDebito = ({ dados = [], totalAtivos = 0 }) => {
+  const hasData = dados && Array.isArray(dados) && dados.length > 0;
+  
   const chartData = {
-    labels: dados.map(item => item.mes),
+    labels: hasData ? dados.map(item => item.mes) : [],
     datasets: [
       {
         label: "Ativações",
-        data: dados.map(item => Number(item.debitos_ativados)),
+        data: hasData ? dados.map(item => Number(item.debitos_ativados || 0)) : [],
         backgroundColor: "#4594E5",
       },
       {
         label: "Desativações",
-        data: dados.map(item => Number(item.debitos_desativados)),
+        data: hasData ? dados.map(item => Number(item.debitos_desativados || 0)) : [],
         backgroundColor: "#FA5F5F",
       },
     ],
@@ -57,6 +24,10 @@ const GraficoDebito = () => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: 'x',
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
     plugins: { 
       legend: { 
         position: "top",
@@ -74,6 +45,7 @@ const GraficoDebito = () => {
         }
       },
       y: {
+        beginAtZero: true,
         ticks: {
           autoSkip: false 
         }
@@ -87,12 +59,18 @@ const GraficoDebito = () => {
         Débitos Ativos <span style={{ color: "#4594E5" }}>{totalAtivos}</span>
       </h4>
       <div style={{ width: "100%", height: "340px" }}>
-        <Bar 
-          data={chartData} 
-          options={options}
-          height={null}
-          width={null} 
-        />
+        {hasData ? (
+          <Bar 
+            data={chartData} 
+            options={options}
+            height={null}
+            width={null} 
+          />
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#888' }}>
+            Carregando dados...
+          </div>
+        )}
       </div>
     </div>
   );
