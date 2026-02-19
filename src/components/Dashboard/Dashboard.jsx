@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Grafico from "./Grafico";
 import { Card, Grid, Group, Text } from "@mantine/core";
 import GraficoBola from "./GraficoBola";
@@ -32,10 +32,12 @@ const Dashboard = () => {
   const [loadingDebito, setLoadingDebito] = useState(true);
   const [loadingGraficoOcupacao, setLoadingGraficoOcupacao] = useState(true);
 
-  const DELAY_VAGAS = 1500;
-  const DELAY_MONITORAS = 3000;
-  const DELAY_DEBITO = 2000; 
-  const DELAY_GRAFICO_OCUPACAO = 1000;
+  const DELAY_DEBITO = 200;
+  const DELAY_VAGAS = 300;
+  const DELAY_MONITORAS = 400;
+  const DELAY_GRAFICO_OCUPACAO = 100;
+
+  const isPrimeiraCargaRef = useRef(true);
 
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
@@ -53,6 +55,16 @@ const Dashboard = () => {
     return randomcolor({ hue: "blue", luminosity: "bright", format: "hex" });
   }
 
+  function formatarDataPT(data) {
+    if (!data) return "-";
+    try {
+      const date = new Date(data);
+      return date.toLocaleString("pt-BR");
+    } catch {
+      return data;
+    }
+  }
+
   const requisicaoSetores = async () => {
     setLoadingSetores(true);
 
@@ -67,7 +79,7 @@ const Dashboard = () => {
             ocupacao: item.ocupacao,
             notificacoes: item.notificacoes,
             tolerancia: item.tolerancia,
-            ultimoMovimento: item.ultimoMovimento,
+            ultimoMovimento: formatarDataPT(item.ultimoMovimento),
             valor_total: item.valor_total,
             cor: gerarCorBonita(),
           }));
@@ -320,32 +332,35 @@ const Dashboard = () => {
 
   useEffect(() => {
     const atualizarDados = async () => {
+      const multiplicador = isPrimeiraCargaRef.current ? 1 : 5;
+      
       await requisicaoSetores();
       
       setTimeout(() => {
         requisicaoDebito();
-      }, DELAY_DEBITO);
+      }, DELAY_DEBITO * multiplicador);
       
       setTimeout(() => {
         requisicaoGraficoOcupacao();
-      }, DELAY_GRAFICO_OCUPACAO);
+      }, DELAY_GRAFICO_OCUPACAO * multiplicador);
       
       setTimeout(() => {
         requisicaoVagaSetor();
-      }, DELAY_VAGAS);
+      }, DELAY_VAGAS * multiplicador);
       
       setTimeout(() => {
         requisicaoMonitoras();
-      }, DELAY_MONITORAS);
+      }, DELAY_MONITORAS * multiplicador);
       
       setUltimaAtualizacao(new Date());
+      isPrimeiraCargaRef.current = false;
     };
   
     atualizarDados(); 
   
     const interval = setInterval(() => {
       atualizarDados();
-    }, 120000);
+    }, 600000);
   
     return () => clearInterval(interval);
   }, []);
@@ -600,7 +615,8 @@ const AtualizacaoInfo = ({ data }) => {
                       <div className="ct-chart-sales-value ct-double-octave ct-series-g">
                         <Grafico dados={dadosGraficoOcupacao} />
                       </div>
-                    </div>
+                    </div> 
+                    <AtualizacaoInfo data={ultimaAtualizacao} />
                   </div>
 
                 </div>
@@ -622,13 +638,14 @@ const AtualizacaoInfo = ({ data }) => {
                         </div>
                       </div>
                     </div>
+                     <AtualizacaoInfo data={ultimaAtualizacao} />
                   </div>
                 </div>
                 <div className="card bg-white border-0 shadow divPers me-1">
                   <div
                     className={
                       window.innerWidth > 1474
-                        ? "card-body13 p-4"
+                        ? "card-body13 py-2 px-4"
                         : "card-body4 p-3"
                     }
                   >
@@ -641,6 +658,7 @@ const AtualizacaoInfo = ({ data }) => {
                         </div>
                       </div>
                     </div>
+                     <AtualizacaoInfo data={ultimaAtualizacao} />
                   </div>
                 </div>
                 <div className="card bg-white border-0 shadow divPers me-1" style={{ position: "relative" }}>
