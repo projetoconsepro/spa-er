@@ -19,7 +19,7 @@ import LoginPage from '../../components/LoginPage';
 import DoisPerfis from '../../components/DoisPerfis';
 import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
 import AdicionarCreditos from '../../components/AdicionarCreditos';
-import MensagemCaixa from '../../components/MensagemCaixa';
+import AbrirTurno from '../../components/AbrirTurno';
 import HistoricoFinanceiro from '../../components/HistoricoFinanceiro';
 import HistoricoFinanceiroParceiro from '../../components/HistoricoFinanceiroParceiro';
 import Configuracoes from '../../components/Configuracoes';
@@ -63,8 +63,6 @@ import ListaInfracoesPendentesRemocao from '../../components/ListaInfracoesPende
 import ListarNotificacoesVaga from '../../components/ListarNotificacoesVaga.jsx';
 import ListarLogsDebitoAuto from '../../components/ListarLogsDebitoAuto.jsx';
 import AdicionarMensagem from '../../components/AdicionarMensagem.jsx';
-import GerenciarCaixa from '../../components/GerenciarCaixa';
-import ImprimirCaixa from '../../components/ImprimirFechamento';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -89,7 +87,7 @@ const componentesMap = {
     LoginPage: <LoginPage />,
     EscolherPerfil: <DoisPerfis />,
     AdicionarCreditos: <AdicionarCreditos />,
-    MensagemCaixa: <MensagemCaixa />,
+    AbrirTurno: <AbrirTurno />,
     HistoricoFinanceiro: <HistoricoFinanceiro />,
     Configuracoes: <Configuracoes />,
     Regularizacao: <Regularizacao />,
@@ -130,8 +128,6 @@ const componentesMap = {
     ListarNotificacoesVaga: <ListarNotificacoesVaga />,
     ListarLogsDebitoAuto: <ListarLogsDebitoAuto />,
     AdicionarMensagem: <AdicionarMensagem />,
-    GerenciarCaixa: <GerenciarCaixa />,
-    ImprimirCaixa: <ImprimirCaixa />,
     Error: <Error />,
 };
 

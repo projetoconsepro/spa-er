@@ -32,7 +32,6 @@ const DoisPerfis = () => {
     if (analiseFeita.perfil[0] === "cliente") {
       FuncTrocaComp("MeusVeiculos");
     } else if (analiseFeita.perfil[0] === "monitor") {
-      window.dispatchEvent(new Event("caixaChange"));
       FuncTrocaComp("ListarVagasMonitor");
     } else if (analiseFeita.perfil[0] === "parceiro") {
       FuncTrocaComp("RegistrarEstacionamentoParceiro");
@@ -49,7 +48,6 @@ const DoisPerfis = () => {
     if (analiseFeita.perfil[0] === "cliente") {
       FuncTrocaComp("MeusVeiculos");
     } else if (analiseFeita.perfil[0] === "monitor") {
-      window.dispatchEvent(new Event("caixaChange"));
       FuncTrocaComp("ListarVagasMonitor");
     } else if (analiseFeita.perfil[0] === "parceiro") {
       FuncTrocaComp("RegistrarEstacionamentoParceiro");

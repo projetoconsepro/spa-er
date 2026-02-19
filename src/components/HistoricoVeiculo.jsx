@@ -35,6 +35,12 @@ const HistoricoVeiculo = () => {
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
     setUser2(user2);
+    if (
+      localStorage.getItem("turno") !== "true" &&
+      user2.perfil[0] === "monitor"
+    ) {
+      FuncTrocaComp( "AbrirTurno");
+    }
     const requisicao = createAPI();
     setEstado2(true);
     let idrequisicao = "";

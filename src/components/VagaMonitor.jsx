@@ -9,14 +9,7 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import io from "socket.io-client";
 
 const socket = io(
-  `${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`,
-  {
-    reconnection: true,
-    reconnectionAttempts: Infinity,
-    reconnectionDelay: 500,
-    reconnectionDelayMax: 2000,
-    timeout: 10000
-  }
+  `${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}`
 );
 
 export const VagaMonitor = ({
@@ -143,31 +136,25 @@ export const VagaMonitor = ({
         alert(error);
       }
     });
-
-    const handleConnect = () => {
-      socket.emit("setor", { setor: setor });
-    };
-
-    socket.on("connect", handleConnect);
-
-    return () => {
-      socket.off("connect", handleConnect);
-    };
   }, [setor]);
 
   useEffect(() => {
-    const handleVaga = (message) => {
-      if (message.vaga.numero === vaga.numero && message.setor === setor) {
+    // Evento de conexão
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    // Evento de desconexão
+    socket.on("disconnect", () => {
+      console.log("Disconnected from server");
+    });
+
+    socket.on("vaga", (message) => {
+      if (message.vaga.numero == vaga.numero && message.setor == setor) {
         funcUpdateVaga(message.vaga);
       }
-    };
-
-    socket.on("vaga", handleVaga);
-
-    return () => {
-      socket.off("vaga", handleVaga);
-    };
-  }, [setor, vaga.numero]);
+    });
+  }, []);
 
   const registroDebitoAutomatico = async (placa, numero, id_vaga, index) => {
     const requisicao = await createAPI();

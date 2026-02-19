@@ -16,21 +16,6 @@ const createAPI = () => {
     headers: headers,
   });
 
-  apiCall.interceptors.response.use(
-    response => response,
-    error => {
-      if (
-        error.response &&
-        error.response.status === 403 &&
-        error.response.data.tipo === "caixa_bloqueado"
-      ) {
-        window.location.href = "/";
-        return;
-      }
-      return Promise.reject(error);
-    }
-  );
-
   return apiCall;
 };
 
