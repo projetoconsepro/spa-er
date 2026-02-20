@@ -230,7 +230,7 @@ const InserirCreditos = () => {
     }
     ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
     if (
-      ValorFinal < 20 ||
+      ValorFinal < 13 ||
       ValorFinal === "" ||
       ValorFinal == null ||
       ValorFinal === undefined ||
@@ -723,7 +723,7 @@ const InserirCreditos = () => {
                   {valor !== "" && metodo === "pix"
                     ? "Você precisa selecionar um valor acima de R$ 2,00!"
                     : valor !== "" && metodo !== "pix"
-                    ? "Você precisa selecionar um valor acima de R$ 20,00!"
+                    ? "Você precisa selecionar um valor acima de R$ 13,00!"
                     : "Você precisa selecionar algum valor!"}
                 </Notification>
               ) : null}
