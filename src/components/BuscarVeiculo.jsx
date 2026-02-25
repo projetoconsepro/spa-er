@@ -149,6 +149,7 @@ const BuscarVeiculo = () => {
             ),
             id_vaga_veiculo: item.estacionado[0].id_vaga_veiculo,
             estado: false,
+            valor_estacionamento: item.estacionado[0].valor_estacionamento,
           }));
           setData(newData);
         }
@@ -186,7 +187,7 @@ const BuscarVeiculo = () => {
         link.vaga,
         link.placa,
         "Nao informado",
-        "Nao informado",
+        link.valor_estacionamento,
         link.numero_notificacoes_pendentes
       );
     } else {

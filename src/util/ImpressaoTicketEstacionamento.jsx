@@ -44,7 +44,7 @@ const ImpressaoTicketEstacionamento = async (
       const response = await requisicao.get("/parametros");
       let valorCobrar;
       let valorCobranca = await calcularValorEstacionamento(tempoValor);
-
+      
       if (valorCobranca !== 0) {
         valorCobrar = valorCobranca ;
       } else if (tempoValor === "00:10:00") {
@@ -95,9 +95,8 @@ const ImpressaoTicketEstacionamento = async (
       horaValidade: horaValidade,
       monitor: monitor,
       metodo: forma(),
-      vaga: vaga,
+      vaga: `${vaga}\nValor: R$ ${parseFloat(tempoValor).toFixed(2)}`,
       placa: placa,
-      valor: await valorTicket(),
       notificacaoPendente: notificacao,
     };
 
