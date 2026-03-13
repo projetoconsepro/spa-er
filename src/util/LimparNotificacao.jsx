@@ -1,16 +1,11 @@
 const LimparNotificacao = async () => {
+  const json = {
+    tipo: "LIMPAR NOTIFICACAO",
+  };
 
-    const json = {
-        tipo: "LIMPAR NOTIFICACAO",
-    }
-
-    if(window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(JSON.stringify(json));
-}
-    
-
-
-
-}
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify(json));
+  }
+};
 
 export default LimparNotificacao;

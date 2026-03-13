@@ -3,23 +3,23 @@ import { React, useState, useEffect } from "react";
 import "../pages/Style/styles.css";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
-import { Button, Card, Divider, Grid, Group, Input, Modal, Text } from "@mantine/core";
+import { Button, Card, Divider, Grid, Group, Modal, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { rem } from "@mantine/core";
-import { IconCar, IconCarOff, IconParking, IconPrinter } from "@tabler/icons-react";
-import { FaCar, FaCarAlt } from "react-icons/fa";
-import { BiCar, BiSolidCarGarage } from "react-icons/bi";
+import { IconPrinter } from "@tabler/icons-react";
+import { FaCar } from "react-icons/fa";
 import createAPI from "../services/createAPI";
 import jsPDF from "jspdf";
 import { useDisclosure } from "@mantine/hooks";
+import {FormatDateBr} from "../util/formatDate";
+import calcularValidade from "../util/CalcularValidade";
+import calcularValorEstacionamento from "../util/valorEstacionamento";
 
 const RegistrarVagaCliente = () => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [inputVaga, setInputVaga] = useState("form-control fs-5");
-  const [vaga, setVaga] = useState([]);
-  const [resposta, setResposta] = useState([{}]);
-  const [resposta2, setResposta2] = useState([]);
+  const [ vaga ] = useState([]);
+  const [ resposta2, setResposta2 ] = useState([]);
   const [valor, setValor] = useState(0);
   const [valorcobranca, setValorCobranca] = useState("");
   const [valorcobranca2, setValorCobranca2] = useState("");
@@ -33,30 +33,12 @@ const RegistrarVagaCliente = () => {
   const [openedModal, { open: openModal, close: closeModal }] =
   useDisclosure(false);
 
-  const handleButtonClick = (buttonIndex) => {
+  const handleButtonClick = async (buttonIndex) => {
     setSelectedButton(buttonIndex);
     const tempo1 = buttonIndex;
-    if (tempo1 === "02:00:00") {
-      setValorCobranca2(valorcobranca * 2);
-    } else if (tempo1 === "01:00:00") {
-      setValorCobranca2(valorcobranca);
-    } else if (tempo1 === "01:30:00") {
-      setValorCobranca2(valorcobranca * 1.5);
-    } else if (tempo1 === "00:30:00") {
-      setValorCobranca2(valorcobranca / 2);
-    }
-  };
 
-  const calcularValidade = (horaInicio, duracao) => {
-    const [horas, minutos, segundos] = duracao.split(":").map(Number);
-    const dataInicio = new Date(`2000-01-01T${horaInicio}`);
-    const dataValidade = new Date(
-      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
-    );
-    const horaValidade = dataValidade.toLocaleTimeString("pt-BR", {
-      timeZone: "America/Sao_Paulo",
-    });
-    return horaValidade;
+    const valor = await calcularValorEstacionamento(tempo1);
+    setValorCobranca2(valor);
   };
 
   async function gerarPDF() {
@@ -128,14 +110,15 @@ const RegistrarVagaCliente = () => {
     requisicao
       .get("/veiculo")
       .then((response) => {
-        setResposta(response?.data?.data);
         if (response.data.msg.resultado === false) {
           FuncTrocaComp("MeusVeiculos");
         }
-        for (let i = 0; i < response?.data?.data.length; i++) {
-          resposta2[i] = {};
-          resposta2[i].placa = response.data.data[i].usuario;
-        }
+
+        const NewArray = response.data.data.map((item) => ({
+          placa: item.usuario,
+        }));
+
+        setResposta2(NewArray);
       })
       .catch(function (error) {
         if (
@@ -153,12 +136,12 @@ const RegistrarVagaCliente = () => {
       });
       
     saldo()
-
+    
     parametros
       .get("/parametros")
       .then((response) => {
-        setValorCobranca(response.data.data.param.estacionamento.valorHora);
-        setValorCobranca2(response.data.data.param.estacionamento.valorHora);
+        setValorCobranca(response.data.data.param.estacionamento.valor60);
+        setValorCobranca2(response.data.data.param.estacionamento.valor60);
       })
       .catch(function (error) {
         if (
@@ -176,29 +159,10 @@ const RegistrarVagaCliente = () => {
       });
   }, []);
 
-  function mexerValores() {
+  async function mexerValores() {
     const tempo1 = selectedButton;
-
-    if (tempo1 === "02:00:00") {
-      return valorcobranca * 2;
-    } else if (tempo1 === "01:00:00") {
-      return valorcobranca;
-    } else if (tempo1 === "01:30:00") {
-      return valorcobranca * 1.5;
-    } else if (tempo1 === "00:30:00") {
-      return valorcobranca / 2;
-    }
+    return await calcularValorEstacionamento(tempo1);
   }
-
-  const FormatDate = (date) => {
-    const data = new Date(date);
-    const year = data.getFullYear();
-    const month = String(data.getMonth() + 1).padStart(2, "0");
-    const day = String(data.getDate()).padStart(2, "0");
-    const formattedDate = `${day}/${month}/${year}`;
-
-    return formattedDate;
-  };
 
   const handleSubmit = async () => {
     setLoadingButton(true);
@@ -266,7 +230,7 @@ const RegistrarVagaCliente = () => {
           setLoadingButton(false);
           if (response.data.msg.resultado) {
             setData2(response.data.data);
-            setDate(FormatDate(response.data.data.data));
+            setDate(FormatDateBr(response.data.data.data));
             setEmissao(response.data.data.chegada)
             const validade = await calcularValidade(response.data.data.chegada, response.data.data.tempo)
             saldo()
@@ -407,7 +371,8 @@ const RegistrarVagaCliente = () => {
                     },
                   }}
                 >
-                  {resposta2.map((item, index) => (
+                {resposta2.map((item, index) => (
+                  item.placa && (
                     <Carousel.Slide key={index}>
                       <Card
                         padding="xs"
@@ -429,7 +394,8 @@ const RegistrarVagaCliente = () => {
                         </Grid>
                       </Card>
                     </Carousel.Slide>
-                  ))}
+                  )
+                ))}
                 </Carousel>
               ) : (
                 <Group position= {resposta2.length == 3 ? 'apart' :'start' 

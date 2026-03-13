@@ -1,15 +1,14 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import CarroLoading from "./Carregamento";
 import Filtro from "../util/Filtro";
 import { AiFillPrinter } from "react-icons/ai";
-import { FaSearch } from "react-icons/fa";
 import RelatoriosPDF from "../util/RelatoriosPDF";
 import  FuncTrocaComp  from "../util/FuncTrocaComp";
 import VoltarComponente from "../util/VoltarComponente";
 import { Group, Loader, Pagination } from "@mantine/core";
 import createAPI from "../services/createAPI";
+import {ArrumaHora3} from "../util/ArrumaHora";
 
 const OcupacaoVagasAdmin = () => {
   const [data, setData] = useState([]);
@@ -17,7 +16,6 @@ const OcupacaoVagasAdmin = () => {
   const [estado2, setEstado2] = useState(false);
   const [estado3, setEstado3] = useState(false);
   const [mensagem, setMensagem] = useState("");
-  const [dataHoje, setDataHoje] = useState("");
   const [estadoLoading, setEstadoLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
@@ -30,13 +28,6 @@ const OcupacaoVagasAdmin = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-  function ArrumaHora(data, hora) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    return data4;
-  }
 
   const imprimir = () => {
     const dataD = [...data.map((item) => ([item.placa, item.data + ' - ' + item.chegada, 
@@ -85,12 +76,10 @@ const OcupacaoVagasAdmin = () => {
     const requisicao = createAPI();
 
     const data = new Date();
-      const dia = data.getDate().toString().padStart(2, '0');
-      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
-      const ano = data.getFullYear();
-      const dataHoje = ano + "-" + mes + "-" + dia;
-
-        setDataHoje(dataHoje);
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    const ano = data.getFullYear();
+    const dataHoje = ano + "-" + mes + "-" + dia;
 
     const idrequisicao= `{"where": [{ "field": "data", "operator": "LIKE", "value": "%${dataHoje}%" }]}`
     const passar = btoa(idrequisicao)
@@ -107,7 +96,7 @@ const OcupacaoVagasAdmin = () => {
             const newData = arraySemNulos.map((item) => ({
               vaga: item.numerovaga,
               chegada:
-                item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+                item.chegada,
               horafinal:
                 item.horafinal[0] +
                 ":" +
@@ -116,7 +105,7 @@ const OcupacaoVagasAdmin = () => {
                 item.horafinal[2],
               saida: item.saida,
               local: item.local,
-              data: ArrumaHora(item.data),
+              data: ArrumaHora3(item.data),
               estado: false,
               placa: item.placa,
               regularizacao: item.regularizacao,
@@ -173,7 +162,7 @@ const OcupacaoVagasAdmin = () => {
       const newData = arraySemNulos.map((item) => ({
         vaga: item.numerovaga,
         chegada:
-          item.chegada[0] + "" + item.chegada[1] + "" + item.chegada[2],
+        item.chegada,
         horafinal:
           item.horafinal[0] +
           ":" +
@@ -182,7 +171,7 @@ const OcupacaoVagasAdmin = () => {
           item.horafinal[2],
         saida: item.saida,
         local: item.local,
-        data: ArrumaHora(item.data),
+        data: ArrumaHora3(item.data),
         estado: false,
         placa: item.placa,
         regularizacao: item.regularizacao,

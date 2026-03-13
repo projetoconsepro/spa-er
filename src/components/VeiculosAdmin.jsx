@@ -1,10 +1,8 @@
-import axios from 'axios'
 import { React, useState, useEffect } from 'react'
 import { FaEye, FaEllipsisH } from 'react-icons/fa'
 import { AiFillPrinter, AiOutlinePlusCircle, AiOutlineReload } from 'react-icons/ai'
 import ScrollTopArrow from "./ScrollTopArrow";
 import CarroLoading from '../components/Carregamento'
-import Swal from 'sweetalert2'
 import RelatoriosPDF from '../util/RelatoriosPDF'
 import VoltarComponente from '../util/VoltarComponente'
 import Filtro from '../util/Filtro';
@@ -14,11 +12,9 @@ import { Group, Pagination } from '@mantine/core';
 const VeiculosAdmin = () => {
   const [data, setData] = useState([])
   const [data2, setData2] = useState([])
-  const [placa, setPlaca] = useState('')
+  const [ placa ] = useState('')
   const [estado2, setEstado2] = useState(false)
-  const [estado, setEstado] = useState(false)
   const [estadoLoading, setEstadoLoading] = useState(false)
-  const [mensagem, setMensagem] = useState('')
 
   const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
@@ -182,9 +178,6 @@ const handleConsultaSelected = (consulta) => {
                         <div className="mt-3 mb-3" style={{ display: estado2 ? 'block' : 'none'}}>
                           <CarroLoading  />       
                         </div>
-                        <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
-                        {mensagem}
-                    </div>
                     </div>
                 </div>
                 <Group position="center" mb="md">

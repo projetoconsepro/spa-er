@@ -19,8 +19,7 @@ import LoginPage from '../../components/LoginPage';
 import DoisPerfis from '../../components/DoisPerfis';
 import RegistrarEstacionamentoParceiro from '../../components/RegistrarEstacionamentoParceiro';
 import AdicionarCreditos from '../../components/AdicionarCreditos';
-import FecharTurno from '../../components/FecharTurno';
-import AbrirTurno from '../../components/AbrirTurno';
+import MensagemCaixa from '../../components/MensagemCaixa';
 import HistoricoFinanceiro from '../../components/HistoricoFinanceiro';
 import HistoricoFinanceiroParceiro from '../../components/HistoricoFinanceiroParceiro';
 import Configuracoes from '../../components/Configuracoes';
@@ -37,7 +36,6 @@ import VeiculosAdmin from '../../components/VeiculosAdmin';
 import ClientesAdmin from '../../components/ClientesAdmin';
 import OcupacaoVagasAdmin from '../../components/OcupacaoVagasAdmin';
 import TransferirCreditoCliente from '../../components/TransferirCreditoCliente';
-import VeiculosAgente from '../../components/VeiculosAgente';
 import PrestacaoContas from '../../components/PrestacaoContas';
 import ConfigurarPerfil from '../../components/ConfigurarPerfil';
 import EditarParametroAdmin from '../../components/EditarParametroAdmin';
@@ -50,110 +48,95 @@ import CameraAutoInfracao from '../../components/CameraAutoInfracao';
 import SugestoesAdmin from '../../components/SugestoesAdmin';
 import AdicionarModelo from '../../components/AdicionarModelo';
 import Feriados from '../../components/Feriados';
+import ListaAutoInfracao from '../../components/ListaAutoInfracao';
+import PlacaIsenta from '../../components/PlacaIsenta';
+import BuscarMovimentoTxId from '../../components/BuscarMovimentoTxId';
+import ListagemMovimentoVeiculo from '../../components/ListagemMovimentoVeiculo';
+import RelatorioMonitorAdmin from '../../components/RelatorioMonitorAdmin';
+import ListarMovimentosAdmin from '../../components/ListarMovimentosAdmin';
+import ListarLogsMovimentosAdmin from '../../components/ListarLogsMovimentosAdmin';
+import RelatorioParceiroAdmin from '../../components/RelatorioParceiroAdmin';
+import MapaCliente from '../../components/MapaCliente';
+import MapaAdmin from '../../components/MapaAdmin';
+import ListarMovimentosFinanceiros from '../../components/ListarMovimentosFinanceiros';
+import ListaInfracoesPendentesRemocao from '../../components/ListaInfracoesPendentesRemocao.jsx';
+import ListarNotificacoesVaga from '../../components/ListarNotificacoesVaga.jsx';
+import ListarLogsDebitoAuto from '../../components/ListarLogsDebitoAuto.jsx';
+import AdicionarMensagem from '../../components/AdicionarMensagem.jsx';
+import GerenciarCaixa from '../../components/GerenciarCaixa';
+import ImprimirCaixa from '../../components/ImprimirFechamento';
 
-export default function Veiculos({Componente}) {
-    switch(Componente) {
-        case "MeusVeiculos":
-            return <ListarVeiculos />;
-        case "AdicionarModelo":
-            return <AdicionarModelo />;
-        case "RegistrarEstacionamento":
-            return <RegistrarVagaCliente />;
-        case "CadastrarVeiculo":
-            return <RegistrarVeiculo />;
-        case "SetoresAdmin":
-            return <SetoresAdmin />;
-        case "RegistrarVagaMonitor":
-            return <RegistrarVagaMonitor />;
-        case "ListarVagasMonitor":
-            return <ListarVagasMonitor />;
-        case "Notificacao":
-            return <Notificacao />;
-        case "Camera":
-            return <Camera />;
-        case "ListarNotificacoes":
-            return <ListarNotificacoes />;
-        case "BuscarVeiculo":
-            return <BuscarVeiculo />;
-        case "Irregularidades":
-            return <Irregularidades />;
-        case "ResetPassword":
-            return <ResetPassword />;
-        case "Confirmation":
-            return <Confirmation />;
-        case "NewPassword":
-            return <NewPassword />;
-        case "RegistrarEstacionamentoParceiro":
-            return <RegistrarEstacionamentoParceiro />;
-        case "HistoricoFinanceiroParceiro":
-            return <HistoricoFinanceiroParceiro />;
-        case "HistoricoVeiculo":
-            return <HistoricoVeiculo />;
-        case "RegisterPage":
-            return <RegisterPage />;
-        case "LoginPage":
-            return <LoginPage />;
-        case "EscolherPerfil":
-            return <DoisPerfis />;
-        case "AdicionarCreditos":
-            return <AdicionarCreditos />;
-        case "AbrirTurno":
-            return <AbrirTurno />;
-        case "FecharTurno":
-            return <FecharTurno />;
-        case "HistoricoFinanceiro":
-            return <HistoricoFinanceiro />;
-        case "Configuracoes":
-            return <Configuracoes />;
-        case "Regularizacao":
-            return <Regularizacao />;
-        case "SugestoesAdmin":
-            return <SugestoesAdmin />;
-        case "UsuariosAdmin":
-            return <UsuariosAdmin />;
-        case "VagasAdmin":
-            return <VagasAdmin />;
-        case "HistoricoCaixa":
-            return <HistoricoCaixa />;
-        case "ListarNotificacoesAdmin":
-            return <ListarNotificacoesAdmin />;
-        case "ListarNotificacoesAgente":
-            return <ListarNotificacoesAgente />;
-        case "AutoInfracao":
-            return <AutoInfracao />;
-        case "Dashboard":
-            return <Dashboard />;
-        case "VeiculosAdmin":
-            return <VeiculosAdmin />;
-        case "ClientesAdmin":
-            return <ClientesAdmin />;
-        case "OcupacaoVagasAdmin":
-            return <OcupacaoVagasAdmin />;
-        case "TransferirCreditoCliente":
-            return <TransferirCreditoCliente />;
-        case "VeiculosAgente":
-            return <VeiculosAgente />;
-        case "PrestacaoContas":
-            return <PrestacaoContas />;
-        case "ConfigurarPerfil":
-            return <ConfigurarPerfil />;
-        case "EditarParametroAdmin":
-            return <EditarParametroAdmin />;
-        case "TransferenciaParceiro":
-            return <TransferenciaParceiro />;
-        case "CartaoCredito":
-            return <CartaoCredito />;
-        case "InserirCreditos":
-            return <InserirCreditos />;
-        case "CameraTicketNotificacao":
-            return <CameraTicketNotificacao />;
-        case "Suporte":
-            return <Suporte />;
-        case "CameraAutoInfracao":
-            return <CameraAutoInfracao />;
-        case "Feriados":
-            return <Feriados />;
-        default:
-            return <Error />;
-    }
+const componentesMap = {
+    MeusVeiculos: <ListarVeiculos />,
+    AdicionarModelo: <AdicionarModelo />,
+    RegistrarEstacionamento: <RegistrarVagaCliente />,
+    CadastrarVeiculo: <RegistrarVeiculo />,
+    SetoresAdmin: <SetoresAdmin />,
+    RegistrarVagaMonitor: <RegistrarVagaMonitor />,
+    ListarVagasMonitor: <ListarVagasMonitor />,
+    Notificacao: <Notificacao />,
+    Camera: <Camera />,
+    ListarNotificacoes: <ListarNotificacoes />,
+    BuscarVeiculo: <BuscarVeiculo />,
+    Irregularidades: <Irregularidades />,
+    ResetPassword: <ResetPassword />,
+    Confirmation: <Confirmation />,
+    NewPassword: <NewPassword />,
+    RegistrarEstacionamentoParceiro: <RegistrarEstacionamentoParceiro />,
+    HistoricoFinanceiroParceiro: <HistoricoFinanceiroParceiro />,
+    HistoricoVeiculo: <HistoricoVeiculo />,
+    RegisterPage: <RegisterPage />,
+    LoginPage: <LoginPage />,
+    EscolherPerfil: <DoisPerfis />,
+    AdicionarCreditos: <AdicionarCreditos />,
+    MensagemCaixa: <MensagemCaixa />,
+    HistoricoFinanceiro: <HistoricoFinanceiro />,
+    Configuracoes: <Configuracoes />,
+    Regularizacao: <Regularizacao />,
+    UsuariosAdmin: <UsuariosAdmin />,
+    VagasAdmin: <VagasAdmin />,
+    HistoricoCaixa: <HistoricoCaixa />,
+    ListarNotificacoesAdmin: <ListarNotificacoesAdmin />,
+    ListarNotificacoesAgente: <ListarNotificacoesAgente />,
+    AutoInfracao: <AutoInfracao />,
+    Dashboard: <Dashboard />,
+    VeiculosAdmin: <VeiculosAdmin />,
+    ClientesAdmin: <ClientesAdmin />,
+    OcupacaoVagasAdmin: <OcupacaoVagasAdmin />,
+    TransferirCreditoCliente: <TransferirCreditoCliente />,
+    PrestacaoContas: <PrestacaoContas />,
+    ConfigurarPerfil: <ConfigurarPerfil />,
+    EditarParametroAdmin: <EditarParametroAdmin />,
+    TransferenciaParceiro: <TransferenciaParceiro />,
+    CartaoCredito: <CartaoCredito />,
+    InserirCreditos: <InserirCreditos />,
+    CameraTicketNotificacao: <CameraTicketNotificacao />,
+    Suporte: <Suporte />,
+    CameraAutoInfracao: <CameraAutoInfracao />,
+    Feriados: <Feriados />,
+    ListaAutoInfracao: <ListaAutoInfracao />,
+    PlacaIsenta: <PlacaIsenta />,
+    BuscarMovimentoTxId: <BuscarMovimentoTxId />,
+    SugestoesAdmin: <SugestoesAdmin />,
+    ListagemMovimentoVeiculo: <ListagemMovimentoVeiculo />,
+    RelatorioMonitorAdmin: <RelatorioMonitorAdmin />,
+    ListarMovimentosAdmin: <ListarMovimentosAdmin />,
+    ListarLogsMovimentosAdmin: <ListarLogsMovimentosAdmin />,
+    RelatorioParceiroAdmin: <RelatorioParceiroAdmin />,
+    MapaCliente: <MapaCliente />,
+    MapaAdmin: <MapaAdmin />,
+    ListarMovimentosFinanceiros: <ListarMovimentosFinanceiros />,
+    ListaInfracoesPendentesRemocao: <ListaInfracoesPendentesRemocao />,
+    ListarNotificacoesVaga: <ListarNotificacoesVaga />,
+    ListarLogsDebitoAuto: <ListarLogsDebitoAuto />,
+    AdicionarMensagem: <AdicionarMensagem />,
+    GerenciarCaixa: <GerenciarCaixa />,
+    ImprimirCaixa: <ImprimirCaixa />,
+    Error: <Error />,
+};
+
+export default function Veiculos({ Componente }) {
+  const ComponenteSelecionado = componentesMap[Componente];
+
+  return ComponenteSelecionado || <Error />;
 }

@@ -1,20 +1,19 @@
 import axios from "axios";
-import React, { useRef } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import validarPlaca from "../util/validarPlaca";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
-import { Button, Divider, Grid, Input, Text } from "@mantine/core";
-import { FaParking } from "react-icons/fa";
-import Swal from "sweetalert2";
+import { Button, Divider, Grid, Text } from "@mantine/core";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
 import createAPI from "../services/createAPI";
 import ModalErroBanco from "./ModalErroBanco";
+import calcularValorEstacionamento from "../util/valorEstacionamento";
 
 const RegistrarEstacionamentoParceiro = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const socketRef = useRef(null);
   const [data, setData] = useState([]);
   const [placa, setPlaca] = useState("placa");
   const [textoPlaca, setTextoPlaca] = useState("");
@@ -22,19 +21,15 @@ const RegistrarEstacionamentoParceiro = () => {
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
-  const [cont, setCont] = useState(0);
   const [success, setSuccess] = useState(false);
   const [vaga, setVaga] = useState("");
   const [tempo, setTempo] = useState("");
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
-  const [token, setToken] = useState("");
   const [user2, setUser2] = useState("");
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
-  const [divPagamento, setDivPagamento] = useState(true);
   const [loadingButton, setLoadingButton] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
   const [onOpenError, setOnOpenError] = useState(false);
@@ -47,8 +42,8 @@ const RegistrarEstacionamentoParceiro = () => {
     await requisicao
       .get("/parametros")
       .then((response) => {
-        setValorCobranca(response.data.data.param.estacionamento.valorHora);
-        setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
+        setValorCobranca(response.data.data.param.estacionamento.valor60);
+        setValorCobranca2(response.data.data.param.estacionamento.valor30);
       })
       .catch(function (error) {
         localStorage.removeItem("user");
@@ -56,7 +51,7 @@ const RegistrarEstacionamentoParceiro = () => {
         localStorage.removeItem("perfil");
       });
   };
-
+  
   const ValidaFormato = () => {
     setLoadingButton(true);
     
@@ -80,18 +75,6 @@ const RegistrarEstacionamentoParceiro = () => {
       handleRegistrar();
     }
   };
-
-  function validarPlaca(placa) {
-    const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-    const regexPlacaNova =
-      /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
-
-    if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   const handlePlaca = () => {
     const clicado = document.getElementById("flexSwitchCheckDefault").checked;
@@ -216,11 +199,17 @@ const RegistrarEstacionamentoParceiro = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
-          setTxId(resposta.data.data.txid);
           getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
         } else {
+          setLoadingButton(false);
+          setEstado(true);
+          setMensagem(resposta.data.msg.msg);
+          setTimeout(() => {
+            setEstado(false);
+            setMensagem("");
+          }, 3000);
         }
       })
       .catch((err) => {
@@ -469,19 +458,14 @@ const RegistrarEstacionamentoParceiro = () => {
       }
     }
 
-  const atualiza = () => {
+  const atualiza = async () => {
     const tempoo = document.getElementById("tempos").value;
     setTempo(tempoo);
-    if (tempoo === "02:00:00") {
-      setValorCobranca2(valorCobranca * 2);
-    } else if (tempoo === "01:00:00") {
+    const valorCobranca = await calcularValorEstacionamento(tempoo);
+    if(valorCobranca !== 0) {
       setValorCobranca2(valorCobranca);
-    } else if (tempoo === "01:30:00") {
-      setValorCobranca2(valorCobranca * 1.5);
-    } else if (tempoo === "00:30:00") {
-      setValorCobranca2(valorCobranca / 2);
+
     } else if (tempoo === "00:10:00") {
-      setDivPagamento(false)
       setValorCobranca2(valorCobranca * 0);
     } else {
       setValorCobranca2(valorCobranca * 0);
@@ -565,23 +549,15 @@ const RegistrarEstacionamentoParceiro = () => {
         setPlaca("placa3");
       } else {
         setPlaca("placa");
-        setCont(0);
       }
     }
   }, [textoPlaca]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
     const user2 = JSON.parse(user);
-    setToken(token);
     setUser2(user2.perfil[0]);
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
+
     localStorage.removeItem("placaCarro");
     param();
     setTempo("00:30:00");
@@ -609,11 +585,11 @@ const RegistrarEstacionamentoParceiro = () => {
               Registrar estacionamento
             </div>
             <Divider my="sm" size="md" variant="dashed" />
-            <div className="row">
-              <div className="col-9 px-3 pt-1">
+                     <div className="row">
+              <div className="col-9 pt-1 text-start ps-4" >
                 <h6>Placa estrangeira/Outra</h6>
               </div>
-              <div className="col-3 px-3">
+              <div className="col-3">
                 <div className="form-check3 form-switch gap-2 d-md-block">
                   <input
                     className="form-check-input align-self-end"
@@ -623,7 +599,8 @@ const RegistrarEstacionamentoParceiro = () => {
                     id="flexSwitchCheckDefault"
                     onChange={() => {
                       jae();
-                    } } />
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -637,7 +614,7 @@ const RegistrarEstacionamentoParceiro = () => {
                 onChange={(e) => setTextoPlaca(e.target.value)}
                 maxLength={limite} />
             </div>
-            <div className="text-start mt-3 mb-1 px-2" onChange={() => { atualiza(); } }>
+            <div className="text-start mt-3 mb-1 px-2" onChange={() => atualiza()}>
               <h6>Selecione o tempo:</h6>
               <select
                 className="form-select form-select-lg mb-2"
@@ -675,7 +652,7 @@ const RegistrarEstacionamentoParceiro = () => {
                       </button>
                     </Grid.Col>
                     <Grid.Col span={6}>
-                    <button type="button" className={`btn icon-shape w-75 icon-shape rounded align-center ${
+                    <button type="button" className={`btn px-5 icon-shape w-75 icon-shape rounded align-center ${
                       selectedButton === "dinheiro"
                         ? "corTempoSelecionado"
                         : "corTempo"
@@ -744,7 +721,7 @@ const RegistrarEstacionamentoParceiro = () => {
           onClose={onCloseError}
         />
     <ModalPix
-        qrCode={data.brcode}
+        qrCode={data.pixCopiaECola}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}

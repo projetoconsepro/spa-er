@@ -21,6 +21,7 @@ import {
 import { IconLock } from "@tabler/icons-react";
 import { FaCar, FaClipboard, FaCoins} from "react-icons/fa";
 import axios from "axios";
+import extrairNumeros from "../util/extrairNumeros";
 
 const LoginPage = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -31,18 +32,11 @@ const LoginPage = () => {
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
   const [mensagem2, setMensagem2] = useState("");
-  const [inputSenha, setInputSenha] = useState("form-control");
-  const [inputLogin, setinputLogin] = useState("form-control");
-  const [passwordType, setPasswordType] = useState("password");
-  const [classolho, setClassolho] = useState("olho");
   const [errorLogin, setErrorLogin] = useState(false);
   const [errorSenha, setErrorSenha] = useState(false);
   const [emailDois, setEmailDois] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function extrairNumeros(string) {
-    return string ? string.replace(/\D/g, "") : string;
-  }
 
   useEffect(() => {
     localStorage.removeItem("SenhaDefault");
@@ -97,6 +91,21 @@ const LoginPage = () => {
           setErrorLogin(false);
           setErrorSenha(false);
         }, 6000);
+      } else {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const perfil = user.perfil[0];
+        if (perfil === "cliente") {
+          const token = btoa(unescape(encodeURIComponent(localStorage.getItem("token"))));
+          const id_usuario = btoa(user.id_usuario);
+          if (window.ReactNativeWebView) {
+            const data = {
+              type: "login",
+              token: token,
+              id_usuario: id_usuario,
+            };
+            window.ReactNativeWebView.postMessage(JSON.stringify(data));
+          }
+        }
       }
     }
   };
@@ -211,7 +220,7 @@ const LoginPage = () => {
                 />
               </div>
               <div className="form-group mb-4 text-start">
-                <Input.Wrapper label="Login">
+                <Input.Wrapper label="Login:">
                   <Input
                     icon={<IconUser size={18} />}
                     placeholder="Digite seu login CPF/CNPJ ou Email"
@@ -246,7 +255,7 @@ const LoginPage = () => {
 
               <div className="mt-3 mb-4 text-center" onClick={() => open()}>
                 <img
-                  src="https://cdn.discordapp.com/attachments/894696108926832711/1133135306493800568/Inserir_um_titulo_10.png"
+                  src="../../assets/img/Banner.png"
                   style={{ borderRadius: "10px" }}
                   alt="gif"
                 />

@@ -1,10 +1,11 @@
 import axios from "axios";
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect } from "react";
 import { FaWheelchair } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../pages/Style/styles.css";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import validarPlaca from "../util/validarPlaca";
 import { useDisclosure } from "@mantine/hooks";
 import ModalPix from "./ModalPix";
 import { Button, Divider, Grid, Text } from "@mantine/core";
@@ -13,31 +14,26 @@ import { Elderly } from "@mui/icons-material";
 import createAPI from "../services/createAPI";
 import CalcularValidade from "../util/CalcularValidade";
 import ModalErroBanco from "./ModalErroBanco";
+import calcularValorEstacionamento from "../util/valorEstacionamento";
 
 const RegistrarVagaMonitor = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const socketRef = useRef(null);
   const [mensagem, setMensagem] = useState("");
   const [placa, setPlaca] = useState("placa");
   const [textoPlaca, setTextoPlaca] = useState("");
   const [data, setData] = useState([]);
   const [estado, setEstado] = useState(false);
-  const [placaVeiculo, setPlacaVeiculo] = useState("");
   const [tempo, setTempo] = useState("00:10:00");
-  const [valor, setValor] = useState("dinheiro");
   const [inputVazio, setInputVazio] = useState("inputvazio3");
   const [mostrapag, SetMostrapag] = useState(false);
   const [valorCobranca, setValorCobranca] = useState(0);
   const [valorcobranca2, setValorCobranca2] = useState(0);
   const [vaga, setVaga] = useState("");
-  const [cont, setCont] = useState(0);
-  const [InputPlaca, setInputPlaca] = useState(" form-control fs-5");
   const [visible, setVisible] = useState(false);
   const [limite, setLimite] = useState(8);
   const [tipoVaga, setTipoVaga] = useState("");
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [selectedButton, setSelectedButton] = useState("pix");
@@ -57,11 +53,9 @@ const RegistrarVagaMonitor = () => {
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
       setLoadingButton(false);
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -71,11 +65,9 @@ const RegistrarVagaMonitor = () => {
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
         setLoadingButton(false);
-        setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
         setTimeout(() => {
-          setInputPlaca("form-control fs-5");
           setEstado(false);
           setMensagem("");
         }, 4000);
@@ -113,7 +105,6 @@ const RegistrarVagaMonitor = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setData(resposta.data.data);
-          setTxId(resposta.data.data.txid);
           getInfoPix(resposta.data.data.txid);
           setOnOpen(true);
           open();
@@ -135,7 +126,7 @@ const RegistrarVagaMonitor = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado === true) {
-          if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+          if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
           ImpressaoTicketEstacionamento(
             'PRIMEIRA',
             response.data.data.chegada,
@@ -160,8 +151,6 @@ const RegistrarVagaMonitor = () => {
 
               listaVagas = listaVagas.filter((element) => element !== null);
 
-              console.log(listaVagas);
-
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
               if (indexByPlaca !== -1) {
@@ -170,6 +159,7 @@ const RegistrarVagaMonitor = () => {
                 vaga.id_vaga_veiculo = "";
                 vaga.chegada = "";
                 vaga.variaDisplay = "aparece";
+                vaga.estacionado = "N";
                 vaga.tempo = "";
                 vaga.temporestante = "";
                 vaga.display = "testeNot2";
@@ -182,7 +172,9 @@ const RegistrarVagaMonitor = () => {
               if (indexVaga !== -1) {
                 const resposta = response.data.data;
                 const vaga = listaVagas[indexVaga];
+                vaga.debito = resposta.debito;
                 vaga.placa = tirarTraco;
+                vaga.estacionado = "S";
                 vaga.numero = parseInt(response.data.data.numero_vagas[0]);
                 vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
                 vaga.chegada = resposta.chegada;
@@ -221,10 +213,6 @@ const RegistrarVagaMonitor = () => {
   const onClose = () => {
     setLoadingButton(false);
   }
-
-  useEffect(() => {
-    console.log(selectedButton)
-  }, [selectedButton]);
   
   const parametros = axios.create({
     baseURL: process.env.REACT_APP_HOST,
@@ -239,11 +227,9 @@ const RegistrarVagaMonitor = () => {
     vagaa[0] = localStorage.getItem("vaga");
     if (tirarTraco === "") {
       setLoadingButton(false);
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Preencha o campo placa");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -253,11 +239,9 @@ const RegistrarVagaMonitor = () => {
     if (!sim) {
       if (!validarPlaca(tirarTraco)) {
         setLoadingButton(false);
-        setInputPlaca("form-control fs-5 is-invalid");
         setEstado(true);
         setMensagem("Placa inválida");
         setTimeout(() => {
-          setInputPlaca("form-control fs-5");
           setEstado(false);
           setMensagem("");
         }, 4000);
@@ -276,7 +260,7 @@ const RegistrarVagaMonitor = () => {
         })
         .then(async(response) => {
           if (response.data.msg.resultado === true) {
-            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -302,14 +286,13 @@ const RegistrarVagaMonitor = () => {
 
               listaVagas = listaVagas.filter((element) => element !== null);
 
-              console.log(listaVagas);
-
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
               if (indexByPlaca !== -1) {
                 const vaga = listaVagas[indexByPlaca];
                 vaga.placa = "";
                 vaga.id_vaga_veiculo = "";
+                vaga.estacionado = "N";
                 vaga.chegada = "";
                 vaga.variaDisplay = "aparece";
                 vaga.tempo = "";
@@ -325,8 +308,10 @@ const RegistrarVagaMonitor = () => {
                 const resposta = response.data.data;
                 const vaga = listaVagas[indexVaga];
                 vaga.placa = tirarTraco;
+                vaga.debito = resposta.debito;
                 vaga.numero = parseInt(vagaa[0]);
                 vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
+                vaga.estacionado = "S";
                 vaga.chegada = resposta.chegada;
                 vaga.tempo = resposta.tempo;
                 vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
@@ -382,7 +367,7 @@ const RegistrarVagaMonitor = () => {
         })
         .then((response) => {
           if (response.data.msg.resultado === true) {
-            if (response.data.msg.msg !== "Vaga atualizada com sucesso"){
+            if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
             ImpressaoTicketEstacionamento(
               'PRIMEIRA',
               response.data.data.chegada,
@@ -407,8 +392,6 @@ const RegistrarVagaMonitor = () => {
 
               listaVagas = listaVagas.filter((element) => element !== null);
 
-              console.log(listaVagas);
-
               const indexByPlaca = listaVagas.findIndex((vaga) => vaga.placa === tirarTraco);
 
               if (indexByPlaca !== -1) {
@@ -430,9 +413,11 @@ const RegistrarVagaMonitor = () => {
                 const resposta = response.data.data;
                 const vaga = listaVagas[indexVaga];
                 vaga.placa = tirarTraco;
+                vaga.debito = resposta.debito;
                 vaga.numero = parseInt(vagaa[0]);
                 vaga.id_vaga_veiculo = resposta.id_vaga_veiculo;
                 vaga.chegada = resposta.chegada;
+                vaga.estacionado = "S";
                 vaga.tempo = resposta.tempo;
                 vaga.temporestante = CalcularValidade(resposta.chegada, resposta.tempo);
                 vaga.variaDisplay = "aparece";
@@ -496,7 +481,6 @@ const RegistrarVagaMonitor = () => {
         setPlaca("placa3");
       } else {
         setPlaca("placa");
-        setCont(0);
       }
     }
   }, [textoPlaca]);
@@ -518,9 +502,9 @@ const RegistrarVagaMonitor = () => {
     await parametros
       .get("/parametros")
       .then((response) => {
-        setValorCobranca(response.data.data.param.estacionamento.valorHora);
+        setValorCobranca(response.data.data.param.estacionamento.valor60);
         if (localStorage.getItem("popup") == "true") {
-          setValorCobranca2(response.data.data.param.estacionamento.valorHora / 2);
+          setValorCobranca2(response.data.data.param.estacionamento.valor30);
         }
       })
       .catch(function (error) {
@@ -541,31 +525,20 @@ const RegistrarVagaMonitor = () => {
     setVaga(localStorage.getItem("vaga"));
   };
 
-  const atualizafunc = () => {
+  const atualizafunc = async () => {
     const tempoo = document.getElementById("tempos").value;
-    const valorr = selectedButton;
-    console.log(selectedButton)
     setTempo(tempoo);
-    setValor(valorr);
     if (tempoo === "00:10:00") {
       SetMostrapag(false);
-      setValor("");
     } else if (tempoo === "notificacao"){
       SetMostrapag(false);
-      setValor("");
     } 
     else {
       SetMostrapag(true);
     }
-
-    if (tempoo === "02:00:00") {
-      setValorCobranca2(valorCobranca * 2);
-    } else if (tempoo === "01:00:00") {
-      setValorCobranca2(valorCobranca);
-    } else if (tempoo === "00:30:00") {
-      setValorCobranca2(valorCobranca / 2);
-    } else if (tempoo === "01:30:00") {
-      setValorCobranca2(valorCobranca * 1.5);
+    const valorTempo = await calcularValorEstacionamento(tempoo);
+    if (valorTempo !== 0) {
+      setValorCobranca2(valorTempo);
     } else if (tempoo === "00:10:00") {
       setValorCobranca2(valorCobranca * 0);
     } else {
@@ -591,22 +564,9 @@ const RegistrarVagaMonitor = () => {
     localStorage.removeItem("id_vagaveiculo");
   };
 
-  function validarPlaca(placa) {
-    const regexPlacaAntiga = /^[a-zA-Z]{3}\d{4}$/;
-    const regexPlacaNova =
-      /^([A-Z]{3}[0-9][A-Z0-9][0-9]{2})|([A-Z]{4}[0-9]{2})$/;
-
-    if (regexPlacaAntiga.test(placa) || regexPlacaNova.test(placa)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   const handleSubmit = async () => {
     setLoadingButton(true);
     let select = selectedButton;
-    setValor(selectedButton);
     const tolerancia = document.getElementById("tempos").value;
 
     if (tolerancia === "notificacao" && textoPlaca !== ""){
@@ -629,11 +589,10 @@ const RegistrarVagaMonitor = () => {
   };
 
   useEffect(() => {
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
+    if (!localStorage.getItem("vaga") || localStorage.getItem("vaga") === "" || 
+      localStorage.getItem("vaga") === null || localStorage.getItem("vaga") === undefined) {
+      FuncTrocaComp("ListarVagasMonitor");
+      return;
     }
     setTipoVaga(localStorage.getItem("tipoVaga"));
     param();
@@ -642,7 +601,6 @@ const RegistrarVagaMonitor = () => {
       setTextoPlaca(localStorage.getItem("placa"));
       setVisible(true);
       SetMostrapag(true);
-      setValor("dinheiro");
       setTempo("00:30:00");
     } else {
       setVisible(false);
@@ -709,7 +667,7 @@ const RegistrarVagaMonitor = () => {
                 <Divider my="sm" size="md" variant="dashed" />
               </div>
 
-              <div className="h6 mt-3 " onChange={atualizafunc}>
+              <div className="h6 mt-3 " onChange={() => atualizafunc()}>
                 <p className="text-start">Determine um tempo:</p>
                 {visible ? (
                   <select
@@ -818,7 +776,7 @@ const RegistrarVagaMonitor = () => {
           setOnOpen={setOnOpenError}
         />
         <ModalPix
-          qrCode={data.brcode}
+          qrCode={data.pixCopiaECola}
           status={notification}
           mensagemPix={pixExpirado}
           onOpen={onOpen}

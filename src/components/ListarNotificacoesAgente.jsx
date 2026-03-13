@@ -1,13 +1,15 @@
-import axios from 'axios'
 import { React, useState, useEffect } from 'react'
-import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineReload } from 'react-icons/ai'
+import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai'
 import Swal from 'sweetalert2'
 import moment from 'moment'
 import VoltarComponente from '../util/VoltarComponente';
 import FuncTrocaComp from '../util/FuncTrocaComp';
 import Filtro from '../util/Filtro'
 import createAPI from '../services/createAPI'
-import { Group, Pagination } from '@mantine/core'
+import { Button, Group, Pagination } from '@mantine/core'
+import CarroLoading from './Carregamento'
+import { IconReload } from '@tabler/icons-react';
+import {ArrumaHora2, ArrumaHora3} from "../util/ArrumaHora";
 
 const ListarNotificacoesAgente = () => {
     const [data, setData] = useState([])
@@ -27,23 +29,6 @@ const ListarNotificacoesAgente = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
-
-
-    function ArrumaHora(data, hora ) {
-        const data2 = data.split("T");
-        const data3 = data2[0].split("-");
-        const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-        return data4;
-    }
-
-    function ArrumaHora2(data) {
-      const data2 = data.split("T");
-      const data6 = data2[1].split(":");
-      const data5 = (data6[0]-3) + ":" + data6[1] + ":";
-      const data7 = data5 + data6[2].split(".")[0];
-      return data7;
-    }
 
     useEffect(() => {
         localStorage.removeItem('autoInfracao')
@@ -95,7 +80,7 @@ const ListarNotificacoesAgente = () => {
         if (response.data.msg.resultado){
           setEstado(false)
           const newData = response.data.data.map((item) => ({
-            data: ArrumaHora(item.data),
+            data: ArrumaHora3(item.data),
             placa: item.veiculo.placa,
             cancelada: item.cancelada,
             cancelada_motivo: item.cancelada_motivo,
@@ -111,10 +96,12 @@ const ListarNotificacoesAgente = () => {
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
           }));
+          setEstadoLoading(false)
           setData(newData)
         }
         else {
           setData([])
+          setEstadoLoading(false)
           setEstado(true)
           setMensagem("Não há notificações para exibir")
         }
@@ -157,7 +144,7 @@ const ListarNotificacoesAgente = () => {
       setEstadoLoading(false)
       setEstado(false)
       const newData = response.data.data.map((item) => ({
-        data: ArrumaHora(item.data),
+        data: ArrumaHora3(item.data),
         placa: item.veiculo.placa,
         cancelada: item.cancelada,
         cancelada_motivo: item.cancelada_motivo,
@@ -198,17 +185,25 @@ const ListarNotificacoesAgente = () => {
 
   return (
     <div className="dashboard-container">
-        <p className="mx-3 text-start fs-4 fw-bold">Notificações pendentes</p>
+        <p className="mx-3 text-start fs-4 fw-bold">Histórico Completo de Notificações</p>
         <div className="row mb-3">
         <div className="col-12">
         <div className="row">
         <div className="col-7 mx-2">
         <Filtro nome={'ListarNotificacoesAgente'} onConsultaSelected={handleConsultaSelected} onLoading={estadoLoading}/>
           </div>
-          <div className="col-3 text-end">
+          <div className="col-2 text-end">
           </div>
-          <div className="col-1 text-end">
-            <AiOutlineReload onClick={() => {reload()}} className="mt-1" size={21} />
+          <div className="col-2 text-end">
+            <Button
+                    variant="gradient"
+                    gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                    radius="md"
+                    size="sm"
+                    onClick={() => reload()}
+                  >
+                    <IconReload color="white" size={20} />
+                </Button>
           </div>
           </div>
           </div>
@@ -224,9 +219,18 @@ const ListarNotificacoesAgente = () => {
                         <tr>
                         <th className="border-bottom" id="tabelaUsuarios" scope="col" onClick={()=>{handleSort()}}>
                             Data {sortAsc ? <AiOutlineArrowUp className="mb-1" size={15} /> : <AiOutlineArrowDown className="mb-1" size={15} />}
+                          </th>                          
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
+                            Hora
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Placa
+                          </th>                          
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
+                            Fabricante
+                          </th>
+                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
+                            Modelo
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios" scope="col">
                             Vaga
@@ -235,19 +239,7 @@ const ListarNotificacoesAgente = () => {
                             Estado
                           </th>
                           <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Fabricante
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Modelo
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
                             Tipo
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Valor
-                          </th>
-                          <th className="border-bottom" id="tabelaUsuarios2" scope="col">
-                            Hora
                           </th>
                         </tr>
                       </thead>
@@ -256,16 +248,15 @@ const ListarNotificacoesAgente = () => {
                     {currentItems.map((item, index) => (
                         <tr key={index} onClick={()=>{mostrar(item)}}>
                           <td>{item.data}</td>
-                          <td>{item.placa}</td>
+                          <td id="tabelaUsuarios2">{item.hora}</td>
+                          <td>{item.placa}</td>                          
+                          <td id="tabelaUsuarios2">{item.fabricante}</td>
+                          <td id="tabelaUsuarios2">{item.modelo}</td>
                           <td> {item.vaga}</td>
                           <td id="tabelaUsuarios2" style={
                             item.pendente === 'Quitado' ? {color: 'green'} : {color: 'red'}
                           }> {item.pendente}</td>
-                          <td id="tabelaUsuarios2">{item.fabricante}</td>
-                          <td id="tabelaUsuarios2">{item.modelo}</td>
-                          <td id="tabelaUsuarios2">{item.tipo}</td>
-                          <td id="tabelaUsuarios2">{item.valor}</td>
-                          <td id="tabelaUsuarios2">{item.hora}</td>
+                          <td id="tabelaUsuarios2">{item.tipo}</td>                          
                         </tr>
                     ))}
                       </tbody>
@@ -274,6 +265,12 @@ const ListarNotificacoesAgente = () => {
                   <div className="alert alert-danger mt-4 mx-3" role="alert" style={{ display: estado ? 'block' : 'none' }}>
                         {mensagem}
                     </div>
+
+                    {data.length === 0 ?
+                    <div>
+                      <CarroLoading />
+                    </div>
+                  : null}
                 </div>
               </div>
 

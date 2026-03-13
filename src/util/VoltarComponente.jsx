@@ -1,32 +1,42 @@
-import { Button } from '@mantine/core'
-import { IconArrowLeft } from '@tabler/icons-react'
-import React, { useEffect, useState } from 'react'
+import { IconArrowLeft } from "@tabler/icons-react";
+import React, { useEffect, useState } from "react";
+import BotaoPadrao from "./BotaoPadrao"; // ajuste o caminho conforme a estrutura do seu projeto
 
 const VoltarComponente = ({ space, arrow }) => {
-    const [componenteAnterior, setComponenteAnterior] = useState('')
-    const [componenteProximo, setComponenteProximo] = useState('')
+  const [componenteAnterior, setComponenteAnterior] = useState("");
+  const [componenteProximo, setComponenteProximo] = useState("");
 
-    useEffect(() => {
-        const componenteAnterior = localStorage.getItem('componente')
-        const componenteProximo = localStorage.getItem('componenteAnterior')
-        setComponenteAnterior(componenteAnterior)
-        setComponenteProximo(componenteProximo)
-    }, [])
+  useEffect(() => {
+    const componenteAnterior = localStorage.getItem("componente");
+    const componenteProximo = localStorage.getItem("componenteAnterior");
+    setComponenteAnterior(componenteAnterior);
+    setComponenteProximo(componenteProximo);
+  }, []);
 
-    const voltar = () => {
-        localStorage.setItem('componenteAnterior', componenteAnterior)
-        localStorage.setItem('componente', componenteProximo)
+  const voltar = () => {
+    if (componenteProximo === "EscolherPerfil") {
+      return;
     }
+    localStorage.setItem("componenteAnterior", componenteAnterior);
+    localStorage.setItem("componente", componenteProximo);
+  };
 
   return (
     <>
-    {arrow ?
-        <IconArrowLeft className="mb-1" onClick={() => {voltar()}}/>
-        : 
-        <Button className={space ? "bg-gray-500 mx-2" : "bg-gray-500" } size="md" radius="md" onClick={() => {voltar()}}>Voltar</Button> 
-    }
+      {arrow ? (
+        <IconArrowLeft
+          className="mb-1"
+          onClick={() => {
+            voltar();
+          }}
+        />
+      ) : (
+        <BotaoPadrao space={space} onClick={voltar}>
+          Voltar
+        </BotaoPadrao>
+      )}
     </>
-    )
-}
+  );
+};
 
-export default VoltarComponente
+export default VoltarComponente;

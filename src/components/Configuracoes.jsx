@@ -1,13 +1,10 @@
-import axios from "axios";
-import { React, useState, useEffect, useRef } from "react";
-import { FaCarAlt, FaCheck, FaParking } from "react-icons/fa";
+import { React, useState, useEffect } from "react";
 import { TbHandClick } from "react-icons/tb";
 import { BsFillTrashFill } from "react-icons/bs";
 import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import { useDisclosure } from "@mantine/hooks";
-import { Button, Card, Divider, Grid, Group, Modal, Text } from "@mantine/core";
-import { Carousel } from '@mantine/carousel';
+import { Button, Card, Divider, Group, Modal, Text } from "@mantine/core";
 import createAPI from "../services/createAPI";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -20,20 +17,8 @@ const Configuracoes = () => {
   const [estado, setEstado] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [cardBody] = useState("card-body3");
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [estadoDiv, setEstadoDiv] = useState(false);
   const [estadoDiv2, setEstadoDiv2] = useState(true);
-  const [debito, setDebito] = useState(true);
-
-  const handleCheckboxChange = (index) => {
-    data[index].check = !data[index].check;
-    setData([...data]);
-  };
-
-  const abrirDiv = (index) => {
-    data[index].estado = !data[index].estado;
-    setData([...data]);
-  };
 
   const Atualizarequisicao = async () => {
     const requisicao = createAPI();
@@ -50,6 +35,8 @@ const Configuracoes = () => {
           estadoOn: false,
           check: false,
           idVeiculo: item.id_veiculo,
+          estacionado: item?.estacionado || "N",
+          vaga: item?.numerovaga || 0,
         }));
         for (let index = 0; index < newData.length; index++) {
           if (newData[index].debito == "S") {
@@ -58,11 +45,16 @@ const Configuracoes = () => {
             newData[index].check = false;
           }
 
+          if (newData[index].estacionado === "S" && newData[index].vaga !== 0) {
+            newData[index].estado = false;
+          }
+
           if ((newData[index].debitoDisponivel === "N" && newData[index].debito === "N") ||
             (newData[index].debitoDisponivel === "N" && newData[index].debito !== "S")) {
             newData[index].estado = false;
           }
         }
+
         setData(newData);
       })
       .catch((error) => {
@@ -97,7 +89,6 @@ const Configuracoes = () => {
       Atualizarequisicao();
     } else {
       open()
-      setDebito(false)
     }
   }, []);
 
@@ -185,7 +176,7 @@ const Configuracoes = () => {
     setData([...data]);
   };
 
-  return (
+    return (
     <div className="col-12 px-3 mb-3">
       <div className="row">
         <div className="col-9">
@@ -199,109 +190,114 @@ const Configuracoes = () => {
           </Button>
         </div>
       </div>
-
+  
       <Card className="border-0 shadow mt-2 mb-3" style={{ display: estadoDiv2 ? 'block' : 'none' }}>
         <Group>
           <Text>Você precisa aceitar os termos de uso do débito automático para usar dessa funcionalidade. Clique no botão no canto superior direito para aceitar.</Text>
         </Group>
       </Card>
-
-      {data.map((link, index) => (
-        <div
-          className="card border-0 shadow mt-2 mb-5"
-          key={index}
-          id="divD"
-          disabled={
-            (link.debitoDisponivel === "N" && link.debito === "N") ||
-              (link.debitoDisponivel === "N" && link.debito !== "S")
-              ? true
-              : false
-          }
-        >
-          <div
-            className={cardBody}
-          >
-            <div className="d-flex align-items-center justify-content-between">
-              <div>
-                <div className="h2 mb-0 d-flex align-items-center">
-                  {link.placa}
-                </div>
-                <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
-                  <h6 className="fs-6">
-                    <TbHandClick />{" "}
-                    <small>Débito automático: {data[index].check ? "Ativado" : "Desativado"}</small>
-                  </h6>
-                </div>
-              </div>
-              <div>
-                <div className="d-flex align-items-center fw-bold">
-                  {data[index].check ? (
-                     <AiFillCheckCircle size={30} color="green" /> ) 
-                     : 
-                     (   
-                     <BiErrorCircle size={30} color="red" />
-                     )}
-                </div>
-              </div>
-            </div>
-          </div>
-          {data[index].estado ? (
+  
+      <>
+        {data.map((link, index) => (
+          link.placa && (
             <div
-              className="card-body5 pt-0"
-              onChange={() => {
-                mudaEstado(index);
-              }}
+              className="card border-0 shadow mt-2 mb-5"
+              key={index}
+              id="divD"
+              disabled={
+                (link.estacionado === "S" && link.vaga !== 0) ||
+                (link.debitoDisponivel === "N" && link.debito === "N") ||
+                (link.debitoDisponivel === "N" && link.debito !== "S")
+                  ? true
+                  : false
+              }
             >
-              {data[index].estado ? <div id="bordaBaixo"></div> : null}
-              <Button
-                type="submit"
-                className="mt-4"
-                variant="outline" color={data[index].check ? "red" : "blue"}
-                fullWidth
-                bold
-                onClick={() => {
-                  salvarAlteracoes(index);
-                }}
-              >
-                {data[index].check ? "Desativar débito automático" : "Ativar débito automático"}
-              </Button>
-              <div className="row mt-3">
-                <div className="col-2"></div>
-                <div className="col-8"></div>
-                <div className="col-2">
-                  <BsFillTrashFill
-                    size={25}
-                    color="red"
-                    onClick={() => {
-                      removerVeiculo(link.id_veiculo);
-                    }}
-                  />
+              <div 
+                className={cardBody}
+                >
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>
+                    <div className="h2 mb-0 d-flex align-items-center">
+                      {link.placa}
+                    </div>
+                    <div className="h6 mt-1 d-flex align-items-center fs-6 text-start">
+                      <h6 className="fs-6">
+                        <TbHandClick />{" "}
+                        <small>Débito automático: {data[index].check ? "Ativado" : "Desativado"}</small>
+                      </h6>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="d-flex align-items-center fw-bold">
+                      {data[index].check ? (
+                        <AiFillCheckCircle size={30} color="green" /> ) 
+                        : 
+                        (
+                        <BiErrorCircle size={30} color="red" />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
+              {data[index].estado ? (
+                <div
+                  className="card-body5 pt-0"
+                  onChange={() => {
+                    mudaEstado(index);
+                  }}
+                >
+                  {data[index].estado ? <div id="bordaBaixo"></div> : null}
+                  <Button
+                    type="submit"
+                    className="mt-4"
+                    variant="outline" color={data[index].check ? "red" : "blue"}
+                    fullWidth
+                    bold
+                    onClick={() => {
+                      salvarAlteracoes(index);
+                    }}
+                  >
+                    {data[index].check ? "Desativar débito automático" : "Ativar débito automático"}
+                  </Button>
+                  <div className="row mt-3">
+                    <div className="col-2"></div>
+                    <div className="col-8"></div>
+                    <div className="col-2">
+                      <BsFillTrashFill
+                        size={25}
+                        color="red"
+                        onClick={() => {
+                          removerVeiculo(link.id_veiculo);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+  
+              <h6
+                style={{
+                  display: (link.estacionado === "S" && link.vaga !== 0) ||
+                    (link.debitoDisponivel === "N" && link.debito === "N") ||
+                    (link.debitoDisponivel === "N" && link.debito !== "S")
+                      ? "block"
+                      : "none",
+                }}
+                className="px-4 fs-6 text-center mt-4"
+                id="modalTexto"
+              >
+                <small>
+                  {link.estacionado === "S" && link.vaga !== 0 ? "Não é possível ativar/desativar o débito automático de veículos que estão estacionados no momento."
+                    : "Este veículo já possui débito automático ativo em outro dispositivo."}
+                </small>
+              </h6>
             </div>
-          ) : null}
-
-          <h6
-            style={{
-              display:
-                (link.debitoDisponivel === "N" && link.debito === "N") ||
-                  (link.debitoDisponivel === "N" && link.debito !== "S")
-                  ? "block"
-                  : "none",
-            }}
-            className="px-4 fs-6"
-          >
-            <small>
-              Este veículo já possui débito automático ativo em outro
-              dispositivo.
-            </small>
-          </h6>
-
-        </div>
-      ))}
+          )
+        ))}
+      </>
       <VoltarComponente />
       <Modal opened={opened} onClose={() => { close() }} closeOnClickOutside={false} style={{ zIndex: 51 }} centered title="Termos de uso débito automático">
-        <div>
+        <div id="modalTexto">
           <small><strong>Ao solicitar a ativação automática do estacionamento, o usuário concorda com os seguintes termos:</strong></small> <br />
           <small>a) Quando o monitor fiscalizar, será realizada uma ativação de 30 minutos, sendo repetida a ativação por um período máximo de 2 horas em cada vaga;</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
@@ -313,9 +309,11 @@ const Configuracoes = () => {
           <Divider my="sm" size="md" variant="dashed" />
           <small>e) A ativação fica vinculada a placa do veículo.</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
+          <small>f) Declaro ter ciência, que não será impresso o comprovante de estacionamento! E caso necessário, irei requisitar uma segunda via com uma monitora.</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
           <small><strong> APÓS CONCORDAR COM OS TERMOS, HABILITE O DÉBITO AUTOMÁTICO NAS PLACAS DESEJADAS.</strong></small> <br />
         </div>
-        {estadoDiv2 ?
+        {estadoDiv2 ? 
           <>
             <div className="form-check mt-3">
               <input type="checkbox" className="form-check-input" id="termsCheckbox" />
@@ -348,8 +346,15 @@ const Configuracoes = () => {
               </Button>
             </div>
           </>
-          : null}
+        : null}
       </Modal>
+      <div
+        className="alert alert-danger mt-4"
+        role="alert"
+        style={{ display: estado ? "block" : "none" }}
+      >
+        {mensagem}
+      </div>
     </div>
   );
 };

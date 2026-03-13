@@ -1,4 +1,3 @@
-import axios from "axios";
 import { React, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import "../pages/Style/styles.css";
@@ -18,16 +17,13 @@ const AdicionarCreditos = () => {
   const [estado, setEstado] = useState(false);
   const [cpf, setCPF] = useState("");
   const [valor, setValor] = useState('');
-  const [InputPlaca, setInputPlaca] = useState("form-control fs-6");
   const [pagamentos, setPagamento] = useState("dinheiro");
   const [data, setData] = useState([]);
   const [onOpen, setOnOpen] = useState(false);
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [estado2, setEstado2] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
-  const [onCloseError, setOnCloseError] = useState(false);
 
   async function getInfoPix(TxId) {
     const requisicao = createAPI();
@@ -105,7 +101,6 @@ const AdicionarCreditos = () => {
             .then((resposta) => {
               if (resposta.data.msg.resultado) {
                 setData(resposta.data.data);
-                setTxId(resposta.data.data.txid);
                 getInfoPix(resposta.data.data.txid);
                 setOnOpen(true);
                 open();
@@ -117,11 +112,9 @@ const AdicionarCreditos = () => {
               setOnOpenError(true);
             });
         } else {
-          setInputPlaca("form-control fs-5 is-invalid");
           setEstado(true);
           setMensagem("Verifique os campos novamente!");
           setTimeout(() => {
-            setInputPlaca("form-control fs-5");
             setEstado(false);
             setMensagem("");
           }, 4000);
@@ -135,11 +128,9 @@ const AdicionarCreditos = () => {
   const handleSubmit = async () => {
     const Newvalor = parseFloat(valor.replace(",", ".")).toFixed(2);
     if (Newvalor < 2 || isNaN(Newvalor)) {
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Valor mínimo de R$ 2,00!");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -205,20 +196,16 @@ const AdicionarCreditos = () => {
           }
         });
     } else if (valor === 0) {
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Verifique os campos novamente!");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
     } else {
-      setInputPlaca("form-control fs-5 is-invalid");
       setEstado(true);
       setMensagem("Verifique os campos novamente!");
       setTimeout(() => {
-        setInputPlaca("form-control fs-5");
         setEstado(false);
         setMensagem("");
       }, 4000);
@@ -233,15 +220,11 @@ const AdicionarCreditos = () => {
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    const user2 = JSON.parse(user);
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     setValor("");
+    if (localStorage.getItem("usuario") !== null) {
+      const user = localStorage.getItem("usuario");
+      setCPF([user]);
+    }
   }, []);
 
   return (
@@ -253,20 +236,20 @@ const AdicionarCreditos = () => {
               <small>Adicionar créditos</small>
             </div>
             <Divider my="sm" size="md" variant="dashed" />
-            <div className="row align-items-center pt-2">
+            <div className="row align-items-center text-center pt-2">
               <div className="col-3">
                 <button
                   type="button"
-                  className="btn btn-info w-100"
+                  className="btn btn-info w-100 p-2"
                   onClick={() => FuncArrumaInput('1000')}
                 >
-                  10
+                  10 
                 </button>
               </div>
               <div className="col-3">
                 <button
                   type="button"
-                  className="btn btn-info w-100"
+                  className="btn btn-info w-100 p-2"
                   onClick={() => FuncArrumaInput('2000')}
                 >
                   20
@@ -275,7 +258,7 @@ const AdicionarCreditos = () => {
               <div className="col-3">
                 <button
                   type="button"
-                  className="btn btn-info w-100"
+                  className="btn btn-info w-100 p-2"
                   onClick={() => FuncArrumaInput('3000')}
                 >
                   30
@@ -284,7 +267,7 @@ const AdicionarCreditos = () => {
               <div className="col-3">
                 <button
                   type="button"
-                  className="btn btn-info w-100"
+                  className="btn btn-info w-100 p-2"
                   onClick={() => FuncArrumaInput('5000')}
                 >
                   50
@@ -358,10 +341,9 @@ const AdicionarCreditos = () => {
       </div>
       <ModalErroBanco
           onOpen={onOpenError}
-          onClose={onCloseError}
         />
       <ModalPix
-        qrCode={data.brcode}
+        qrCode={data.pixCopiaECola}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}

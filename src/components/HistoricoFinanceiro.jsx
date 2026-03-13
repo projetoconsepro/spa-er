@@ -1,17 +1,14 @@
-import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
-import { FaCoins } from "react-icons/fa";
-import Swal from "sweetalert2";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
-import { Badge, Box, Group, Pagination } from "@mantine/core";
+import { Badge, Group, Pagination } from "@mantine/core";
 import { IconCash } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
+import {ArrumaHora} from "../util/ArrumaHora";
 
-const HistoricoFinanceiro = () => {
+const HistoricoFinanceiro = (id_usuario = 0) => {
   const [resposta, setResposta] = useState([]);
-  const [resposta2, setResposta2] = useState([]);
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [saldo, setSaldo] = useState(0);
@@ -28,25 +25,18 @@ const HistoricoFinanceiro = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = resposta.slice(indexOfFirstItem, indexOfLastItem);
 
-  function ArrumaHora(data) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    const data6 = data2[1].split(":");
-    const data5 = data4 + " " + (data6[0] - 3) + ":" + data6[1];
-    return data5;
-  }
-
   useEffect(() => {
+    let id = id_usuario.id_usuario ?? 0;
     const requisicao = createAPI();
     requisicao
-      .get("/financeiro/cliente")
+    .get(`/financeiro/cliente/${id}`)
       .then((response) => {
         setSaldo(response?.data.dados.saldo);
         const newData = response?.data.dados.movimentos.map((item) => ({
           valor: Math.abs(item.valor),
           data: ArrumaHora(item.data),
           tipo: item.tipo,
+          placa: item.placa,
         }));
         for (let i = 0; i < newData.length; i++) {
           if (newData[i].tipo === "credito") {
@@ -58,7 +48,6 @@ const HistoricoFinanceiro = () => {
           }
         }
         setResposta(newData);
-        setResposta2(newData);
       })
       .catch((error) => {
         if (
@@ -82,11 +71,12 @@ const HistoricoFinanceiro = () => {
     setEstadoLoading(true);
     setEstadoLoading(true);
 
+    let id = id_usuario.id_usuario ?? 0;
     const requisicao = createAPI();
 
     const base64 = btoa(where);
     requisicao
-      .get(`/financeiro/cliente/?query=${base64}`)
+    .get(`/financeiro/cliente/${id}/?query=${base64}`)
       .then((response) => {
         if (response.data.msg.resultado) {
           setEstadoLoading(false);
@@ -95,6 +85,7 @@ const HistoricoFinanceiro = () => {
             valor: Math.abs(item.valor),
             data: ArrumaHora(item.data),
             tipo: item.tipo,
+            placa: item.placa,
           }));
           for (let i = 0; i < newData.length; i++) {
             if (newData[i].tipo === "credito") {
@@ -193,6 +184,7 @@ const HistoricoFinanceiro = () => {
                       : item.tipo === "Transferencia de credito"
                       ? "Transferencia de crédito"
                       : item.tipo}
+                      {item.placa && <span> - {item.placa}</span>}
                   </div>
                 </div>
                 <div className="col-5 p-0">
@@ -204,7 +196,7 @@ const HistoricoFinanceiro = () => {
                     {typeof item.valor === "number" &&
                     item.valor.toString()[0] === "0"
                       ? `R$ ${item.valor.toString().replace(".", ",")}`
-                      : `R$ ${item.valor}`}
+                      : `${item.debito === 'S' ? '-' : '+'}  R$ ${item.valor}`}
                   </div>
                 </div>
               </div>

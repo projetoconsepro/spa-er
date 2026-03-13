@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import sha256 from "crypto-js/sha256";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -8,6 +8,7 @@ import { Button, Input, PasswordInput } from "@mantine/core";
 import { IconLock, IconPhone } from "@tabler/icons-react";
 import { IconLockCheck } from "@tabler/icons-react";
 import ReactInputMask from "react-input-mask";
+import extrairNumeros from "../util/extrairNumeros";
 
 const NewPassword = () => {
   const [senha, setSenha] = useState("");
@@ -19,21 +20,15 @@ const NewPassword = () => {
   const [errorSenha2, setErrorSenha2] = useState(false);
   const [telefone] = useState(localStorage.getItem("telefone"));
   const [input, setInput] = useState("");
-  const [errorSenhaTelefone, setErrorSenhaTelefone] = useState(false);
 
-  function extrairNumeros(string) {
-    return string ? string.replace(/\D/g, '') : string;
-}
 
   const handleSubmit = async () => {
 
     if (telefone === "Não cadastrado") {
         if (input === "") {
-            setErrorSenhaTelefone(true);
             setMensagem("Digite seu telefone!");
             setEstado(true);
             setTimeout(() => {
-                setErrorSenhaTelefone(false);
                 setMensagem("");
                 setEstado(false);
             }, 4000);
@@ -168,7 +163,6 @@ const NewPassword = () => {
                     value={input}
                     component={ReactInputMask} mask={'(99) 99999-9999'}
                     onChange={(e) => setInput(e.target.value)}
-                    error={setErrorSenhaTelefone}
                     className="mt-1"
                   />
                 </div>

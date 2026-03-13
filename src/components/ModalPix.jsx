@@ -16,11 +16,12 @@ import {
 import { React, useState, useEffect, useRef } from "react";
 import QRCode from "react-qr-code";
 import { FaCopy, FaCheck } from "react-icons/fa";
+import { MensagemCompra } from "../util/MensagemCompra";
 
 const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
-  const inputRef = useRef(null);
+  const inputRef = useRef(null); 
   const [icon, setIcon] = useState("FaCopy");
-
+  
   const copyToClipboard = () => {
     // Seleciona o conteúdo do input
     inputRef.current.select();
@@ -33,8 +34,20 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
     }, 1000);
   };
 
-  const user = JSON.parse(localStorage.getItem("user"));
   const [opened, { open, close }] = useDisclosure(false);
+  const [mensagemExtra, setMensagemExtra] = useState("");
+  const user = localStorage.getItem("user");
+  const perfil = user ? JSON.parse(user).perfil : null;
+
+  useEffect(() => {
+    if (perfil[0] === 'cliente'){
+      const buscarMensagem = async () => {
+      const texto = await MensagemCompra();
+      setMensagemExtra(texto);
+    };
+    buscarMensagem();
+  }
+  }, []);
 
   useEffect(() => {
     if (onOpen) {
@@ -131,6 +144,11 @@ const ModalPix = ({ qrCode, status, mensagemPix, onOpen, onClose }) => {
               </span>
             </Button>
           </div>
+          {!status && mensagemPix !== "Pix expirado" && mensagemExtra && (
+            <div style={{ marginTop: 15, marginBottom: 10, textAlign: "center" }}>
+              {mensagemExtra}
+            </div>
+          )}
           <div className="mt-3">
             {status ? (
               <Notification

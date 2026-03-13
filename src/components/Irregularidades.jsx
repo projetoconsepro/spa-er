@@ -1,7 +1,6 @@
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
-import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
+import { AiFillCheckCircle } from "react-icons/ai";
 import { BsCalendarDate, BsCashCoin, BsConeStriped } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
@@ -12,8 +11,11 @@ import { IconReload, IconX } from "@tabler/icons-react";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import createAPI from "../services/createAPI";
-import { Button, Group, Pagination } from "@mantine/core";
+import { Button } from "@mantine/core";
 import ModalErroBanco from "./ModalErroBanco";
+import { ArrumaHora } from "../util/ArrumaHora";
+import { verificaValidadeInfracao } from "../util/verificaValidadeInfracao";
+import { MensagemCompra } from "../util/MensagemCompra";
 
 const Irregularidades = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -24,36 +26,38 @@ const Irregularidades = () => {
   const user = localStorage.getItem("user");
   const user2 = JSON.parse(user);
   const [saldoCredito, setSaldoCredito] = useState(0);
-  const [valorCobranca, setValorCobranca] = useState(0);
   const [loading, setOnLoading] = useState(false);
   const [notification, setNotification] = useState(true);
   const [pixExpirado, setPixExpirado] = useState("");
-  const [txid, setTxId] = useState("");
   const [onOpen, setOnOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
-    
-  const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 50;
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-
-    };
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-
+  const [validacoes, setValidacoes] = useState({});
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
     setData([...data]);
   };
 
+  const buscarMensagem = async () => {
+    const texto = await MensagemCompra();
+    return texto;
+  };
 
-  const regularizar = (index) => {
+  const regularizar = async (index) => {
+    const isValido = data[index].infracao === 'S'
+      ? await verificaValidadeInfracao(data[index].data_infracao) 
+    : null;
+
+    setValidacoes((prev) => ({
+      ...prev,
+      [data[index].id_notificacao]: isValido,
+    }));
+
+    if (isValido=== false) {
+      return;
+    }
     setLoadingButton(true);
     const select = document.getElementById("pagamentos").value;
     if (select === "credito") {
@@ -74,20 +78,19 @@ const Irregularidades = () => {
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
       const requisicao = createAPI();
 
-      const campo = { 
+      const campo = {
         id_vaga_veiculo: data[index].id_vaga_veiculo,
-        tipoPagamento: 'pix',
-      }
+        tipoPagamento: "pix",
+      };
 
       requisicao
         .post("/gerarcobranca", {
           valor: valor2,
-          campo: JSON.stringify(campo)
+          campo: JSON.stringify(campo),
         })
         .then((resposta) => {
           if (resposta.data.msg.resultado) {
             setData2(resposta.data.data);
-            setTxId(resposta.data.data.txid);
             getInfoPix(resposta.data.data.txid, index);
             open();
             setOnOpen(true);
@@ -103,52 +106,53 @@ const Irregularidades = () => {
 
   async function getInfoPix(TxId, index) {
     const requisicao = createAPI();
-      await requisicao
-        .put(`/notificacao/pix`,{
-          txid: TxId,
-        })
-        .then((response) => {
-          if (response.data.msg.resultado) {
-            setLoadingButton(false);
-            setOnOpen(false);
+    await requisicao
+      .put(`/notificacao/pix`, {
+        txid: TxId,
+      })
+      .then((response) => {
+        if (response.data.msg.resultado) {
+          setLoadingButton(false);
+          setOnOpen(false);
+          buscarMensagem().then((texto) => {
             Swal.fire({
               title: "Regularizado!",
-              text: "A notificação foi regularizada.",
               icon: "success",
-              timer: 2000,
-            });
-            if (index !== undefined) {
-              FuncTrocaComp("MeusVeiculos");
-              data[index].pago = "S";
-              setData([...data]);
-            } else {
-              FuncTrocaComp("MeusVeiculos");
-              startNotificao();
-            }
-          } else {
-            setLoadingButton(false);
-            setNotification(false);
-            setPixExpirado("Pix expirado");
-          }
-        })
-        .catch((err) => {
-          setLoadingButton(false);
-          setOnOpenError(true);
-        });
-    }
+              timer: 5000,
+              html: `
+                        A notificação foi regularizada.<br>
+                        ${texto
+                  ? `<small style="display:block;margin-top:10px;color:#555;">${texto}</small>`
+                  : ""
+                }
+                      `,
+            })
+          });
 
-  function ArrumaHora(data) {
-    const data2 = data.split("T");
-    const data3 = data2[0].split("-");
-    const data4 = data3[2] + "/" + data3[1] + "/" + data3[0];
-    const data6 = data2[1].split(":");
-    const data5 = data4 + " " + (data6[0] - 3) + ":" + data6[1];
-    return data5;
+          if (index !== undefined) {
+            FuncTrocaComp("MeusVeiculos");
+            data[index].pago = "S";
+            setData([...data]);
+          } else {
+            FuncTrocaComp("MeusVeiculos");
+            startNotificao();
+          }
+        } else {
+          setLoadingButton(false);
+          setNotification(false);
+          setPixExpirado("Pix expirado");
+        }
+      })
+      .catch((err) => {
+        setLoadingButton(false);
+        setOnOpenError(true);
+      });
   }
+
 
   const onClose = () => {
-  setLoadingButton(false);
-  }
+    setLoadingButton(false);
+  };
 
   const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
     const requisicao = createAPI();
@@ -160,13 +164,21 @@ const Irregularidades = () => {
       })
       .then((response) => {
         if (response.data.msg.resultado) {
+          SaldoCredito();
           setLoadingButton(false);
-          Swal.fire({
+           buscarMensagem().then((texto) => {
+            Swal.fire({
             title: "Regularizado!",
-            text: "A notificação foi regularizada.",
+             html: `
+                        A notificação foi regularizada.<br>
+                        ${texto
+                  ? `<small style="display:block;margin-top:10px;color:#555;">${texto}</small>`
+                  : ""
+                }
+                      `,
             icon: "success",
-            timer: 2000,
-          });
+            timer: 8000,
+          }); });
           if (index !== undefined) {
             data[index].pago = "S";
             setData([...data]);
@@ -188,7 +200,7 @@ const Irregularidades = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -219,6 +231,8 @@ const Irregularidades = () => {
             placa: item.veiculo.placa,
             estado: false,
             pago: item.pago,
+            data_infracao: item.data_infracao,
+            infracao: item.infracao
           }));
           setData(newData);
         } else {
@@ -235,7 +249,7 @@ const Irregularidades = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -266,6 +280,8 @@ const Irregularidades = () => {
             placa: item.veiculo.placa,
             estado: false,
             pago: item.pago,
+            data_infracao: item.data_infracao,
+            infracao: item.infracao
           }));
           setData(newData);
         } else {
@@ -282,7 +298,7 @@ const Irregularidades = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -296,27 +312,8 @@ const Irregularidades = () => {
     }, 4000);
   };
 
-  useEffect(() => {
+  const SaldoCredito = () => {
     const requisicao = createAPI();
-    requisicao.get("/parametros").then((response) => {
-        setValorCobranca(
-          response.data.data.param.estacionamento.valor_notificacao
-        );
-      })
-      .catch(function (error) {
-        if (
-          error?.response?.data?.msg === "Cabeçalho inválido!" ||
-          error?.response?.data?.msg === "Token inválido!" ||
-          error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
-        ) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("perfil");
-        } else {
-          console.log(error);
-        }
-      });
 
     requisicao
       .get("/usuario/saldo-credito")
@@ -328,7 +325,7 @@ const Irregularidades = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -337,20 +334,17 @@ const Irregularidades = () => {
           console.log(error);
         }
       });
-    if (
-      localStorage.getItem("turno") !== "true" &&
-      user2.perfil[0] === "monitor"
-    ) {
-      FuncTrocaComp("AbrirTurno");
-    }
     const placa = localStorage.getItem("placaCarro");
     if (placa !== null && placa !== undefined && placa !== "") {
       startPlaca(placa);
     } else {
       startNotificao();
     }
-  }, []);
+  }
 
+  useEffect(() => {
+    SaldoCredito();
+  }, []);
   const handleConsultaSelected = (consulta) => {
     handleFiltro(consulta);
   };
@@ -379,6 +373,8 @@ const Irregularidades = () => {
             placa: item.veiculo.placa,
             estado: false,
             pago: item.pago,
+            data_infracao: item.data_infracao,
+            infracao: item.infracao
           }));
           setData(newData);
         } else {
@@ -392,7 +388,7 @@ const Irregularidades = () => {
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
           error?.response?.data?.msg ===
-            "Usuário não possui o perfil mencionado!"
+          "Usuário não possui o perfil mencionado!"
         ) {
           localStorage.removeItem("user");
           localStorage.removeItem("token");
@@ -402,6 +398,22 @@ const Irregularidades = () => {
         }
       });
   };
+  
+  useEffect(() => {
+    const verificarInfracoes = async () => {
+      const resultados = {};
+      for (const item of data) {
+        resultados[item.id_notificacao] = item.infracao === 'S'
+          ? await verificaValidadeInfracao(item.data_infracao)
+          : null;
+      }
+      setValidacoes(resultados);
+    };
+
+    if (data.length > 0) {
+      verificarInfracoes();
+    }
+  }, [data]);
 
   return (
     <div className="col-12 px-3 mb-4">
@@ -418,190 +430,204 @@ const Irregularidades = () => {
                 onLoading={loading}
               />
             </div>
-            <div className="col-3 text-end"></div>
-            <div className="col-1 text-end">
-              <IconReload
-                onClick={() => {
-                  startNotificao();
-                }}
-                className="mt-1"
-                size={21}
-              />
+            <div className="col-2 text-end"></div>
+            <div className="col-2 text-end">
+              <Button
+                variant="gradient"
+                gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                radius="md"
+                size="sm"
+                onClick={() => startNotificao()}
+              >
+                <IconReload color="white" size={20} />
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
       {data.map((link, index) => (
-        <div className="card border-0 shadow mt-2 mb-3" key={index}>
+        <div className="card border-0 shadow mt-3 mb-0" key={index}>
           <div
-            className={link.pago === "S" ? "card-body10 mb-0 pb-0" : "card-body9"}
-            onClick={() => link.pago === "S" ? atualiza(index) : null}
+            className={
+              link.pago === "S" && link.estado === false
+                ? "card-body10 pb-0 mb-4"
+                : link.pago === "S" && link.estado === true
+                  ? "card-body10 pb-0 mb-3"
+                  : link.estado && link.infracao === 'S' && !validacoes[link.id_notificacao] === true
+                    ? "card-body13 mb-3"
+                    : "card-body9 mb-3"
+            }
+            onClick={() => (link.pago === "S" ? atualiza(index) : null)}
           >
             <div className="d-flex align-items-center justify-content-between">
               <div>
-                <div className="h2 mb-0 d-flex align-items-center">
-                  {link.placa}
-                </div>
-                <div
-                  className="h6 mt-2 d-flex align-items-center fs-6"
-                  id="estacionadocarro"
-                >
-                  <h6>
-                    {" "}
-                    <BsCalendarDate />‎ {link.data}
-                  </h6>
-                </div>
-                {link.estado ? (
-                  <div
-                    className="h6 d-flex align-items-center fs-6 mb-0 pb-0"
-                  >
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" 
-                    || link.tipo_notificacao === "Ocupando vaga de idoso" ? (
-                      <h6>
-                        {" "}
-                        <FaClipboardList />‎{" "}
-                        <small>Motivo: {link.tipo_notificacao}</small>
-                      </h6>
-                    ) : (
-                      <h6>
-                        {" "}
-                        <FaClipboardList />‎ 
-                        {window.innerWidth <= 360 ? 
-                        <small>Motivo: {link.tipo_notificacao}</small>
-                        :
-                        `Motivo: ${link.tipo_notificacao}`}
-                      </h6>
-                    )}
+
+                <div className="d-flex flex-column gap-2">
+
+                  <div className="h2 d-flex align-items-center">
+                    {link.placa}
                   </div>
-                ) : (
-                  <div className="h6 d-flex align-items-center fs-6 mb-0 pb-0">
-                    {link.tipo_notificacao === "Ocupando vaga de deficiente" 
-                    || link.tipo_notificacao === "Ocupando vaga de idoso" ? (
-                      <h6>
-                        {" "}
-                        <FaClipboardList />‎{" "}
-                        <small>Motivo: {link.tipo_notificacao}</small>
-                      </h6>
-                    ) : (
-                      <h6>
-                        {" "}
-                        <FaClipboardList />‎ 
-                        {window.innerWidth <= 360 ? 
-                        <small>Motivo: {link.tipo_notificacao}</small>
-                        :
-                        `Motivo: ${link.tipo_notificacao}`}
-                      </h6>
-                    )}
+
+                  <div className="h6 d-flex align-items-center">
+                    <BsCalendarDate className="me-2" />
+                    {link.data}
                   </div>
+
+                  <div className="h6 d-flex align-items-center fs-6">
+                    <FaClipboardList className="me-2 flex-shrink-0" />
+                    <span
+                      className={`
+        ${!link.estado ? "text-truncate d-block" : ""} 
+        ${window.innerWidth <= 360 ? "w-auto" : ""}
+      `}
+                      style={{
+                        maxWidth: '220px',
+                        fontSize:
+                          link.tipo_notificacao.includes("deficiente") || link.tipo_notificacao.includes("idoso") || link.tipo_notificacao.includes("excedido")
+                            ? (link.estado ? '0.85rem' : '1rem')
+                            : '1rem'
+                      }}
+                    >
+                      Motivo: {link.tipo_notificacao}
+                    </span>
+                  </div>
+                  <div className="h6 d-flex align-items-center">
+                    <FaClipboardList className="me-2 align-self-start" style={{ marginTop: "2px" }} />
+                    <span>
+                      Status:{" "}
+                      <span className={link.pago === "S" ? "text-success mx-1" : "text-danger mx-1"}>
+                          {link.pago === "S"
+                        ? "Quitado"
+                        : link.infracao === 'S' && validacoes[link.id_notificacao] === false
+                          ? "Autuado"
+                          : "Pendente"
+                      }
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                {link.estado && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
+                  <>
+                    <div className="d-flex flex-column gap-2 mt-2 mb-3">
+                      <div className="h6 d-flex align-items-center">
+                        <FaParking className="me-2" />
+                        <span>Vaga: {link.vaga}</span>
+                      </div>
+                      <div className="h6 d-flex align-items-center">
+                        <FaCarAlt className="me-2" />
+                        <span>Modelo: {link.modelo}</span>
+                      </div>
+                      <div className="h6 d-flex align-items-center">
+                        <BsCashCoin className="me-2" />
+                        <span>Valor: R${link.valor}</span>
+                      </div>
+                    </div>
+                  </>
                 )}
-               <div className="h6 d-flex align-items-center fs-6">
-               <FaClipboardList />{" "} Status: {" "}
-                  <h6 className={link.pago === "S" ? 'text-success mt-2 mx-1' : 'text-danger mt-2 mx-1' }>
-                  {" "} {link.pago === "S" ? "Quitado" : "Pendente"}
-                  </h6>
               </div>
-              </div>
+
               <div>
                 {link.pago === "N" ? (
-                  <div className="d-flex align-items-center fw-bold mb-6">
-                    <BiErrorCircle size={30} color="red" />
-                  </div>
+                  <BiErrorCircle size={30} color="red" />
                 ) : (
-                  <div className="d-flex align-items-center fw-bold mb-6">
-                    <AiFillCheckCircle size={30} color="green" />
-                  </div>
+                  <AiFillCheckCircle size={30} color="green" />
                 )}
               </div>
-              
             </div>
-            {link.pago === "N" ?
-              <div className="row">
-              <div className="col-12">
+
+            {link.estado && link.pago !== "S" && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
+              <div className="alert alert-warning mb-2" style={{ width: 'calc(100%)' }}>
+                <div className="text-start">
+                  <i className="fas fa-exclamation-triangle me-2"></i>
+                  <span>Esta notificação gerou infração e excedeu o prazo de regularização</span>
+                </div>
+              </div>
+            )}
+
+            {link.pago === "N" && (
+              <div className="row mt-3">
+                <div className="col-12">
                   <Button
                     variant="outline"
                     color="red"
                     radius="md"
                     fullWidth
-                    className="mt-2"
                     leftIcon={
-                       link.estado ? <IconX size={20} /> :  <BsConeStriped size={20} />
+                      link.estado ? (
+                        <IconX size={20} />
+                      ) : (
+                        <BsConeStriped size={20} />
+                      )
                     }
-                    onClick={() => {
-                      atualiza(index);
-                    }}
+                    onClick={() => atualiza(index)}
                   >
-                    {link.estado ? "Fechar" : "Regularize aqui"}
+                    {link.estado
+                      ? "Fechar"
+                      : !link.estado && link.infracao === 'S' && validacoes[link.id_notificacao] === false
+                        ? "Abrir"
+                        : "Regularize aqui"}
                   </Button>
+                </div>
               </div>
-              </div>
-              : null }
+            )}
           </div>
-          {link.estado ? (
-            <div className="justify-content-between pb-3 mb-1">
-              <div
-                className="h6 align-items-start text-start px-4"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <FaParking />‎ Vaga: {link.vaga}
-                </h6>
-              </div>
-              <div
-                className="h6 align-items-start text-start px-4"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <FaCarAlt />‎ Modelo: {link.modelo}
-                </h6>
-              </div>
-              <div
-                className="h6 align-items-start text-start px-4"
-                id="estacionadocarroo"
-              >
-                <h6>
-                  {" "}
-                  <BsCashCoin />‎ Valor: R${link.valor}
-                </h6>
+
+          {link.estado && !(link.infracao === 'S' && validacoes[link.id_notificacao] === false) && (
+            <div className="pb-3 mb-1">
+              <div className="d-flex flex-column gap-2 px-4">
+                <div className="h6 d-flex align-items-center">
+                  <FaParking className="me-2" />
+                  <span>Vaga: {link.vaga}</span>
+                </div>
+                <div className="h6 d-flex align-items-center">
+                  <FaCarAlt className="me-2" />
+                  <span>Modelo: {link.modelo}</span>
+                </div>
+                <div className="h6 d-flex align-items-center">
+                  <BsCashCoin className="me-2" />
+                  <span>Valor: R${link.valor}</span>
+                </div>
               </div>
 
               {link.pago === "S" ? null : (
-                <div className="h6 mt-3 mx-5">
-                  <select
-                    className="form-select2 form-select-md mb-1 text-black"
-                    id="pagamentos"
-                    aria-label=".form-select-md"
-                    defaultValue="credito"
-                  >
-                    <option value="pix">PIX</option>
-                    <option value="credito">Saldo</option>
-                  </select>
-                  <div className="pt-3 gap-6 d-md-block">
-                    <div className="row">
-                      <div className="col-12">
-                        <Button
-                          type="submit"
-                          loading={loadingButton}
-                          variant="gradient"
-                          gradient={{ from: "blue", to: "cyan" }}
-                          fullWidth
-                          onClick={() => {
-                            regularizar(index);
-                          }}
-                        >
-                          Pagar
-                        </Button>
+                (link.infracao !== "S" || validacoes[link.id_notificacao] !== false) && (
+                  <div className="h6 mt-3 mx-5">
+                    <select
+                      className="form-select2 form-select-md mb-1 text-black"
+                      id="pagamentos"
+                      aria-label=".form-select-md"
+                      defaultValue="credito"
+                    >
+                      <option value="pix">PIX</option>
+                      <option value="credito">Saldo</option>
+                    </select>
+                    <div className="pt-2 gap-6 d-md-block">
+                      <div className="row">
+                        <div className="col-12">
+                          <Button
+                            type="submit"
+                            loading={loadingButton}
+                            variant="gradient"
+                            gradient={{ from: "blue", to: "cyan" }}
+                            fullWidth
+                            onClick={() => {
+                              regularizar(index);
+                            }}
+                          >
+                            Pagar
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )
               )}
             </div>
-          ) : null}
+          )}
         </div>
       ))}
+
       <div
         className="alert alert-danger mt-4"
         role="alert"
@@ -609,15 +635,11 @@ const Irregularidades = () => {
       >
         {mensagem}
       </div>
-
       <VoltarComponente />
 
-      <ModalErroBanco
-          onOpen={onOpenError}
-          onClose={onCloseError}
-      />
+      <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
       <ModalPix
-        qrCode={data2.brcode}
+        qrCode={data2.pixCopiaECola}
         status={notification}
         mensagemPix={pixExpirado}
         onOpen={onOpen}
