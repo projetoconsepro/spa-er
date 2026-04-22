@@ -225,6 +225,23 @@ export const VagaMonitor = ({
       });
   };
 
+  const verificarDebitoAutomatico = async (placa) => {
+    if (!placa) return false;
+    const requisicao = createAPI();
+    return requisicao
+      .get(`/veiculo/debito/${placa}`)
+      .then((response) => {
+        if (response.data.msg.resultado) {
+          return response.data.data;
+        }
+        return false;
+      })
+      .catch((error) => {
+        ValidarRequisicao(error);
+        return false;
+      });
+  };
+
   const funcExtratoPlaca = (placa) => {
     const requisicao = createAPI();
     requisicao
@@ -289,6 +306,12 @@ export const VagaMonitor = ({
   const estaciona = async (vaga) => {
     localStorage.setItem("numero_vaga", vaga.numero);
     const horaAgoraNew = await horaAgoraFunc();
+
+    let debitoAtivo = false;
+    if (vaga.placa !== "") {
+      debitoAtivo = await verificarDebitoAutomatico(vaga.placa);
+    }
+
     if (vaga.temporestante < horaAgoraNew && vaga.placa !== "") {
       if (
         vaga.numero_notificacoes_pendentes !== 0 &&
@@ -362,7 +385,7 @@ export const VagaMonitor = ({
             Swal.close();
           });
         }
-      } else if (vaga.debito === "S") {
+      } else if (vaga.debito === "S" || debitoAtivo) {
         Swal.fire({
           title: "Deseja liberar esta vaga?",
           showDenyButton: true,
