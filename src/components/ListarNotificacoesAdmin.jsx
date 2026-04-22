@@ -367,7 +367,7 @@ const ListarNotificacoesAdmin = () => {
             debito_automatico: item.debitoAtivo ? "Sim" : "Não",
           }));
           setQuantidade(response.data.quantidade);
-          setData(newData);
+          setData(newData);          
         } else {
           setQuantidade(0);
           setData([]);
@@ -474,6 +474,8 @@ const ListarNotificacoesAdmin = () => {
             CANCELADAS:&nbsp;&nbsp; {quantidade.canceladas}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             PENDENTES:&nbsp;&nbsp; {quantidade.pendentes}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            INFRAÇÕES:&nbsp;&nbsp; {quantidade.infracoes}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             TOTAL:&nbsp;&nbsp; {quantidade.total}
           </h6>

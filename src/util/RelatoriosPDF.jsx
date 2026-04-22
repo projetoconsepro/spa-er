@@ -36,7 +36,7 @@ const RelatoriosPDF = (nomeArquivo, cabecalho, array, quantidades = null) => {
     doc.text(`Gerado por: ${user2.nome}`, 15, 17);
     doc.text(`Data: ${formattedDate}`, 15, 23);
     if (quantidades) {
-      doc.text(`Regularizadas: ${quantidades.pagas}      Canceladas: ${quantidades.canceladas}      Pendentes: ${quantidades.pendentes}      Total: ${quantidades.total}`, 15, 30);    }
+      doc.text(`Regularizadas: ${quantidades.pagas}      Canceladas: ${quantidades.canceladas}      Pendentes: ${quantidades.pendentes}     Infrações: ${quantidades.infracoes}      Total: ${quantidades.total}`, 15, 30);    }
   };
 
   header();
