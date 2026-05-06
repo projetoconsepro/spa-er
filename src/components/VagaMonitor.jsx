@@ -28,6 +28,7 @@ export const VagaMonitor = ({
   setResposta,
   funcAttResposta,
   setor,
+  getVagas,
 }) => {
   const getHours = () => {
     const dataAtual = new Date();
@@ -178,8 +179,14 @@ export const VagaMonitor = ({
         numero_vaga: numero,
         id_vaga_veiculo: id_vaga,
       })
-      .then((response) => {
+      .then(async (response) => {
         if (response.data.msg.resultado === true) {
+          if(response.data.msg.msg === 'Veículo já foi debitado nos últimos 30 minutos' || response.data.msg.msg === 'Veiculo ja possui tempo valido'){
+            localStorage.removeItem('listaVagas');
+            FuncTrocaComp( "ListarVagasMonitor");
+            await getVagas(setor, 'reset');
+            return;
+          }
           const updatedResposta = [...resposta];
           let validade = CalcularHoras(
             CalcularValidade(
@@ -507,7 +514,7 @@ export const VagaMonitor = ({
       btnFooter2.addEventListener("click", function () {
         funcExtratoPlaca(vaga.placa);
       });
-    }
+    } 
   };
 
   // Função para determinar a cor de fundo

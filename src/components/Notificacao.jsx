@@ -231,7 +231,11 @@ const Notificacao = () => {
                     setTimeout(() => {
                         setEstado(false);
                         setMensagem("");
-                    }, 4000);
+                    }, 5000);
+                    if(response.data.msg.msg === "Veículo tem tempo!" || response.data.msg.msg === "Usuário adicionou tempo agora!"){
+                        localStorage.removeItem('listaVagas');
+                        FuncTrocaComp("ListarVagasMonitor");
+                    }
                 }
             }).catch(function (error) {
                 localStorage.removeItem("user")
@@ -323,7 +327,11 @@ const Notificacao = () => {
                     setTimeout(() => {
                         setEstado(false);
                         setMensagem("");
-                    }, 4000);
+                    }, 5000);                    
+                    if(response.data.msg.msg === "Veículo tem tempo!" || response.data.msg.msg === "Usuário adicionou tempo agora!"){
+                        localStorage.removeItem('listaVagas');
+                        FuncTrocaComp( "ListarVagasMonitor");
+                    }
                 }
             }).catch(function (error) {
                 localStorage.removeItem("user")
