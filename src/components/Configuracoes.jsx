@@ -34,6 +34,7 @@ const Configuracoes = () => {
           estado: true,
           estadoOn: false,
           check: false,
+          pendente: item.pendente_desativacao_debito === 'S',
           idVeiculo: item.id_veiculo,
           estacionado: item?.estacionado || "N",
           vaga: item?.numerovaga || 0,
@@ -95,10 +96,11 @@ const Configuracoes = () => {
   const salvarAlteracoes = (index) => {
     const requisicao = createAPI();
     const idVeiculo = data[index].idVeiculo;
+    const debitoAutomatico = data[index].pendente ? "S" : (!data[index].check ? "S" : "N");
     requisicao
       .put("/veiculo", {
         idVeiculo: idVeiculo,
-        debitoAutomatico: !data[index].check ? "S" : "N",
+        debitoAutomatico: debitoAutomatico,
       })
       .then((response) => {
         if (response.data.msg.resultado) {
@@ -107,7 +109,7 @@ const Configuracoes = () => {
           Atualizarequisicao();
           Swal.fire(
             "Confirmado!",
-            "O débito automático foi alterado com sucesso!",
+            response.data.msg.msg,
             "success"
           ).then((result) => {
             FuncTrocaComp("MeusVeiculos");
@@ -226,6 +228,7 @@ const Configuracoes = () => {
                         <small>Débito automático: {data[index].check ? "Ativado" : "Desativado"}</small>
                       </h6>
                     </div>
+
                   </div>
                   <div>
                     <div className="d-flex align-items-center fw-bold">
@@ -242,39 +245,57 @@ const Configuracoes = () => {
               {data[index].estado ? (
                 <div
                   className="card-body5 pt-0"
+                  style={{ height: "auto" }}
                   onChange={() => {
                     mudaEstado(index);
                   }}
                 >
                   {data[index].estado ? <div id="bordaBaixo"></div> : null}
-                  <Button
-                    type="submit"
-                    className="mt-4"
-                    variant="outline" color={data[index].check ? "red" : "blue"}
-                    fullWidth
-                    bold
-                    onClick={() => {
-                      salvarAlteracoes(index);
-                    }}
-                  >
-                    {data[index].check ? "Desativar débito automático" : "Ativar débito automático"}
-                  </Button>
-                  <div className="row mt-3">
-                    <div className="col-2"></div>
-                    <div className="col-8"></div>
-                    <div className="col-2">
-                      <BsFillTrashFill
-                        size={25}
-                        color="red"
-                        onClick={() => {
-                          removerVeiculo(link.id_veiculo);
-                        }}
-                      />
-                    </div>
+                  <div className="d-flex gap-2 mt-4">
+                    <Button
+                      type="submit"
+                      variant="outline"
+                      color={data[index].pendente ? "orange" : (data[index].check ? "red" : "blue")}
+                      style={{ flex: 1 }}
+                      bold
+                      onClick={() => {
+                        salvarAlteracoes(index);
+                      }}
+                    >
+                      {data[index].pendente
+                        ? "Cancelar desativação"
+                        : (data[index].check ? "Desativar débito automático" : "Ativar débito automático")}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      px="sm"
+                      color="red"
+                      onClick={() => {
+                        removerVeiculo(link.id_veiculo);
+                      }}
+                    >
+                      <BsFillTrashFill size={18} color="red" />
+                    </Button>
                   </div>
+                  {data[index].pendente ? (
+                    <p
+                      className="text-center mt-3 mb-0"
+                      style={{
+                        backgroundColor: "#fff3e0",
+                        color: "#d68925",
+                        borderRadius: "6px",
+                        padding: "6px 10px",
+                        fontSize: "0.75rem",
+                        wordBreak: "break-word",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      A desativação do débito automático está pendente e estará disponível no dia seguinte.
+                    </p>
+                  ) : null}
                 </div>
               ) : null}
-  
+
               <h6
                 style={{
                   display: (link.estacionado === "S" && link.vaga !== 0) ||
@@ -283,7 +304,7 @@ const Configuracoes = () => {
                       ? "block"
                       : "none",
                 }}
-                className="px-4 fs-6 text-center mt-4"
+                className="px-4 fs-6 text-center mt-2 mb-3"
                 id="modalTexto"
               >
                 <small>

@@ -86,6 +86,8 @@ const ListagemMovimentoVeiculo = () => {
                 ? "Débito Automático Ativado"
                 : item.acao === "da.rm"
                 ? "Débito Automático Desativado"
+                : item.acao === "da.pend"
+                ? "Solicitação de Desativação do Débito Automático"
                 : "",
             usuario: item.nome,
             hora: FixDate(item.hora),
