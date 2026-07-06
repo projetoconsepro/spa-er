@@ -37,6 +37,12 @@ const MapaAdmin = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const dropdownRef = useRef(null);
+  const [localizacaoAgentes, setLocalizacaoAgentes] = useState([]);
+  const [selectedAgentes, setSelectedAgentes] = useState([]);
+  const [dropdownAgenteVisible, setDropdownAgenteVisible] = useState(false);
+  const [searchTermAgente, setSearchTermAgente] = useState('');
+  const dropdownAgenteRef = useRef(null);
+  const seenAgentesRef = useRef(new Set());
   const [pageLoaded, setPageLoaded] = useState(false);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [centerMap, setCenterMap] = useState(false);
@@ -98,6 +104,16 @@ const MapaAdmin = () => {
     });
     return () => {
       socket.off('vagasDados');
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.emit('enviarLocalizacaoAgente');
+    socket.on('localizacaoDadosAgente', (data) => {
+      setLocalizacaoAgentes(data);
+    });
+    return () => {
+      socket.off('localizacaoDadosAgente');
     };
   }, []);
 
@@ -185,6 +201,16 @@ const MapaAdmin = () => {
     window.open(url, '_blank');
   };
 
+  const handleAgenteSelect = (agenteId) => {
+    setSelectedAgentes((prev) =>
+      prev.includes(agenteId) ? prev.filter((id) => id !== agenteId) : [...prev, agenteId]
+    );
+  };
+
+  const removeAgente = (agenteId) => {
+    setSelectedAgentes((prev) => prev.filter((id) => id !== agenteId));
+  };
+
   const handleMonitoraSelect = (monitoraId) => {
     setSelectedMonitoras((prevSelectedMonitoras) =>
       prevSelectedMonitoras.includes(monitoraId)
@@ -208,16 +234,29 @@ const MapaAdmin = () => {
   }, [pageLoaded]);
 
   useEffect(() => {
+    const novos = localizacaoAgentes
+      .map(a => a.idUsuario)
+      .filter(id => !seenAgentesRef.current.has(id));
+    if (novos.length > 0) {
+      novos.forEach(id => seenAgentesRef.current.add(id));
+      setSelectedAgentes(prev => [...prev, ...novos]);
+    }
+  }, [localizacaoAgentes]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownVisible(false);
+      }
+      if (dropdownAgenteRef.current && !dropdownAgenteRef.current.contains(event.target)) {
+        setDropdownAgenteVisible(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [dropdownRef]);
+  }, [dropdownRef, dropdownAgenteRef]);
 
   const data = {
     labels: ['Vagas Livres', 'Vagas Ocupadas'],
@@ -336,6 +375,7 @@ const MapaAdmin = () => {
                 </div>
                 {localizacaoMonitoras.length > 0 && (
                 <div className='px-2 mb-4'>
+                  <div className='text-start ps-2 mt-2 mb-1'><h6>Monitoras :</h6></div>
                   <div className='bg-white py-3 px-3 rounded-2' style={{ height: '100%' }}>
                     <div className="dropdown" ref={dropdownRef} style={{ position: 'relative' }}>
                       <input
@@ -413,6 +453,88 @@ const MapaAdmin = () => {
                     </div>
                   </div>
                 </div>)}
+
+                {localizacaoAgentes.length > 0 && (
+                <div className='px-2 mb-4'>
+                  <div className='text-start ps-2 mt-2 mb-1'><h6>Agentes :</h6></div>
+                  <div className='bg-white py-3 px-3 rounded-2' style={{ height: '100%' }}>
+                    <div className="dropdown" ref={dropdownAgenteRef} style={{ position: 'relative' }}>
+                      <input
+                        type="text"
+                        className="form-control dropdown-toggle rounded-1"
+                        placeholder="Selecionar Agentes"
+                        onClick={() => setDropdownAgenteVisible(!dropdownAgenteVisible)}
+                        aria-expanded={dropdownAgenteVisible}
+                        onChange={(e) => setSearchTermAgente(e.target.value)}
+                        style={{ backgroundColor: '#fff', border: '1px solid #ccc' }}
+                      />
+                      {dropdownAgenteVisible && (
+                        <ul
+                          className="dropdown-menu show"
+                          style={{
+                            width: '100%',
+                            position: 'absolute',
+                            top: 'auto',
+                            bottom: '100%',
+                            backgroundColor: '#fff',
+                            zIndex: 1000,
+                            boxShadow: 'none'
+                          }}>
+                          {localizacaoAgentes
+                            .filter((agente) => agente.nome.toLowerCase().includes(searchTermAgente.toLowerCase()))
+                            .sort((a, b) => a.nome.localeCompare(b.nome))
+                            .map((agente) => (
+                              <li key={agente.idUsuario} className="dropdown-item d-flex align-items-center" style={{ borderBottom: '1px solid #e9ecef', padding: '12px 15px' }}>
+                                <input
+                                  type="checkbox"
+                                  id={`agente-${agente.idUsuario}`}
+                                  className="me-2"
+                                  style={{ width: '20px', height: '15px', accentColor: '#E07B2A' }}
+                                  checked={selectedAgentes.includes(agente.idUsuario)}
+                                  onChange={() => handleAgenteSelect(agente.idUsuario)}
+                                />
+                                <label htmlFor={`agente-${agente.idUsuario}`} className="w-100 m-0">
+                                  <span>{agente.nome}</span>
+                                </label>
+                              </li>
+                            ))}
+                          <li className="dropdown-item d-flex align-items-center" style={{ borderBottom: '1px solid #e9ecef', padding: '12px 15px' }}>
+                            <input
+                              type="checkbox"
+                              id="select-all-agentes"
+                              className="me-2"
+                              style={{ width: '20px', height: '15px', accentColor: '#E07B2A' }}
+                              checked={localizacaoAgentes.length > 0 && selectedAgentes.length === localizacaoAgentes.length}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedAgentes(localizacaoAgentes.map(agente => agente.idUsuario));
+                                } else {
+                                  setSelectedAgentes([]);
+                                }
+                              }}
+                            />
+                            <label htmlFor="select-all-agentes" className="w-100 m-0">
+                              <span>{selectedAgentes.length === localizacaoAgentes.length ? 'Desmarcar Todos' : 'Selecionar Todos'}</span>
+                            </label>
+                          </li>
+                        </ul>
+                      )}
+                    </div>
+
+                    <div className="selected-monitoras mt-3 d-flex flex-wrap justify-content-start">
+                      {selectedAgentes.map((agenteId) => {
+                        const agente = localizacaoAgentes.find((a) => a.idUsuario === agenteId);
+                        if (!agente) return null;
+                        return (
+                          <div key={agenteId} className="chip">
+                            {agente.nome}
+                            <CloseButton className='text-white ms-2 ps-1' variant="transparent" onClick={() => removeAgente(agenteId)} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>)}
               </div>
             </div>
           </Modal>
@@ -458,6 +580,7 @@ const MapaAdmin = () => {
               showLivres={showLivres}
               openMaps={openMaps}
               localizacaoMonitoras={localizacaoMonitoras.filter(monitora => selectedMonitoras.includes(monitora.idUsuario))}
+              localizacaoAgentes={localizacaoAgentes.filter(agente => selectedAgentes.includes(agente.idUsuario))}
               centerMap={centerMap}
             />
           </div>
