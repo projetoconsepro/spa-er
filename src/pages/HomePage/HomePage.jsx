@@ -61,9 +61,11 @@ if (user === null || user === undefined) {
   }
   useEffect(() => {
     if (user != null && userDados.perfil[0] != null) {
-      if (userDados.perfil[0] == 'monitor') {
+      const perfil = userDados.perfil[0];
+      if (perfil === 'monitor' || perfil === 'agente') {
         const { id_usuario, nome } = userDados;
-        
+        const eventoSocket = perfil === 'monitor' ? 'localizacaoSalvar' : 'localizacaoAgenteSalvar';
+
         if (navigator.geolocation) {
           navigator.geolocation.watchPosition((position) => {
             const { latitude, longitude } = position.coords;
@@ -74,7 +76,7 @@ if (user === null || user === undefined) {
                 nome: nome,
                 coordenadas: `${latitude},${longitude}`,
               };
-              socket.emit('localizacaoSalvar', data);
+              socket.emit(eventoSocket, data);
               setLastPosition(newPosition);
             }
           }, (error) => {
