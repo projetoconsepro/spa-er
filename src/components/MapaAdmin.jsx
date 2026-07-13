@@ -42,8 +42,8 @@ const MapaAdmin = () => {
   const [dropdownAgenteVisible, setDropdownAgenteVisible] = useState(false);
   const [searchTermAgente, setSearchTermAgente] = useState('');
   const dropdownAgenteRef = useRef(null);
-  const seenAgentesRef = useRef(new Set());
-  const [pageLoaded, setPageLoaded] = useState(false);
+  const prevMonitorasRef = useRef([]);
+  const prevAgentesRef = useRef([]);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [centerMap, setCenterMap] = useState(false);
   const coresSetoresRef = useRef({});
@@ -90,7 +90,6 @@ const MapaAdmin = () => {
     socket.emit('enviarLocalizacao');
     socket.on('localizacaoDados', (data) => {
       setLocalizacaoMonitoras(data);
-      setPageLoaded(true);
     });
     return () => {
       socket.off('localizacaoDados');
@@ -226,20 +225,26 @@ const MapaAdmin = () => {
   };
 
   useEffect(() => {
-    if (pageLoaded) {
-      if (localizacaoMonitoras.length > 0) {
-        setSelectedMonitoras(localizacaoMonitoras.map(monitora => monitora.idUsuario));
-      }
+    const prevIds = prevMonitorasRef.current.map(m => m.idUsuario);
+    const novos = localizacaoMonitoras.map(m => m.idUsuario).filter(id => !prevIds.includes(id));
+    prevMonitorasRef.current = localizacaoMonitoras;
+    if (novos.length > 0) {
+      setSelectedMonitoras(prev => {
+        const toAdd = novos.filter(id => !prev.includes(id));
+        return toAdd.length > 0 ? [...prev, ...toAdd] : prev;
+      });
     }
-  }, [pageLoaded]);
+  }, [localizacaoMonitoras]);
 
   useEffect(() => {
-    const novos = localizacaoAgentes
-      .map(a => a.idUsuario)
-      .filter(id => !seenAgentesRef.current.has(id));
+    const prevIds = prevAgentesRef.current.map(a => a.idUsuario);
+    const novos = localizacaoAgentes.map(a => a.idUsuario).filter(id => !prevIds.includes(id));
+    prevAgentesRef.current = localizacaoAgentes;
     if (novos.length > 0) {
-      novos.forEach(id => seenAgentesRef.current.add(id));
-      setSelectedAgentes(prev => [...prev, ...novos]);
+      setSelectedAgentes(prev => {
+        const toAdd = novos.filter(id => !prev.includes(id));
+        return toAdd.length > 0 ? [...prev, ...toAdd] : prev;
+      });
     }
   }, [localizacaoAgentes]);
 
@@ -270,12 +275,6 @@ const MapaAdmin = () => {
   const closeSectorInfo = () => {
     setSectorInfo(null);
   };
-
-  useEffect(() => {
-    if (localizacaoMonitoras.length > 0) {
-      setSelectedMonitoras(localizacaoMonitoras.map(monitora => monitora.idUsuario));
-    }
-  }, []);
 
   return (
     <div>
