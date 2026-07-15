@@ -1,6 +1,7 @@
 
 import { React, useState, useEffect } from "react";
 import {
+  AiFillPrinter,
   AiOutlineArrowDown,
   AiOutlineArrowUp,
   AiOutlineCheck,
@@ -13,6 +14,7 @@ import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
 import { Button, Group, Pagination } from "@mantine/core";
 import CarroLoading from "./Carregamento";
+import RelatoriosPDF from "../util/RelatoriosPDF";
 
 const ListaInfracoesPendentesRemocao = () => {
   const [data, setData] = useState([]);
@@ -54,6 +56,21 @@ const ListaInfracoesPendentesRemocao = () => {
     fetchInfracoes();
   }, []);
 
+  const Imprimir = () => {
+    const dataD = [
+      ...data.map((item) => [
+        item.placa,
+        item.codigo_ai,
+        moment(item.data).format("DD/MM/YYYY HH:mm"),
+        item.cor,
+        item.modelo,
+      ]),
+    ];
+    const nomeArquivo = "Relatório de Infrações Pendentes de Remoção";
+    const cabecalho = ["Placa", "Código AI", "Data", "Cor", "Modelo"];
+    RelatoriosPDF(nomeArquivo, cabecalho, dataD);
+  };
+
   const handleRemocao = (item) => {
    Swal.fire({
     title: 'Infração Pendente de Remoção Foi Cancelada?',
@@ -92,7 +109,17 @@ const ListaInfracoesPendentesRemocao = () => {
       <div className="row mb-3">
         <div className="col-12 d-flex justify-content-between">
         <p className="mx-3 text-start fs-4 fw-bold">Autos de Infração Pendentes de Remoção</p>
-            <div className="text-end">
+            <div className="text-end d-flex">
+              <Button
+                variant="gradient"
+                gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                radius="md"
+                size="sm"
+                className="me-2"
+                onClick={() => Imprimir()}
+              >
+                <AiFillPrinter color="white" size={20} />
+              </Button>
               <Button
                 variant="gradient"
                 gradient={{ from: "indigo", to: "blue", deg: 60 }}
