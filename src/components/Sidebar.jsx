@@ -197,7 +197,7 @@ const Sidebar = () => {
             ]
           },
           { icon: <RiFileAddFill />, name: "‎ Cadastros",
-          subitem: [
+          subitem: [              
               { icon: <TbTextPlus />, name: "‎ Mensagem", componente: "AdicionarMensagem", className: commonStyles },
               { icon: <FaUserPlus />, name: "‎ Usuários", componente: "UsuariosAdmin", className: commonStyles },
               { icon: <FaCar />, name: "‎ Placas isentas", componente: "PlacaIsenta", className: commonStyles },
@@ -210,8 +210,9 @@ const Sidebar = () => {
           { icon: <FaSearch />, name: "‎ Consultas",
           subitem: [
             { icon: <FaCarAlt />, name: "‎ Buscar Veículo", componente: "BuscarVeiculo", className: commonStyles },
-            { icon: <FaSearch />, name: "‎ Movimento PIX", componente: "BuscarMovimentoTxId", className: commonStyles },
+            { icon: <FaSearch />, name: "‎ Usuário/Veículo", componente: "ConsultarUsuarioVeiculos", className: commonStyles },
             { icon: <FaUser />, name: "‎ Clientes", componente: "ClientesAdmin", className: commonStyles },
+            { icon: <FaSearch />, name: "‎ Movimento PIX", componente: "BuscarMovimentoTxId", className: commonStyles },
             ]
           },
           { icon: <BsCashCoin />, name: "‎ Financeiro",

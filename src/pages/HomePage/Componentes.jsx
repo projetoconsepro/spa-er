@@ -65,6 +65,7 @@ import ListarLogsDebitoAuto from '../../components/ListarLogsDebitoAuto.jsx';
 import AdicionarMensagem from '../../components/AdicionarMensagem.jsx';
 import GerenciarCaixa from '../../components/GerenciarCaixa';
 import ImprimirCaixa from '../../components/ImprimirFechamento';
+import ConsultarUsuarioVeiculos from '../../components/ConsultarUsuarioVeiculos';
 
 const componentesMap = {
     MeusVeiculos: <ListarVeiculos />,
@@ -132,6 +133,7 @@ const componentesMap = {
     AdicionarMensagem: <AdicionarMensagem />,
     GerenciarCaixa: <GerenciarCaixa />,
     ImprimirCaixa: <ImprimirCaixa />,
+    ConsultarUsuarioVeiculos: <ConsultarUsuarioVeiculos />,
     Error: <Error />,
 };
 
