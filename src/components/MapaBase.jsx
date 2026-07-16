@@ -12,11 +12,11 @@ const MapInstanceGetter = ({ mapRef }) => {
 
 const createIcon = (iconUrl) => {
   return new L.Icon({
-    iconSize: [35, 38],
+    iconSize: [20, 28],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-    shadowSize: [41, 41],
+    shadowSize: [10, 10],
     iconUrl: iconUrl,
   });
 };
@@ -32,6 +32,24 @@ const iconAgentes = createIcon('https://img.icons8.com/3d-fluency/94/scooter.png
 
 const isValidCoord = (lat, lng) =>
   isFinite(lat) && isFinite(lng) && !isNaN(lat) && !isNaN(lng);
+
+const isValidBoundsPoint = (point) => {
+  if (!Array.isArray(point) || point.length < 2) {
+    return false;
+  }
+
+  const [lat, lng] = point;
+  return isValidCoord(lat, lng);
+};
+
+const normalizePolygonBounds = (bounds) => {
+  if (!Array.isArray(bounds)) {
+    return null;
+  }
+
+  const normalizedBounds = bounds.filter(isValidBoundsPoint);
+  return normalizedBounds.length >= 3 ? normalizedBounds : null;
+};
 
 const iconCurrentLocation = new L.Icon({
   iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAADhElEQVR4nO1ZS08TURgloC7cTCLUiKALNTGyl2BcGCMu/AEGoz9BxccGozHRDbgXgsafgMDCR6BNkIUKLtE2ETEhPgJEpC0jLR1pe8xprnXmzlTvdKZTiD3Jl0zamc45d+58j9O6uhpqqMEzADQAOAbgJoBhADEAcQA/RfA4Kr7jOR0A6jcD8X0A7gH4Cvf4AqAPQGs1iIcAPARgwDsMAIMAmoIifx7ACvzHdwDnKkl8O4BHpe6ub+QxtGDgcjSFk1M6Dk4k0DQeLwSP+Vl3NIXHCwZ+bOT/JuQB7+U3+Z0AnjvdbW4ti4vvUtgTSUAbiysFz70UTeFjKldKxDPe08+Vt5Ffz+Zx630ajeNqpJ2iaTyO27NprOccn0gEwA4/BNi2DVeu4+Vq2cTl6JzWsZhxfBqDXslfkH9xZjVb2NN+kddEHJlMIqpnnUR0lUu+EcCyvPKVIK+ZRCzZn8RKWSlW5Pk/ez6Xx/FX/m2bUnHi9Wrh/ZIw4JZ8q1yk+MJWmrwmoncuLQsgl/1uBLA9sKRKL9nGbeyNJJy2Up8q+XrRpxTBPB8UeU3E9VhKFsB+q0FFALtKS4V1U6T8iuZIwqlit6sIYLtbBNuDoMlrIoYXbb3iDRUBI+Yr2NtUS8CVqG0bDakI4OBRBJuwagnonNZlAW9VBFha5QMVLFzaP+LQREIWsKwiwLLxQuHqkNfG4tgd5iRqQea/ELCy1bdQdKu/xCPmKzgGVkvA1Vh5adRSyDjDVkvAqL2Q9agIoOlUxFo2XyjrQZNvjiQK95ZwVLWZ+2y+igN40AK67VX4k7KbJxwzyyTGATwo8qFwHPNpWzvdq0S+1EBD9yAoAXdmbQNNBkCLsgAhgnafZaRkWqs0+dPTOhwMivuuyAsBu+ShnlNS22SyYuQPv0hiYT3nZDmW55vSq5R/jdYH3QO/ybdNJhFztlXOlkXeJIJepQXLRh5n3ui+bpslZ2Or3xN5058Xo7a3KoeCe+ClRoTCcdz9kHba88RTANs8CzCZuzRcbeDKcQB3I4Tnctqat6fK33jim7krmbyWzGQGqyZnWPYvp6b0QifJFWbwmJ9di6Uwsmg4VVgz+n1b+RJCuuTs5BO+eX5hXfqmA6LAeEWGeZ5pOxDykpAW0XZYeidF8Jpe1xW2QkLYALbTt2HPzsFDTHaGCB7PiO962FVuir9Za6ihbuvjF9VmU57Ix8nEAAAAAElFTkSuQmCC',
@@ -73,7 +91,7 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
     <MapContainer
     style={{ height: `100%`, width: '100%', zIndex: 2 ,overflow: 'hidden', position: 'absolute', top: '0', left: '0' }}
     center={center}
-      zoom={17}
+      zoom={19}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -111,16 +129,24 @@ const MapaBase = ({ basePosition, vagas, selectedSectors, sectors, handleSectorC
       })}
       <MapEvents />
       {sectors && sectors.length > 0 && sectors.map((sector) =>
-        selectedSectors.includes(sector.name) ? (
-          <Polygon
-            key={sector.name}
-            positions={sector.bounds}
-            pathOptions={{ color: sector.color }}
-            eventHandlers={{
-              click: () => handleSectorClick(sector.name),
-            }}
-          />
-        ) : null
+        selectedSectors.includes(sector.name) ? (() => {
+          const validBounds = normalizePolygonBounds(sector.bounds);
+
+          if (!validBounds) {
+            return null;
+          }
+
+          return (
+            <Polygon
+              key={sector.name}
+              positions={validBounds}
+              pathOptions={{ color: sector.color }}
+              eventHandlers={{
+                click: () => handleSectorClick(sector.name),
+              }}
+            />
+          );
+        })() : null
       )}
 
       {!locationError && basePosition && (
