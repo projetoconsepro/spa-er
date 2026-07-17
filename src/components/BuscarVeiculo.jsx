@@ -8,7 +8,6 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import { Button, Divider } from "@mantine/core";
 import createAPI from "../services/createAPI";
 import ImpressaoTicketEstacionamento from "../util/ImpressaoTicketEstacionamento";
-import calcularValidade from "../util/CalcularValidade";
 
 const BuscarVeiculo = () => {
   const [placa, setPlaca] = useState("placa");
@@ -143,10 +142,7 @@ const BuscarVeiculo = () => {
             estacionado: item.estacionado[0].estacionado,
             tempo: item.estacionado[0].tempo,
             chegada: item.estacionado[0].chegada,
-            temporestante: calcularValidade(
-              item.estacionado[0].chegada,
-              item.estacionado[0].tempo
-            ),
+            temporestante: item.estacionado[0].temporestante,
             id_vaga_veiculo: item.estacionado[0].id_vaga_veiculo,
             estado: false,
             valor_estacionamento: item.estacionado[0].valor_estacionamento,
