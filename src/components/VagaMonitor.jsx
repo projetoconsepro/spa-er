@@ -310,16 +310,144 @@ export const VagaMonitor = ({
       });
   };
 
+  const buscarDadosVeiculo = async (placa) => {
+    const requisicao = createAPI();
+    try {
+      const response = await requisicao.get(`/veiculo/${placa}`);
+      if (
+        response.data.msg.resultado === false &&
+        response.data.msg.msg !== "Dados encontrados"
+      ) {
+        return null;
+      }
+      const item = response?.data?.data?.[0];
+      if (!item) return null;
+      return {
+        placa: item.placa,
+        modelo: item.modelo?.modelo,
+        fabricante: item.modelo?.fabricante?.fabricante,
+        cor: item.cor,
+        vaga: item.estacionado[0].numerovaga,
+        numero_notificacoes_pendentes: item.numero_notificacoes_pendentes,
+        saldo_devedor: item.saldo_devedorr,
+        debito: item.debitar_automatico === "S" ? "Ativo" : "Inativo",
+        saldo: item.saldo,
+        cpf: item.cpf,
+        nome: item.nome,
+        temporestante: CalcularValidade(
+          item.estacionado[0].chegada,
+          item.estacionado[0].tempo
+        ),
+      };
+    } catch (error) {
+      ValidarRequisicao(error);
+      return null;
+    }
+  };
+
+  const montarInfoVeiculoHtml = (info) => {
+    if (!info) return "";
+    const badgeStyle =
+      "display:inline-block;max-width:100%;box-sizing:border-box;padding:2px 10px;border-radius:12px;font-size:0.72rem;font-weight:600;overflow-wrap:anywhere;word-break:break-word;white-space:normal;";
+
+    const temNotificacao = info.numero_notificacoes_pendentes !== 0;
+    const badgeNotificacao = temNotificacao
+      ? `<span style="${badgeStyle}margin-left:-5px;margin-top:2px;background:#f8d7da;color:#842029;">${info.numero_notificacoes_pendentes} pendente${info.numero_notificacoes_pendentes > 1 ? "s" : ""}</span>`
+      : `<span style="${badgeStyle}margin-left:-3px;margin-top:2px;background:#d1e7dd;color:#0f5132;"> Nenhuma </span>`;
+
+    const badgeDebito = info.debito === "Ativo"
+      ? `<span style="${badgeStyle}background:#d1e7dd;color:#0f5132;">Ativo</span>`
+      : `<span style="${badgeStyle}background:#e9ecef;color:#495057;">Inativo</span>`;
+
+    const campo = (label, valor) => `
+      <div style="min-width:0;max-width:100%;">
+        <div style="color:#868e96;font-size:0.7rem;overflow-wrap:anywhere;word-break:break-word;">${label}</div>
+        <div style="font-weight:600;font-size:0.85rem;overflow-wrap:anywhere;word-break:break-word;white-space:normal;line-height:1.3;">${valor}</div>
+      </div>`;
+
+    const detalhesDebito = info.debito === "Ativo"
+      ? `
+        <div style="border-top:1px solid #eee;margin-top:10px;padding-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px 12px;">
+          ${campo("Debitando de", info.nome)}
+          ${campo("Saldo", info.saldo)}
+        </div>`
+      : "";
+
+    return `
+      <style>
+        @media (min-width:480px){
+          .swal2-popup{padding:8px 20px 40px 20px !important;}
+        }
+       @media (max-width:480px){        
+          .swal2-popup{padding:8px 4px 40px 4px !important;}
+        }
+        .swal2-html-container{margin:0 0 .15em !important;padding-left:0 !important;padding-right:0 !important;width:100% !important;box-sizing:border-box !important;}
+        .vaga-info-actions{display:flex !important;flex-wrap:wrap !important;justify-content:center !important;gap:12px !important;width:100%;box-sizing:border-box;margin:.5em 0 0 !important;padding:0 16px !important;}
+        .vaga-info-actions button{flex:1 1 100px;min-width:100px;margin:0 !important;padding:13px 6px !important;font-size:.78rem !important;border-radius:8px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .vaga-info-actions .swal2-cancel,
+        .vaga-info-actions .swal2-confirm{flex:0 1 auto !important;min-width:0 !important;padding:12px 18px !important;font-size:.85rem !important;}
+        @media (min-width:480px){
+          .vaga-info-actions .swal2-cancel,
+          .vaga-info-actions .swal2-confirm{min-width:120px !important;}
+        }
+        .swal2-footer{box-sizing:border-box;display:flex !important;flex-wrap:wrap !important;justify-content:center !important;gap:6px !important;padding:1em 16px 0 !important;}
+        .swal2-footer button{flex:1 1 140px !important;min-width:140px;width:auto !important;margin:0 !important;padding:13px 10px !important;}
+      </style>
+      <div style="box-sizing:border-box;width:100%;max-width:100%;text-align:left;margin-top:18px;padding:20px 20px 5px 16px;">
+        <button type="button" id="btnToggleInfoVeiculo" style="box-sizing:border-box;width:100%;max-width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;background:#eef1fc;border:1px solid #c7d2fe;border-radius:8px;font-weight:600;font-size:.90rem;color:#3a58c8;cursor:pointer;margin-bottom:6px;overflow:hidden;">
+          <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Detalhes do veículo · ${info.placa}</span>
+          <span id="setaInfoVeiculo" style="flex-shrink:0;font-size:.7rem;">▾</span>
+        </button>
+        <div id="detalhesInfoVeiculo" style="display:none;box-sizing:border-box;width:100%;max-width:100%;border:1px solid #dee2e6;border-radius:8px;padding:12px;font-size:.85rem;overflow-wrap:anywhere;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px 12px;">
+            ${campo("Notificações", badgeNotificacao)}
+            ${campo("Vaga", info.vaga)}
+            ${campo("Tempo restante", info.temporestante)}
+            ${campo("Modelo", info.modelo || "Sem informações")}
+            ${campo("Fabricante", info.fabricante || "Sem informações")}
+            ${campo("Cor", info.cor || "Sem informações")}
+            ${campo("Saldo devedor", info.saldo_devedor)}
+          </div>
+          <div style="border-top:1px solid #eee;margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+            <span style="color:#868e96;font-size:.78rem;">Débito automático</span>
+            ${badgeDebito}
+          </div>
+          ${detalhesDebito}
+        </div>
+      </div>
+    `;
+  };
+
+  const attachInfoVeiculoToggle = () => {
+    const btn = document.getElementById("btnToggleInfoVeiculo");
+    const detalhes = document.getElementById("detalhesInfoVeiculo");
+    const seta = document.getElementById("setaInfoVeiculo");
+    if (btn && detalhes) {
+      btn.addEventListener("click", () => {
+        const aberto = detalhes.style.display !== "none";
+        detalhes.style.display = aberto ? "none" : "block";
+        if (seta) seta.textContent = aberto ? "▾" : "▴";
+      });
+    }
+  };
+
   const estaciona = async (vaga) => {
     localStorage.setItem("numero_vaga", vaga.numero);
     const horaAgoraNew = await horaAgoraFunc();
 
-    let debitoAtivo = false;
-    if (vaga.placa !== "") {
-      debitoAtivo = await verificarDebitoAutomatico(vaga.placa);
+    if (vaga.placa === "") {
+      localStorage.setItem("vaga", vaga.numero);
+      localStorage.setItem("tipoVaga", vaga.tipo);
+      localStorage.setItem("popup", false);
+      FuncTrocaComp("RegistrarVagaMonitor");
+      return;
     }
 
-    if (vaga.temporestante < horaAgoraNew && vaga.placa !== "") {
+    const debitoAtivo = await verificarDebitoAutomatico(vaga.placa);
+    const infoVeiculo = await buscarDadosVeiculo(vaga.placa);
+    const infoVeiculoHtml = montarInfoVeiculoHtml(infoVeiculo);
+
+    if (vaga.temporestante < horaAgoraNew) {
       if (
         vaga.numero_notificacoes_pendentes !== 0 &&
         vaga.numero_notificacoes_pendentess !== 0
@@ -327,6 +455,9 @@ export const VagaMonitor = ({
         if (horaAgoraNew < vaga.hora_notificacao) {
           Swal.fire({
             title: "Deseja liberar esta vaga?",
+            html: infoVeiculoHtml,
+            width: "min(94vw, 480px)",
+            customClass: { actions: "vaga-info-actions" },
             showCancelButton: true,
             showDenyButton: true,
             cancelButtonText: "Cancelar",
@@ -346,6 +477,7 @@ export const VagaMonitor = ({
               FuncTrocaComp("ListarNotificacoes");
             }
           });
+          attachInfoVeiculoToggle();
 
           const btnFooter2 = document.getElementById("ticket");
           btnFooter2.addEventListener("click", function () {
@@ -354,6 +486,9 @@ export const VagaMonitor = ({
         } else {
           Swal.fire({
             title: "Deseja liberar esta vaga?",
+            html: infoVeiculoHtml,
+            width: "min(94vw, 480px)",
+            customClass: { actions: "vaga-info-actions" },
             showCancelButton: true,
             showDenyButton: true,
             cancelButtonText: "Cancelar",
@@ -376,6 +511,7 @@ export const VagaMonitor = ({
               FuncTrocaComp("Notificacao");
             }
           });
+          attachInfoVeiculoToggle();
 
           const btnFooter2 = document.getElementById("ticket");
           btnFooter2.addEventListener("click", function () {
@@ -395,6 +531,9 @@ export const VagaMonitor = ({
       } else if (vaga.debito === "S" || debitoAtivo) {
         Swal.fire({
           title: "Deseja liberar esta vaga?",
+          html: infoVeiculoHtml,
+          width: "min(94vw, 480px)",
+          customClass: { actions: "vaga-info-actions" },
           showDenyButton: true,
           showCancelButton: true,
           cancelButtonText: "Cancelar",
@@ -428,6 +567,7 @@ export const VagaMonitor = ({
             });
           }
         });
+        attachInfoVeiculoToggle();
 
         const btnFooter2 = document.getElementById("ticket");
         btnFooter2.addEventListener("click", function () {
@@ -436,6 +576,9 @@ export const VagaMonitor = ({
       } else {
         Swal.fire({
           title: "Deseja liberar esta vaga?",
+          html: infoVeiculoHtml,
+          width: "min(94vw, 480px)",
+          customClass: { actions: "vaga-info-actions" },
           showDenyButton: true,
           showCancelButton: true,
           cancelButtonText: "Cancelar",
@@ -461,6 +604,7 @@ export const VagaMonitor = ({
             FuncTrocaComp("Notificacao");
           }
         });
+        attachInfoVeiculoToggle();
 
         const btnFooter = document.getElementById("btnFooter");
         btnFooter.addEventListener("click", function () {
@@ -478,15 +622,11 @@ export const VagaMonitor = ({
         });
       }
     } else {
-      if (vaga.placa === "") {
-        localStorage.setItem("vaga", vaga.numero);
-        localStorage.setItem("tipoVaga", vaga.tipo);
-        localStorage.setItem("popup", false);
-        FuncTrocaComp("RegistrarVagaMonitor");
-        return;
-      }
       Swal.fire({
         title: "Deseja liberar esse veículo?",
+        html: infoVeiculoHtml,
+        width: "min(94vw, 480px)",
+        customClass: { actions: "vaga-info-actions" },
         showDenyButton: true,
         showCancelButton: true,
         cancelButtonText: "Cancelar",
@@ -509,12 +649,13 @@ export const VagaMonitor = ({
           FuncTrocaComp("RegistrarVagaMonitor");
         }
       });
+      attachInfoVeiculoToggle();
 
       const btnFooter2 = document.getElementById("ticket");
       btnFooter2.addEventListener("click", function () {
         funcExtratoPlaca(vaga.placa);
       });
-    } 
+    }
   };
 
   // Função para determinar a cor de fundo
