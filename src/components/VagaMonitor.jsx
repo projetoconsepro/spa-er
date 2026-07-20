@@ -658,6 +658,7 @@ export const VagaMonitor = ({
     }
   };
 
+  
   // Função para determinar a cor de fundo
   const determineBackgroundColor = (vaga) => {
     const horaAtual = getHours();
