@@ -390,8 +390,20 @@ export const VagaMonitor = ({
           .vaga-info-actions .swal2-cancel,
           .vaga-info-actions .swal2-confirm{min-width:120px !important;}
         }
+        @media (min-width:351px) and (max-width:375px){
+          .vaga-info-actions .swal2-cancel,
+          .vaga-info-actions .swal2-confirm{padding:13px 13px !important;}
+        }
         .swal2-footer{box-sizing:border-box;display:flex !important;flex-wrap:wrap !important;justify-content:center !important;gap:6px !important;padding:1em 16px 0 !important;}
         .swal2-footer button{flex:1 1 140px !important;min-width:140px;width:auto !important;margin:0 !important;padding:13px 10px !important;}
+        @media (max-width:352px){
+          .vaga-info-actions,
+          .swal2-footer{flex-direction:column !important;}
+          .vaga-info-actions button,
+          .vaga-info-actions .swal2-cancel,
+          .vaga-info-actions .swal2-confirm,
+          .swal2-footer button{flex:1 1 auto !important;width:100% !important;min-width:0 !important;}
+        }
       </style>
       <div style="box-sizing:border-box;width:100%;max-width:100%;text-align:left;margin-top:18px;padding:20px 20px 5px 16px;">
         <button type="button" id="btnToggleInfoVeiculo" style="box-sizing:border-box;width:100%;max-width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;background:#eef1fc;border:1px solid #c7d2fe;border-radius:8px;font-weight:600;font-size:.90rem;color:#3a58c8;cursor:pointer;margin-bottom:6px;overflow:hidden;">
