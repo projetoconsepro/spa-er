@@ -1,5 +1,13 @@
 import { React, useState, useEffect } from "react";
-import { Input, Button, Badge, Paper, Card, Alert, Modal } from "@mantine/core";
+import {
+  Input,
+  Button,
+  Badge,
+  Paper,
+  Alert,
+  Modal,
+  LoadingOverlay,
+} from "@mantine/core";
 import { IconSearch, IconPlus, IconAlertCircle } from "@tabler/icons-react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { FaCar, FaUser } from "react-icons/fa";
@@ -31,12 +39,12 @@ const ConsultarUsuarioVeiculos = () => {
   const [loadingPlaca, setLoadingPlaca] = useState(false);
 
   const [alturaResultados, setAlturaResultados] = useState(
-    typeof window !== "undefined" && window.innerWidth < 576 ? 480 : 375
+    typeof window !== "undefined" && window.innerWidth < 576 ? 640 : 580
   );
 
   useEffect(() => {
     const atualizarAlturaResultados = () => {
-      setAlturaResultados(window.innerWidth < 576 ? 480 : 375);
+      setAlturaResultados(window.innerWidth < 576 ? 640 : 580);
     };
 
     atualizarAlturaResultados();
@@ -89,8 +97,6 @@ const ConsultarUsuarioVeiculos = () => {
   };
 
   const buscar = () => {
-    setResultados(null);
-
     if (valor.trim() === "") {
       exibirErro("Informe uma placa, CPF ou CNPJ para consulta");
       return;
@@ -114,6 +120,7 @@ const ConsultarUsuarioVeiculos = () => {
         setEstadoLoading(false);
 
         if (!response.data.msg.resultado) {
+          setResultados(null);
           exibirErro(response.data.msg.msg);
           return;
         }
@@ -125,6 +132,7 @@ const ConsultarUsuarioVeiculos = () => {
       .catch((error) => {
         setEstadoLoading(false);
         if (!tratarErroAutenticacao(error)) {
+          setResultados(null);
           console.log(error);
         }
       });
@@ -379,17 +387,27 @@ const ConsultarUsuarioVeiculos = () => {
 
   return (
     <div className="container">
+      <style>{`
+        .veiculo-card-col {
+          width: 100%;
+        }
+        @container (min-width: 480px) {
+          .veiculo-card-col {
+            width: 50%;
+          }
+        }
+      `}</style>
       <Modal
         opened={modalVeiculoAberto}
         onClose={() => setModalVeiculoAberto(false)}
         centered
       >
         <div className="row">
-          <div className="col-9 px-3 pt-1">
-            <h6>Placa estrangeira/Outra</h6>
+          <div className="col-9 ps-4 pt-1 pb-3">
+            <h6>&nbsp;Placa estrangeira/Outra</h6>
           </div>
-          <div className="col-3 px-3">
-            <div className="form-check3 form-switch gap-2 d-md-block">
+          <div className="col-3">
+            <div className="form-check3 form-switch d-md-block">
               <input
                 className="form-check-input align-self-end"
                 type="checkbox"
@@ -439,124 +457,129 @@ const ConsultarUsuarioVeiculos = () => {
       </Modal>
 
       <div
-        className="row justify-content-center form-bg-image"
-        data-background-lg="../../assets/img/illustrations/signin.svg"
+        className={
+          resultados
+            ? "row justify-content-center form-bg-image "
+            : "row justify-content-center form-bg-image"
+        }
         style={{
           minHeight: resultados ? "auto" : "70vh",
           transition: "min-height .2s ease",
         }}
       >
-        <div className="col-12 d-flex align-items-center justify-content-center p-1">
-          <Paper
-            shadow="md"
-            radius="lg"
-            p="xl"
-            className="w-100"
-            style={{ maxWidth: "640px" }}
-          >
-            <div className="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
+        <div
+          className={
+            resultados
+              ? "col-12 d-flex align-items-stretch justify-content-center p-1"
+              : "col-12 d-flex align-items-center justify-content-center p-1"
+          }
+          style={{ maxWidth: resultados ? "1100px" : "640px" }}
+        >
+          <Paper shadow="md" radius="lg" p={0} className="w-100">
+            <div className={resultados ? "row g-0" : ""}>
               <div
-                className="d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: "50%",
-                  backgroundColor: "#e7f5ff",
-                }}
+                className={
+                  resultados ? "col-12 col-lg-5 p-4 pe-lg-0 p-lg-5" : "p-4 p-lg-5"
+                }
               >
-                <IconSearch size="1.1rem" color="#3a58c8" />
-              </div>
-              <div style={{ minWidth: 0 }}>
-                <div className="h5 fw-bold mb-0 text-start">Consultar usuário/veículo</div>
-                <p
-                  className="text-muted mb-0 text-start"
-                  style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.875rem)" }}
-                >
-                  Pesquise por placa, CPF ou CNPJ para ver o usuário e os
-                  veículos vinculados.
-                </p>
-              </div>
-            </div>
+                <div className="d-flex align-items-center gap-3 pb-3 mb-4 border-bottom">
+                  <div style={{ minWidth: 0 }}>
+                    <div className="h5 fw-bold mb-0 text-start">Consultar usuário/veículo</div>
+                    <p
+                      className="text-muted mb-0 text-start"
+                      style={{ fontSize: "clamp(0.75rem, 2.5vw, 0.875rem)" }}
+                    >
+                      Pesquise por placa, CPF ou CNPJ para ver o usuário e os
+                      veículos vinculados.
+                    </p>
+                  </div>
+                </div>
 
-              <Input
-                icon={<IconSearch size="1.1rem" />}
-                placeholder="Digite a placa, CPF ou CNPJ"
-                size="md"
-                radius="md"
-                value={valor}
-                onChange={(e) => setValor(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    buscar();
-                  }
-                }}
-              />
-
-            <div className="d-flex align-items-center gap-2 mt-2 mb-1">
-              <div className="d-grid flex-fill">
-                <Button
-                  loading={estadoLoading}
-                  onClick={() => {
-                    buscar();
-                  }}
-                  loaderPosition="right"
-                  className="bg-blue-50"
+                <Input
+                  icon={<IconSearch size="1.1rem" />}
+                  placeholder="Digite a placa, CPF ou CNPJ"
                   size="md"
                   radius="md"
-                  leftIcon={<IconSearch size="1rem" />}
-                  sx={{
-                    transition: "background-color .15s ease, color .15s ease, border-color .15s ease",
-                    border: "1px solid #3a58c8",
-                    "&:hover": {
-                      backgroundColor: "#fff !important",
-                      color: "#3a58c8",
-                    },
+                  value={valor}
+                  onChange={(e) => setValor(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      buscar();
+                    }
                   }}
-                >
-                  Buscar
-                </Button>
-              </div>
-              <div className="d-grid flex-fill">
-                <VoltarComponente space={false} />
-              </div>
-            </div>
+                />
 
-            {estado ? (
-              <Alert
-                icon={<IconAlertCircle size="1.1rem" />}
-                color="red"
-                variant="light"
-                radius="md"
-                mt="md"
-                styles={{ message: { color: "#c92a2a" } }}
-              >
-                {mensagem}
-              </Alert>
-            ) : null}
-          </Paper>
-        </div>
-      </div>
+                <div className="d-flex align-items-center gap-2 mt-2 mb-1">
+                  <div className="d-grid flex-fill">
+                    <Button
+                      loading={estadoLoading}
+                      onClick={() => {
+                        buscar();
+                      }}
+                      loaderPosition="right"
+                      className="bg-blue-50"
+                      size="md"
+                      radius="md"
+                      leftIcon={<IconSearch size="1rem" />}
+                      sx={{
+                        transition: "background-color .15s ease, color .15s ease, border-color .15s ease",
+                        border: "1px solid #3a58c8",
+                        "&:hover": {
+                          backgroundColor: "#fff !important",
+                          color: "#3a58c8",
+                        },
+                      }}
+                    >
+                      Buscar
+                    </Button>
+                  </div>
+                  <div className="d-grid flex-fill">
+                    <VoltarComponente space={false} />
+                  </div>
+                </div>
 
-      {resultados ? (
-        <div className="row justify-content-center mt-3">
-          <div className="col-12 d-flex align-items-center justify-content-center p-1">
-            <Card
-              shadow="md"
-              radius="lg"
-              p={0}
-              className="w-100"
-              style={{
-                maxWidth: "640px",
-                height: alturaResultados,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <div
-                className="p-3 p-sm-4"
-                style={{ flex: 1, minHeight: 0, overflowY: "auto" }}
-              >
-                {resultados.map((resultado, index) => (
+                {estado ? (
+                  <Alert
+                    icon={<IconAlertCircle size="1.1rem" />}
+                    color="red"
+                    variant="light"
+                    radius="md"
+                    mt="md"
+                    styles={{ message: { color: "#c92a2a" } }}
+                  >
+                    {mensagem}
+                  </Alert>
+                ) : null}
+              </div>
+
+              {resultados ? (
+                <>
+                  <div className="d-none d-lg-flex col-lg-1 px-0 justify-content-center">
+                    <div
+                      style={{ width: 1, backgroundColor: "#e9ecef" }}
+                    />
+                  </div>
+
+                  <div
+                    className="col-12 col-lg-6"
+                    style={{
+                      height: alturaResultados,
+                      display: "flex",
+                      flexDirection: "column",
+                      position: "relative",
+                    }}
+                  >
+                    <LoadingOverlay
+                      visible={estadoLoading}
+                      overlayBlur={2}
+                      radius="md"
+                    />
+                    <div className="d-lg-none mx-4" style={{ height: 1, backgroundColor: "#e9ecef" }} />
+                    <div
+                      className="p-4 ps-lg-0 p-lg-5"
+                      style={{ flex: 1, minHeight: 0, overflowY: "auto" }}
+                    >
+                {resultados?.map((resultado, index) => (
                   <div
                     className={index === 0 ? "" : "mt-4 pt-4 border-top"}
                     key={index}
@@ -615,9 +638,12 @@ const ConsultarUsuarioVeiculos = () => {
                     )}
 
                     {resultado.veiculos.length > 0 ? (
-                      <div className="row g-3">
+                      <div
+                        className="row g-3"
+                        style={{ containerType: "inline-size" }}
+                      >
                         {resultado.veiculos.map((veiculo, i) => (
-                          <div className="col-12 col-md-6" key={i}>
+                          <div className="veiculo-card-col" key={i}>
                             <div
                               className="border rounded-3 p-3 h-100 d-flex flex-column"
                               id="veiculoConsultaCard"
@@ -720,11 +746,14 @@ const ConsultarUsuarioVeiculos = () => {
                     )}
                   </div>
                 ))}
-              </div>
-            </Card>
-          </div>
+                    </div>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </Paper>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 };
