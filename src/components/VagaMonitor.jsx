@@ -408,7 +408,7 @@ export const VagaMonitor = ({
       <div style="box-sizing:border-box;width:100%;max-width:100%;text-align:left;margin-top:18px;padding:20px 20px 5px 16px;">
         <button type="button" id="btnToggleInfoVeiculo" style="box-sizing:border-box;width:100%;max-width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;background:#eef1fc;border:1px solid #c7d2fe;border-radius:8px;font-weight:600;font-size:.90rem;color:#3a58c8;cursor:pointer;margin-bottom:6px;overflow:hidden;">
           <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Detalhes do veículo · ${info.placa}</span>
-          <span id="setaInfoVeiculo" style="flex-shrink:0;font-size:.7rem;">▾</span>
+          <span id="setaInfoVeiculo" style="flex-shrink:0;font-size:1.1rem;line-height:1;">▾</span>
         </button>
         <div id="detalhesInfoVeiculo" style="display:none;box-sizing:border-box;width:100%;max-width:100%;border:1px solid #dee2e6;border-radius:8px;padding:12px;font-size:.85rem;overflow-wrap:anywhere;">
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px 12px;">
