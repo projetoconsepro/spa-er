@@ -7,6 +7,7 @@ import {
   Alert,
   Modal,
   LoadingOverlay,
+  Tooltip,
 } from "@mantine/core";
 import { IconSearch, IconPlus, IconAlertCircle } from "@tabler/icons-react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
@@ -299,6 +300,16 @@ const ConsultarUsuarioVeiculos = () => {
   };
 
   const alternarDebitoAutomatico = (veiculo, idUsuario) => {
+    if (veiculo.estacionado === "S") {
+      Swal.fire({
+        title: "Veículo estacionado",
+        text: "Não é possível alterar o débito automático de um veículo que está estacionado.",
+        icon: "warning",
+        confirmButtonColor: "#3A58C8",
+      });
+      return;
+    }
+
     const novoStatus = veiculo.debito_automatico === "S" ? "N" : "S";
 
     Swal.fire({
@@ -674,42 +685,58 @@ const ConsultarUsuarioVeiculos = () => {
                               </div>
                               {resultado.usuario ? (
                                 <div className="d-flex gap-2 mt-auto pt-2">
-                                  <Button
-                                    variant="outline"
-                                    color={
-                                      veiculo.debito_automatico === "S"
-                                        ? "red"
-                                        : "blue"
-                                    }
-                                    size="xs"
-                                    radius="md"
-                                    className="flex-grow-1"
-                                    onClick={() =>
-                                      alternarDebitoAutomatico(
-                                        veiculo,
-                                        resultado.usuario.id_usuario
-                                      )
-                                    }
-                                    sx={(theme) => {
-                                      const corBotao =
-                                        veiculo.debito_automatico === "S"
-                                          ? "red"
-                                          : "blue";
-                                      return {
-                                        transition:
-                                          "background-color .15s ease, color .15s ease",
-                                        "&:hover": {
-                                          backgroundColor:
-                                            theme.colors[corBotao][6],
-                                          color: theme.white,
-                                        },
-                                      };
-                                    }}
+                                  <Tooltip
+                                    label="Veículo estacionado: não é possível alterar o débito automático"
+                                    disabled={veiculo.estacionado !== "S"}
+                                    multiline
+                                    width={220}
+                                    withArrow
                                   >
-                                    {veiculo.debito_automatico === "S"
-                                      ? "Desativar débito"
-                                      : "Ativar débito"}
-                                  </Button>
+                                    <Button
+                                      variant="outline"
+                                      color={
+                                        veiculo.estacionado === "S"
+                                          ? "gray"
+                                          : veiculo.debito_automatico === "S"
+                                          ? "red"
+                                          : "blue"
+                                      }
+                                      size="xs"
+                                      radius="md"
+                                      className="flex-grow-1"
+                                      disabled={veiculo.estacionado === "S"}
+                                      onClick={() =>
+                                        alternarDebitoAutomatico(
+                                          veiculo,
+                                          resultado.usuario.id_usuario
+                                        )
+                                      }
+                                      sx={(theme) => {
+                                        const corBotao =
+                                          veiculo.debito_automatico === "S"
+                                            ? "red"
+                                            : "blue";
+                                        return {
+                                          transition:
+                                            "background-color .15s ease, color .15s ease",
+                                          "&:hover":
+                                            veiculo.estacionado === "S"
+                                              ? undefined
+                                              : {
+                                                  backgroundColor:
+                                                    theme.colors[corBotao][6],
+                                                  color: theme.white,
+                                                },
+                                        };
+                                      }}
+                                    >
+                                      {veiculo.estacionado === "S"
+                                        ? "Estacionado"
+                                        : veiculo.debito_automatico === "S"
+                                        ? "Desativar débito"
+                                        : "Ativar débito"}
+                                    </Button>
+                                  </Tooltip>
                                   <Button
                                     variant="outline"
                                     color="red"
