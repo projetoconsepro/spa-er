@@ -500,7 +500,7 @@ const Irregularidades = () => {
                       Motivo: {link.tipo_notificacao}
                     </span>
                   </div>
-                  <div className="h6 d-flex align-items-center m-0">
+                  <div className="h6 d-flex align-items-center">
                     <FaClipboardList className="me-2 align-self-start" style={{ marginTop: "2px" }} />
                     <span>
                       Status:{" "}
