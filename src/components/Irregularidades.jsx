@@ -224,6 +224,7 @@ const Irregularidades = () => {
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
+            id_tipo_notificacao: item.tipo_notificacao.id_tipo_notificacao,
             monitor: item.monitor.nome,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
@@ -273,6 +274,7 @@ const Irregularidades = () => {
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
+            id_tipo_notificacao: item.tipo_notificacao.id_tipo_notificacao,
             monitor: item.monitor.nome,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
@@ -366,6 +368,7 @@ const Irregularidades = () => {
             id_notificacao: item.id_notificacao,
             id_vaga_veiculo: item.id_vaga_veiculo,
             tipo_notificacao: item.tipo_notificacao.nome,
+            id_tipo_notificacao: item.tipo_notificacao.id_tipo_notificacao,
             monitor: item.monitor.nome,
             vaga: item.vaga,
             modelo: item.veiculo.modelo.nome,
@@ -454,8 +457,8 @@ const Irregularidades = () => {
                 ? "card-body10 pb-0 mb-4"
                 : link.pago === "S" && link.estado === true
                   ? "card-body10 pb-0 mb-3"
-                  : link.estado && link.infracao === 'S' && !validacoes[link.id_notificacao] === true
-                    ? "card-body13 mb-3"
+                  : link.estado && ((link.infracao === 'S' && !validacoes[link.id_notificacao] === true) || link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7)
+                    ? `card-body13 ${(link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7) && link.infracao === "N" ? "mb-lg-4 mb-6" : "mb-lg-3 mb-5"}`
                     : "card-body9 mb-3"
             }
             onClick={() => (link.pago === "S" ? atualiza(index) : null)}
@@ -474,17 +477,22 @@ const Irregularidades = () => {
                     {link.data}
                   </div>
 
-                  <div className="h6 d-flex align-items-center fs-6">
-                    <FaClipboardList className="me-2 flex-shrink-0" />
+                  <div className={`h6 d-flex fs-6 ${link.estado && link.tipo_notificacao.includes("indevidamente") ? "align-items-start" : "align-items-center"}`}>
+                    <FaClipboardList
+                      className={`me-2 flex-shrink-0 ${link.estado && link.tipo_notificacao.includes("indevidamente") ? "align-self-start" : ""}`}
+                      style={link.estado && link.tipo_notificacao.includes("indevidamente") ? { marginTop: "2px" } : undefined}
+                    />
                     <span
                       className={`
-        ${!link.estado ? "text-truncate d-block" : ""} 
+        ${!link.estado ? "text-truncate d-block" : ""}
+        ${link.estado && link.tipo_notificacao.includes("indevidamente") ? "d-block text-start" : ""}
         ${window.innerWidth <= 360 ? "w-auto" : ""}
       `}
                       style={{
                         maxWidth: '220px',
                         fontSize:
                           link.tipo_notificacao.includes("deficiente") || link.tipo_notificacao.includes("idoso") || link.tipo_notificacao.includes("excedido")
+                          || link.tipo_notificacao.includes("indevidamente")
                             ? (link.estado ? '0.85rem' : '1rem')
                             : '1rem'
                       }}
@@ -507,7 +515,7 @@ const Irregularidades = () => {
                     </span>
                   </div>
                 </div>
-                {link.estado && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
+                {link.estado && ((link.infracao === 'S' && validacoes[link.id_notificacao] === false) || (link.tipo_notificacao.includes("indevidamente"))) && (
                   <>
                     <div className="d-flex flex-column gap-2 mt-2 mb-3">
                       <div className="h6 d-flex align-items-center">
@@ -544,6 +552,14 @@ const Irregularidades = () => {
                 </div>
               </div>
             )}
+            {link.estado && link.infracao === "N" && (link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7) && (
+              <div className="alert alert-warning mb-2" style={{ width: 'calc(100%)' }}>
+                <div className="text-start">
+                  <i className="fas fa-exclamation-triangle me-2"></i>
+                  <span>Esta notificação não pode ser regularizada devido ao uso de uma vaga incompatível com o tipo de veículo</span>
+                </div>
+              </div>
+            )}
 
             {link.pago === "N" && (
               <div className="row mt-3">
@@ -564,7 +580,7 @@ const Irregularidades = () => {
                   >
                     {link.estado
                       ? "Fechar"
-                      : !link.estado && link.infracao === 'S' && validacoes[link.id_notificacao] === false
+                      : !link.estado && (link.infracao === 'S' && validacoes[link.id_notificacao] === false) || link.tipo_notificacao.includes("indevidamente")
                         ? "Abrir"
                         : "Regularize aqui"}
                   </Button>
@@ -573,7 +589,7 @@ const Irregularidades = () => {
             )}
           </div>
 
-          {link.estado && !(link.infracao === 'S' && validacoes[link.id_notificacao] === false) && (
+          {link.estado && !(link.infracao === 'S' && validacoes[link.id_notificacao] === false) && !(link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7) ? (
             <div className="pb-3 mb-1">
               <div className="d-flex flex-column gap-2 px-4">
                 <div className="h6 d-flex align-items-center">
@@ -624,7 +640,7 @@ const Irregularidades = () => {
                 )
               )}
             </div>
-          )}
+          ) : null}
         </div>
       ))}
 

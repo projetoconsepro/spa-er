@@ -61,7 +61,7 @@ const ListarNotificacoesAdmin = () => {
 
   const mostrar = async (item, index) => {
     const requisicao = createAPI();
-    if (item.pendente === "Pendente") {
+    if (item.pendente === "Pendente" && item.id_tipo_notificacao !== 6 && item.id_tipo_notificacao !== 7) {
       Swal.fire({
         title: "Informações da notificação",
         html: `<p><b>Data:</b> ${item.data}</p>
@@ -188,6 +188,7 @@ const ListarNotificacoesAdmin = () => {
             fabricante: item.veiculo.modelo.fabricante.nome,
             modelo: item.veiculo.modelo.nome,
             tipo: item.tipo_notificacao.nome,
+            id_tipo_notificacao: item.tipo_notificacao.id_tipo_notificacao,
             valor: item.valor,
             id_vaga_veiculo: item.id_vaga_veiculo,
             id_notificacao: item.id_notificacao,
@@ -358,6 +359,7 @@ const ListarNotificacoesAdmin = () => {
             fabricante: item.veiculo.modelo.fabricante.nome,
             modelo: item.veiculo.modelo.nome,
             tipo: item.tipo_notificacao.nome,
+            id_tipo_notificacao: item.tipo_notificacao.id_tipo_notificacao,
             valor: item.valor,
             id_vaga_veiculo: item.id_vaga_veiculo,
             id_notificacao: item.id_notificacao,
