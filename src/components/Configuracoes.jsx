@@ -242,39 +242,38 @@ const Configuracoes = () => {
               {data[index].estado ? (
                 <div
                   className="card-body5 pt-0"
+                  style={{ height: "auto" }}
                   onChange={() => {
                     mudaEstado(index);
                   }}
                 >
                   {data[index].estado ? <div id="bordaBaixo"></div> : null}
-                  <Button
-                    type="submit"
-                    className="mt-4"
-                    variant="outline" color={data[index].check ? "red" : "blue"}
-                    fullWidth
-                    bold
-                    onClick={() => {
-                      salvarAlteracoes(index);
-                    }}
-                  >
+                  <div className="d-flex gap-2 mt-4">
+                    <Button
+                      type="submit"
+                      variant="outline" color={data[index].check ? "red" : "blue"}
+                      style={{ flex: 1 }}
+                      bold
+                      onClick={() => {
+                        salvarAlteracoes(index);
+                      }}
+                    >
                     {data[index].check ? "Desativar débito automático" : "Ativar débito automático"}
-                  </Button>
-                  <div className="row mt-3">
-                    <div className="col-2"></div>
-                    <div className="col-8"></div>
-                    <div className="col-2">
-                      <BsFillTrashFill
-                        size={25}
-                        color="red"
-                        onClick={() => {
-                          removerVeiculo(link.id_veiculo);
-                        }}
-                      />
-                    </div>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      px="sm"
+                      color="red"
+                      onClick={() => {
+                        removerVeiculo(link.id_veiculo);
+                      }}
+                    >
+                      <BsFillTrashFill size={18} color="red" />
+                    </Button>
                   </div>
                 </div>
               ) : null}
-  
+
               <h6
                 style={{
                   display: (link.estacionado === "S" && link.vaga !== 0) ||
@@ -283,7 +282,7 @@ const Configuracoes = () => {
                       ? "block"
                       : "none",
                 }}
-                className="px-4 fs-6 text-center mt-4"
+                className="px-4 fs-6 text-center mt-2 mb-3"
                 id="modalTexto"
               >
                 <small>

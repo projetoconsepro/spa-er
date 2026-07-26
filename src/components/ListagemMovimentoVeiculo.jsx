@@ -32,6 +32,8 @@ const ListagemMovimentoVeiculo = () => {
         item.placa,
         item.movimento,
         item.usuario,
+        item.nomeGerador,
+        item.perfilGerador,
       ];
     });
     const cabecalho = [
@@ -39,8 +41,10 @@ const ListagemMovimentoVeiculo = () => {
       "Placa",
       "Movimento",
       "Usuário",
+      "Executado por",
+      "Perfil",
     ];
-    RelatoriosPDF(nomeArquivo, cabecalho, dataD);
+    RelatoriosPDF(nomeArquivo, cabecalho, dataD, null);
   };
 
   const FixDate = (date) => {
@@ -88,6 +92,8 @@ const ListagemMovimentoVeiculo = () => {
                 ? "Débito Automático Desativado"
                 : "",
             usuario: item.nome,
+            nomeGerador: item.nome_gerador,
+            perfilGerador: item.perfil_gerador,
             hora: FixDate(item.hora),
           }));
           setData(newData);
@@ -196,6 +202,20 @@ const ListagemMovimentoVeiculo = () => {
                           >
                             Usuário
                           </th>
+                          <th
+                            className="border-bottom"
+                            id="tabelaUsuarios"
+                            scope="col"
+                          >
+                            Executado por
+                          </th>
+                          <th
+                            className="border-bottom"
+                            id="tabelaUsuarios"
+                            scope="col"
+                          >
+                            Perfil
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -205,6 +225,8 @@ const ListagemMovimentoVeiculo = () => {
                             <td>{item.hora}</td>
                             <td> {item.movimento}</td>
                             <td>{item.usuario}</td>
+                            <td>{item.nomeGerador}</td>
+                            <td>{item.perfilGerador}</td>
                           </tr>
                         ))}
                       </tbody>
