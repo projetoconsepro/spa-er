@@ -610,7 +610,7 @@ const ListarNotificacoes = () => {
                 : link.pago === "S" && link.estado === true
                   ? "card-body10 pb-0 mb-3"
                   : link.estado && ((link.infracao === 'S' && !validacoes[link.id_notificacao] === true) || link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7)
-                    ? `card-body13 ${(link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7) && link.infracao === "N" ? "mb-lg-5 mb-7" : "mb-lg-5 mb-6"}`
+                    ? `card-body13 ${(link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7) && link.infracao === "N" ? "mb-lg-5 mb-6" : "mb-lg-5 mb-5"}`
                     : "card-body9 mb-3"
             }
             onClick={() => (link.pago === "S" ? atualiza(index) : null)}
@@ -681,10 +681,11 @@ const ListarNotificacoes = () => {
                               <FaCarAlt className="me-2" />
                               <span>Modelo: {link.modelo}</span>
                             </div>
+                            {!(link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7) ? ( 
                             <div className="h6 d-flex align-items-center">
                               <BsCashCoin className="me-2" />
                               <span>Valor: R${link.valor}</span>
-                            </div>
+                            </div>) : null}
                     </div>
                   </>
                 )}
@@ -698,11 +699,20 @@ const ListarNotificacoes = () => {
                 )}
               </div>
             </div>
-                  {link.estado && link.pago !== "S" && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
+                  {link.estado && link.pago !== "S" && link.infracao === 'S' && validacoes[link.id_notificacao] === false && !(link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7) && (
                     <div className="alert alert-warning mb-2" style={{ width: 'calc(100%)' }}>
                       <div className="text-start">
                         <i className="fas fa-exclamation-triangle me-2"></i>
                         <span>Esta notificação gerou infração e excedeu o prazo de regularização</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {(link.id_tipo_notificacao === 6 || link.id_tipo_notificacao === 7) &&  link.estado && link.pago !== "S" && link.infracao === 'S' && validacoes[link.id_notificacao] === false && (
+                    <div className="alert alert-warning mb-4" style={{ width: 'calc(100%)' }}>
+                      <div className="text-start">
+                        <i className="fas fa-exclamation-triangle me-2"></i>
+                        <span>Esta notificação gerou infração e não pode ser regularizada</span>
                       </div>
                     </div>
                   )}
