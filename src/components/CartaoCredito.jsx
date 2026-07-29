@@ -3,6 +3,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import VoltarComponente from "../util/VoltarComponente";
 import { Button, Group, Notification } from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
+import creditCardType from "credit-card-type";
 import createAPI from "../services/createAPI";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 
@@ -20,21 +21,17 @@ const CartaoCredito = () => {
   const [respostaAPI, setRespostaAPI] = useState("");
 
   const getCardFlag = async (cardNumber) => {
-    const cardNumberRegex = [
-      { regex: /^4[0-9]{12}(?:[0-9]{3})?$/, label: "visa" },
-      { regex: /^5[1-5][0-9]{14}$/, label: "mastercard" },
-      {
-        regex:
-          /^(4(0117[89]|3(1274|8935)|5(1416|7(393|63[12])))|50(4175|6(699|7([0-6]\d|7[0-8]))|9\d{3})|6(27780|36(297|368)|5(0(0(3[1-35-9]|4\d|5[01])|4(0[5-9]|([1-3]\d|8[5-9]|9\d))|5([0-2]\d|3[0-8]|4[1-9]|[5-8]\d|9[0-8])|7(0\d|1[0-8]|2[0-7])|9(0[1-9]|[1-6]\d|7[0-8]))|16(5[2-9]|[67]\d)|50([01]\d|2[1-9]|[34]\d|5[0-8]))))/,
-        label: "elocard",
-      },
-    ];
+    const cardTypeLabels = {
+      visa: "visa",
+      mastercard: "mastercard",
+      elo: "elocard",
+    };
 
-    const resp = cardNumberRegex.find((cardRegex) =>
-      cardNumber.match(cardRegex.regex)
-    );
+    const [cardType] = creditCardType(cardNumber);
 
-    return resp;
+    if (!cardType || !cardTypeLabels[cardType.type]) return undefined;
+
+    return { label: cardTypeLabels[cardType.type] };
   };
 
   const handleCardNumberChange = async (e) => {
