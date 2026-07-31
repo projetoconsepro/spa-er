@@ -52,7 +52,8 @@ const ListarNotificacoesAgente = () => {
                    <p><b>Tipo:</b> ${item.tipo}</p>
                    <p><b>Valor:</b> R$${item.valor}</p>
                    <p><b>Monitor:</b> ${item.monitor}</p>
-                   <p><b>Hora:</b> ${item.hora}</p>`,
+                   <p><b>Hora:</b> ${item.hora}</p>
+                   <p><b>Local:</b> ${item.local}</p>`,
             showConfirmButton: true,
             showCancelButton: true,
             confirmButtonText: 'Auto de infração',
@@ -95,6 +96,7 @@ const ListarNotificacoesAgente = () => {
             id_notificacao: item.id_notificacao,
             monitor: item.monitor.nome,
             hora: ArrumaHora2(item.data),
+            local: item.local
           }));
           setEstadoLoading(false)
           setData(newData)
@@ -159,6 +161,7 @@ const ListarNotificacoesAgente = () => {
         id_notificacao: item.id_notificacao,
         monitor: item.monitor.nome,
         hora: ArrumaHora2(item.data),
+        local: item.local,
       }));
       setData(newData)
     }
