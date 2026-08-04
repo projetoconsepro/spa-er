@@ -43,7 +43,7 @@ import { IconPlugConnected } from "@tabler/icons-react";
 import ConfigImpressora from "../util/ConfigImpressora";
 import { TbReportMoney, TbTextPlus } from "react-icons/tb";
 import { PiListChecksFill } from "react-icons/pi";
-import { AiFillWarning } from "react-icons/ai";
+import { AiFillWarning, AiOutlineClockCircle } from "react-icons/ai";
 
 const Sidebar = () => {
 
@@ -188,7 +188,8 @@ const Sidebar = () => {
           { icon: <FaHistory />, name: "‎ Históricos",
           subitem: [
               { icon: <BsConeStriped />, name: "‎ Irregularidades", componente: "ListarNotificacoesAdmin", className: commonStyles },
-              { icon: <FaParking />, name: "‎ Estacionamentos", componente: "OcupacaoVagasAdmin", className: commonStyles }, 
+              { icon: <FaParking />, name: "‎ Estacionamentos", componente: "OcupacaoVagasAdmin", className: commonStyles },
+              { icon: <AiOutlineClockCircle />, name: "‎ Vagas Inativas", componente: "VagasInativasAdmin", className: commonStyles },
               { icon: <FaRegChartBar />, name: "‎ Movimentos", componente: "ListarMovimentosAdmin", className: commonStyles },
               { icon: <MdCarCrash />, name: "‎ Registro Débito", componente: "ListarLogsDebitoAuto", className: commonStyles },
               { icon: <FaChalkboardTeacher />, name: "‎ Ações Movimentos", componente: "ListarLogsMovimentosAdmin", className: commonStyles },
