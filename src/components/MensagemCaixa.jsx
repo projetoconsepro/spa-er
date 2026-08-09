@@ -1,4 +1,16 @@
+import FuncTrocaComp from "../util/FuncTrocaComp";
+
 function MensagemCaixa() {
+  const handleSair = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("perfil");
+    localStorage.removeItem("setorCaixa");
+    localStorage.removeItem("caixa");
+    FuncTrocaComp("LoginPage");
+    window.location.reload();
+  };
+
   return (
     <div
       className="container"
@@ -22,7 +34,14 @@ function MensagemCaixa() {
             <p className="text-dark fw-semibold mt-3" style={{ fontSize: '16px' }}>
               Dirija-se ao responsável para realizar a abertura do caixa.
             </p>
-          </div>
+            <button
+              className="btn w-auto btn-primary px-4 font-weight-bold py-2 mt-4"
+              onClick={handleSair}
+            >
+              Sair
+            </button> 
+
+          </div>            
         </div>
       </div>
     </div>
