@@ -150,6 +150,7 @@ const ListarVagasMonitor = () => {
               updatedItem.Countdown = "";
               updatedItem.variaDisplay = "escondido";
             } else {
+              updatedItem.regularizado = response.data.data[i].regularizado;
               updatedItem.estacionado = response.data.data[i].estacionado;
               updatedItem.debito = response.data.data[i].debitar_automatico;
               updatedItem.numero_notificacoes = response.data.data[i].numero_notificacoes_pendentes;
