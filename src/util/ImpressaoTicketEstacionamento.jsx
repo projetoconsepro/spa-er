@@ -1,6 +1,8 @@
 import axios from "axios";
 import calcularValidade from "../util/CalcularValidade";
 import calcularValorEstacionamento from "../util/valorEstacionamento";
+import isComputador from "../util/isComputador";
+import ExtratoPlacaPDF from "../util/ExtratoPlacaPDF";
 
 const ImpressaoTicketEstacionamento = async (
   via,
@@ -102,6 +104,9 @@ const ImpressaoTicketEstacionamento = async (
 
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
+    } else if (isComputador()) {
+      console.log("caiu");
+      ExtratoPlacaPDF(json);
     }
   }
 };
