@@ -105,7 +105,6 @@ const ImpressaoTicketEstacionamento = async (
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
     } else if (isComputador()) {
-      console.log("caiu");
       ExtratoPlacaPDF(json);
     }
   }
