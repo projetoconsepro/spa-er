@@ -1,4 +1,6 @@
 import axios from "axios";
+import isComputador from "./isComputador";
+import NotificacaoPDF from "./NotificacaoPDF";
 
 const ImpressaoTicketNotificacao = async (
   via,
@@ -74,6 +76,8 @@ const ImpressaoTicketNotificacao = async (
 
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
+    } else if (isComputador()) {
+      NotificacaoPDF(json);
     }
   }
 };
