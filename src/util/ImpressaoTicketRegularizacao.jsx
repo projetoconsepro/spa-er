@@ -1,3 +1,6 @@
+import isComputador from "./isComputador";
+import NotificacaoPDF from "./NotificacaoPDF";
+
 const ImpressaoTicketRegularizacao = async (via, item) => {
   const obterHoraAtual = () => {
     const dataAtual = new Date();
@@ -44,6 +47,8 @@ const ImpressaoTicketRegularizacao = async (via, item) => {
     };
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify(json));
+    } else if (isComputador()) {
+      NotificacaoPDF(json);
     }
   }
 };
