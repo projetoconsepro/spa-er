@@ -35,6 +35,7 @@ import Dashboard from '../../components/Dashboard/Dashboard';
 import VeiculosAdmin from '../../components/VeiculosAdmin';
 import ClientesAdmin from '../../components/ClientesAdmin';
 import OcupacaoVagasAdmin from '../../components/OcupacaoVagasAdmin';
+import VagasInativasAdmin from '../../components/VagasInativasAdmin';
 import TransferirCreditoCliente from '../../components/TransferirCreditoCliente';
 import PrestacaoContas from '../../components/PrestacaoContas';
 import ConfigurarPerfil from '../../components/ConfigurarPerfil';
@@ -104,6 +105,7 @@ const componentesMap = {
     VeiculosAdmin: <VeiculosAdmin />,
     ClientesAdmin: <ClientesAdmin />,
     OcupacaoVagasAdmin: <OcupacaoVagasAdmin />,
+    VagasInativasAdmin: <VagasInativasAdmin />,
     TransferirCreditoCliente: <TransferirCreditoCliente />,
     PrestacaoContas: <PrestacaoContas />,
     ConfigurarPerfil: <ConfigurarPerfil />,

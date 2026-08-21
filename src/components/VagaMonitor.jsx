@@ -68,7 +68,7 @@ export const VagaMonitor = ({
       };
     } else {
       const validade = await CalcularValidade(vagaNew.chegada, vagaNew.tempo);
-
+      
       vaga = {
         numero: vaga.numero,
         chegada: vagaNew.chegada,
@@ -82,6 +82,7 @@ export const VagaMonitor = ({
         estacionado: vagaNew.estacionado,
         id_vaga_veiculo: vagaNew.id_vaga_veiculo,
         debito: vagaNew.debitar_automatico,
+        regularizado: vagaNew.regularizado,
       };
 
       if (vagaNew.numero_notificacoes_pendentess !== 0) {
@@ -334,6 +335,10 @@ export const VagaMonitor = ({
         saldo: item.saldo,
         cpf: item.cpf,
         nome: item.nome,
+        hora_notificacao: item.estacionado[0].hora_notificacao,
+        hora_fim_notificacao: item.estacionado[0].hora_fim_notificacao,
+        notificado: item.estacionado[0].notificado,
+        regularizado: item.estacionado[0].regularizado,
         temporestante: CalcularValidade(
           item.estacionado[0].chegada,
           item.estacionado[0].tempo
@@ -372,7 +377,21 @@ export const VagaMonitor = ({
           ${campo("Saldo", info.saldo)}
         </div>`
       : "";
-
+       const detalhesNotificacao = info.notificado === "S"
+      ? `
+        <div style="border-top:1px solid #eee;margin-top:10px;padding-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px 12px;">
+            ${campo("Hora da notificação", info.hora_notificacao || "Sem informações")}
+            ${campo("Hora do fim da notificação", info.hora_fim_notificacao || "Sem informações")}
+            ${campo(
+              "Regularizado",
+              info.regularizado === "S"
+                ? "Sim"
+                : info.regularizado === "N"
+                  ? "Não"
+                  : "Sem informações"
+            )}        
+        </div>`
+      : "";
     return `
       <style>
         @media (min-width:480px){
@@ -424,7 +443,8 @@ export const VagaMonitor = ({
             <span style="color:#868e96;font-size:.78rem;">Débito automático</span>
             ${badgeDebito}
           </div>
-          ${detalhesDebito}
+          ${detalhesDebito}     
+          ${detalhesNotificacao}
         </div>
       </div>
     `;
@@ -683,8 +703,10 @@ export const VagaMonitor = ({
 
     const diffSegundos = segundosTempoRestante - segundosHoraAtual;
     const diffMinutos = diffSegundos / 60;
-
-    if (
+if(vaga.regularizado === 'S'){
+      return "#cfe0f8";
+    }
+    else if (
       vaga.numero_notificacoes_pendentess &&
       vaga.numero_notificacoes_pendentess !== 0
     ) {
