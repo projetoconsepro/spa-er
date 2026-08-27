@@ -121,10 +121,23 @@ const MapaAdmin = () => {
     if (vagasSetor.length === 0) {
       return null;
     }
-    const coordenadas = vagasSetor.map(vaga => {
-      const [lat, lng] = vaga.coordenada.split(',').map(parseFloat);
-      return [lat, lng];
-    });
+    const coordenadas = vagasSetor
+      .map(vaga => {
+        const [latRaw, lngRaw] = vaga.coordenada.split(',');
+        const lat = parseFloat(latRaw.trim());
+        const lng = parseFloat(lngRaw.trim());
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+          return null;
+        }
+
+        return [lat, lng];
+      })
+      .filter(Boolean);
+
+    if (coordenadas.length < 3) {
+      return null;
+    }
 
     const convexHull = (points) => {
       points.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
@@ -150,7 +163,13 @@ const MapaAdmin = () => {
 
       lower.pop();
       upper.pop();
-      return lower.concat(upper);
+      const hull = lower.concat(upper);
+
+      if (hull.length < 3) {
+        return null;
+      }
+
+      return hull;
     };
 
     return convexHull(coordenadas);
