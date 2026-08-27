@@ -368,17 +368,27 @@ const RegistrarVagaMonitor = () => {
         .then((response) => {
           if (response.data.msg.resultado === true) {
             if (response.data.msg.msg !== "Vaga atualizada com sucesso" && response.data.data.debitado !== "S"){
-            ImpressaoTicketEstacionamento(
-              'PRIMEIRA',
-              response.data.data.chegada,
-              response.data.data.tempo,
-              response.config.headers.id_usuario,
-              vagaa,
-              tirarTraco,
-              response.data.msg.msg === "Debito" ? 'debito' : selectedButton,
-              response.data.msg.msg === "Debito" ? response.data.data.tempoDebito : tempo,
-              response.data.data.notificacao_pendente
-            );
+                Swal.fire({
+                  title: 'Deseja imprimir a via do cliente?',
+                  icon: 'question',
+                  showCancelButton: true,
+                  confirmButtonText: 'Sim',
+                  cancelButtonText: 'Não'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    ImpressaoTicketEstacionamento(
+                      'PRIMEIRA',
+                      response.data.data.chegada,
+                      response.data.data.tempo,
+                      response.config.headers.id_usuario,
+                      vagaa,
+                      tirarTraco,
+                      response.data.msg.msg === "Debito" ? 'debito' : selectedButton,
+                      response.data.msg.msg === "Debito" ? response.data.data.tempoDebito : tempo,
+                      response.data.data.notificacao_pendente
+                    );
+                  }
+                });
             }
 
             const listaVagasString = localStorage.getItem("listaVagas");
