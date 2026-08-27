@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import createAPI from "../services/createAPI";
-import { AiOutlineReload } from "react-icons/ai";
+import { AiFillPrinter, AiOutlineReload } from "react-icons/ai";
 import { FaEllipsisH, FaPowerOff } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { Button, Group, Loader, Pagination, Modal } from "@mantine/core";
@@ -9,6 +9,7 @@ import Filtro from "../util/Filtro";
 import { RiDeleteBinFill, RiEditLine } from "react-icons/ri";
 import { Divider } from "@mantine/core";
 import validarPlaca from "../util/validarPlaca";
+import RelatoriosPDF from "../util/RelatoriosPDF";
 
 const ListarMovimentosAdmin = () => {
   const [estado, setEstado] = useState(false);
@@ -281,6 +282,41 @@ const ListarMovimentosAdmin = () => {
     cancelamento: "Cancelamento",
     infracao: "Infração",
     saida: "Saída",
+  };
+
+  const createPDF = () => {
+    const nomeArquivo = "Relatório de Movimentos";
+    const cabecalho = [
+      "Placa",
+      "Tipo",
+      "Data",
+      "Setor",
+      "Vaga",
+      "Pagamento",
+      "Valor",
+      "Tempo",
+      "Usuário",
+      "Perfil",
+    ];
+    const dataD = data.map((item) => [
+      item.placa_veiculo,
+      tipoMovimentoComAcentos[item.tipo_movimento],
+      new Date(item.hora).toLocaleString(),
+      item.nome_setor,
+      item.numero_vaga,
+      item.tipo_movimento === "notificacao"
+        ? `Notificação ${item.estado_notificacao}`
+        : item.tipo || "-",
+      item.tipo_movimento === "notificacao"
+        ? "-"
+        : item.valor
+        ? `R$ ${parseFloat(item.valor).toFixed(2)}`
+        : "-",
+      item.tipo_movimento === "notificacao" ? "-" : item.tempo || "-",
+      item.nome_usuario,
+      item.perfil_usuario.charAt(0).toUpperCase() + item.perfil_usuario.slice(1),
+    ]);
+    RelatoriosPDF(nomeArquivo, cabecalho, dataD);
   };
 
   /**
@@ -567,16 +603,25 @@ const ListarMovimentosAdmin = () => {
       <p className="mx-3 text-start fs-4 fw-bold">Listar Movimentos</p>
       <div className="row mb-3">
         <div className="col-12">
-          <div className="row">
-            <div className="col-lg-6 col-6">
+          <div className="row g-2 align-items-center">
+            <div className="col-lg-8 col-12">
               <Filtro
                 nome={"ListarMovimentosAdmin"}
                 onConsultaSelected={handleConsultaSelected}
                 onLoading={estadoLoading}
               />
             </div>
-            <div className="col-lg-3 col-3"></div>
-            <div className="col-lg-3 col-3 text-end me-0">
+            <div className="col-lg-4 col-12 d-flex justify-content-end">
+              <Button
+                variant="gradient"
+                gradient={{ from: "indigo", to: "blue", deg: 60 }}
+                radius="md"
+                size="sm"
+                className="me-2"
+                onClick={() => createPDF()}
+              >
+                <AiFillPrinter color="white" size={20} />
+              </Button>
               <Button
                 variant="gradient"
                 gradient={{ from: "indigo", to: "blue", deg: 60 }}
