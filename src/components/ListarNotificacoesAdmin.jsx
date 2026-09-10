@@ -59,8 +59,104 @@ const ListarNotificacoesAdmin = () => {
     RelatoriosPDF(nomeArquivo, cabecalho, dataD, quantidade);
   };
 
-  const mostrar = async (item, index) => {
+  const selecionarUsuarioERegularizar = (item, index) => {
     const requisicao = createAPI();
+    requisicao
+      .post("/notificacao/usuarios-saldo", {
+        id_vaga_veiculo: item.id_vaga_veiculo,
+      })
+      .then((response) => {
+        if (!response.data.msg.resultado) {
+          Swal.fire("Erro", response.data.msg.msg, "error");
+          return;
+        }
+
+        const usuarios = response.data.data;
+        const opcoes = usuarios
+          .map(
+            (usuario, i) => `
+          <div class="form-check text-start mb-2">
+            <input class="form-check-input" type="radio" name="usuarioSaldo" id="usuarioSaldo${i}" value="${usuario.id_usuario}" ${i === 0 ? "checked" : ""}>
+            <label class="form-check-label" for="usuarioSaldo${i}">
+              ${usuario.nome} — Saldo disponível: R$ ${usuario.saldo}
+            </label>
+          </div>
+        `
+          )
+          .join("");
+
+        Swal.fire({
+          title: "Selecione o usuário para debitar o saldo",
+          html: `<div class="text-start">${opcoes}</div>`,
+          showCancelButton: true,
+          confirmButtonText: "Confirmar",
+          confirmButtonColor: "#3A58C8",
+          cancelButtonText: "Cancelar",
+          preConfirm: () => {
+            const selecionado = document.querySelector(
+              'input[name="usuarioSaldo"]:checked'
+            );
+            if (!selecionado) {
+              Swal.showValidationMessage("Selecione um usuário");
+              return false;
+            }
+            return selecionado.value;
+          },
+        }).then((result) => {
+          if (result.isConfirmed && result.value) {
+            requisicao
+              .put("/notificacao/", {
+                id_vaga_veiculo: item.id_vaga_veiculo,
+                tipoPagamento: "saldo",
+                id_usuario_saldo: result.value,
+              })
+              .then((resposta) => {
+                if (resposta.data.msg.resultado) {
+                  Swal.fire(
+                    "Regularizado!",
+                    "A notificação foi regularizada.",
+                    "success"
+                  );
+                  data[index].pendente = "Quitado";
+                  setData([...data]);
+                } else {
+                  Swal.fire("Erro", resposta.data.msg.msg, "error");
+                }
+              })
+              .catch((error) => {
+                if (
+                  error?.response?.data?.msg === "Cabeçalho inválido!" ||
+                  error?.response?.data?.msg === "Token inválido!" ||
+                  error?.response?.data?.msg ===
+                    "Usuário não possui o perfil mencionado!"
+                ) {
+                  localStorage.removeItem("user");
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("perfil");
+                } else {
+                  console.log(error);
+                }
+              });
+          }
+        });
+      })
+      .catch((error) => {
+        if (
+          error?.response?.data?.msg === "Cabeçalho inválido!" ||
+          error?.response?.data?.msg === "Token inválido!" ||
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
+        } else {
+          console.log(error);
+        }
+      });
+  };
+
+  const mostrar = async (item, index) => {
     if (item.pendente === "Pendente" && item.id_tipo_notificacao !== 6 && item.id_tipo_notificacao !== 7) {
       Swal.fire({
         title: "Informações da notificação",
@@ -81,49 +177,14 @@ const ListarNotificacoesAdmin = () => {
        }`,
         showCancelButton: true,
         showConfirmButton: true,
-        confirmButtonText: "Regularizar",
+        confirmButtonText: "Regularizar com saldo",
         confirmButtonColor: "#3A58C8",
         cancelButtonText: "Fechar",
       }).then((result) => {
         if (result.isDismissed) {
           Swal.close();
         } else if (result.isConfirmed) {
-          requisicao
-            .put("/notificacao/", {
-              id_vaga_veiculo: item.id_vaga_veiculo,
-            })
-            .then((response) => {
-              if (response.data.msg.resultado) {
-                Swal.fire(
-                  "Regularizado!",
-                  "A notificação foi regularizada.",
-                  "success"
-                );
-                data[index].pendente = "Quitado";
-                setData([...data]);
-              } else {
-                setEstado(true);
-                setMensagem(response.data.msg.msg);
-                setTimeout(() => {
-                  setEstado(false);
-                  setMensagem("");
-                }, 5000);
-              }
-            })
-            .catch((error) => {
-              if (
-                error?.response?.data?.msg === "Cabeçalho inválido!" ||
-                error?.response?.data?.msg === "Token inválido!" ||
-                error?.response?.data?.msg ===
-                  "Usuário não possui o perfil mencionado!"
-              ) {
-                localStorage.removeItem("user");
-                localStorage.removeItem("token");
-                localStorage.removeItem("perfil");
-              } else {
-                console.log(error);
-              }
-            });
+          selecionarUsuarioERegularizar(item, index);
         }
       });
     } else {

@@ -50,6 +50,8 @@ const ListarNotificacoes = () => {
 
     if (select === "dinheiro") {
       regularizar(data[index].id_vaga_veiculo, index, select, data[index]);
+    } else if (select === "saldo") {
+      regularizarComSaldo(index);
     } else {
       const valor = data[index].valor.toString();
       const valor2 = parseFloat(valor.replace(",", ".")).toFixed(2);
@@ -119,13 +121,17 @@ const ListarNotificacoes = () => {
     ImpressaoTicketRegularizacao("SEGUNDA", item);
   };
 
-  const regularizar = async (idVagaVeiculo, index, pagamento, item) => {
+  const regularizar = async (idVagaVeiculo, index, pagamento, item, idUsuarioSaldo) => {
     const requisicao = createAPI();
+    const corpo = {
+      id_vaga_veiculo: idVagaVeiculo,
+      tipoPagamento: pagamento,
+    };
+    if (idUsuarioSaldo) {
+      corpo.id_usuario_saldo = idUsuarioSaldo;
+    }
     requisicao
-      .put("/notificacao/", {
-        id_vaga_veiculo: idVagaVeiculo,
-        tipoPagamento: pagamento,
-      })
+      .put("/notificacao/", corpo)
       .then((response) => {
         setButtonLoading(false);
         if (response.data.msg.resultado) {
@@ -152,6 +158,80 @@ const ListarNotificacoes = () => {
         }
       })
       .catch((error) => {
+        if (
+          error?.response?.data?.msg === "Cabeçalho inválido!" ||
+          error?.response?.data?.msg === "Token inválido!" ||
+          error?.response?.data?.msg ===
+            "Usuário não possui o perfil mencionado!"
+        ) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("perfil");
+        } else {
+          console.log(error);
+        }
+      });
+  };
+
+  const regularizarComSaldo = (index) => {
+    const requisicao = createAPI();
+    requisicao
+      .post("/notificacao/usuarios-saldo", {
+        id_vaga_veiculo: data[index].id_vaga_veiculo,
+      })
+      .then((response) => {
+        if (!response.data.msg.resultado) {
+          setButtonLoading(false);
+          Swal.fire("Erro", response.data.msg.msg, "error");
+          return;
+        }
+
+        const usuarios = response.data.data;
+        const opcoes = usuarios
+          .map(
+            (usuario, i) => `
+          <div class="form-check text-start mb-2">
+            <input class="form-check-input" type="radio" name="usuarioSaldo" id="usuarioSaldo${i}" value="${usuario.id_usuario}" ${i === 0 ? "checked" : ""}>
+            <label class="form-check-label" for="usuarioSaldo${i}">
+              ${usuario.nome} — Saldo disponível: R$ ${usuario.saldo}
+            </label>
+          </div>
+        `
+          )
+          .join("");
+
+        Swal.fire({
+          title: "Selecione o usuário para debitar o saldo",
+          html: `<div class="text-start">${opcoes}</div>`,
+          showCancelButton: true,
+          confirmButtonText: "Confirmar",
+          cancelButtonText: "Cancelar",
+          preConfirm: () => {
+            const selecionado = document.querySelector(
+              'input[name="usuarioSaldo"]:checked'
+            );
+            if (!selecionado) {
+              Swal.showValidationMessage("Selecione um usuário");
+              return false;
+            }
+            return selecionado.value;
+          },
+        }).then((result) => {
+          if (result.isConfirmed && result.value) {
+            regularizar(
+              data[index].id_vaga_veiculo,
+              index,
+              "saldo",
+              data[index],
+              result.value
+            );
+          } else {
+            setButtonLoading(false);
+          }
+        });
+      })
+      .catch((error) => {
+        setButtonLoading(false);
         if (
           error?.response?.data?.msg === "Cabeçalho inválido!" ||
           error?.response?.data?.msg === "Token inválido!" ||
@@ -774,7 +854,7 @@ const ListarNotificacoes = () => {
 
     {link.pago === "S" ? (
       <div className="px-3">
-        {perfil === "monitor" && (
+        {(perfil === "monitor" || perfil === "admin") && (
           <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
@@ -794,10 +874,16 @@ const ListarNotificacoes = () => {
           className="form-select form-select-lg mb-1"
           aria-label=".form-select-lg example"
           id="pagamentos"
-          defaultValue="01:00:00"
+          defaultValue={perfil === "admin" ? "saldo" : "01:00:00"}
         >
-          <option value="pix">PIX</option>
-          <option value="dinheiro">Dinheiro</option>
+          {perfil === "admin" ? (
+            <option value="saldo">Saldo</option>
+          ) : (
+            <>
+              <option value="pix">PIX</option>
+              <option value="dinheiro">Dinheiro</option>
+            </>
+          )}
         </select>
         <div className="pt-3 gap-6 d-md-block">
           <div className="row">
@@ -814,7 +900,7 @@ const ListarNotificacoes = () => {
                 Regularizar
               </Button>
             </div>
-            {perfil === "monitor" && (
+            {(perfil === "monitor" || perfil === "admin") && (
               <div className="col-2 ps-0">
                 <ActionIcon
                   variant="outline"
