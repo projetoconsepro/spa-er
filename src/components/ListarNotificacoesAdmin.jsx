@@ -3,6 +3,7 @@ import { React, useState, useEffect } from "react";
 import { AiFillPrinter, AiOutlineReload } from "react-icons/ai";
 import { FaEllipsisH, FaEye, FaImages, FaPowerOff } from "react-icons/fa";
 import Swal from "sweetalert2";
+import selecionarUsuarioSaldo from "../util/ModalUsuariosSaldo";
 import RelatoriosPDF from "../util/RelatoriosPDF";
 import { Button, Group, Loader, Modal, Pagination } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -11,6 +12,7 @@ import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
 import createAPI from "../services/createAPI";
 import { ArrumaHora3, ArrumaHora2 } from "../util/ArrumaHora";
+import { verificaValidadeInfracao } from "../util/verificaValidadeInfracao";
 
 const ListarNotificacoesAdmin = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -59,7 +61,7 @@ const ListarNotificacoesAdmin = () => {
     RelatoriosPDF(nomeArquivo, cabecalho, dataD, quantidade);
   };
 
-  const selecionarUsuarioERegularizar = (item, index) => {
+  const selecionarUsuarioERegularizar = (item) => {
     const requisicao = createAPI();
     requisicao
       .post("/notificacao/usuarios-saldo", {
@@ -71,38 +73,7 @@ const ListarNotificacoesAdmin = () => {
           return;
         }
 
-        const usuarios = response.data.data;
-        const opcoes = usuarios
-          .map(
-            (usuario, i) => `
-          <div class="form-check text-start mb-2">
-            <input class="form-check-input" type="radio" name="usuarioSaldo" id="usuarioSaldo${i}" value="${usuario.id_usuario}" ${i === 0 ? "checked" : ""}>
-            <label class="form-check-label" for="usuarioSaldo${i}">
-              ${usuario.nome} — Saldo disponível: R$ ${usuario.saldo}
-            </label>
-          </div>
-        `
-          )
-          .join("");
-
-        Swal.fire({
-          title: "Selecione o usuário para debitar o saldo",
-          html: `<div class="text-start">${opcoes}</div>`,
-          showCancelButton: true,
-          confirmButtonText: "Confirmar",
-          confirmButtonColor: "#3A58C8",
-          cancelButtonText: "Cancelar",
-          preConfirm: () => {
-            const selecionado = document.querySelector(
-              'input[name="usuarioSaldo"]:checked'
-            );
-            if (!selecionado) {
-              Swal.showValidationMessage("Selecione um usuário");
-              return false;
-            }
-            return selecionado.value;
-          },
-        }).then((result) => {
+        selecionarUsuarioSaldo(response.data.data, item.valor, item.placa).then((result) => {
           if (result.isConfirmed && result.value) {
             requisicao
               .put("/notificacao/", {
@@ -117,8 +88,13 @@ const ListarNotificacoesAdmin = () => {
                     "A notificação foi regularizada.",
                     "success"
                   );
-                  data[index].pendente = "Quitado";
-                  setData([...data]);
+                  setData((atual) =>
+                    atual.map((n) =>
+                      n.id_notificacao === item.id_notificacao
+                        ? { ...n, pendente: "Quitado" }
+                        : n
+                    )
+                  );
                 } else {
                   Swal.fire("Erro", resposta.data.msg.msg, "error");
                 }
@@ -156,11 +132,19 @@ const ListarNotificacoesAdmin = () => {
       });
   };
 
-  const mostrar = async (item, index) => {
-    if (item.pendente === "Pendente" && item.id_tipo_notificacao !== 6 && item.id_tipo_notificacao !== 7) {
-      Swal.fire({
-        title: "Informações da notificação",
-        html: `<p><b>Data:</b> ${item.data}</p>
+  const mostrar = async (item) => {
+    const tipoPermitido =
+      item.id_tipo_notificacao !== 6 && item.id_tipo_notificacao !== 7;
+    let podeRegularizar = false;
+    if (tipoPermitido && item.pendente === "Pendente") {
+      podeRegularizar = true;
+    } else if (tipoPermitido && item.pendente === "Infração") {
+      podeRegularizar = await verificaValidadeInfracao(item.data_infracao);
+    }
+
+    Swal.fire({
+      title: "Informações da notificação",
+      html: `<p><b>Data:</b> ${item.data}</p>
                    <p><b>Placa:</b> ${item.placa}</p>
                    <p><b>Estado:</b> ${item.pendente}</p>
                    <p><b>Modelo:</b> ${item.modelo}</p>
@@ -175,45 +159,18 @@ const ListarNotificacoesAdmin = () => {
            ? `<p><b>Saldo no Momento da Notificação:</b> R$${item.saldo_no_momento}</p>`
            : ""
        }`,
-        showCancelButton: true,
-        showConfirmButton: true,
-        confirmButtonText: "Regularizar com saldo",
-        confirmButtonColor: "#3A58C8",
-        cancelButtonText: "Fechar",
-      }).then((result) => {
-        if (result.isDismissed) {
-          Swal.close();
-        } else if (result.isConfirmed) {
-          selecionarUsuarioERegularizar(item, index);
-        }
-      });
-    } else {
-      Swal.fire({
-        title: "Informações da notificação",
-        html: `<p><b>Data:</b> ${item.data}</p>
-                     <p><b>Placa:</b> ${item.placa}</p>
-                     <p><b>Estado:</b> ${item.pendente}</p>
-                     <p><b>Modelo:</b> ${item.modelo}</p>
-                     <p><b>Fabricante:</b> ${item.fabricante}</p>
-                     <p><b>Tipo:</b> ${item.tipo}</p>
-                     <p><b>Valor:</b> R$${item.valor}</p>
-                     <p><b>Monitor:</b> ${item.monitor}</p>
-                     <p><b>Hora:</b> ${item.hora}</p>
-                    <p><b>Débito Ativo:</b> ${item.debito_automatico}</p>
-       ${
-         item.debito_automatico === "Sim"
-           ? `<p><b>Saldo no Momento da Notificação:</b> R$${item.saldo_no_momento}</p>`
-           : ""
-       }`,
-        showCancelButton: true,
-        showConfirmButton: false,
-        cancelButtonText: "Fechar",
-      }).then((result) => {
-        if (result.isDismissed) {
-          Swal.close();
-        }
-      });
-    }
+      showCancelButton: true,
+      showConfirmButton: podeRegularizar,
+      confirmButtonText: "Regularizar com saldo",
+      confirmButtonColor: "#3A58C8",
+      cancelButtonText: "Fechar",
+    }).then((result) => {
+      if (result.isDismissed) {
+        Swal.close();
+      } else if (result.isConfirmed && podeRegularizar) {
+        selecionarUsuarioERegularizar(item);
+      }
+    });
   };
 
   useEffect(() => {
@@ -257,6 +214,8 @@ const ListarNotificacoesAdmin = () => {
             hora: ArrumaHora2(item.data),
             saldo_no_momento: item.saldoNoMomento ?? undefined,
             debito_automatico: item.debitoAtivo ? "Sim" : "Não",
+            infracao: item.infracao,
+            data_infracao: item.data_infracao,
           }));
           setData(newData);
         } else {
@@ -324,7 +283,7 @@ const ListarNotificacoesAdmin = () => {
     open();
   };
 
-  const cancelar = (item, index) => {
+  const cancelar = (item) => {
     Swal.fire({
       title: "Informe o motivo do cancelamento",
       html: '<input type="text" id="cancelamento" class="form-control">',
@@ -363,10 +322,18 @@ const ListarNotificacoesAdmin = () => {
                 "Notificação cancelada com sucesso.",
                 "success"
               );
-              data[index].cancelada = "S";
-              data[index].cancelada_motivo = motivo;
-              data[index].pendente = "Cancelado";
-              setData([...data]);
+              setData((atual) =>
+                atual.map((n) =>
+                  n.id_notificacao === item.id_notificacao
+                    ? {
+                        ...n,
+                        cancelada: "S",
+                        cancelada_motivo: motivo,
+                        pendente: "Cancelado",
+                      }
+                    : n
+                )
+              );
             }
           })
           .catch((error) => {
@@ -428,6 +395,8 @@ const ListarNotificacoesAdmin = () => {
             hora: ArrumaHora2(item.data),
             saldo_no_momento: item.saldoNoMomento ?? undefined,
             debito_automatico: item.debitoAtivo ? "Sim" : "Não",
+            infracao: item.infracao,
+            data_infracao: item.data_infracao,
           }));
           setQuantidade(response.data.quantidade);
           setData(newData);          
@@ -667,7 +636,7 @@ const ListarNotificacoesAdmin = () => {
                                   </h6>
                                   <h6
                                     className="dropdown-item d-flex align-items-center"
-                                    onClick={() => mostrar(item, index)}
+                                    onClick={() => mostrar(item)}
                                   >
                                     <FaEye />
                                     ‎‎ Ver mais
@@ -676,7 +645,7 @@ const ListarNotificacoesAdmin = () => {
                                   item.pendente === "Pendente" ? (
                                     <h6
                                       className="dropdown-item d-flex align-items-center text-danger"
-                                      onClick={() => cancelar(item, index)}
+                                      onClick={() => cancelar(item)}
                                     >
                                       <FaPowerOff />
                                       ‎‎ Cancelar notificação

@@ -306,7 +306,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Periodo", label: "Período" },
         { value: "Nome", label: "Nome" },
       ]);       
-    } else if (nome === "ListarLogsDebitoAuto") {                 
+    } else if (nome === "ListarLogsDebitoAuto" || nome === "ListarLogsRegularizacaoSaldo") {                 
       setOptions([ 
         { value: "Placa", label: "Placa" },
         { value: "Data", label: "Data" },

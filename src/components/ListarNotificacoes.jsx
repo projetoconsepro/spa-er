@@ -4,6 +4,7 @@ import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin, BsConeStriped  } from "react-icons/bs";
 import { BiErrorCircle } from "react-icons/bi";
 import Swal from "sweetalert2";
+import selecionarUsuarioSaldo from "../util/ModalUsuariosSaldo";
 import VoltarComponente from "../util/VoltarComponente";
 import FuncTrocaComp from "../util/FuncTrocaComp";
 import Filtro from "../util/Filtro";
@@ -186,37 +187,7 @@ const ListarNotificacoes = () => {
           return;
         }
 
-        const usuarios = response.data.data;
-        const opcoes = usuarios
-          .map(
-            (usuario, i) => `
-          <div class="form-check text-start mb-2">
-            <input class="form-check-input" type="radio" name="usuarioSaldo" id="usuarioSaldo${i}" value="${usuario.id_usuario}" ${i === 0 ? "checked" : ""}>
-            <label class="form-check-label" for="usuarioSaldo${i}">
-              ${usuario.nome} — Saldo disponível: R$ ${usuario.saldo}
-            </label>
-          </div>
-        `
-          )
-          .join("");
-
-        Swal.fire({
-          title: "Selecione o usuário para debitar o saldo",
-          html: `<div class="text-start">${opcoes}</div>`,
-          showCancelButton: true,
-          confirmButtonText: "Confirmar",
-          cancelButtonText: "Cancelar",
-          preConfirm: () => {
-            const selecionado = document.querySelector(
-              'input[name="usuarioSaldo"]:checked'
-            );
-            if (!selecionado) {
-              Swal.showValidationMessage("Selecione um usuário");
-              return false;
-            }
-            return selecionado.value;
-          },
-        }).then((result) => {
+        selecionarUsuarioSaldo(response.data.data, data[index].valor, data[index].placa).then((result) => {
           if (result.isConfirmed && result.value) {
             regularizar(
               data[index].id_vaga_veiculo,
