@@ -63,6 +63,7 @@ import ListarMovimentosFinanceiros from '../../components/ListarMovimentosFinanc
 import ListaInfracoesPendentesRemocao from '../../components/ListaInfracoesPendentesRemocao.jsx';
 import ListarNotificacoesVaga from '../../components/ListarNotificacoesVaga.jsx';
 import ListarLogsDebitoAuto from '../../components/ListarLogsDebitoAuto.jsx';
+import ListarLogsRegularizacaoSaldo from '../../components/ListarLogsRegularizacaoSaldo.jsx';
 import AdicionarMensagem from '../../components/AdicionarMensagem.jsx';
 import GerenciarCaixa from '../../components/GerenciarCaixa';
 import ImprimirCaixa from '../../components/ImprimirFechamento';
@@ -132,6 +133,7 @@ const componentesMap = {
     ListaInfracoesPendentesRemocao: <ListaInfracoesPendentesRemocao />,
     ListarNotificacoesVaga: <ListarNotificacoesVaga />,
     ListarLogsDebitoAuto: <ListarLogsDebitoAuto />,
+    ListarLogsRegularizacaoSaldo: <ListarLogsRegularizacaoSaldo />,
     AdicionarMensagem: <AdicionarMensagem />,
     GerenciarCaixa: <GerenciarCaixa />,
     ImprimirCaixa: <ImprimirCaixa />,
