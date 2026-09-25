@@ -70,6 +70,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:caracterizacao": "cross-env CI=true react-scripts test --watchAll=false --testPathPattern=testes-caracterizacao",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
