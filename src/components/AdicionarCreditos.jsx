@@ -6,9 +6,9 @@ import FuncTrocaComp from "../util/FuncTrocaComp";
 import ModalPix from "./ModalPix";
 import { useDisclosure } from "@mantine/hooks";
 import { Button, Divider, Input } from "@mantine/core";
-import { IconCash, IconUser } from "@tabler/icons-react";
+import { IconCash, IconReceipt, IconUser } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
-import ImpressaoTicketCredito from "../util/ImpressaoTicketCredito";
+import ImpressaoTicketCredito, { existeUltimoComprovanteCredito, reimprimirUltimoComprovanteCredito } from "../util/ImpressaoTicketCredito";
 import ModalErroBanco from "./ModalErroBanco";
 
 const AdicionarCreditos = () => {
@@ -24,6 +24,7 @@ const AdicionarCreditos = () => {
   const [pixExpirado, setPixExpirado] = useState("");
   const [estado2, setEstado2] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
+  const [temComprovante, setTemComprovante] = useState(existeUltimoComprovanteCredito());
 
   async function getInfoPix(TxId) {
     const requisicao = createAPI();
@@ -34,6 +35,7 @@ const AdicionarCreditos = () => {
       .then((response) => {
         if (response.data.msg.resultado) {
           ImpressaoTicketCredito(cpf, valor, pagamentos, response.config.headers.id_usuario)
+          setTemComprovante(true)
           setValor("")
           setCPF("")
           setOnOpen(false);
@@ -159,6 +161,7 @@ const AdicionarCreditos = () => {
         .then((response) => {
           if (response.data.msg.resultado) {
             ImpressaoTicketCredito(cpf, Newvalor, pagamentos, response.config.headers.id_usuario)
+            setTemComprovante(true)
             setEstado2(false);
             setValor("")
             setCPF("")
@@ -214,6 +217,15 @@ const AdicionarCreditos = () => {
     setCPF("");
   };
 
+  const reimprimirComprovante = () => {
+    reimprimirUltimoComprovanteCredito();
+    Swal.fire({
+      title: "Comprovante enviado para a impressora",
+      icon: "success",
+      timer: 2000,
+    });
+  };
+
   const atualiza = () => {
     const pagamentos = document.getElementById("pagamentos").value;
     setPagamento(pagamentos);
@@ -235,6 +247,27 @@ const AdicionarCreditos = () => {
             <div className="h5 mt-2 align-items-center text-start">
               <small>Adicionar créditos</small>
             </div>
+            {temComprovante && (
+              <div className="text-start" style={{ marginTop: "-6px" }}>
+                <Button
+                  variant="subtle"
+                  size="sm"
+                  compact
+                  leftIcon={<IconReceipt size={16} />}
+                  styles={{
+                    root: {
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                      "&:hover": { backgroundColor: "transparent", textDecoration: "underline" },
+                    },
+                    leftIcon: { marginRight: 5 },
+                  }}
+                  onClick={reimprimirComprovante}
+                >
+                  Reimprimir último comprovante
+                </Button>
+              </div>
+            )}
             <Divider my="sm" size="md" variant="dashed" />
             <div className="row align-items-center text-center pt-2">
               <div className="col-3">

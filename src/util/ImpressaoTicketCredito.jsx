@@ -22,6 +22,25 @@ const ImpressaoTicketCredito = async (cpf, valor, pagamento, monitor) => {
   if (window.ReactNativeWebView) {
     window.ReactNativeWebView.postMessage(JSON.stringify(json));
   }
+
+  localStorage.setItem("ultimoComprovanteCredito", JSON.stringify(json));
+};
+
+export const existeUltimoComprovanteCredito = () =>
+  localStorage.getItem("ultimoComprovanteCredito") !== null;
+
+export const reimprimirUltimoComprovanteCredito = () => {
+  const json = localStorage.getItem("ultimoComprovanteCredito");
+
+  if (!json) {
+    return false;
+  }
+
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(json);
+  }
+
+  return true;
 };
 
 export default ImpressaoTicketCredito;
