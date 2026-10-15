@@ -24,7 +24,6 @@ import {
   IconSquareRoundedPlusFilled,
 } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
-import EnviarNotificacao from "../util/EnviarNotificacao";
 import LimparNotificacao from "../util/LimparNotificacao";
 import { FormatDateBr } from "../util/formatDate";
 import { IconX } from "@tabler/icons-react";
@@ -143,22 +142,6 @@ const ListarVeiculos = () => {
     });
   };
 
-  const calcularValidade2 = (horaInicio, duracao) => {
-    const [horas, minutos, segundos] = duracao.split(":").map(Number);
-    const dataInicio = new Date(`2000-01-01T${horaInicio}`);
-    const dataValidade = new Date(
-      dataInicio.getTime() + horas * 3600000 + minutos * 60000 + segundos * 1000
-    );
-
-    const dataAtual = new Date();
-    dataAtual.setHours(dataValidade.getHours());
-    dataAtual.setMinutes(dataValidade.getMinutes() - 10);
-    dataAtual.setSeconds(dataValidade.getSeconds());
-    const timestamp = dataAtual.getTime();
-
-    return timestamp;
-  };
-
   const atualizacomp = async () => {
     setDivError(false);
     const requisicao = createAPI();
@@ -205,14 +188,6 @@ const ListarVeiculos = () => {
               notificacao[i] = { estado: false };
             }
           } else {
-            EnviarNotificacao(
-              calcularValidade2(
-                response.data.data[i].chegada,
-                response.data.data[i].tempo
-              ),
-              response.data.data[i].id_vaga_veiculo,
-              response.data.data[i].usuario
-            );
             resposta[i].div = "card-body19 mb-2";
             resposta[i].textoestacionado = "Adicionar tempo";
             mostrardiv[i] = { estado: false };
