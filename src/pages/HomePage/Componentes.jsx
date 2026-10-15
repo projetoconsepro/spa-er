@@ -57,6 +57,7 @@ import RelatorioMonitorAdmin from '../../components/RelatorioMonitorAdmin';
 import ListarMovimentosAdmin from '../../components/ListarMovimentosAdmin';
 import ListarLogsMovimentosAdmin from '../../components/ListarLogsMovimentosAdmin';
 import RelatorioParceiroAdmin from '../../components/RelatorioParceiroAdmin';
+import RelatorioSetorAdmin from '../../components/RelatorioSetorAdmin';
 import MapaCliente from '../../components/MapaCliente';
 import MapaAdmin from '../../components/MapaAdmin';
 import ListarMovimentosFinanceiros from '../../components/ListarMovimentosFinanceiros';
@@ -127,6 +128,7 @@ const componentesMap = {
     ListarMovimentosAdmin: <ListarMovimentosAdmin />,
     ListarLogsMovimentosAdmin: <ListarLogsMovimentosAdmin />,
     RelatorioParceiroAdmin: <RelatorioParceiroAdmin />,
+    RelatorioSetorAdmin: <RelatorioSetorAdmin />,
     MapaCliente: <MapaCliente />,
     MapaAdmin: <MapaAdmin />,
     ListarMovimentosFinanceiros: <ListarMovimentosFinanceiros />,
