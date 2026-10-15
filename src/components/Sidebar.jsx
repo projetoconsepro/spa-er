@@ -223,6 +223,7 @@ const Sidebar = () => {
             { icon: <TbReportMoney />, name: "‎ Extrato Financeiro", componente: "ListarMovimentosFinanceiros", className: commonStyles },
             { icon: <TbClipboardList />, name: "‎ Relatório Monitor", componente: "RelatorioMonitorAdmin", className: commonStyles },
             { icon: <FaUsers  />, name: "‎ Relatório Parceiro", componente: "RelatorioParceiroAdmin", className: commonStyles },
+            { icon: <MdAddLocationAlt />, name: "‎ Relatório Setor", componente: "RelatorioSetorAdmin", className: commonStyles },
             { icon: <FaHistory />, name: "‎ Caixa Monitor", componente: "HistoricoCaixa", className: commonStyles },
             { icon: <FcMoneyTransfer />, name: "‎ Depósito Parceiro", componente: "TransferenciaParceiro", className: commonStyles },
             ]

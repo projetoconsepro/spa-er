@@ -12,6 +12,7 @@ import {
   IconCheck,
   IconHelpTriangle,
   IconMail,
+  IconTrash,
   IconVideo,
 } from "@tabler/icons-react";
 import React, { useState, useEffect } from "react";
@@ -308,6 +309,32 @@ const Suporte = () => {
                   Condominio Viena Shopping - R. Júlio de Castilhos, 2500 - 12 -
                   Centro, Taquara - RS, 95600-000
                 </Text>
+              </div>
+            </Accordion.Panel>
+          </Accordion.Item>
+          <Accordion.Item value="excluir-conta">
+            <Accordion.Control icon={<IconTrash color="gray" />}>
+              Excluir minha conta
+            </Accordion.Control>
+            <Accordion.Panel>
+              <div className="text-start mx-3">
+                <Text size="sm" color="dimmed">
+                  Veja como solicitar a exclusão da sua conta e quais dados são
+                  excluídos ou mantidos.
+                </Text>
+              </div>
+              <div
+                className={
+                  window.innerWidth > 768
+                    ? "text-start mt-3 mx-3"
+                    : "text-center mt-3 mx-3"
+                }
+              >
+                <a href="/excluir-conta/">
+                  <Button radius="sm" variant="default" size="md">
+                    Solicitar exclusão da conta
+                  </Button>
+                </a>
               </div>
             </Accordion.Panel>
           </Accordion.Item>
