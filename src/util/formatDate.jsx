@@ -17,4 +17,6 @@ const FormatDate = (date) => {
 
     return formattedDate;
   };
-  export {FormatDate, FormatDateBr};
+  const FormatDateIsoBr = (dataIso) => dataIso.split("-").reverse().join("/");
+
+  export {FormatDate, FormatDateBr, FormatDateIsoBr};
