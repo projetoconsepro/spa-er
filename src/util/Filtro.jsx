@@ -27,6 +27,12 @@ import InputMask from "react-input-mask";
 import {FormatDate} from "../util/formatDate";
 import extrairNumeros from "../util/extrairNumeros";
 
+const propsMenuForaDoModal = {
+  menuPortalTarget: document.body,
+  menuPosition: "fixed",
+  styles: { menuPortal: (base) => ({ ...base, zIndex: 1000 }) },
+};
+
 const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [cardBody, setCardBody] = useState("");
@@ -57,6 +63,8 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
   const [cpf, setCpf] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [setoresFiltro, setSetoresFiltro] = useState([]);
+  const [setorFiltro, setSetorFiltro] = useState(null);
   const telefoneRef = useRef(null);
 
 
@@ -86,7 +94,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
   }, [onLoading]);
 
   useEffect(() => {
-    if (nome === "PrestacaoContas") {
+    if (nome === "PrestacaoContas" || nome === "RelatorioSetorAdmin") {
       const timer = setTimeout(() => {
         open();
       }, 100);
@@ -121,6 +129,22 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Nome", label: "Nome" },
       ]);
     } else if (nome === "RelatorioMonitorAdmin") {
+      setOptions([
+        { value: "Data", label: "Data" },
+        { value: "Periodo", label: "Período" },
+      ]);
+    } else if (nome === "RelatorioSetorAdmin") {
+      createAPI()
+        .get("/setores")
+        .then((response) => {
+          const setores = response?.data?.data?.setores || [];
+          setSetoresFiltro(
+            setores
+              .map((item) => ({ value: item.id_setor, label: `Setor ${item.nome}` }))
+              .sort((a, b) => a.label.localeCompare(b.label))
+          );
+        })
+        .catch(() => setSetoresFiltro([]));
       setOptions([
         { value: "Data", label: "Data" },
         { value: "Periodo", label: "Período" },
@@ -508,6 +532,11 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         default:
           break;
       }
+      if (nome === "RelatorioSetorAdmin" && setorFiltro !== null) {
+        const consultaComSetor = JSON.parse(consulta);
+        consultaComSetor.where.push({ field: "setor", operator: "=", value: setorFiltro.value });
+        consulta = JSON.stringify(consultaComSetor);
+      }
       onConsultaSelected(consulta);
     }
   };
@@ -533,12 +562,27 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         centered
       >
         <div className={cardBody}>
+          {nome === "RelatorioSetorAdmin" ? (
+            <div className="mb-3">
+              <div className="mb-1">Selecione o setor:</div>
+              <Select
+                options={setoresFiltro}
+                value={setorFiltro}
+                onChange={setSetorFiltro}
+                placeholder="Selecione o setor..."
+                {...propsMenuForaDoModal}
+                noOptionsMessage={() => "Nenhum setor encontrado. Verifique a conexão com o servidor."}
+              />
+              <div className="mt-3 mb-1">Filtrar por:</div>
+            </div>
+          ) : null}
           <Select
             options={options}
             value={selectedOption}
             onChange={handleSelection}
             isSearchable={false}
             placeholder="Selecione..."
+            {...(nome === "RelatorioSetorAdmin" ? propsMenuForaDoModal : {})}
           />
           {estado ? (
             <div className="mt-4">
