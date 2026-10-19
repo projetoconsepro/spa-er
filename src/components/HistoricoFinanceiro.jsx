@@ -2,8 +2,8 @@ import { React, useState, useEffect } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import VoltarComponente from "../util/VoltarComponente";
 import Filtro from "../util/Filtro";
-import { Badge, Group, Pagination } from "@mantine/core";
-import { IconCash } from "@tabler/icons-react";
+import { Box, Group, Pagination, Paper, Text } from "@mantine/core";
+import { IconReceipt, IconWallet } from "@tabler/icons-react";
 import createAPI from "../services/createAPI";
 import {ArrumaHora} from "../util/ArrumaHora";
 
@@ -12,10 +12,11 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
   const [mensagem, setMensagem] = useState("");
   const [estado, setEstado] = useState(false);
   const [saldo, setSaldo] = useState(0);
+  const [totalGasto, setTotalGasto] = useState();
   const [estadoLoading, setEstadoLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
+  const itemsPerPage = 20;
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -32,6 +33,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
     .get(`/financeiro/cliente/${id}`)
       .then((response) => {
         setSaldo(response?.data.dados.saldo);
+        setTotalGasto(response?.data.dados.totalGasto);
         const newData = response?.data.dados.movimentos.map((item) => ({
           valor: Math.abs(item.valor),
           data: ArrumaHora(item.data),
@@ -68,6 +70,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
   const handleConsulta = (where) => {
     setEstado(false);
     setMensagem("");
+    setCurrentPage(1);
     setEstadoLoading(true);
     setEstadoLoading(true);
 
@@ -81,6 +84,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
         if (response.data.msg.resultado) {
           setEstadoLoading(false);
           setSaldo(response?.data.dados.saldo);
+          setTotalGasto(response?.data.dados.totalGasto);
           const newData = response?.data.dados.movimentos.map((item) => ({
             valor: Math.abs(item.valor),
             data: ArrumaHora(item.data),
@@ -99,6 +103,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
           setResposta(newData);
         } else {
           setResposta([]);
+          setTotalGasto("0,00");
           setEstadoLoading(false);
           setEstado(true);
           setMensagem(response.data.msg.msg);
@@ -122,29 +127,58 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
 
   return (
     <div className="mb-3">
-      <p className="mx-3 text-start fs-4 fw-bold">
+      <p className="text-start fs-4 fw-bold">
         <VoltarComponente arrow={true} /> Histórico financeiro:
       </p>
-      <div className="row mb-3">
-        <div className="col-5 mx-2">
+      <div className="d-flex flex-wrap gap-2 mb-3">
+        <Paper
+          px="xs"
+          py={6}
+          className="d-flex text-center"
+          sx={{
+            flex: "999 1 320px",
+            minWidth: 0,
+            borderRadius: "0.6rem",
+            "@media (min-width: 768px)": {
+              paddingTop: 4,
+              paddingBottom: 4,
+              "& .mantine-Text-root": { lineHeight: 1.3 },
+            },
+          }}
+        >
+          <div className="px-1" style={{ flex: "1 1 0", minWidth: 0 }}>
+            <Text size="xs" color="dimmed"className="d-flex align-items-center justify-content-center gap-1">
+              <IconWallet size={14} color="#3DAE30" /> Saldo atual
+            </Text>
+            <Text size="sm" weight={600}color="#525252" style={{ overflowWrap: "anywhere" }}>
+              R$ {saldo}
+            </Text>
+          </div>
+          {totalGasto !== undefined && (
+            <div className="px-1 border-start" style={{ flex: "1 1 0", minWidth: 0 }}>
+              <Text size="xs" color="dimmed"className="d-flex align-items-center justify-content-center gap-1">
+                <IconReceipt size={14} color="#FB6660" /> Total gasto
+              </Text>
+              <Text size="sm" weight={600}color="#FB6660" style={{ overflowWrap: "anywhere" }}>
+                R$ {totalGasto}
+              </Text>
+            </div>
+          )}
+        </Paper>
+        <Box
+          className="d-flex"
+          sx={{
+            flex: "1 1 300px",
+            "& .mantine-Group-root": { flex: 1, alignItems: "stretch" },
+            "& .mantine-Group-root > .mantine-Button-root": { height: "auto", minHeight: 36 },
+          }}
+        >
           <Filtro
             nome={"HistoricoFinanceiro"}
             onConsultaSelected={handleConsulta}
             onLoading={estadoLoading}
           />
-        </div>
-        <div className="col-6 text-end mt-1">
-          <Badge
-            variant="gradient"
-            fz="sm"
-            w={window.innerWidth < 768 ? 150 : 200}
-            h={30}
-            gradient={{ from: "teal", to: "blue", deg: 210 }}
-            leftSection={<IconCash />}
-          >
-            R${saldo}
-          </Badge>
-        </div>
+        </Box>
       </div>
       <div id="kkk" className="mb-3">
         {currentItems.map((item, index) => (
@@ -216,7 +250,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
           value={currentPage}
           size="sm"
           onChange={handlePageChange}
-          total={resposta.length / 50 + 1}
+          total={Math.max(1, Math.ceil(resposta.length / itemsPerPage))}
           limit={itemsPerPage}
         />
       </Group>
