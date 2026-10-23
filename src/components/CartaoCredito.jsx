@@ -1,11 +1,45 @@
 import React, { useState } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import VoltarComponente from "../util/VoltarComponente";
-import { Button, Group, Notification } from "@mantine/core";
-import { IconArrowRight } from "@tabler/icons-react";
+import { Button, Card, Select } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
 import creditCardType from "credit-card-type";
 import createAPI from "../services/createAPI";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import MensagemErro from "../util/MensagemErro";
+import TituloComVoltar from "../util/TituloComVoltar";
+import { AZUL, BOTAO_PRINCIPAL } from "../util/estiloCredito";
+
+const MESES = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+
+const ANOS = Array.from({ length: 16 }, (_, i) => {
+  const ano = new Date().getFullYear() + i;
+  return { value: String(ano).slice(-2), label: String(ano) };
+});
+
+const ESTILO_SELECT = {
+  input: {
+    height: 44,
+    minHeight: 44,
+    borderRadius: 8,
+    borderColor: "#CED4DA",
+    fontSize: 16,
+    fontWeight: 400,
+    color: "#212529",
+    "&::placeholder": { color: "#868E96" },
+    "&:focus": {
+      borderColor: AZUL,
+      boxShadow: "0 0 0 3px rgba(28,126,214,.2)",
+    },
+  },
+  item: { fontSize: 15 },
+};
+
+const TIPOS = [
+  { valor: "credito", nome: "Crédito" },
+  { valor: "debito", nome: "Débito" },
+  { valor: "debito,credito", nome: "Ambos" },
+];
 
 const CartaoCredito = () => {
   const [cardNumber, setCardNumber] = useState("#### #### #### ####");
@@ -77,26 +111,24 @@ const CartaoCredito = () => {
     handleCvvMouseLeave();
   };
 
-  const handleExpMonthChange = (e) => {
-    if (e.target.value !== "mes") {
-      setExpMonth(e.target.value);
+  const handleExpMonthChange = (mes) => {
+    if (mes) {
+      setExpMonth(mes);
     }
 
     handleCvvMouseLeave();
   };
 
-  const handleExpYearChange = (e) => {
-    if (e.target.value !== "ano") {
-      setExpYear(e.target.value);
+  const handleExpYearChange = (ano) => {
+    if (ano) {
+      setExpYear(ano);
     }
 
     handleCvvMouseLeave();
   };
 
-  const handleTypeCardChange = (e) => {
-    if (e.target.value !== "tipo") {
-      setTypeCard(e.target.value);
-    }
+  const handleTypeCardChange = (tipo) => {
+    setTypeCard(tipo);
   };
 
   const handleCvvMouseEnter = () => {
@@ -115,8 +147,8 @@ const CartaoCredito = () => {
 
   const handleOnclick = () => {
     if (
-      document.querySelector(".front").style.transform ===
-      "perspective(1000px) rotateY(0deg)"
+      document.querySelector(".front").style.transform !==
+      "perspective(1000px) rotateY(-180deg)"
     ) {
       document.querySelector(".front").style.transform =
         "perspective(1000px) rotateY(-180deg)";
@@ -253,10 +285,22 @@ const CartaoCredito = () => {
   };
 
   return (
-    <div className="container2 text-start">
-      <div className="d-flex justify-content-center">
+    <div className="tela-credito">
+      <Card
+        shadow="sm"
+        padding="lg"
+        radius="md"
+        withBorder
+        mb="sm"
+        className="container2 text-start"
+      >
+        <TituloComVoltar
+          titulo="Novo cartão"
+          subtitulo="Cadastre um cartão para adicionar créditos à sua conta."
+        />
+        <div className="cadastro-cartao-corpo">
         <div
-          className="card-container mt-5"
+          className="card-container"
           onClick={() => {
             handleOnclick();
           }}
@@ -265,21 +309,13 @@ const CartaoCredito = () => {
             <div className="image">
               <img src="../../assets/img/cartaoCredito/chip.png" alt="" />
               {logoMarca && (
-                <img
-                  src={logoMarca}
-                  alt=""
-                  style={{
-                    width: logoMarca.includes("elo") ? "85px" : "",
-                    height: logoMarca.includes("elo") ? "40px" : "",
-                  }}
-                  className="logo"
-                />
+                <img src={logoMarca} alt="" className="logo" />
               )}
             </div>
             <div className="card-number-box">{cardNumber}</div>
             <div className="flexbox">
               <div className="box">
-                <span>NOME</span>
+                <span>Nome</span>
                 <div className="card-holder-name">
                   <TransitionGroup>
                     {cardHolder.split("").map((digit, index) => (
@@ -312,178 +348,124 @@ const CartaoCredito = () => {
             </div>
           </div>
         </div>
-      </div>
-      <form className="mt-3">
-        <div className="inputBox mb-3">
-          <span>Número do cartão</span>
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            maxLength={16}
-            className="card-number-input"
-            onChange={(e) => handleCardNumberChange(e)}
-            onInput={(e) => {
-              e.target.value = e.target.value.replace(/[^0-9]/g, "");
-            }}
-          />
-        </div>
-        <div className="inputBox mb-2">
-          <span>Nome do titular</span>
-          <input
-            type="text"
-            className="card-holder-input"
-            onChange={(e) => handleCardHolderChange(e)}
-            value={cardHolder}
-            maxLength={20}
-          />
-        </div>
-        <div className="row">
-          <div className="col-12">
-            <div className="row mt-3 inputBox">
-              <div className="col-4">
-                <span>Mês da validade</span>
-              </div>
-              <div className="col-4">
-                <span>Ano da validade</span>
-              </div>
-              <div className="col-4">
-                <span>CVV</span>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-4">
-                <div className="inputBox">
-                  <select
-                    name=""
-                    id=""
-                    className="month-input"
-                    onChange={handleExpMonthChange}
-                    defaultValue="mes"
-                  >
-                    <option value="mes" disabled readOnly>
-                      mês
-                    </option>
-                    <option value="01">01</option>
-                    <option value="02">02</option>
-                    <option value="03">03</option>
-                    <option value="04">04</option>
-                    <option value="05">05</option>
-                    <option value="06">06</option>
-                    <option value="07">07</option>
-                    <option value="08">08</option>
-                    <option value="09">09</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-4">
-                <div className="inputBox">
-                  <select
-                    name=""
-                    id=""
-                    className="year-input"
-                    onChange={handleExpYearChange}
-                    defaultValue={"ano"}
-                  >
-                    <option value="ano" disabled>
-                      ano
-                    </option>
-                    <option value="23">2023</option>
-                    <option value="24">2024</option>
-                    <option value="25">2025</option>
-                    <option value="26">2026</option>
-                    <option value="27">2027</option>
-                    <option value="28">2028</option>
-                    <option value="29">2029</option>
-                    <option value="30">2030</option>
-                    <option value="31">2031</option>
-                    <option value="32">2032</option>
-                    <option value="33">2033</option>
-                    <option value="34">2034</option>
-                    <option value="35">2035</option>
-                    <option value="36">2036</option>
-                    <option value="37">2037</option>
-                    <option value="38">2038</option>
-                    <option value="39">2039</option>
-                    <option value="40">2040</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-4">
-                <div className="inputBox">
-                  <input
-                    type="text"
-                    maxLength="4"
-                    className="cvv-input"
-                    onMouseEnter={handleCvvMouseEnter}
-                    onMouseLeave={handleCvvMouseLeave}
-                    onChange={handleCvvChange}
-                  />
-                </div>
-              </div>
-            </div>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <div className="inputBox">
+            <label htmlFor="cartao-numero">Número do cartão</label>
+            <input
+              id="cartao-numero"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              autoComplete="cc-number"
+              placeholder="0000 0000 0000 0000"
+              maxLength={16}
+              className="card-number-input"
+              onChange={(e) => handleCardNumberChange(e)}
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, "");
+              }}
+            />
           </div>
-        </div>
-        <div className="row mt-2">
-          <div className="col-12">
+          <div className="inputBox">
+            <label htmlFor="cartao-titular">Nome impresso no cartão</label>
+            <input
+              id="cartao-titular"
+              type="text"
+              autoComplete="cc-name"
+              placeholder="Nome completo"
+              className="card-holder-input"
+              onChange={(e) => handleCardHolderChange(e)}
+              value={cardHolder}
+              maxLength={20}
+            />
+          </div>
+          <div className="cadastro-cartao-linha">
+            <fieldset className="inputBox">
+              <legend>Validade</legend>
+              <div className="cadastro-cartao-validade">
+                <Select
+                  aria-label="Mês da validade"
+                  placeholder="Mês"
+                  data={MESES}
+                  value={expMonth === "mm" ? null : expMonth}
+                  onChange={handleExpMonthChange}
+                  maxDropdownHeight={220}
+                  styles={ESTILO_SELECT}
+                />
+                <Select
+                  aria-label="Ano da validade"
+                  placeholder="Ano"
+                  data={ANOS}
+                  value={expYear === "yy" ? null : expYear}
+                  onChange={handleExpYearChange}
+                  maxDropdownHeight={220}
+                  styles={ESTILO_SELECT}
+                />
+              </div>
+            </fieldset>
             <div className="inputBox">
-              <span>Tipo do cartão: </span>
-              <select
-                name=""
-                id=""
-                className="tipo-input"
-                onChange={handleTypeCardChange}
-                defaultValue="tipo"
-              >
-                <option value="tipo" disabled>
-                  tipo
-                </option>
-                <option value="credito">crédito</option>
-                <option value="debito">débito</option>
-                <option value="debito,credito">crédito e débito</option>
-              </select>
+              <label htmlFor="cartao-cvv">CVV</label>
+              <input
+                id="cartao-cvv"
+                type="text"
+                inputMode="numeric"
+                autoComplete="cc-csc"
+                placeholder="123"
+                maxLength="4"
+                className="cvv-input"
+                onMouseEnter={handleCvvMouseEnter}
+                onMouseLeave={handleCvvMouseLeave}
+                onFocus={handleCvvMouseEnter}
+                onBlur={handleCvvMouseLeave}
+                onChange={handleCvvChange}
+              />
             </div>
           </div>
-        </div>
-        <div>
-          <div className="row">
-            {divMensagem && (
-              <div className="col-12">
-                <Notification color="red" title="Aviso!" mt={12}>
-                  {mensagemApi && respostaAPI !== ""
-                    ? "Cartão já cadastrado por este usuário!"
-                    : mensagemApi
-                    ? "Não conseguimos salvar seu cartão. Por favor, verifique as informações e tente novamente."
-                    : "Por favor, preencha todos os campos!"}
-                </Notification>
-              </div>
-            )}
-            <div className="col-12 d-flex justify-content-center mt-4">
-              <Button
-                variant="gradient"
-                gradient={{ from: "indigo", to: "grape.8", deg: 45 }}
-                size="md"
-                fullWidth
-                mt="md"
-                radius="md"
-                loading={loadingButton}
-                onClick={() => {
-                  handleRegistrar();
-                }}
-              >
-                Salvar ‎
-                <IconArrowRight size="1.3rem" />
-              </Button>
+          <fieldset className="inputBox">
+            <legend>Usar este cartão no</legend>
+            <div className="cadastro-cartao-tipos" role="radiogroup">
+              {TIPOS.map(({ valor, nome }) => (
+                <button
+                  key={valor}
+                  type="button"
+                  role="radio"
+                  aria-checked={typeCard === valor}
+                  className={
+                    typeCard === valor
+                      ? "cadastro-cartao-tipo selecionado"
+                      : "cadastro-cartao-tipo"
+                  }
+                  onClick={() => handleTypeCardChange(valor)}
+                >
+                  {nome}
+                </button>
+              ))}
             </div>
-          </div>
+          </fieldset>
+          {divMensagem && (
+            <MensagemErro mt="md">
+              {mensagemApi && respostaAPI !== ""
+                ? "Este cartão já está cadastrado na sua conta."
+                : mensagemApi
+                ? "Não conseguimos salvar seu cartão. Confira os dados e tente novamente."
+                : "Preencha todos os campos para salvar o cartão."}
+            </MensagemErro>
+          )}
+          <Button
+            {...BOTAO_PRINCIPAL}
+            mt={6}
+            loading={loadingButton}
+            rightIcon={loadingButton ? null : <IconCheck size="1.1rem" />}
+            onClick={() => {
+              handleRegistrar();
+            }}
+          >
+            Salvar cartão
+          </Button>
+        </form>
         </div>
-      </form>
-      <Group position="center" mt="lg">
-        <VoltarComponente />
-      </Group>
+      </Card>
+      <VoltarComponente />
     </div>
   );
 };
