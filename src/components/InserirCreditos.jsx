@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Group,
   Text,
   Card,
@@ -16,6 +17,7 @@ import {
   IconArrowRight,
   IconCash,
   IconCheck,
+  IconTrash,
   IconX,
 } from "@tabler/icons-react";
 import { React, useState, useEffect } from "react";
@@ -84,6 +86,50 @@ const InserirCreditos = () => {
       .catch((err) => {
         setCreditCard([]);
       });
+  };
+
+  const apagarCartao = (cartao) => {
+    const finalDoNumero = cartao.numero.slice(-4);
+    Swal.fire({
+      title: "Tem certeza?",
+      text: `Você deseja apagar o cartão de final ${finalDoNumero}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, apagar!",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const requisicao = createAPI();
+        requisicao
+          .delete(`/cartao/${parseInt(cartao.cartao)}`)
+          .then((response) => {
+            if (response.data.msg.resultado) {
+              Swal.fire({
+                icon: "success",
+                title: response.data.msg.msg,
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              setCreditCardSelected(null);
+              setCreditCard(
+                creditCard.filter((item) => item.cartao !== cartao.cartao)
+              );
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: response.data.msg.msg,
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   useEffect(() => {
@@ -529,6 +575,22 @@ const InserirCreditos = () => {
                                 {item.numero}
                               </Text>
                             </div>
+                            <ActionIcon
+                              className="ms-auto me-2"
+                              variant="transparent"
+                              aria-label="Apagar cartão"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                apagarCartao(item);
+                              }}
+                            >
+                              <IconTrash
+                                size="1.25rem"
+                                color={
+                                  CreditCardSelected === index ? "white" : "red"
+                                }
+                              />
+                            </ActionIcon>
                           </div>
                         </Box>
                       </div>
