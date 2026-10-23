@@ -1,24 +1,23 @@
 import {
   ActionIcon,
-  Group,
   Text,
   Card,
   Button,
-  Radio,
   Image,
   Input,
-  Notification,
-  Tabs,
+  SimpleGrid,
+  UnstyledButton,
   Box,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  IconArrowForwardUpDouble,
   IconArrowRight,
-  IconCash,
   IconCheck,
+  IconChevronDown,
+  IconChevronUp,
+  IconCircleCheckFilled,
+  IconPlus,
   IconTrash,
-  IconX,
 } from "@tabler/icons-react";
 import { React, useState, useEffect } from "react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
@@ -28,9 +27,77 @@ import createAPI from "../services/createAPI";
 import VoltarComponente from "../util/VoltarComponente";
 import ModalErroBanco from "./ModalErroBanco";
 import { MdPix } from "react-icons/md";
-import { FaSave } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { MensagemCompra } from "../util/MensagemCompra";
+import MensagemErro from "../util/MensagemErro";
+import TituloComVoltar from "../util/TituloComVoltar";
+import {
+  GRADIENTE,
+  AZUL,
+  AZUL_ESCURO,
+  AZUL_CLARO,
+  BORDA,
+  BOTAO_PRINCIPAL,
+} from "../util/estiloCredito";
+
+const LIMITE_CARTOES = 3;
+const VALOR_MAXIMO = 1000;
+
+const METODOS = [
+  { valor: "pix", nome: "Pix", Icone: MdPix },
+  { valor: "cartaoDeb", nome: "Débito", Icone: BsCreditCard2Back },
+  { valor: "cartaoCred", nome: "Crédito", Icone: BsCreditCard2Front },
+];
+
+const VALORES = {
+  pix: ["15.00", "30.00", "50.00", "100.00"],
+  cartao: ["20.00", "30.00", "50.00", "100.00"],
+};
+
+const BANDEIRAS = {
+  visa: { nome: "Visa", logo: "../../assets/img/cartaoCredito/visa-unselected.png" },
+  mastercard: { nome: "Mastercard", logo: "../../assets/img/cartaoCredito/mastercard.png" },
+  elocard: { nome: "Elo", logo: "../../assets/img/cartaoCredito/elocard-unselected.png" },
+};
+
+const formatarReais = (numero) =>
+  Number(numero).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+const modalidadesCartao = (item) => {
+  if (item.debito === "S" && item.credito === "S") return "Crédito e débito";
+  if (item.credito === "S") return "Crédito";
+  return "Débito";
+};
+
+const BlocoInfo = ({ Icone, children, acao }) => (
+  <Box
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+      padding: "12px 14px",
+      borderRadius: 10,
+      background: "#F8F9FA",
+    }}
+  >
+    <Box
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 8,
+        background: AZUL_CLARO,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+      }}
+    >
+      <Icone size={20} color={AZUL_ESCURO} />
+    </Box>
+    <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+    {acao}
+  </Box>
+);
 
 const InserirCreditos = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -42,27 +109,20 @@ const InserirCreditos = () => {
   const [metodo, setMetodo] = useState("pix");
   const [divAvancar, setDivAvancar] = useState(false);
   const [divAvancar2, setDivAvancar2] = useState(false);
+  const [erroMaximo, setErroMaximo] = useState(false);
   const [pixExpirado, setPixExpirado] = useState("Sucesso!");
   const [onOpen, setOnOpen] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
   const [CreditCardSelected, setCreditCardSelected] = useState(null);
+  const [mostrarTodosCartoes, setMostrarTodosCartoes] = useState(false);
   const [creditCard, setCreditCard] = useState([]);
-  const [valorPadrao, setValorPadrao] = useState("3");
 
-    const buscarMensagem = async () => {
-      const texto = await MensagemCompra();
-      return texto;
-    };
-
-  useEffect(() => {
-    if (metodo === "pix") {
-      setValorPadrao("3");
-    } else {
-      setValorPadrao("4");
-    }
-  }, [metodo]);
+  const buscarMensagem = async () => {
+    const texto = await MensagemCompra();
+    return texto;
+  };
 
   const getCreditCardFUNC = async () => {
     const requisicao = createAPI();
@@ -174,11 +234,7 @@ const InserirCreditos = () => {
   const fazerPix = () => {
     setButtonDisabled(true);
 
-    let ValorFinal = valor;
-    if (ValorFinal === "outro") {
-      ValorFinal = valor2;
-    }
-    ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
+    const ValorFinal = valorNumerico.toFixed(2);
 
     if (
       ValorFinal <= 2 ||
@@ -270,11 +326,7 @@ const InserirCreditos = () => {
   const pagamentoCartao = () => {
     const id_cartao = creditCard[CreditCardSelected].cartao;
     setButtonDisabled(true);
-    let ValorFinal = valor;
-    if (ValorFinal === "outro") {
-      ValorFinal = valor2;
-    }
-    ValorFinal = parseFloat(ValorFinal.replace(",", ".")).toFixed(2);
+    const ValorFinal = valorNumerico.toFixed(2);
     if (
       ValorFinal < 13 ||
       ValorFinal === "" ||
@@ -300,11 +352,11 @@ const InserirCreditos = () => {
       .then((resposta) => {
         if (resposta.data.msg.resultado) {
           setButtonDisabled(false);
-        buscarMensagem().then((texto) => {
-          Swal.fire({
-            icon: "success",
-            title: "Sucesso!",
-            html: `
+          buscarMensagem().then((texto) => {
+            Swal.fire({
+              icon: "success",
+              title: "Sucesso!",
+              html: `
               Crédito inserido com sucesso!<br>
               ${
                 texto
@@ -312,28 +364,28 @@ const InserirCreditos = () => {
                   : ""
               }
             `,
-            showConfirmButton: false,
-            timerProgressBar: false,
-            didOpen: () => {
-              setTimeout(() => {
-                Swal.update({
-                  showConfirmButton: true,
-                });
-                const btn = document.querySelector('.swal2-confirm');
-                if (btn) {
-                  btn.style.opacity = "0";
-                  btn.style.transition = "opacity 1.5s";
-                  setTimeout(() => {
-                    btn.style.opacity = "1";
-                  }, 30); 
-                }
-              }, 2000);
-            },
-            confirmButtonText: "Ok",
-          }).then(() => {
-            FuncTrocaComp("MeusVeiculos");
+              showConfirmButton: false,
+              timerProgressBar: false,
+              didOpen: () => {
+                setTimeout(() => {
+                  Swal.update({
+                    showConfirmButton: true,
+                  });
+                  const btn = document.querySelector(".swal2-confirm");
+                  if (btn) {
+                    btn.style.opacity = "0";
+                    btn.style.transition = "opacity 1.5s";
+                    setTimeout(() => {
+                      btn.style.opacity = "1";
+                    }, 30);
+                  }
+                }, 2000);
+              },
+              confirmButtonText: "Ok",
+            }).then(() => {
+              FuncTrocaComp("MeusVeiculos");
+            });
           });
-        });
         } else {
           setButtonDisabled(false);
           Swal.fire({
@@ -353,9 +405,19 @@ const InserirCreditos = () => {
     } else {
       setValor("20.00");
     }
+    setCreditCardSelected(null);
   }, [metodo]);
 
   const validaFormato = () => {
+    if (valorNumerico > VALOR_MAXIMO) {
+      setDivAvancar2(false);
+      setErroMaximo(true);
+      setTimeout(() => {
+        setErroMaximo(false);
+      }, 5000);
+      return;
+    }
+    setErroMaximo(false);
     if (metodo === "pix") {
       fazerPix();
     } else {
@@ -363,443 +425,444 @@ const InserirCreditos = () => {
     }
   };
 
+  const ehPix = metodo === "pix";
+  const etapa = tabsValue === "Valor" ? 1 : 0;
+  const cartoesDoMetodo = creditCard
+    .map((item, index) => ({ item, index }))
+    .filter(
+      ({ item }) =>
+        (item.credito === "S" && metodo === "cartaoCred") ||
+        (item.debito === "S" && metodo === "cartaoDeb")
+    );
+  const temMaisCartoes = cartoesDoMetodo.length > LIMITE_CARTOES;
+  const primeirosCartoes = cartoesDoMetodo.slice(0, LIMITE_CARTOES);
+  const selecionadoEscondido =
+    CreditCardSelected !== null &&
+    !primeirosCartoes.some(({ index }) => index === CreditCardSelected);
+  const cartoesVisiveis =
+    mostrarTodosCartoes || !temMaisCartoes
+      ? cartoesDoMetodo
+      : selecionadoEscondido
+      ? [
+          ...primeirosCartoes.slice(0, LIMITE_CARTOES - 1),
+          ...cartoesDoMetodo.filter(({ index }) => index === CreditCardSelected),
+        ]
+      : primeirosCartoes;
+  const cartaoEscolhido =
+    CreditCardSelected !== null ? creditCard[CreditCardSelected] : null;
+  const metodoEscolhido = METODOS.find((m) => m.valor === metodo);
+  const valorNumerico =
+    valor === "outro"
+      ? parseFloat(valor2.replace(/\./g, "").replace(",", "."))
+      : parseFloat(valor);
+  const temValor = !isNaN(valorNumerico) && valorNumerico > 0;
+  const textoBotaoPagar = temValor
+    ? ehPix
+      ? `Gerar Pix de ${formatarReais(valorNumerico)}`
+      : `Pagar ${formatarReais(valorNumerico)}`
+    : ehPix
+    ? "Gerar Pix"
+    : "Pagar";
+
+  const estiloOpcao = (selecionado) => ({
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+    minHeight: 64,
+    padding: "10px 12px",
+    borderRadius: 10,
+    border: `1.5px solid ${selecionado ? AZUL : BORDA}`,
+    background: selecionado ? AZUL_CLARO : "#fff",
+    transition: "border-color 150ms ease, background-color 150ms ease",
+  });
+
+  const nomeModalidade = metodo === "cartaoDeb" ? "débito" : "crédito";
+
   return (
-    <div>
-      <Card shadow="sm" padding="lg" radius="md" className="mb-4" withBorder>
-        <Tabs defaultValue={tabsValue} value={tabsValue} inverted>
-          <Tabs.List>
-            <Tabs.Tab
-              value="Meios de pagamento"
-              icon={<IconCheck size="0.8rem" />}
-              onClick={() => setTabsValue("Meios de pagamento")}
-            >
-              Pagamento
-            </Tabs.Tab>
-            <Tabs.Tab value="Valor" icon={<IconCheck size="0.8rem" />}>
-              Valor
-            </Tabs.Tab>
-          </Tabs.List>
-
-          <Tabs.Panel value="Meios de pagamento" pt="xs">
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Group position="apart" mt="md" mb="xs">
-                <Text weight={500}>1. Selecione o método de pagamento:</Text>
-              </Group>
-
-              <Group position="apart" mt="lg">
-                <Group position="apart" className="d-block">
-                  <div
-                    className="col-3 d-flex align-items-center justify-content-center border border-success rounded"
-                    style={{
-                      height: "75px",
-                      width: "80px",
-                      background:
-                        metodo === "pix"
-                          ? "linear-gradient(to right, #0CA678,  #1098AD)"
-                          : "transparent",
-                    }}
-                    onClick={() => setMetodo("pix")}
-                  >
-                    <MdPix
-                      className="mx-1"
-                      size={35}
-                      color={metodo === "pix" ? "white" : "black"}
-                    />
-                  </div>
-                  <Text weight={500} color="green">
-                    Pix
-                  </Text>
-                </Group>
-
-                <Group position="apart" className="d-block">
-                  <div
-                    className="col-3 d-flex align-items-center justify-content-center rounded border border-success"
-                    style={{
-                      height: "75px",
-                      width: "80px",
-                      background:
-                        metodo === "cartaoDeb"
-                          ? "linear-gradient(to right, #0CA678,  #1098AD)"
-                          : "transparent",
-                    }}
-                    onClick={() => setMetodo("cartaoDeb")}
-                  >
-                    <BsCreditCard2Back
-                      className="mx-1"
-                      size={35}
-                      style={{
-                        color: metodo === "cartaoDeb" ? "white" : "black",
-                      }}
-                    />
-                  </div>
-                  <Text weight={500} color="green">
-                    Débito
-                  </Text>
-                </Group>
-                <Group position="apart" className="d-block">
-                  <div
-                    className="col-3 d-flex align-items-center justify-content-center rounded border border-success"
-                    style={{
-                      height: "75px",
-                      width: "80px",
-                      background:
-                        metodo === "cartaoCred"
-                          ? "linear-gradient(to right, #0CA678,  #1098AD)"
-                          : "transparent",
-                    }}
-                    onClick={() => setMetodo("cartaoCred")}
-                  >
-                    <BsCreditCard2Front
-                      className="mx-1"
-                      style={{
-                        color: metodo === "cartaoCred" ? "white" : "black",
-                      }}
-                      size={35}
-                    />
-                  </div>
-                  <Text weight={500} color="green">
-                    Crédito
-                  </Text>
-                </Group>
-              </Group>
-
-              {metodo !== "pix" ? (
-                <Group position="apart" mt="md" mb="xs">
-                  <Text weight={500}>2. Selecione seu cartão:</Text>
-                </Group>
-              ) : null}
-
-              {metodo !== "pix" && creditCard.length > 0 ? (
-                <div>
-                  {creditCard.map((item, index) =>
-                    (item.credito === "S" && metodo === "cartaoCred") ||
-                    (item.debito === "S" && metodo === "cartaoDeb") ? (
-                      <div key={index}>
-                        <Box
-                          className="border border-black rounded mb-2 align-items-center"
-                          style={{
-                            maxWidth: "400px",
-                            minHeight: "50px",
-                            backgroundImage:
-                              CreditCardSelected === index
-                                ? "linear-gradient(45deg, #0CA678,  #1098AD)"
-                                : "none",
-                          }}
-                          onClick={() => setCreditCardSelected(index)}
-                        >
-                          <div className="d-flex align-items-center">
-                            <div className="align-items-center">
-                              {item.bandeira === "visa" ? (
-                                CreditCardSelected !== index ? (
-                                  <Image
-                                    src="../../assets/img/cartaoCredito/visa-unselected.png"
-                                    alt="image"
-                                    style={{
-                                      width: 45,
-                                      height: 45,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      marginLeft: "5px",
-                                    }}
-                                  />
-                                ) : (
-                                  <Image
-                                    src="../../assets/img/cartaoCredito/visa.png"
-                                    alt="image"
-                                    style={{
-                                      width: 45,
-                                      height: 45,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      marginLeft: "5px",
-                                    }}
-                                  />
-                                )
-                              ) : item.bandeira === "mastercard" ? (
-                                <Image
-                                  src="../../assets/img/cartaoCredito/mastercard.png"
-                                  alt="image"
-                                  style={{
-                                    width: 50,
-                                    height: 50,
-                                    display: "flex",
-                                    alignItems: "center",
-                                  }}
-                                />
-                              ) : item.bandeira === "elocard" ? (
-                                CreditCardSelected === index ? (
-                                  <Image
-                                    src="../../assets/img/cartaoCredito/elocard.png"
-                                    alt="image"
-                                    style={{
-                                      width: 50,
-                                      height: 50,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      marginLeft: "2px",
-                                    }}
-                                  />
-                                ) : (
-                                  <Image
-                                    src="../../assets/img/cartaoCredito/elocard-unselected.png"
-                                    alt="image"
-                                    style={{
-                                      width: 50,
-                                      height: 50,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      marginLeft: "2px",
-                                    }}
-                                  />
-                                )
-                              ) : (
-                                <BsCreditCard2Back
-                                  className="m-2"
-                                  size={30}
-                                  color={
-                                    CreditCardSelected === index
-                                      ? "white"
-                                      : "black"
-                                  }
-                                />
-                              )}
-                            </div>
-                            <div
-                              className={
-                                CreditCardSelected === index
-                                  ? "text-start text-white mx-2"
-                                  : "text-start mx-2"
-                              }
-                            >
-                              <Text weight={400} style={{ marginTop: "-3px" }}>
-                                {item.numero}
-                              </Text>
-                            </div>
-                            <ActionIcon
-                              className="ms-auto me-2"
-                              variant="transparent"
-                              aria-label="Apagar cartão"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                apagarCartao(item);
-                              }}
-                            >
-                              <IconTrash
-                                size="1.25rem"
-                                color={
-                                  CreditCardSelected === index ? "white" : "red"
-                                }
-                              />
-                            </ActionIcon>
-                          </div>
-                        </Box>
-                      </div>
-                    ) : null
-                  )}
-                  <Button
-                    className="mt-3 mb-3"
-                    variant="outline"
-                    leftIcon={<IconArrowForwardUpDouble size="1rem" />}
-                    onClick={() => {
-                      FuncTrocaComp("CartaoCredito");
-                    }}
-                  >
-                    Adicionar novo cartão
-                  </Button>
-                </div>
-              ) : metodo !== "pix" && creditCard.length === 0 ? (
-                <div className="mb-5">
-                  <div>
-                    <div
-                      className="d-flex align-items-center justify-content-center"
-                      onClick={() => FuncTrocaComp("CartaoCredito")}
-                    >
-                      <Box>
-                        <Image
-                          src="../../assets/img/cartaoCredito/creditCardPayment.png"
-                          alt="image"
-                          style={{ width: 160, height: 160 }}
-                        />
-                      </Box>
-                    </div>
-                  </div>
-                  <div className="mt-1">
-                    <Text> Você não possui cartão registrado </Text>
-                    <Button
-                      color="#65A059"
-                      fullWidth
-                      mt="md"
-                      radius="md"
-                      rightIcon={<FaSave />}
-                      onClick={() => FuncTrocaComp("CartaoCredito")}
-                    >
-                      <Text> Adicionar um cartão </Text>
-                    </Button>
-                  </div>
-                </div>
-              ) : null}
-
-              <Button
-                variant="gradient"
-                gradient={{ from: "teal", to: "blue", deg: 60 }}
-                fullWidth
-                mt="md"
-                radius="md"
-                onClick={() => handleTabs()}
-              >
-                Avançar ‎
-                <IconArrowRight size="1.125rem" />
-              </Button>
-              {divAvancar ? (
-                <Notification
-                  className="mt-3"
-                  icon={<IconX size="1.1rem" />}
-                  color="red"
-                  withBorder={false}
-                >
-                  <Text weight={500} color="red">
-                    {metodo === null
-                      ? "Você precisa selecionar um método de pagamento!"
-                      : metodo !== "pix" && CreditCardSelected === null
-                      ? "Você precisa selecionar um cartão!"
-                      : "Você precisa cadastrar um cartão! "}
-                  </Text>
-                </Notification>
-              ) : null}
-            </Card>
-          </Tabs.Panel>
-
-          <Tabs.Panel value="Valor" pt="xs">
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Group position="center" mt="md" mb="xs">
-                <Text weight={500} fz="lg">
-                  Quanto você quer recarregar?
-                </Text>
-              </Group>
-              <Radio.Group value={valorPadrao}>
-                {metodo === "pix" ? (
-                  <Group mt="xs">
-                    <Radio
-                      value="3"
-                      size="lg"
-                      label="R$ 15,00"
-                      onClick={() => {
-                        setValor("15.00");
-                        setValorPadrao("3");
-                      }}
-                    />
-                  </Group>
-                ) : (
-                  <Group mt="xs">
-                    <Radio
-                      value="4"
-                      size="lg"
-                      label="R$ 20,00"
-                      onClick={() => {
-                        setValor("20.00");
-                        setValorPadrao("4");
-                      }}
-                    />
-                  </Group>
-                )}
-                <Group mt="xs">
-                  <Radio
-                    value="6"
-                    size="lg"
-                    label="R$ 30,00"
-                    onClick={() => {
-                      setValor("30.00");
-                      setValorPadrao("6");
-                    }}
-                  />
-                </Group>
-                <Group mt="xs">
-                  <Radio
-                    value="7"
-                    size="lg"
-                    label="R$ 50,00"
-                    onClick={() => {
-                      setValor("50.00");
-                      setValorPadrao("7");
-                    }}
-                  />
-                </Group>
-                <Group mt="xs">
-                  <Radio
-                    value="9"
-                    size="lg"
-                    label="R$ 100,00"
-                    onClick={() => {
-                      setValor("100.00");
-                      setValorPadrao("9");
-                    }}
-                  />
-                </Group>
-                <Group mt="xs">
-                  <Radio
-                    value="8"
-                    size="lg"
-                    label="Outro valor:"
-                    onClick={() => {
-                      setValor("outro");
-                      setValorPadrao("8");
-                    }}
-                  />
-                </Group>
-                {valor === "outro" ? (
-                  <div>
-                    <Group position="apart" mt="md" mb="xs">
-                      <Text weight={500}>2. Selecione o valor:</Text>
-                    </Group>
-                    <Input
-                      icon={<IconCash />}
-                      placeholder="R$ 0,00"
-                      value={valor2}
-                      onChange={(e) => FuncArrumaInput(e)}
-                    />
-                  </div>
-                ) : null}
-              </Radio.Group>
-              <Button
-                variant="gradient"
-                gradient={{ from: "teal", to: "blue", deg: 60 }}
-                fullWidth
-                mt="md"
-                loading={buttonDisabled}
-                loaderPosition="right"
-                radius="md"
+    <div className="tela-credito">
+      <Card shadow="sm" padding="lg" radius="md" mb="sm" withBorder>
+        <Card.Section
+          component="nav"
+          aria-label="Passos"
+          mb="lg"
+          style={{ display: "flex", borderBottom: `1px solid ${BORDA}` }}
+        >
+          {["Pagamento", "Valor"].map((nome, i) => {
+            const atual = etapa === i;
+            const concluido = i <= etapa;
+            return (
+              <UnstyledButton
+                key={nome}
+                aria-current={atual ? "step" : undefined}
                 onClick={() => {
-                  validaFormato();
+                  if (i === 0) setTabsValue("Meios de pagamento");
+                  else if (etapa === 0) handleTabs();
                 }}
+                style={{ flex: 1, textAlign: "center" }}
               >
-                Registrar transferência ‎
-                {buttonDisabled ? null : <IconCheck size="1.125rem" />}
-              </Button>
-              {divAvancar2 ? (
-                <Notification
-                  className="mt-3"
-                  icon={<IconX size="1.1rem" />}
-                  color="red"
-                  withBorder={false}
+                <span
+                  style={{
+                    display: "block",
+                    height: 4,
+                    background: concluido ? GRADIENTE : "#E9ECEF",
+                    transition: "background 200ms ease",
+                  }}
+                />
+                <Text
+                  size="sm"
+                  weight={atual ? 700 : 600}
+                  py={12}
+                  style={{ color: atual ? AZUL_ESCURO : "#868E96" }}
                 >
-                  {valor !== "" && metodo === "pix"
-                    ? "Você precisa selecionar um valor acima de R$ 2,00!"
-                    : valor !== "" && metodo !== "pix"
-                    ? "Você precisa selecionar um valor acima de R$ 13,00!"
-                    : "Você precisa selecionar algum valor!"}
-                </Notification>
-              ) : null}
-            </Card>
-          </Tabs.Panel>
+                  {i + 1}. {nome}
+                </Text>
+              </UnstyledButton>
+            );
+          })}
+        </Card.Section>
 
-          <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
-          <ModalPix
-            qrCode={data.pixCopiaECola}
-            status={notification}
-            mensagemPix={pixExpirado}
-            onOpen={onOpen}
-          />
-        </Tabs>
+        <TituloComVoltar
+          titulo="Adicionar créditos"
+          subtitulo="O valor é adicionado no seu saldo do sistema."
+          rotuloVoltar="Voltar para pagamento"
+          onVoltar={
+            etapa === 1 ? () => setTabsValue("Meios de pagamento") : undefined
+          }
+        />
+
+        {etapa === 0 ? (
+          <div className="text-start">
+            <Text weight={600} mb="xs" id="rotulo-metodo">
+              Forma de pagamento
+            </Text>
+            <SimpleGrid
+              cols={3}
+              spacing="sm"
+              role="radiogroup"
+              aria-labelledby="rotulo-metodo"
+            >
+              {METODOS.map(({ valor: v, nome, Icone }) => {
+                const selecionado = metodo === v;
+                return (
+                  <UnstyledButton
+                    key={v}
+                    role="radio"
+                    aria-checked={selecionado}
+                    onClick={() => setMetodo(v)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 6,
+                      minHeight: 84,
+                      borderRadius: 12,
+                      border: `1.5px solid ${selecionado ? "transparent" : BORDA}`,
+                      background: selecionado ? GRADIENTE : "#fff",
+                      color: selecionado ? "#fff" : "#212529",
+                      boxShadow: selecionado
+                        ? "0 4px 12px rgba(28, 126, 214, 0.25)"
+                        : "none",
+                      transition: "background 150ms ease, box-shadow 150ms ease",
+                    }}
+                  >
+                    <Icone size={28} color={selecionado ? "#fff" : AZUL_ESCURO} />
+                    <Text weight={600} size="sm" inherit>
+                      {nome}
+                    </Text>
+                  </UnstyledButton>
+                );
+              })}
+            </SimpleGrid>
+
+            {ehPix ? (
+              <Text size="sm" color="dimmed" mt="md">
+                No próximo passo você escolhe o valor e recebe o QR Code para
+                pagar.
+              </Text>
+            ) : (
+              <>
+                <Text weight={600} mt="xl" mb="xs" id="rotulo-cartao">
+                  Cartão de {nomeModalidade}
+                </Text>
+                {divAvancar ? (
+                  <MensagemErro mb="xs">
+                    {cartoesDoMetodo.length === 0
+                      ? `Cadastre um cartão de ${nomeModalidade} para continuar.`
+                      : "Escolha um cartão para continuar."}
+                  </MensagemErro>
+                ) : null}
+                <div
+                  role="radiogroup"
+                  aria-labelledby="rotulo-cartao"
+                  style={{ display: "flex", flexDirection: "column", gap: 8 }}
+                >
+                  {cartoesDoMetodo.length === 0 ? (
+                    <BlocoInfo Icone={metodoEscolhido.Icone}>
+                      <Text weight={600} size="sm" color="dark">
+                        Nenhum cartão de {nomeModalidade}
+                      </Text>
+                      <Text size="xs" style={{ color: "#495057" }}>
+                        {creditCard.length === 0
+                          ? "Você ainda não tem cartão cadastrado."
+                          : `Seus cartões cadastrados não aceitam ${nomeModalidade}.`}{" "}
+                        Adicione um cartão abaixo.
+                      </Text>
+                    </BlocoInfo>
+                  ) : null}
+                  {cartoesVisiveis.map(({ item, index }) => {
+                    const selecionado = CreditCardSelected === index;
+                    const bandeira = BANDEIRAS[item.bandeira];
+                    const final = item.numero.slice(-4);
+                    return (
+                      <Box key={item.cartao} style={estiloOpcao(selecionado)}>
+                        <UnstyledButton
+                          role="radio"
+                          aria-checked={selecionado}
+                          onClick={() => setCreditCardSelected(index)}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
+                            flex: 1,
+                            minWidth: 0,
+                            alignSelf: "stretch",
+                          }}
+                        >
+                          <Box
+                            style={{
+                              width: 52,
+                              height: 36,
+                              borderRadius: 6,
+                              border: `1px solid ${BORDA}`,
+                              background: "#fff",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {bandeira ? (
+                              <Image
+                                src={bandeira.logo}
+                                alt={bandeira.nome}
+                                width={40}
+                                height={26}
+                                fit="contain"
+                              />
+                            ) : (
+                              <BsCreditCard2Back size={22} color="#495057" />
+                            )}
+                          </Box>
+                          <div style={{ minWidth: 0 }}>
+                            <Text
+                              weight={600}
+                              style={{ fontVariantNumeric: "tabular-nums" }}
+                            >
+                              •••• {final}
+                            </Text>
+                            <Text size="xs" color="dimmed">
+                              {bandeira ? `${bandeira.nome} · ` : ""}
+                              {modalidadesCartao(item)}
+                            </Text>
+                          </div>
+                          {selecionado ? (
+                            <IconCircleCheckFilled
+                              size="1.4rem"
+                              style={{ marginLeft: "auto", flexShrink: 0, color: AZUL }}
+                            />
+                          ) : null}
+                        </UnstyledButton>
+                        <ActionIcon
+                          size="lg"
+                          radius="md"
+                          color="red"
+                          variant="subtle"
+                          ml={4}
+                          aria-label={`Apagar cartão de final ${final}`}
+                          onClick={() => apagarCartao(item)}
+                        >
+                          <IconTrash size="1.2rem" />
+                        </ActionIcon>
+                      </Box>
+                    );
+                  })}
+                  {temMaisCartoes ? (
+                    <UnstyledButton
+                      aria-expanded={mostrarTodosCartoes}
+                      onClick={() => setMostrarTodosCartoes(!mostrarTodosCartoes)}
+                      className="botao-ver-cartoes"
+                    >
+                      {mostrarTodosCartoes
+                        ? "Mostrar menos"
+                        : `Ver todos os cartões (${cartoesDoMetodo.length})`}
+                      {mostrarTodosCartoes ? (
+                        <IconChevronUp size="1rem" />
+                      ) : (
+                        <IconChevronDown size="1rem" />
+                      )}
+                    </UnstyledButton>
+                  ) : null}
+                  <UnstyledButton
+                    onClick={() => FuncTrocaComp("CartaoCredito")}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      minHeight: 52,
+                      borderRadius: 10,
+                      border: `1.5px dashed ${BORDA}`,
+                      color: AZUL_ESCURO,
+                      fontWeight: 600,
+                      fontSize: 14,
+                    }}
+                  >
+                    <IconPlus size="1.1rem" />
+                    Adicionar cartão
+                  </UnstyledButton>
+                </div>
+              </>
+            )}
+
+            <Button
+              {...BOTAO_PRINCIPAL}
+              mt="xl"
+              rightIcon={<IconArrowRight size="1.1rem" />}
+              onClick={() => handleTabs()}
+            >
+              Continuar
+            </Button>
+          </div>
+        ) : (
+          <div className="text-start">
+            <BlocoInfo
+              Icone={metodoEscolhido.Icone}
+              acao={
+                <Button
+                  variant="subtle"
+                  color="blue"
+                  compact
+                  onClick={() => setTabsValue("Meios de pagamento")}
+                >
+                  Alterar
+                </Button>
+              }
+            >
+              <Text size="xs" color="dimmed">
+                Pagando com
+              </Text>
+              <Text weight={600} size="sm">
+                {metodoEscolhido.nome}
+                {cartaoEscolhido
+                  ? ` · ${
+                      BANDEIRAS[cartaoEscolhido.bandeira]?.nome || "Cartão"
+                    } •••• ${cartaoEscolhido.numero.slice(-4)}`
+                  : ""}
+              </Text>
+            </BlocoInfo>
+
+            <Text weight={600} mt="xl" id="rotulo-valor">
+              Quanto você quer adicionar?
+            </Text>
+            <Text size="xs" color="dimmed" mt={2} mb="sm" id="minimo-valor">
+              {ehPix
+                ? "Valor mínimo no Pix: acima de R$ 2,00."
+                : "Valor mínimo no cartão: R$ 13,00."}
+            </Text>
+            <SimpleGrid
+              cols={2}
+              breakpoints={[{ minWidth: 992, cols: 4 }]}
+              spacing="sm"
+              role="radiogroup"
+              aria-labelledby="rotulo-valor"
+              aria-describedby="minimo-valor"
+            >
+              {[...(ehPix ? VALORES.pix : VALORES.cartao), "outro"].map((v) => {
+                const selecionado = valor === v;
+                return (
+                  <UnstyledButton
+                    key={v}
+                    role="radio"
+                    aria-checked={selecionado}
+                    onClick={() => setValor(v)}
+                    style={{
+                      ...estiloOpcao(selecionado),
+                      justifyContent: "center",
+                      minHeight: 56,
+                      gridColumn: v === "outro" ? "1 / -1" : undefined,
+                    }}
+                  >
+                    <Text
+                      weight={selecionado ? 700 : 600}
+                      size={v === "outro" ? "sm" : "lg"}
+                      color={selecionado ? AZUL_ESCURO : "dark"}
+                      style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                      {v === "outro" ? "Outro valor" : formatarReais(v)}
+                    </Text>
+                  </UnstyledButton>
+                );
+              })}
+            </SimpleGrid>
+
+            {valor === "outro" ? (
+              <div style={{ marginTop: 8 }}>
+                <Input
+                  icon={
+                    <Text size="sm" weight={600} color="dimmed">
+                      R$
+                    </Text>
+                  }
+                  aria-label="Valor"
+                  placeholder="0,00"
+                  inputMode="numeric"
+                  size="md"
+                  radius="md"
+                  autoFocus
+                  value={valor2}
+                  onChange={(e) => FuncArrumaInput(e)}
+                />
+              </div>
+            ) : null}
+
+            {divAvancar2 ? (
+              <MensagemErro mt="sm">
+                {valor !== "" && metodo === "pix"
+                  ? "Informe um valor acima de R$ 2,00."
+                  : valor !== "" && metodo !== "pix"
+                  ? "Informe um valor de pelo menos R$ 13,00."
+                  : "Escolha um valor."}
+              </MensagemErro>
+            ) : null}
+            {erroMaximo ? (
+              <MensagemErro mt="sm">
+                O valor máximo é {formatarReais(VALOR_MAXIMO)}.
+              </MensagemErro>
+            ) : null}
+
+            <Button
+              {...BOTAO_PRINCIPAL}
+              mt="xl"
+              loading={buttonDisabled}
+              loaderPosition="right"
+              rightIcon={buttonDisabled ? null : <IconCheck size="1.1rem" />}
+              onClick={() => {
+                validaFormato();
+              }}
+            >
+              {textoBotaoPagar}
+            </Button>
+          </div>
+        )}
+
+        <ModalErroBanco onOpen={onOpenError} onClose={onCloseError} />
+        <ModalPix
+          qrCode={data.pixCopiaECola}
+          status={notification}
+          mensagemPix={pixExpirado}
+          onOpen={onOpen}
+        />
       </Card>
       <VoltarComponente />
     </div>
