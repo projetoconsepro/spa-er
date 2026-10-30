@@ -32,9 +32,15 @@ import jsPDF from "jspdf";
 import moment from "moment";
 import calcularValidade from "../util/CalcularValidade";
 import calcularValorEstacionamento from "../util/valorEstacionamento";
+import { EVENTO_DEBITO_AUTOMATICO_ALTERADO, podeVerRecargaAutomatica } from "../util/recargaAutomatica";
 
 const ListarVeiculos = () => {
   const [resposta] = useState([]);
+  const [mostrarRecarga, setMostrarRecarga] = useState(null);
+
+  useEffect(() => {
+    podeVerRecargaAutomatica().then(setMostrarRecarga);
+  }, []);
   const [valorcobranca, setValorCobranca] = useState("");
   const [valorcobranca2, setValorCobranca2] = useState("");
   const [mostrar, setMostrar] = useState(false);
@@ -124,6 +130,8 @@ const ListarVeiculos = () => {
           })
           .then((response) => {
             if (response.data.msg.resultado === true) {
+              window.dispatchEvent(new Event(EVENTO_DEBITO_AUTOMATICO_ALTERADO));
+              podeVerRecargaAutomatica().then(setMostrarRecarga);
               Swal.fire({
                 title: response.data.msg.msg,
                 icon: "success",
@@ -762,7 +770,7 @@ const ListarVeiculos = () => {
             <div className="row g-2">
               <div className="col-6 col-lg-4" style={{ paddingLeft: "10px" }}>
                 <button
-                  className="btn w-100 text-white"
+                  className="btn w-100 text-white text-nowrap px-2"
                   style={{ borderRadius: "5px", background: "#3381D4" }}
                   onClick={() => {
                     FuncTrocaComp("Configuracoes");
@@ -773,15 +781,17 @@ const ListarVeiculos = () => {
               </div>
 
               <div className="col-6 col-lg-4" style={{ paddingRight: "10px" }}>
-                <button
-                  className="btn w-100 text-white"
-                  style={{ borderRadius: "5px", background: "#1099A8" }}
-                  onClick={() => {
-                    FuncTrocaComp("Irregularidades");
-                  }}
-                >
-                  Notificação
-                </button>{" "}
+                {mostrarRecarga === null ? null : (
+                  <button
+                    className="btn w-100 text-white text-nowrap px-2"
+                    style={{ borderRadius: "5px", background: "#1099A8" }}
+                    onClick={() => {
+                      FuncTrocaComp(mostrarRecarga ? "RecargaAutomatica" : "Irregularidades");
+                    }}
+                  >
+                    {mostrarRecarga ? "Recarga automática" : "Notificação"}
+                  </button>
+                )}
               </div>
 
               <div className="col-12 col-lg-4 px-2">

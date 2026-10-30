@@ -191,6 +191,7 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
                       size={25}
                       color={
                         item.tipo === "Acrescimo de credito" ||
+                        item.tipo === "Recarga automatica" ||
                         item.tipo === "Transferencia recebida"
                           ? "#3DAE30"
                           : "#FB6660"
@@ -213,6 +214,8 @@ const HistoricoFinanceiro = (id_usuario = 0) => {
                       ? "Regularização"
                       : item.tipo === "Acrescimo de credito"
                       ? "Acréscimo de crédito"
+                      : item.tipo === "Recarga automatica"
+                      ? "Recarga automática"
                       : item.tipo === "Transferencia recebida"
                       ? "Transferência recebida"
                       : item.tipo === "Transferencia de credito"

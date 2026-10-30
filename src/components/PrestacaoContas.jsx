@@ -34,13 +34,15 @@ const PrestacaoContas = () => {
       data[0][categoria][indice].total.creditosInseridos.quantidade,
       formatNumero(data[0][categoria][indice].total.creditosInseridos.dinheiro),
       formatNumero(data[0][categoria][indice].total.creditosInseridos.pix),
-      formatNumero(0), // Valor fixo (0)
+      formatNumero(data[0][categoria][indice].total.creditosInseridos.cartao || 0),
+      formatNumero(data[0][categoria][indice].total.creditosInseridos.recargaAutomatica || 0),
       formatNumero(
         data[0][categoria][indice].total.creditosInseridos.TotalValor
       ),
       formatNumero(data[0][categoria][indice].total.finalTotal.dinheiro),
       formatNumero(data[0][categoria][indice].total.finalTotal.pix),
-      formatNumero(0), // Valor fixo (0)
+      formatNumero(data[0][categoria][indice].total.finalTotal.cartao || 0),
+      formatNumero(data[0][categoria][indice].total.finalTotal.recargaAutomatica || 0),
       formatNumero(data[0][categoria][indice].total.finalTotal.TotalValor),
     ];
   }
@@ -87,8 +89,8 @@ const PrestacaoContas = () => {
         "",
         { content: "Regularização", colSpan: 4 },
         { content: "Estacionamento", colSpan: 4 },
-        { content: "Recarga", colSpan: 5 },
-        { content: "Total arrecadado", colSpan: 4 },
+        { content: "Recarga", colSpan: 6 },
+        { content: "Total arrecadado", colSpan: 5 },
       ],
       [
         "",
@@ -104,10 +106,12 @@ const PrestacaoContas = () => {
         "Din",
         "Pix",
         "Cartão",
+        "Rec. aut.",
         "Total",
         "Din",
         "Pix",
         "Cartão",
+        "Rec. aut.",
         "Total",
       ],
     ];
@@ -164,6 +168,7 @@ const PrestacaoContas = () => {
             ? formatNumero(item.creditosInseridos.pix)
             : formatNumero(item.total.creditosInseridos.pix),
           formatNumero(0), // Valor fixo (0)
+          formatNumero(0),
           isRegularizacaoPresente
             ? formatNumero(item.creditosInseridos.TotalValor)
             : formatNumero(item.total.creditosInseridos.TotalValor),
@@ -178,6 +183,7 @@ const PrestacaoContas = () => {
               : item.total.finalTotal.pix
           ),
           formatNumero(0), // Valor fixo (0)
+          formatNumero(0),
           isRegularizacaoPresente
             ? formatNumero(item.finalTotal.TotalValor)
             : formatNumero(item.total.finalTotal.TotalValor),
@@ -237,6 +243,7 @@ const PrestacaoContas = () => {
             ? formatNumero(item.creditosInseridos.pix)
             : formatNumero(item.total.creditosInseridos.pix),
           formatNumero(0), // Valor fixo (0)
+          formatNumero(0),
           isRegularizacaoPresente
             ? formatNumero(item.creditosInseridos.TotalValor)
             : formatNumero(item.total.creditosInseridos.TotalValor),
@@ -251,6 +258,7 @@ const PrestacaoContas = () => {
               : item.total.finalTotal.pix
           ),
           formatNumero(0), // Valor fixo (0)
+          formatNumero(0),
           isRegularizacaoPresente
             ? formatNumero(item.finalTotal.TotalValor)
             : formatNumero(item.total.finalTotal.TotalValor),
@@ -279,10 +287,12 @@ const PrestacaoContas = () => {
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
           formatNumero(item.total.creditosInseridos.cartao),
+          formatNumero(item.total.creditosInseridos.recargaAutomatica || 0),
           formatNumero(item.total.creditosInseridos.TotalValor),
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
           formatNumero(item.total.finalTotal.cartao),
+          formatNumero(item.total.finalTotal.recargaAutomatica || 0),
           formatNumero(item.total.finalTotal.TotalValor),
         ]);
       }
@@ -306,9 +316,11 @@ const PrestacaoContas = () => {
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
           formatNumero(0),
+          formatNumero(0),
           formatNumero(item.total.creditosInseridos.TotalValor),
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
+          formatNumero(0),
           formatNumero(0),
           formatNumero(item.total.finalTotal.TotalValor),
         ]);
@@ -333,9 +345,11 @@ const PrestacaoContas = () => {
           formatNumero(item.total.creditosInseridos.dinheiro),
           formatNumero(item.total.creditosInseridos.pix),
           formatNumero(0),
+          formatNumero(0),
           formatNumero(item.total.creditosInseridos.TotalValor),
           formatNumero(item.total.finalTotal.dinheiro),
           formatNumero(item.total.finalTotal.pix),
+          formatNumero(0),
           formatNumero(0),
           formatNumero(item.total.finalTotal.TotalValor),
         ]);
@@ -389,24 +403,26 @@ const PrestacaoContas = () => {
     regularizacaoData.push(["Total", ...totalFinal]);
 
     const columnStyles = {
-      0: { cellWidth: 17 },
-      1: { cellWidth: 12 },
-      2: { cellWidth: 17 },
-      3: { cellWidth: 17 },
-      4: { cellWidth: 17 },
-      5: { cellWidth: 12 },
-      6: { cellWidth: 17 },
-      7: { cellWidth: 17 },
-      8: { cellWidth: 17 },
-      9: { cellWidth: 12 },
-      10: { cellWidth: 17 },
-      11: { cellWidth: 17 },
-      12: { cellWidth: 17 },
-      13: { cellWidth: 17 },
-      14: { cellWidth: 17 },
-      15: { cellWidth: 17 },
-      16: { cellWidth: 17 },
-      17: { cellWidth: 17 },
+      0: { cellWidth: 16 },
+      1: { cellWidth: 10 },
+      2: { cellWidth: 15 },
+      3: { cellWidth: 15 },
+      4: { cellWidth: 15 },
+      5: { cellWidth: 10 },
+      6: { cellWidth: 15 },
+      7: { cellWidth: 15 },
+      8: { cellWidth: 15 },
+      9: { cellWidth: 10 },
+      10: { cellWidth: 15 },
+      11: { cellWidth: 15 },
+      12: { cellWidth: 15 },
+      13: { cellWidth: 15 },
+      14: { cellWidth: 15 },
+      15: { cellWidth: 15 },
+      16: { cellWidth: 15 },
+      17: { cellWidth: 15 },
+      18: { cellWidth: 15 },
+      19: { cellWidth: 15 },
     };
 
     let headStyles = {
@@ -461,14 +477,15 @@ const PrestacaoContas = () => {
     /////////////////////////////////////////////////////////////////////////////////
 
     const resumoData = [
-      [{ content: "Resumo", colSpan: 5 }],
-      ["Receita", "Dinheiro", "Pix", "Cartão", "Total"],
+      [{ content: "Resumo", colSpan: 6 }],
+      ["Receita", "Dinheiro", "Pix", "Cartão", "Recarga automática", "Total"],
     ];
 
     resumoData.push([
       "Monitores",
       formatNumero(data[0].monitor[iMonitor].total.finalTotal.dinheiro),
       formatNumero(data[0].monitor[iMonitor].total.finalTotal.pix),
+      formatNumero(0),
       formatNumero(0),
       formatNumero(data[0].monitor[iMonitor].total.finalTotal.TotalValor),
     ]);
@@ -478,6 +495,7 @@ const PrestacaoContas = () => {
       formatNumero(data[0].parceiro[iParceiro].total.finalTotal.dinheiro),
       formatNumero(data[0].parceiro[iParceiro].total.finalTotal.pix),
       formatNumero(0),
+      formatNumero(0),
       formatNumero(data[0].parceiro[iParceiro].total.finalTotal.TotalValor),
     ]);
 
@@ -486,6 +504,7 @@ const PrestacaoContas = () => {
       formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.dinheiro),
       formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.pix),
       formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.cartao),
+      formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.recargaAutomatica || 0),
       formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.TotalValor),
     ]);
 
@@ -494,6 +513,7 @@ const PrestacaoContas = () => {
       formatNumero(data[0].avulso[iAvulso].total.finalTotal.dinheiro),
       formatNumero(data[0].avulso[iAvulso].total.finalTotal.pix),
       formatNumero(0),
+      formatNumero(0),
       formatNumero(data[0].avulso[iAvulso].total.finalTotal.TotalValor),
     ]);
 
@@ -501,6 +521,7 @@ const PrestacaoContas = () => {
       "Chatbot",
       formatNumero(data[0].chatbot[iChatbot].total.finalTotal.dinheiro),
       formatNumero(data[0].chatbot[iChatbot].total.finalTotal.pix),
+      formatNumero(0),
       formatNumero(0),
       formatNumero(data[0].chatbot[iChatbot].total.finalTotal.TotalValor),
     ]);
@@ -522,6 +543,7 @@ const PrestacaoContas = () => {
           data[0].chatbot[iChatbot].total.finalTotal.pix
       ),
       formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.cartao),
+      formatNumero(data[0].aplicativo[iAplicativo].total.finalTotal.recargaAutomatica || 0),
       formatNumero(
         data[0].parceiro[iParceiro].total.finalTotal.TotalValor +
           data[0].monitor[iMonitor].total.finalTotal.TotalValor +
@@ -547,6 +569,7 @@ const PrestacaoContas = () => {
         2: { cellWidth: tableWidth },
         3: { cellWidth: tableWidth },
         4: { cellWidth: tableWidth },
+        5: { cellWidth: tableWidth },
       },
       headStyles: headStyles,
       theme: "grid",
