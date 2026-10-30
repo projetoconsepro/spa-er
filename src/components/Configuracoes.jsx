@@ -8,6 +8,7 @@ import { Button, Card, Divider, Group, Modal, Text } from "@mantine/core";
 import createAPI from "../services/createAPI";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import FuncTrocaComp from "../util/FuncTrocaComp";
+import { EVENTO_DEBITO_AUTOMATICO_ALTERADO } from "../util/recargaAutomatica";
 import { BiErrorCircle } from "react-icons/bi";
 import { AiFillCheckCircle } from "react-icons/ai";
 
@@ -105,6 +106,7 @@ const Configuracoes = () => {
           data[index].estadoOn = !data[index].estadoOn;
           setData([...data]);
           Atualizarequisicao();
+          window.dispatchEvent(new Event(EVENTO_DEBITO_AUTOMATICO_ALTERADO));
           Swal.fire(
             "Confirmado!",
             "O débito automático foi alterado com sucesso!",
@@ -154,6 +156,7 @@ const Configuracoes = () => {
           .then((response) => {
             if (response.data.msg.resultado === true) {
               Atualizarequisicao();
+              window.dispatchEvent(new Event(EVENTO_DEBITO_AUTOMATICO_ALTERADO));
               Swal.fire({
                 title: response.data.msg.msg,
                 icon: "success",

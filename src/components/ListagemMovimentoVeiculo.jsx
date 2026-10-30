@@ -80,7 +80,7 @@ const ListagemMovimentoVeiculo = () => {
         if (response.data.msg.resultado) {
           setEstado(false);
           const newData = response.data.data.map((item) => ({
-            placa: item.placa,
+            placa: item.placa || "—",
             movimento:
               item.acao === "v.add"
                 ? "Veículo Cadastrado"
@@ -90,9 +90,16 @@ const ListagemMovimentoVeiculo = () => {
                 ? "Débito Automático Ativado"
                 : item.acao === "da.rm"
                 ? "Débito Automático Desativado"
+                : item.acao === "ra.add"
+                ? "Recarga Automática Ativada"
+                : item.acao === "ra.rm"
+                ? "Recarga Automática Desativada"
                 : "",
             usuario: item.nome,
-            nomeGerador: item.nome_gerador,
+            nomeGerador:
+              !item.nome_gerador && item.acao?.startsWith("ra.")
+                ? "Sistema"
+                : item.nome_gerador,
             perfilGerador: item.perfil_gerador,
             hora: FixDate(item.hora),
           }));

@@ -212,6 +212,17 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         { value: "Periodo", label: "Período" },
         { value: "Estado", label: "Estado" },
       ]);
+    } else if (nome === "HistoricoRecargaAutomatica") {
+      setOptions([
+        { value: "Data", label: "Data" },
+        { value: "Periodo", label: "Período" },
+      ]);
+    } else if (nome === "ListarLogsRecargaAutomatica") {
+      setOptions([
+        { value: "Data", label: "Data" },
+        { value: "Periodo", label: "Período" },
+        { value: "Nome", label: "Nome" },
+      ]);
     } else if (nome === "HistoricoFinanceiro") {
       setOptions([
         { value: "Data", label: "Data" },
@@ -225,6 +236,7 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
         },
         { value: "Transferencia recebida", label: "Transferência recebida" },
         { value: "Acrescimo de credito", label: "Acréscimo de crédito" },
+        { value: "Recarga automatica", label: "Recarga automática" },
         { value: "credito", label: "Estacionamento" },
       ]);
     } else if (nome === "HistoricoFinanceiroParceiro") {
@@ -634,6 +646,9 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                           <Grid.Col span={12}>
                             <Radio value="cartao" label="Cartão" />
                           </Grid.Col>
+                          <Grid.Col span={12}>
+                            <Radio value="recarga_automatica" label="Recarga automática" />
+                          </Grid.Col>
                         </Grid>
                       </Radio.Group>
                     </div>
@@ -684,6 +699,9 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                             </Grid.Col>
                             <Grid.Col span={12}>
                               <Radio value="cartao" label="Cartão" />
+                            </Grid.Col>
+                            <Grid.Col span={12}>
+                              <Radio value="recarga_automatica" label="Recarga automática" />
                             </Grid.Col>
                           </Grid>
                         </Radio.Group>
@@ -809,6 +827,9 @@ const Filtro = ({ nome, onConsultaSelected, onLoading }) => {
                                       </Grid.Col>
                                       <Grid.Col span={12}>
                                         <Radio value="cartao" label="Cartão" />
+                                      </Grid.Col>
+                                      <Grid.Col span={12}>
+                                        <Radio value="recarga_automatica" label="Recarga automática" />
                                       </Grid.Col>
                                     </Grid>
                                   </Radio.Group>

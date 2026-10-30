@@ -65,6 +65,9 @@ import ListaInfracoesPendentesRemocao from '../../components/ListaInfracoesPende
 import ListarNotificacoesVaga from '../../components/ListarNotificacoesVaga.jsx';
 import ListarLogsDebitoAuto from '../../components/ListarLogsDebitoAuto.jsx';
 import ListarLogsRegularizacaoSaldo from '../../components/ListarLogsRegularizacaoSaldo.jsx';
+import RecargaAutomatica from '../../components/RecargaAutomatica.jsx';
+import HistoricoRecargaAutomatica from '../../components/HistoricoRecargaAutomatica.jsx';
+import ListarLogsRecargaAutomatica from '../../components/ListarLogsRecargaAutomatica.jsx';
 import AdicionarMensagem from '../../components/AdicionarMensagem.jsx';
 import GerenciarCaixa from '../../components/GerenciarCaixa';
 import ImprimirCaixa from '../../components/ImprimirFechamento';
@@ -136,6 +139,9 @@ const componentesMap = {
     ListarNotificacoesVaga: <ListarNotificacoesVaga />,
     ListarLogsDebitoAuto: <ListarLogsDebitoAuto />,
     ListarLogsRegularizacaoSaldo: <ListarLogsRegularizacaoSaldo />,
+    RecargaAutomatica: <RecargaAutomatica />,
+    HistoricoRecargaAutomatica: <HistoricoRecargaAutomatica />,
+    ListarLogsRecargaAutomatica: <ListarLogsRecargaAutomatica />,
     AdicionarMensagem: <AdicionarMensagem />,
     GerenciarCaixa: <GerenciarCaixa />,
     ImprimirCaixa: <ImprimirCaixa />,
