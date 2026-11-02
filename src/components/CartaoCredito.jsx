@@ -263,8 +263,13 @@ const CartaoCredito = () => {
         .then((resposta) => {
           setLoadingButton(false);
           if (resposta.data.msg.resultado) {
-            FuncTrocaComp("InserirCreditos");
-            localStorage.setItem("cartaoCredito", "true");
+            const destino = localStorage.getItem("componenteAnterior") === "RecargaAutomatica"
+              ? "RecargaAutomatica"
+              : "InserirCreditos";
+            if (destino === "InserirCreditos") {
+              localStorage.setItem("cartaoCredito", "true");
+            }
+            FuncTrocaComp(destino);
           } else {
             if (resposta.data.msg.msg === "Cartão já cadastrado!") {
               setRespostaAPI(resposta.data.msg.msg);

@@ -22,12 +22,14 @@ import {
 import { BsConeStriped, BsCashCoin, BsFileEarmarkArrowDown } from "react-icons/bs";
 import {
   MdAddLocationAlt,
+  MdAutorenew,
   MdCarCrash,
   MdHelp,
   MdOutlineSubdirectoryArrowRight,
 } from "react-icons/md";
 import { RiSettings5Fill, RiFileAddFill } from "react-icons/ri";
 import { useState, useEffect } from "react";
+import { EVENTO_DEBITO_AUTOMATICO_ALTERADO, consultarAcessoRecarga } from "../util/recargaAutomatica";
 import { BiLogOut, BiSearchAlt, BiTransfer} from "react-icons/bi";
 import {
   AiFillEdit,
@@ -51,6 +53,35 @@ const Sidebar = () => {
   const teste = JSON.parse(nome);
   const [mostrarSidebar, setMostrarSidebar] = useState(true);
   const [ariaExpanded, setAriaExpanded] = useState(false);
+  const [acessoRecarga, setAcessoRecarga] = useState({ acesso: false, historico: false });
+  const perfilAtual = teste?.perfil?.[0];
+
+  useEffect(() => {
+    if (perfilAtual !== "cliente") {
+      return undefined;
+    }
+    let ativo = true;
+    let tentativas = 0;
+    let temporizador = null;
+    const atualizarRecarga = () => {
+      clearTimeout(temporizador);
+      consultarAcessoRecarga().then((resultado) => {
+        if (!ativo) return;
+        setAcessoRecarga(resultado);
+        if (resultado.falhou && tentativas < 5) {
+          tentativas += 1;
+          temporizador = setTimeout(atualizarRecarga, 30000);
+        }
+      });
+    };
+    atualizarRecarga();
+    window.addEventListener(EVENTO_DEBITO_AUTOMATICO_ALTERADO, atualizarRecarga);
+    return () => {
+      ativo = false;
+      clearTimeout(temporizador);
+      window.removeEventListener(EVENTO_DEBITO_AUTOMATICO_ALTERADO, atualizarRecarga);
+    };
+  }, [perfilAtual]);
 
   const toggleSidebar = (componente) => {
     setAriaExpanded(false);
@@ -167,6 +198,12 @@ const Sidebar = () => {
           { icon: <BsCashCoin />, name: "‎ Financeiro",
               subitem: [
                   { icon: <BsCashCoin />, name: "‎ Adicionar Créditos", componente: "InserirCreditos", className: commonStyles },
+                  ...(acessoRecarga.acesso
+                    ? [{ icon: <MdAutorenew />, name: "‎ Recarga Automática", componente: "RecargaAutomatica", className: commonStyles }]
+                    : []),
+                  ...(acessoRecarga.historico
+                    ? [{ icon: <FaHistory />, name: "‎ Histórico Recarga", componente: "HistoricoRecargaAutomatica", className: commonStyles }]
+                    : []),
                   { icon: <BiTransfer />, name: "‎ Transferir Créditos", componente: "TransferirCreditoCliente", className: commonStyles },
                   { icon: <TbReportSearch />, name: "‎ Histórico", componente: "HistoricoFinanceiro", className: commonStyles },
               ]
@@ -192,6 +229,7 @@ const Sidebar = () => {
               { icon: <AiOutlineClockCircle />, name: "‎ Vagas Inativas", componente: "VagasInativasAdmin", className: commonStyles },
               { icon: <FaRegChartBar />, name: "‎ Movimentos", componente: "ListarMovimentosAdmin", className: commonStyles },
               { icon: <MdCarCrash />, name: "‎ Registro Débito", componente: "ListarLogsDebitoAuto", className: commonStyles },
+              { icon: <MdAutorenew />, name: "‎ Recarga Automática", componente: "ListarLogsRecargaAutomatica", className: commonStyles },
               { icon: <TbReportMoney />, name: "‎ Log Regularização", componente: "ListarLogsRegularizacaoSaldo", className: commonStyles },
               { icon: <FaChalkboardTeacher />, name: "‎ Ações Movimentos", componente: "ListarLogsMovimentosAdmin", className: commonStyles },
               { icon: <FaCar />, name: "‎ Veículos", componente: "ListagemMovimentoVeiculo", className: commonStyles },

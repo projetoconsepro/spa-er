@@ -51,9 +51,9 @@ todosOsArquivos(SRC).forEach((f) => {
 });
 
 describe('M02 · mapa de telas', () => {
-  test('M02-08 · o mapa tem 70 entradas e importa as 70 telas de uma vez', () => {
-    expect(chavesDoMapa.size).toBe(70);
-    expect((fonteComponentes.match(/^import /gm) || []).length).toBe(71);
+  test('M02-08 · o mapa tem 73 entradas e importa as 73 telas de uma vez', () => {
+    expect(chavesDoMapa.size).toBe(73);
+    expect((fonteComponentes.match(/^import /gm) || []).length).toBe(74);
     expect(fonteComponentes).not.toMatch(/React\.lazy|import\(/);
     // Sem divisão de código: o cliente baixa as telas de admin e a monitora
     // baixa as do parceiro, toda vez.
@@ -112,7 +112,7 @@ describe('M02 · mapa de telas', () => {
     // uma monitora abre o do cliente. Nenhum é fechado.
   });
 
-  test('M02-08 · o pacote inclui praticamente todo o código-fonte: 125 dos 126 arquivos', () => {
+  test('M02-08 · o pacote inclui praticamente todo o código-fonte: 136 dos 137 arquivos', () => {
     // Alcance a partir de src/index.js, seguindo imports relativos.
     const resolver = (base, rel) => {
       const p = path.resolve(path.dirname(base), rel);
@@ -134,8 +134,8 @@ describe('M02 · mapa de telas', () => {
     const fonte = todosOsArquivos(SRC).filter((f) => !f.includes('testes-caracterizacao'));
     const mortos = fonte.filter((f) => !vistos.has(f)).map((f) => path.relative(SRC, f).split(path.sep).join('/'));
 
-    expect(fonte.length).toBe(126);
-    expect(fonte.length - mortos.length).toBe(125);
+    expect(fonte.length).toBe(137);
+    expect(fonte.length - mortos.length).toBe(136);
     expect(mortos).toEqual(['util/Paginacao.jsx']);
     // Um único pacote: todo perfil baixa as telas de todos os outros.
   });
