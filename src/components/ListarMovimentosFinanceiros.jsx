@@ -9,6 +9,11 @@ import { ArrumaHora } from '../util/ArrumaHora';
 import createAPI from "../services/createAPI";
 import jsPDF from 'jspdf';
 
+const ROTULO_TIPO = {
+  cartao: "Cartão",
+  recarga_automatica: "Recarga automática",
+};
+
 const ListarMovimentosFinanceiros = () => {
   const [estado, setEstado] = useState(false);
   const [estado2, setEstado2] = useState(false);
@@ -184,7 +189,7 @@ const ListarMovimentosFinanceiros = () => {
         ArrumaHora(item.data),
         item.usuario.charAt(0).toUpperCase() + item.usuario.slice(1),
         item.perfil.charAt(0).toUpperCase() + item.perfil.slice(1),
-        item.tipo.replace('cartao', 'cartão').charAt(0).toUpperCase() + item.tipo.slice(1),
+        ROTULO_TIPO[item.tipo] || item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1),
         `R$ ${formatNumero(item.valor)}`,
       ]);
     });
@@ -300,7 +305,7 @@ const ListarMovimentosFinanceiros = () => {
                             <td id="tabelaUsuarios">{item.usuario.charAt(0).toUpperCase() + item.usuario.slice(1)}</td>
                             <td id="tabelaUsuarios">{item.perfil.charAt(0).toUpperCase() + item.perfil.slice(1)}</td>
                             <td id="tabelaUsuarios">
-                              {item.tipo === 'cartao' ? 'Cartão' : item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1)}
+                              {ROTULO_TIPO[item.tipo] || item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1)}
                             </td>
                             <td id="tabelaUsuarios">{`R$ ${parseFloat(item.valor).toFixed(2)}`}</td>
 

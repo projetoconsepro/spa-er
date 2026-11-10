@@ -6,6 +6,7 @@ import {
   IconEdit,
   IconCalendar,
   IconClock,
+  IconRefresh,
 } from "@tabler/icons-react";
 import {
   Accordion,
@@ -21,6 +22,7 @@ import {
   rem,
 } from "@mantine/core";
 import createAPI from "../services/createAPI";
+import ParametrosRecargaAutomatica from "./ParametrosRecargaAutomatica";
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
@@ -727,6 +729,21 @@ const EditarParametroAdmin = () => {
             </div>
           </Accordion.Panel>
         </Accordion.Item>
+        {data.recargaAutomatica ? (
+          <Accordion.Item value="recargaAutomatica">
+            <Accordion.Control icon={<IconRefresh size={rem(20)} color="#12B886" />}>
+              Parâmetros recarga automática
+            </Accordion.Control>
+            <Accordion.Panel>
+              <ParametrosRecargaAutomatica
+                parametros={data.recargaAutomatica}
+                onSalvo={(recargaAutomatica) =>
+                  setData((anterior) => ({ ...anterior, recargaAutomatica }))
+                }
+              />
+            </Accordion.Panel>
+          </Accordion.Item>
+        ) : null}
       </Accordion>
     </div>
   );
