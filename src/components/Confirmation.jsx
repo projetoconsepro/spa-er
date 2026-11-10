@@ -18,11 +18,8 @@ const Confirmation = () => {
     const veiculo = axios.create({
       baseURL: process.env.REACT_APP_HOST,
     });
-    const email = localStorage.getItem("email") ?? "";
     veiculo
-      .get(
-        `/verificar?codigo=${encodeURIComponent(codigo)}&email=${encodeURIComponent(email)}`
-      )
+      .get(`/verificar?codigo=${codigo}`)
       .then((response) => {
         const resposta = response.data.msg.resultado;
         if (resposta === false) {
@@ -32,8 +29,8 @@ const Confirmation = () => {
             setEstado(false);
           }, 5000);
         } else {
-          // O e-mail fica guardado até a troca: a nova senha vai com ele e o código.
           localStorage.setItem("codigoConfirm", codigo);
+          localStorage.removeItem("email");
           FuncTrocaComp("NewPassword");
         }
       })

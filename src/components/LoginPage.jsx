@@ -40,8 +40,6 @@ const LoginPage = () => {
 
   useEffect(() => {
     localStorage.removeItem("SenhaDefault");
-    localStorage.removeItem("tokenSenhaDefault");
-    localStorage.removeItem("perfilSenhaDefault");
     localStorage.removeItem("id_usuario");
     localStorage.removeItem("componenteAnterior");
   }, []);
