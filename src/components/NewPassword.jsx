@@ -43,20 +43,10 @@ const NewPassword = () => {
       });
       if (localStorage.getItem("SenhaDefault") === "true") {
         veiculo
-          .post(
-            "/usuario/senha",
-            {
-              senha: password,
-              id_usuario: localStorage.getItem("id_usuario"),
-            },
-            {
-              headers: {
-                token: localStorage.getItem("tokenSenhaDefault"),
-                id_usuario: localStorage.getItem("id_usuario"),
-                perfil_usuario: localStorage.getItem("perfilSenhaDefault"),
-              },
-            }
-          )
+          .post("/usuario/senha", {
+            senha: password,
+            id_usuario: localStorage.getItem("id_usuario"),
+          })
           .then((response) => {
             const resposta = response.data.msg.resultado;
             if (resposta === false) {
@@ -68,8 +58,6 @@ const NewPassword = () => {
               }, 4000);
             } else {
               localStorage.removeItem("codigoConfirm");
-              localStorage.removeItem("tokenSenhaDefault");
-              localStorage.removeItem("perfilSenhaDefault");
               FuncTrocaComp("LoginPage");
             }
           })
@@ -95,7 +83,6 @@ const NewPassword = () => {
         veiculo
           .post("/usuario/senha", {
             codigo_seguranca: codigoConfirm,
-            email: localStorage.getItem("email"),
             senha: password,
             ...(cell !== 'Não cadastrado' ? { telefone: cell } : {})
           })
@@ -112,7 +99,6 @@ const NewPassword = () => {
               localStorage.removeItem("codigoConfirm");
               localStorage.removeItem("SenhaDefault");
               localStorage.removeItem("telefone");
-              localStorage.removeItem("email");
               FuncTrocaComp("LoginPage");
             }
           })
