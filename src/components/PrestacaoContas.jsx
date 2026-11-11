@@ -458,8 +458,6 @@ const PrestacaoContas = () => {
       },
     });
 
-    /////////////////////////////////////////////////////////////////////////////////
-
     const resumoData = [
       [{ content: "Resumo", colSpan: 5 }],
       ["Receita", "Dinheiro", "Pix", "Cartão", "Total"],
@@ -552,8 +550,6 @@ const PrestacaoContas = () => {
       theme: "grid",
     });
 
-    ////////////////////////////////////////////////////
-
     const totalPages = doc.internal.getNumberOfPages(); // Obtém o total de páginas
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
@@ -569,6 +565,14 @@ const PrestacaoContas = () => {
     doc.save(`Relatório de Prestação de Contas ${dataFiltrada}.pdf`);
   };
 
+  /**
+   * Consulta a API e prepara os dados para exibição.
+   * Garante que todos os perfis (Monitor, Parceiro, Aplicativo, Avulso, Chatbot)
+   * sempre tenham pelo menos uma linha do perfil e uma linha "Total" zerada,
+   * mesmo se não houver movimentos.
+   * Também protege contra erros de acesso a propriedades de arrays nulos/undefined.
+   * @param {string} consulta - String JSON com os filtros da consulta
+   */
   const handleConsulta = (consulta) => {
     setDataFiltrada("");
     setEstado2(false);
@@ -612,315 +616,173 @@ const PrestacaoContas = () => {
           setEstadoLoading(false);
           setEstado(true);
           setData(res.data.data);
-          let newData = [];
-          const monitoresArray = res.data.data[0].monitor;
-          if (monitoresArray.length === 1 && monitoresArray[0].total) {
-            newData.push({
-              perfil: "Monitor",
-              nome: "",
-              totalRegularizacao: 0,
-              totalEstacionamento: 0,
-              totalRecarga: 0,
-              finalTotal: 0,
+
+          /**
+           * Normaliza os dados de um perfil para garantir que sempre haja pelo menos
+           * uma linha do perfil e uma linha "Total" (ambas zeradas se não houver movimentos).
+           * Também garante que, se vier apenas o total, o perfil aparece zerado antes.
+           * @param {Array} array - Array de dados do perfil vindo da API
+           * @param {string} perfilNome - Nome do perfil (ex: "Monitor")
+           * @returns {Array} Array normalizado para exibição na tabela
+           */
+          function normalizarCategoria(array, perfilNome) {
+            // Se não vier array ou vier vazio, retorna perfil e total zerado
+            if (!Array.isArray(array) || array.length === 0) {
+              return [
+                {
+                  perfil: perfilNome,
+                  nome: null,
+                  totalRegularizacao: 0,
+                  totalEstacionamento: 0,
+                  totalRecarga: 0,
+                  finalTotal: 0,
+                },
+                {
+                  perfil: "Total",
+                  nome: null,
+                  totalRegularizacao: 0,
+                  totalEstacionamento: 0,
+                  totalRecarga: 0,
+                  finalTotal: 0,
+                },
+              ];
+            }
+
+            // Se vier só o total, retorna perfil zerado e o total
+            if (
+              array.length === 1 &&
+              array[0].total &&
+              !array[0].nome &&
+              !array[0].Regularizacao
+            ) {
+              return [
+                {
+                  perfil: perfilNome,
+                  nome: null,
+                  totalRegularizacao: 0,
+                  totalEstacionamento: 0,
+                  totalRecarga: 0,
+                  finalTotal: 0,
+                },
+                {
+                  perfil: "Total",
+                  nome: null,
+                  totalRegularizacao:
+                    array[0].total.Regularizacao?.TotalValor ?? 0,
+                  totalEstacionamento:
+                    array[0].total.estacionamento?.TotalValor ?? 0,
+                  totalRecarga:
+                    array[0].total.creditosInseridos?.TotalValor ?? 0,
+                  finalTotal: array[0].total.finalTotal?.TotalValor ?? 0,
+                },
+              ];
+            }
+
+            // Caso normal: mapeia os itens e o total
+            let mapped = array.map((item) => {
+              if (item.total) {
+                return {
+                  perfil: "Total",
+                  nome: null,
+                  totalRegularizacao: item.total.Regularizacao?.TotalValor ?? 0,
+                  totalEstacionamento:
+                    item.total.estacionamento?.TotalValor ?? 0,
+                  totalRecarga: item.total.creditosInseridos?.TotalValor ?? 0,
+                  finalTotal: item.total.finalTotal?.TotalValor ?? 0,
+                };
+              }
+              return {
+                perfil: perfilNome,
+                nome: item.nome ?? null,
+                totalRegularizacao: item.Regularizacao?.TotalValor ?? 0,
+                totalEstacionamento: item.estacionamento?.TotalValor ?? 0,
+                totalRecarga: item.creditosInseridos?.TotalValor ?? 0,
+                finalTotal: item.finalTotal?.TotalValor ?? 0,
+              };
             });
+
+            // Se não veio total, adiciona total zerado
+            if (!mapped.some((item) => item.perfil === "Total")) {
+              mapped.push({
+                perfil: "Total",
+                nome: null,
+                totalRegularizacao: 0,
+                totalEstacionamento: 0,
+                totalRecarga: 0,
+                finalTotal: 0,
+              });
+            }
+
+            return mapped;
           }
-          newData = newData.concat(
-            monitoresArray
-              .map((item) => {
-                if (item) {
-                  if (item.total) {
-                    const perfil = "Total";
-                    const nome = "";
-                    const totalRegularizacao =
-                      item.total.Regularizacao.TotalValor;
-                    const totalEstacionamento =
-                      item.total.estacionamento.TotalValor;
-                    const totalRecarga =
-                      item.total.creditosInseridos.TotalValor;
-                    const finalTotal = item.total.finalTotal.TotalValor;
-                    return {
-                      perfil,
-                      nome,
-                      totalRegularizacao,
-                      totalEstacionamento,
-                      totalRecarga,
-                      finalTotal,
-                    };
-                  }
-                  const perfil = "Monitor";
-                  const nome = item.nome || "";
-                  const totalRegularizacao = item.Regularizacao
-                    ? item.Regularizacao.TotalValor
-                    : null;
-                  const totalEstacionamento = item.estacionamento
-                    ? item.estacionamento.TotalValor
-                    : null;
-                  const totalRecarga = item.creditosInseridos
-                    ? item.creditosInseridos.TotalValor
-                    : null;
-                  const finalTotal = item.finalTotal
-                    ? item.finalTotal.TotalValor
-                    : null;
-                  return {
-                    perfil,
-                    nome,
-                    totalRegularizacao,
-                    totalEstacionamento,
-                    totalRecarga,
-                    finalTotal,
-                  };
-                }
-              })
-              .filter(Boolean)
-          );
 
-          let newData2 = [];
-          const parceirosArray = res.data.data[0].parceiro;
-          if (parceirosArray.length === 1 && parceirosArray[0].total) {
-            newData2.push({
-              perfil: "Parceiro",
-              nome: "",
-              totalRegularizacao: 0,
-              totalEstacionamento: 0,
-              totalRecarga: 0,
-              finalTotal: 0,
-            });
-          }
-          newData2 = newData2.concat(
-            parceirosArray.map((item) => {
-              if (item) {
-                if (item.total) {
-                  const perfil = "Total";
-                  const nome = "";
-                  const totalRegularizacao =
-                    item.total.Regularizacao.TotalValor;
-                  const totalEstacionamento =
-                    item.total.estacionamento.TotalValor;
-                  const totalRecarga = item.total.creditosInseridos.TotalValor;
-                  const finalTotal = item.total.finalTotal.TotalValor;
-                  return {
-                    perfil,
-                    nome,
-                    totalRegularizacao,
-                    totalEstacionamento,
-                    totalRecarga,
-                    finalTotal,
-                  };
-                }
-                const perfil = "Parceiro";
-                const nome = item.nome || "";
-                const totalRegularizacao = item.Regularizacao
-                  ? item.Regularizacao.TotalValor
-                  : null;
-                const totalEstacionamento = item.estacionamento
-                  ? item.estacionamento.TotalValor
-                  : null;
-                const totalRecarga = item.creditosInseridos
-                  ? item.creditosInseridos.TotalValor
-                  : null;
-                const finalTotal = item.finalTotal
-                  ? item.finalTotal.TotalValor
-                  : null;
-                return {
-                  perfil,
-                  nome,
-                  totalRegularizacao,
-                  totalEstacionamento,
-                  totalRecarga,
-                  finalTotal,
-                };
-              }
-            })
-            .filter(Boolean)
-          );
+          const data0 = res.data.data[0] || {};
+          const monitorArr = Array.isArray(data0.monitor) ? data0.monitor : [];
+          const parceiroArr = Array.isArray(data0.parceiro)
+            ? data0.parceiro
+            : [];
+          const aplicativoArr = Array.isArray(data0.aplicativo)
+            ? data0.aplicativo
+            : [];
+          const avulsoArr = Array.isArray(data0.avulso) ? data0.avulso : [];
+          const chatbotArr = Array.isArray(data0.chatbot) ? data0.chatbot : [];
 
-          const newData3 = res.data.data[0].aplicativo.map((item) => {
-            if (item) {
-              if (item.total) {
-                const perfil = "Total";
-                const nome = "";
-                const totalRegularizacao = item.total.Regularizacao.TotalValor;
-                const totalEstacionamento =
-                  item.total.estacionamento.TotalValor;
-                const totalRecarga = item.total.creditosInseridos.TotalValor;
-                const finalTotal = item.total.finalTotal.TotalValor;
-                return {
-                  perfil,
-                  nome,
-                  totalRegularizacao,
-                  totalEstacionamento,
-                  totalRecarga,
-                  finalTotal,
-                };
-              }
-              const perfil = "Aplicativo";
-              const nome = "";
-              const totalRegularizacao = item.Regularizacao
-                ? item.Regularizacao.TotalValor
-                : null;
-              const totalEstacionamento = item.estacionamento
-                ? item.estacionamento.TotalValor
-                : null;
-              const totalRecarga = item.creditosInseridos
-                ? item.creditosInseridos.TotalValor
-                : null;
-              const finalTotal = item.finalTotal
-                ? item.finalTotal.TotalValor
-                : null;
-              return {
-                perfil,
-                nome,
-                totalRegularizacao,
-                totalEstacionamento,
-                totalRecarga,
-                finalTotal,
-              };
-            }
-          });
+          let newData = normalizarCategoria(monitorArr, "Monitor");
+          const newData2 = normalizarCategoria(parceiroArr, "Parceiro");
+          const newData3 = normalizarCategoria(aplicativoArr, "Aplicativo");
+          const newData5 = normalizarCategoria(avulsoArr, "Avulso");
+          const newData6 = normalizarCategoria(chatbotArr, "Chatbot");
 
-          const newData5 = res.data.data[0].avulso.map((item) => {
-            if (item) {
-              if (item.total) {
-                const perfil = "Total";
-                const nome = "";
-                const totalRegularizacao = item.total.Regularizacao.TotalValor;
-                const totalEstacionamento =
-                  item.total.estacionamento.TotalValor;
-                const totalRecarga = item.total.creditosInseridos.TotalValor;
-                const finalTotal = item.total.finalTotal.TotalValor;
-                return {
-                  perfil,
-                  nome,
-                  totalRegularizacao,
-                  totalEstacionamento,
-                  totalRecarga,
-                  finalTotal,
-                };
-              }
-              const perfil = "Avulso";
-              const nome = "";
-              const totalRegularizacao = item.Regularizacao
-                ? item.Regularizacao.TotalValor
-                : null;
-              const totalEstacionamento = item.estacionamento
-                ? item.estacionamento.TotalValor
-                : null;
-              const totalRecarga = item.creditosInseridos
-                ? item.creditosInseridos.TotalValor
-                : null;
-              const finalTotal = item.finalTotal
-                ? item.finalTotal.TotalValor
-                : null;
-              return {
-                perfil,
-                nome,
-                totalRegularizacao,
-                totalEstacionamento,
-                totalRecarga,
-                finalTotal,
-              };
-            }
-          });
-
-          const newData6 = res.data.data[0].chatbot.map((item) => {
-            if (item) {
-              if (item.total) {
-                const perfil = "Total";
-                const nome = "";
-                const totalRegularizacao = item.total.Regularizacao.TotalValor;
-                const totalEstacionamento =
-                  item.total.estacionamento.TotalValor;
-                const totalRecarga = item.total.creditosInseridos.TotalValor;
-                const finalTotal = item.total.finalTotal.TotalValor;
-                return {
-                  perfil,
-                  nome,
-                  totalRegularizacao,
-                  totalEstacionamento,
-                  totalRecarga,
-                  finalTotal,
-                };
-              }
-              const perfil = "Chatbot";
-              const nome = "";
-              const totalRegularizacao = item.Regularizacao
-                ? item.Regularizacao.TotalValor
-                : null;
-              const totalEstacionamento = item.estacionamento
-                ? item.estacionamento.TotalValor
-                : null;
-              const totalRecarga = item.creditosInseridos
-                ? item.creditosInseridos.TotalValor
-                : null;
-              const finalTotal = item.finalTotal
-                ? item.finalTotal.TotalValor
-                : null;
-              return {
-                perfil,
-                nome,
-                totalRegularizacao,
-                totalEstacionamento,
-                totalRecarga,
-                finalTotal,
-              };
-            }
-          });
-
-          const iParceiro = res.data.data[0].parceiro.length - 1;
-          const iMonitor = res.data.data[0].monitor.length - 1;
-          const iAplicativo = res.data.data[0].aplicativo.length - 1;
-          const iAvulso = res.data.data[0].avulso.length - 1;
-          const iChatbot = res.data.data[0].chatbot.length - 1;
+          // Total geral
+          const iParceiro = parceiroArr.length > 0 ? parceiroArr.length - 1 : 0;
+          const iMonitor = monitorArr.length > 0 ? monitorArr.length - 1 : 0;
+          const iAplicativo =
+            aplicativoArr.length > 0 ? aplicativoArr.length - 1 : 0;
+          const iAvulso = avulsoArr.length > 0 ? avulsoArr.length - 1 : 0;
+          const iChatbot = chatbotArr.length > 0 ? chatbotArr.length - 1 : 0;
 
           const newData4 = {
-            nome: "",
+            nome: null,
             perfil: "Total geral",
             totalRegularizacao:
-              res.data.data[0].parceiro[iParceiro].total.Regularizacao
-                .TotalValor +
-              res.data.data[0].monitor[iMonitor].total.Regularizacao
-                .TotalValor +
-              res.data.data[0].aplicativo[iAplicativo].total.Regularizacao
-                .TotalValor +
-              res.data.data[0].avulso[iAvulso].total.Regularizacao.TotalValor +
-              res.data.data[0].chatbot[iChatbot].total.Regularizacao.TotalValor,
+              (parceiroArr[iParceiro]?.total?.Regularizacao?.TotalValor ?? 0) +
+              (monitorArr[iMonitor]?.total?.Regularizacao?.TotalValor ?? 0) +
+              (aplicativoArr[iAplicativo]?.total?.Regularizacao?.TotalValor ??
+                0) +
+              (avulsoArr[iAvulso]?.total?.Regularizacao?.TotalValor ?? 0) +
+              (chatbotArr[iChatbot]?.total?.Regularizacao?.TotalValor ?? 0),
             totalEstacionamento:
-              res.data.data[0].parceiro[iParceiro].total.estacionamento
-                .TotalValor +
-              res.data.data[0].monitor[iMonitor].total.estacionamento
-                .TotalValor +
-              res.data.data[0].aplicativo[iAplicativo].total.estacionamento
-                .TotalValor +
-              res.data.data[0].avulso[iAvulso].total.estacionamento.TotalValor +
-              res.data.data[0].chatbot[iChatbot].total.estacionamento
-                .TotalValor,
+              (parceiroArr[iParceiro]?.total?.estacionamento?.TotalValor ?? 0) +
+              (monitorArr[iMonitor]?.total?.estacionamento?.TotalValor ?? 0) +
+              (aplicativoArr[iAplicativo]?.total?.estacionamento?.TotalValor ??
+                0) +
+              (avulsoArr[iAvulso]?.total?.estacionamento?.TotalValor ?? 0) +
+              (chatbotArr[iChatbot]?.total?.estacionamento?.TotalValor ?? 0),
             totalRecarga:
-              res.data.data[0].parceiro[iParceiro].total.creditosInseridos
-                .TotalValor +
-              res.data.data[0].monitor[iMonitor].total.creditosInseridos
-                .TotalValor +
-              res.data.data[0].aplicativo[iAplicativo].total.creditosInseridos
-                .TotalValor +
-              res.data.data[0].avulso[iAvulso].total.creditosInseridos
-                .TotalValor +
-              res.data.data[0].chatbot[iChatbot].total.creditosInseridos
-                .TotalValor,
+              (parceiroArr[iParceiro]?.total?.creditosInseridos?.TotalValor ??
+                0) +
+              (monitorArr[iMonitor]?.total?.creditosInseridos?.TotalValor ??
+                0) +
+              (aplicativoArr[iAplicativo]?.total?.creditosInseridos
+                ?.TotalValor ?? 0) +
+              (avulsoArr[iAvulso]?.total?.creditosInseridos?.TotalValor ?? 0) +
+              (chatbotArr[iChatbot]?.total?.creditosInseridos?.TotalValor ?? 0),
             finalTotal:
-              res.data.data[0].parceiro[iParceiro].total.finalTotal.TotalValor +
-              res.data.data[0].monitor[iMonitor].total.finalTotal.TotalValor +
-              res.data.data[0].aplicativo[iAplicativo].total.finalTotal
-                .TotalValor +
-              res.data.data[0].avulso[iAvulso].total.finalTotal.TotalValor +
-              res.data.data[0].chatbot[iChatbot].total.finalTotal.TotalValor,
+              (parceiroArr[iParceiro]?.total?.finalTotal?.TotalValor ?? 0) +
+              (monitorArr[iMonitor]?.total?.finalTotal?.TotalValor ?? 0) +
+              (aplicativoArr[iAplicativo]?.total?.finalTotal?.TotalValor ?? 0) +
+              (avulsoArr[iAvulso]?.total?.finalTotal?.TotalValor ?? 0) +
+              (chatbotArr[iChatbot]?.total?.finalTotal?.TotalValor ?? 0),
           };
 
-          newData = newData.concat(
-            newData2,
-            newData3,
-            newData5,
-            newData6,
-            newData4
-          );
+          newData = [
+            ...newData,
+            ...newData2,
+            ...newData3,
+            ...newData5,
+            ...newData6,
+            newData4,
+          ];
           setData2(newData);
         } else {
           setData([]);
@@ -1083,25 +945,8 @@ const PrestacaoContas = () => {
                                 }
                                 id="tabelaUsuarios"
                               >
-                                {" "}
-                                {item.perfil}{" "}
+                                {item.perfil}
                               </th>
-                              {item.nome !== undefined ? (
-                                <td
-                                  className={
-                                    item.perfil === "Total" ||
-                                    item.perfil === "Total geral"
-                                      ? "fw-bolder col"
-                                      : "col"
-                                  }
-                                  scope="row"
-                                  id="tabelaUsuarios"
-                                >
-                                  {item.nome.length > 14
-                                    ? item.nome.substring(0, 14) + "..."
-                                    : item.nome}
-                                </td>
-                              ) : null}
                               <td
                                 className={
                                   item.perfil === "Total" ||
@@ -1109,10 +954,17 @@ const PrestacaoContas = () => {
                                     ? "fw-bolder col"
                                     : "col"
                                 }
-                                id="tabelaUsuarios2"
+                                scope="row"
+                                id="tabelaUsuarios"
                               >
-                                {" "}
-                                {formatNumero(item.totalRegularizacao)}{" "}
+                                {["Avulso", "Chatbot", "Aplicativo"].includes(
+                                  item.perfil
+                                )
+                                  ? ""
+                                  : typeof item.nome === "string" &&
+                                    item.nome.length > 14
+                                  ? item.nome.substring(0, 14) + "..."
+                                  : item.nome || ""}
                               </td>
                               <td
                                 className={
@@ -1123,8 +975,7 @@ const PrestacaoContas = () => {
                                 }
                                 id="tabelaUsuarios2"
                               >
-                                {" "}
-                                {formatNumero(item.totalEstacionamento)}{" "}
+                                {formatNumero(item.totalRegularizacao)}
                               </td>
                               <td
                                 className={
@@ -1135,8 +986,18 @@ const PrestacaoContas = () => {
                                 }
                                 id="tabelaUsuarios2"
                               >
-                                {" "}
-                                {formatNumero(item.totalRecarga)}{" "}
+                                {formatNumero(item.totalEstacionamento)}
+                              </td>
+                              <td
+                                className={
+                                  item.perfil === "Total" ||
+                                  item.perfil === "Total geral"
+                                    ? "fw-bolder col"
+                                    : "col"
+                                }
+                                id="tabelaUsuarios2"
+                              >
+                                {formatNumero(item.totalRecarga)}
                               </td>
                               <td
                                 className={
@@ -1147,8 +1008,7 @@ const PrestacaoContas = () => {
                                 }
                                 id="tabelaUsuarios"
                               >
-                                {" "}
-                                {formatNumero(item.finalTotal)}{" "}
+                                {formatNumero(item.finalTotal)}
                               </td>
                             </tr>
                           ) : null
