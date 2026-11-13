@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
 import { AiFillCheckCircle, AiOutlineReload } from "react-icons/ai";
 import { BsCalendarDate, BsFillPersonFill, BsCashCoin, BsConeStriped  } from "react-icons/bs";
@@ -39,6 +39,7 @@ const ListarNotificacoes = () => {
   const [estadoModal, setEstadoModal] = useState("select");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [validacoes, setValidacoes] = useState({});
+  const pixEmEspera = useRef(new Set());
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -75,6 +76,8 @@ const ListarNotificacoes = () => {
             getInfoPix(resposta.data.data.txid, index, data[index]);
             open();
           } else {
+            setButtonLoading(false);
+            Swal.fire({ icon: "info", text: resposta.data.msg.msg });
           }
         })
         .catch((err) => {
@@ -85,6 +88,10 @@ const ListarNotificacoes = () => {
   };
 
   async function getInfoPix(TxId, index, item) {
+    if (pixEmEspera.current.has(TxId)) {
+      return;
+    }
+    pixEmEspera.current.add(TxId);
     const requisicao = createAPI();
     await requisicao
       .put(`/notificacao/pix`, {
@@ -115,6 +122,9 @@ const ListarNotificacoes = () => {
       .catch((err) => {
         setButtonLoading(false);
         setOnOpenError(true);
+      })
+      .finally(() => {
+        pixEmEspera.current.delete(TxId);
       });
   }
 
@@ -237,6 +247,7 @@ const ListarNotificacoes = () => {
 
   const onClose = () => {
     setButtonLoading(false);
+    setOnOpen(false);
   };
 
   const startPlaca = async (placa) => {

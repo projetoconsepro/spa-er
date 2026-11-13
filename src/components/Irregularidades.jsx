@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaClipboardList, FaParking, FaCarAlt } from "react-icons/fa";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { BsCalendarDate, BsCashCoin, BsConeStriped } from "react-icons/bs";
@@ -34,6 +34,7 @@ const Irregularidades = () => {
   const [onOpenError, setOnOpenError] = useState(false);
   const [onCloseError, setOnCloseError] = useState(false);
   const [validacoes, setValidacoes] = useState({});
+  const pixEmEspera = useRef(new Set());
 
   const atualiza = (index) => {
     data[index].estado = !data[index].estado;
@@ -95,6 +96,9 @@ const Irregularidades = () => {
             open();
             setOnOpen(true);
           } else {
+            setLoadingButton(false);
+            Swal.fire({ icon: "info", text: resposta.data.msg.msg });
+            startNotificao();
           }
         })
         .catch((err) => {
@@ -105,6 +109,10 @@ const Irregularidades = () => {
   };
 
   async function getInfoPix(TxId, index) {
+    if (pixEmEspera.current.has(TxId)) {
+      return;
+    }
+    pixEmEspera.current.add(TxId);
     const requisicao = createAPI();
     await requisicao
       .put(`/notificacao/pix`, {
@@ -146,12 +154,16 @@ const Irregularidades = () => {
       .catch((err) => {
         setLoadingButton(false);
         setOnOpenError(true);
+      })
+      .finally(() => {
+        pixEmEspera.current.delete(TxId);
       });
   }
 
 
   const onClose = () => {
     setLoadingButton(false);
+    setOnOpen(false);
   };
 
   const FuncRegularizao = async (idVagaVeiculo, index, pagamento) => {
