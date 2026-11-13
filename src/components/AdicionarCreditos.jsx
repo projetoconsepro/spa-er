@@ -235,6 +235,7 @@ const AdicionarCreditos = () => {
     setValor("");
     if (localStorage.getItem("usuario") !== null) {
       const user = localStorage.getItem("usuario");
+      localStorage.removeItem("usuario");
       setCPF([user]);
     }
   }, []);
