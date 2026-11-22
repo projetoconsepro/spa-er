@@ -463,6 +463,31 @@ export const VagaMonitor = ({
     }
   };
 
+  const botaoAddCreditoHtml = `
+                <button class="btn3 botao bg-success" id="btnAddCredito">
+                  Adicionar créditos
+                </button>
+                `;
+
+  const attachAddCredito = (info) => {
+    const btn = document.getElementById("btnAddCredito");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      if (info?.debito === "Ativo" && info?.cpf) {
+        localStorage.setItem("usuario", info.cpf);
+      } else {
+        localStorage.removeItem("usuario");
+      }
+      Swal.close();
+      FuncTrocaComp("AdicionarCreditos");
+    });
+  };
+
+  const attachAcoesModal = (info) => {
+    attachInfoVeiculoToggle();
+    attachAddCredito(info);
+  };
+
   const estaciona = async (vaga) => {
     localStorage.setItem("numero_vaga", vaga.numero);
     const horaAgoraNew = await horaAgoraFunc();
@@ -497,7 +522,7 @@ export const VagaMonitor = ({
             denyButtonText: "Regularizar",
             denyButtonColor: "#3A58C8",
             footer: `
-                <button class="btn3 botao bg-blue-50" id="ticket">
+                ${botaoAddCreditoHtml}<button class="btn3 botao bg-blue-50" id="ticket">
                 Extrato de placa
                 </button>
                 `,
@@ -509,7 +534,7 @@ export const VagaMonitor = ({
               FuncTrocaComp("ListarNotificacoes");
             }
           });
-          attachInfoVeiculoToggle();
+          attachAcoesModal(infoVeiculo);
 
           const btnFooter2 = document.getElementById("ticket");
           btnFooter2.addEventListener("click", function () {
@@ -530,7 +555,7 @@ export const VagaMonitor = ({
                 <button class="btn3 botao bg-green-50 mx-2" id="btnFooter">
                   Adicionar tempo
                 </button>
-                <button class="btn3 botao bg-blue-50" id="ticket">
+                ${botaoAddCreditoHtml}<button class="btn3 botao bg-blue-50" id="ticket">
                   Extrato de placa
                 </button>
                 `,
@@ -543,7 +568,7 @@ export const VagaMonitor = ({
               FuncTrocaComp("Notificacao");
             }
           });
-          attachInfoVeiculoToggle();
+          attachAcoesModal(infoVeiculo);
 
           const btnFooter2 = document.getElementById("ticket");
           btnFooter2.addEventListener("click", function () {
@@ -573,7 +598,7 @@ export const VagaMonitor = ({
           denyButtonText: `Debitar`,
           denyButtonColor: "green",
           footer: `
-              <button class="btn3 botao bg-blue-50" id="ticket">
+              ${botaoAddCreditoHtml}<button class="btn3 botao bg-blue-50" id="ticket">
               Extrato de placa
               </button>
               `,
@@ -599,7 +624,7 @@ export const VagaMonitor = ({
             });
           }
         });
-        attachInfoVeiculoToggle();
+        attachAcoesModal(infoVeiculo);
 
         const btnFooter2 = document.getElementById("ticket");
         btnFooter2.addEventListener("click", function () {
@@ -621,7 +646,7 @@ export const VagaMonitor = ({
               Adicionar tempo
               </button>
               <br />
-              <button class="btn3 botao bg-blue-50" id="ticket">
+              ${botaoAddCreditoHtml}<button class="btn3 botao bg-blue-50" id="ticket">
               Extrato de placa
               </button>
               `,
@@ -636,7 +661,7 @@ export const VagaMonitor = ({
             FuncTrocaComp("Notificacao");
           }
         });
-        attachInfoVeiculoToggle();
+        attachAcoesModal(infoVeiculo);
 
         const btnFooter = document.getElementById("btnFooter");
         btnFooter.addEventListener("click", function () {
@@ -666,7 +691,7 @@ export const VagaMonitor = ({
         denyButtonText: `Adicionar tempo`,
         denyButtonColor: "green",
         footer: `
-              <button class="btn3 botao bg-blue-50" id="ticket">
+              ${botaoAddCreditoHtml}<button class="btn3 botao bg-blue-50" id="ticket">
               Extrato de placa
               </button>
               `,
@@ -681,7 +706,7 @@ export const VagaMonitor = ({
           FuncTrocaComp("RegistrarVagaMonitor");
         }
       });
-      attachInfoVeiculoToggle();
+      attachAcoesModal(infoVeiculo);
 
       const btnFooter2 = document.getElementById("ticket");
       btnFooter2.addEventListener("click", function () {

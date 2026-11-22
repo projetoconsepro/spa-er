@@ -66,6 +66,12 @@ export const AuthProvider = ({ children }) => {
             response.data.dados.usuario.id_usuario
           );
           localStorage.setItem("SenhaDefault", true);
+          // A troca da senha padrão vai autenticada com o token deste login.
+          localStorage.setItem("tokenSenhaDefault", response.data.dados.token);
+          localStorage.setItem(
+            "perfilSenhaDefault",
+            response.data.dados.usuario.perfil?.[0]?.perfil
+          );
           FuncTrocaComp("NewPassword");
           return {
             auth: response.data.msg.resultado,
