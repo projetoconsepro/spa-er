@@ -20,6 +20,7 @@ const Configuracoes = () => {
   const [cardBody] = useState("card-body3");
   const [estadoDiv, setEstadoDiv] = useState(false);
   const [estadoDiv2, setEstadoDiv2] = useState(true);
+  const [valorNotificacao, setValorNotificacao] = useState(null);
 
   const Atualizarequisicao = async () => {
     const requisicao = createAPI();
@@ -71,7 +72,7 @@ const Configuracoes = () => {
   const confirmarTermos = () => {
     const checkbox = document.getElementById("termsCheckbox");
     if (checkbox.checked) {
-      localStorage.setItem("termosDebito", "true");
+      localStorage.setItem("termosDebitoNotificacao", "true");
       setEstadoDiv2(false)
       close();
       Atualizarequisicao();
@@ -84,13 +85,27 @@ const Configuracoes = () => {
   }
 
   useEffect(() => {
-    const debito = localStorage.getItem("termosDebito");
+    const debito = localStorage.getItem("termosDebitoNotificacao");
     if (debito == "true") {
       setEstadoDiv2(false)
       Atualizarequisicao();
     } else {
       open()
     }
+  }, []);
+
+  useEffect(() => {
+    createAPI()
+      .get("/parametros")
+      .then((response) => {
+        const valor = Number(response.data.data.param.estacionamento.valor_notificacao);
+        if (!Number.isNaN(valor) && valor > 0) {
+          setValorNotificacao(valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   const salvarAlteracoes = (index) => {
@@ -312,6 +327,8 @@ const Configuracoes = () => {
           <small>e) A ativação fica vinculada a placa do veículo.</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
           <small>f) Declaro ter ciência, que não será impresso o comprovante de estacionamento! E caso necessário, irei requisitar uma segunda via com uma monitora.</small> <br />
+          <Divider my="sm" size="md" variant="dashed" />
+          <small>g) Declaro ter ciência de que, caso seja emitida notificação para o veículo e eu possua saldo suficiente no aplicativo CONSEPRO Taquara, o valor da notificação{valorNotificacao ? ` (${valorNotificacao})` : ""} será debitado automaticamente do meu saldo, ficando a notificação regularizada.</small> <br />
           <Divider my="sm" size="md" variant="dashed" />
           <small><strong> APÓS CONCORDAR COM OS TERMOS, HABILITE O DÉBITO AUTOMÁTICO NAS PLACAS DESEJADAS.</strong></small> <br />
         </div>

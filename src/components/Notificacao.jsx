@@ -52,13 +52,35 @@ const Notificacao = () => {
         }
     }
 
+    const liberarBotao = () => {
+        setEstado2(false);
+        setDisabled(false);
+    };
+
+    const tratarErroDoEnvio = (error) => {
+        liberarBotao();
+        const status = error?.response?.status;
+        if (status === 401 || status === 403) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+            localStorage.removeItem("perfil");
+            return;
+        }
+        setMensagem("Não foi possível confirmar a notificação. Verifique a conexão e toque em Confirmar de novo.");
+        setEstado(true);
+        setTimeout(() => {
+            setEstado(false);
+            setMensagem("");
+        }, 6000);
+    };
+
     const submit = async () => {
         setDisabled(true);
         let modeloImpressao = "";
         let fabricanteImpressao = "";
         setEstado2(true)
         if(imagens.length === 0){
-                setEstado2(false)
+                liberarBotao()
                 setMensagem("Necessário retirar fotos do veículo")
                 setEstado(true)
                 setTimeout(() => {
@@ -70,7 +92,7 @@ const Notificacao = () => {
 
         if (!infoBanco){
             if (modeloCerto === "" || cor === "") {
-                setEstado2(false)
+                liberarBotao()
                 setMensagem("Necessário selecionar modelo, fabricante e cor")
                 setEstado(true)
                 setTimeout(() => {
@@ -87,7 +109,7 @@ const Notificacao = () => {
                 if (document.getElementById('selectCores') !== null && document.getElementById('selectCores') !== undefined){
                     const corSelect = document.getElementById('selectCores').value;
                     if(corSelect === ""){
-                        setEstado2(false)
+                        liberarBotao()
                         setMensagem("Necessário selecionar modelo, fabricante e cor")
                         setEstado(true)
                         setTimeout(() => {
@@ -101,7 +123,7 @@ const Notificacao = () => {
 
 
                 if((document.getElementById('selectCores') === null || document.getElementById('selectCores') === undefined) && cor2 === ''){
-                    setEstado2(false)
+                    liberarBotao()
                     setMensagem("Necessário selecionar modelo, fabricante e cor")
                     setEstado(true)
                     setTimeout(() => {
@@ -151,7 +173,7 @@ const Notificacao = () => {
             "imagens": imagens,
     }).then(
             response => {
-                setEstado2(false)
+                liberarBotao()
                 if(response.data.msg.resultado === true){
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
@@ -237,11 +259,7 @@ const Notificacao = () => {
                         FuncTrocaComp("ListarVagasMonitor");
                     }
                 }
-            }).catch(function (error) {
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-        });
+            }).catch(tratarErroDoEnvio);
     } else {
         requisicao.post('/notificacao', {
             "placa": placa,
@@ -249,7 +267,7 @@ const Notificacao = () => {
             "id_tipo_notificacao": tipoNot,
             "imagens": imagens,
     }).then(response => {
-                setEstado2(false)
+                liberarBotao()
                 if(response.data.msg.resultado === true) {
                     if(response.data.data.id_notificacao !== undefined){
                         const id = response.data.data.id_notificacao
@@ -333,13 +351,10 @@ const Notificacao = () => {
                         FuncTrocaComp( "ListarVagasMonitor");
                     }
                 }
-            }).catch(function (error) {
-                localStorage.removeItem("user")
-            localStorage.removeItem("token")
-            localStorage.removeItem("perfil");
-        });
+            }).catch(tratarErroDoEnvio);
     }
  } else {
+    liberarBotao()
     setMensagem("Necessário retirar fotos do veículo")
     setEstado(true)
     setTimeout(() => {
@@ -350,9 +365,6 @@ const Notificacao = () => {
 }
 
 
-setTimeout(() => {
-    setDisabled(false);
-}, 2000);
 
     const back = () => {
         FuncTrocaComp( "ListarVagasMonitor");
